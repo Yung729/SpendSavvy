@@ -6,9 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -81,17 +84,21 @@ fun LoginPageScreen(modifier: Modifier = Modifier) {
             color = HeaderTitle
         )
 
+        Spacer(modifier = Modifier.height(20.dp))
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text(text = "User Name") },
             leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "person")
+                Icon(Icons.Default.Person, contentDescription = "User Name")
             },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp, top = 10.dp)
+                .padding(bottom = 10.dp, top = 10.dp),
+            shape = RoundedCornerShape(15.dp),
+            singleLine = true
         )
 
         OutlinedTextField(
@@ -104,7 +111,9 @@ fun LoginPageScreen(modifier: Modifier = Modifier) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp, top = 10.dp)
+                .padding(bottom = 10.dp, top = 10.dp),
+            shape = RoundedCornerShape(15.dp),
+            singleLine = true
         )
 
         Button(
@@ -115,8 +124,7 @@ fun LoginPageScreen(modifier: Modifier = Modifier) {
             )
         ) {
             Text(
-                text = "LOGIN",
-                textAlign = TextAlign.Center
+                text = "LOGIN", textAlign = TextAlign.Center
             )
         }
 
@@ -130,6 +138,10 @@ fun LoginPageScreen(modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     SpendSavvyTheme {
-
+        LoginPageScreen(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp)
+        )
     }
 }
