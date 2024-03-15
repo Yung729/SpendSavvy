@@ -39,109 +39,33 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.SpendSavvyTheme
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 class MainActivity : ComponentActivity() {
+
+    lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SpendSavvyTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-                ) {
-                    LoginPageScreen(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp)
-                    )
-                }
+
+                navController = rememberNavController()
+                SetupNavGraph(navController = navController)
+
             }
         }
     }
 }
 
-
-@Composable
-fun LoginPageScreen(modifier: Modifier = Modifier) {
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Login",
-            fontFamily = poppinsFontFamily,
-            textAlign = TextAlign.Center,
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-            color = HeaderTitle
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text(text = "User Name") },
-            leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "User Name")
-            },
-            maxLines = 1,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp, top = 10.dp),
-            shape = RoundedCornerShape(15.dp),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(text = "Password") },
-            leadingIcon = {
-                Icon(Icons.Default.Info, contentDescription = "password")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp, top = 10.dp),
-            shape = RoundedCornerShape(15.dp),
-            singleLine = true
-        )
-
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ButtonColor
-            )
-        ) {
-            Text(
-                text = "LOGIN", textAlign = TextAlign.Center
-            )
-        }
-
-    }
-
-
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     SpendSavvyTheme {
-        LoginPageScreen(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp)
-        )
+
     }
 }
