@@ -92,7 +92,7 @@ fun SignUpScreen(modifier : Modifier = Modifier) {
             )
         ) {
             Text(
-                text = "LOGIN", textAlign = TextAlign.Center
+                text = "SIGN UP", textAlign = TextAlign.Center
             )
         }
 
