@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "593904497050",
+    "project_id": "spendsavvy-5a2a8",
+    "storage_bucket": "spendsavvy-5a2a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593904497050:android:6549163bee66f360afca23",
+        "android_client_info": {
+          "package_name": "com.example.spendsavvy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJNmUwN3spZSEldL_3wZ6_WsCrBk-LGzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
