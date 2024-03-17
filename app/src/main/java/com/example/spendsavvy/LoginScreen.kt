@@ -39,7 +39,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
-import com.example.spendsavvy.ui.theme.SpendSavvyTheme
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
