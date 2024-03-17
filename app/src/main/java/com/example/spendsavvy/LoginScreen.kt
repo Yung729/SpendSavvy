@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -27,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -113,7 +116,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(route = Screen.SignUp.route)
+
             },
             modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -124,6 +127,28 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
                 text = "LOGIN", textAlign = TextAlign.Center
             )
         }
+
+        ClickableText(
+            text = AnnotatedString("Forgot Password ?"),
+            onClick = {
+
+            },
+            style = TextStyle(
+                color = ButtonColor,
+                fontFamily = poppinsFontFamily
+            ),
+        )
+
+        ClickableText(
+            text = AnnotatedString("Register Account ?"),
+            onClick = {
+                navController.navigate(route = Screen.SignUp.route)
+            },
+            style = TextStyle(
+                color = ButtonColor,
+                fontFamily = poppinsFontFamily
+            ),
+        )
 
     }
 }

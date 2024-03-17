@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -45,7 +46,9 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     var email by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     val passIcon = if (passwordVisible)
@@ -70,8 +73,8 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = userName,
+            onValueChange = { userName = it },
             label = { Text(text = "User Name") },
             leadingIcon = {
                 Icon(Icons.Default.Person, contentDescription = "User Name")
@@ -85,11 +88,54 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
         )
 
         OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text(text = "Email") },
+            leadingIcon = {
+                Icon(Icons.Default.Email, contentDescription = "Email")
+            },
+            maxLines = 1,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 10.dp),
+            shape = RoundedCornerShape(15.dp),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        )
+
+
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text(text = "Password") },
             leadingIcon = {
                 Icon(Icons.Default.Info, contentDescription = "password")
+            },
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        painter = passIcon,
+                        contentDescription = "PassIcon",
+                        modifier = Modifier.size(35.dp)
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = if (passwordVisible) VisualTransformation.None
+            else PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 10.dp),
+            shape = RoundedCornerShape(15.dp),
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text(text = "Confirm Password") },
+            leadingIcon = {
+                Icon(Icons.Default.Info, contentDescription = "Confirm password")
             },
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -121,6 +167,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
                 text = "SIGN UP", textAlign = TextAlign.Center
             )
         }
+
 
     }
 }
