@@ -1,7 +1,9 @@
 package com.example.spendsavvy
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -98,7 +100,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
@@ -121,10 +123,90 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
 
             OutlinedButton(
-                onClick = { /*TODO*/ }, shape = RectangleShape
+                onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(6.dp),
+                contentPadding = PaddingValues(3.dp),
+                border = BorderStroke(1.dp, Color.Black)
 
             ) {
-                Text(text = "Add Transactions")
+                Text(
+                    text = "Add Transactions",
+                    color = Color.Black,
+                    fontSize = 10.sp)
+            }
+
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column {
+                Text(
+                    text = "Fixed Deposit",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp,
+                    color = HeaderTitle
+                )
+
+                Text(
+                    text = "Assets that Earn Interest",
+                    fontSize = 10.sp,
+                    color = HeaderTitle
+                )
+            }
+
+
+            OutlinedButton(
+                onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(6.dp),
+                contentPadding = PaddingValues(3.dp),
+                border = BorderStroke(1.dp, Color.Black)
+
+            ) {
+                Text(
+                    text = "Add/Manage FD",
+                    color = Color.Black,
+                    fontSize = 10.sp)
+            }
+
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column {
+                Text(
+                    text = "Stock",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp,
+                    color = HeaderTitle
+                )
+
+                Text(
+                    text = "Assets that Earn Interest",
+                    fontSize = 10.sp,
+                    color = HeaderTitle
+                )
+            }
+
+
+            OutlinedButton(
+                onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(6.dp),
+                contentPadding = PaddingValues(3.dp),
+                border = BorderStroke(1.dp, Color.Black)
+
+            ) {
+                Text(
+                    text = "Add/Manage Stock",
+                    color = Color.Black,
+                    fontSize = 10.sp)
             }
 
         }
