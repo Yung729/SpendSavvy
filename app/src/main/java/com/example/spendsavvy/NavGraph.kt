@@ -2,9 +2,11 @@ package com.example.spendsavvy
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -12,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -72,8 +75,13 @@ fun TabsNavGraph() {
                         } == true,
                         icon = {
                             Icon(
-                                imageVector = if (screen.route == "overview_screen") Icons.Default.Home else Icons.Default.AccountBox,
-                                contentDescription = null
+                                painter =
+                                if (screen.route == "overview_screen")
+                                    painterResource(id = R.drawable.bar_chart)
+                                else
+                                    painterResource(id = R.drawable.wallet),
+                                contentDescription = null,
+                                Modifier.size(30.dp,30.dp)
                             )
                         },
                         onClick = {
