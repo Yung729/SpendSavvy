@@ -1,6 +1,5 @@
 package com.example.spendsavvy
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,14 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
 fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) {
-
 
 
     Column(
@@ -75,10 +71,12 @@ fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) 
         )
 
         Card(
-
             colors = CardDefaults.cardColors(
                 containerColor = CardColor, //later need change to brush color
                 contentColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp
             ),
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
