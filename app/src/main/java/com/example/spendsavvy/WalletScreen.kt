@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -132,7 +131,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 Text(
                     text = "Add Transactions",
                     color = Color.Black,
-                    fontSize = 10.sp)
+                    fontSize = 10.sp
+                )
             }
 
         }
@@ -169,7 +169,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 Text(
                     text = "Add/Manage FD",
                     color = Color.Black,
-                    fontSize = 10.sp)
+                    fontSize = 10.sp
+                )
             }
 
         }
@@ -206,7 +207,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 Text(
                     text = "Add/Manage Stock",
                     color = Color.Black,
-                    fontSize = 10.sp)
+                    fontSize = 10.sp
+                )
             }
 
         }

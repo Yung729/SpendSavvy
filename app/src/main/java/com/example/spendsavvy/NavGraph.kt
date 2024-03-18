@@ -20,7 +20,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
@@ -102,23 +101,23 @@ fun TabsNavGraph() {
             modifier = Modifier.padding(innerPadding)
         ) {
 
-                composable(route = Screen.Overview.route) {
-                    OverviewScreen(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        navController = navController
-                    )
-                }
+            composable(route = Screen.Overview.route) {
+                OverviewScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
 
-                composable(route = Screen.Wallet.route) {
-                    WalletScreen(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        navController = navController
-                    )
-                }
+            composable(route = Screen.Wallet.route) {
+                WalletScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
             
 
         }

@@ -41,8 +41,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
-import com.google.firebase.Firebase
-import com.google.firebase.database.database
 
 @Composable
 fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
