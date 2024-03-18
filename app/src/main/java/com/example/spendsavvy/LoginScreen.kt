@@ -116,7 +116,10 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Button(
             onClick = {
-
+                navController.navigate("EnterMainScreen") {
+                    // clear back stack for nested navigation
+                    popUpTo(Screen.Login.route)
+                }
             },
             modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
             colors = ButtonDefaults.buttonColors(
