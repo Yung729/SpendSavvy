@@ -68,6 +68,7 @@ fun TabsNavGraph() {
             NavigationBar {
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = backStackEntry?.destination
+
                 items.forEach { screen ->
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any {
