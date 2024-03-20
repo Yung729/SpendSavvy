@@ -1,5 +1,6 @@
 package com.example.spendsavvy
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -51,6 +53,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
     var password by remember { mutableStateOf("") }
 
     var passwordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     val passIcon = if (passwordVisible)
         painterResource(id = R.drawable.show_pass)
@@ -114,12 +117,20 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             singleLine = true
         )
 
+
+
+
         Button(
             onClick = {
-                navController.navigate("EnterMainScreen") {
-                    // clear back stack for nested navigation
-                    popUpTo(Screen.Login.route)
+                if (email == "leongkahyung@gmail.com" && password == "1234") {
+                    navController.navigate("EnterMainScreen") {
+                        // clear back stack for nested navigation
+                        popUpTo(Screen.Login.route)
+                    }
+                } else {
+                    Toast.makeText(context, "Login Unsuccesful", Toast.LENGTH_LONG).show()
                 }
+
             },
             modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
             colors = ButtonDefaults.buttonColors(
