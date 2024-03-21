@@ -51,6 +51,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
+
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
 
@@ -92,8 +93,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
-            singleLine = true
-        )
+            singleLine = true,
+
+            )
 
         OutlinedTextField(
             value = password,
@@ -141,7 +143,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                         }
                     }
             },
-            modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
+            modifier = Modifier
+                .padding(bottom = 10.dp, top = 10.dp)
+                .bounceClick(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = ButtonColor
             )
@@ -183,6 +187,8 @@ fun LoginScreenPreview() {
     LoginScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController(), auth = Firebase.auth
+            .padding(20.dp),
+        navController = rememberNavController(),
+        auth = Firebase.auth
     )
 }
