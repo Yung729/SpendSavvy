@@ -27,7 +27,7 @@ import com.example.spendsavvy.screen.WalletScreen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SetupNavGraph(navController: NavHostController) {
+fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
 
     NavHost(
         navController = navController,
@@ -41,8 +41,9 @@ fun SetupNavGraph(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(20.dp),
-                navController = navController
-                
+                navController = navController,
+                auth = auth
+
             )
         }
 
@@ -53,8 +54,8 @@ fun SetupNavGraph(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(20.dp),
-                navController = navController
-                
+                navController = navController,
+                auth = auth
             )
         }
 
@@ -86,7 +87,7 @@ fun TabsNavGraph() {
                                 else
                                     painterResource(id = R.drawable.wallet),
                                 contentDescription = null,
-                                Modifier.size(30.dp,30.dp)
+                                Modifier.size(30.dp, 30.dp)
                             )
                         },
                         onClick = {
@@ -131,7 +132,7 @@ fun TabsNavGraph() {
                     navController = navController
                 )
             }
-            
+
 
         }
 

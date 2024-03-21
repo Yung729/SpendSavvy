@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -51,15 +52,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
 
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
     var passwordVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
-
     val passIcon = if (passwordVisible)
         painterResource(id = R.drawable.show_pass)
     else
@@ -122,12 +121,25 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             singleLine = true
         )
 
-
-
-
         Button(
             onClick = {
-                signIn(email, password, navController)
+
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener() { task ->
+                        if (task.isSuccessful) {
+
+                            val user = auth.currentUser
+                            navController.navigate(route = "EnterMainScreen")
+
+                        } else if (!task.isSuccessful) {
+                            Toast.makeText(
+                                context,
+                                "Unsuccessful to Sign In Account",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        }
+                    }
             },
             modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -164,23 +176,6 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
     }
 }
 
-private fun signIn(email: String, password: String, navController: NavController) {
-    val auth: FirebaseAuth = Firebase.auth
-
-    auth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener() { task ->
-        if (task.isSuccessful) {
-
-            val user = auth.currentUser
-            navController.navigate(route = "EnterMainScreen")
-
-        } else {
-            // If sign in fails, display a message to the user.
-
-        }
-    }
-
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -188,6 +183,6 @@ fun LoginScreenPreview() {
     LoginScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController()
+            .padding(20.dp), navController = rememberNavController(), auth = Firebase.auth
     )
 }

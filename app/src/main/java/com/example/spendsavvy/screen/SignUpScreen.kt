@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,14 +50,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 @Composable
-fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController,auth: FirebaseAuth) {
 
     var email by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-    val auth: FirebaseAuth = Firebase.auth
+    val context = LocalContext.current
 
     val passIcon = if (passwordVisible)
         painterResource(id = R.drawable.show_pass)
@@ -173,7 +175,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
                             navController.navigate(route = Screen.Login.route)
 
                         } else {
-                            // If sign in fails, display a message to the user.
+                            Toast.makeText(context,"Unsuccessful to Sign Up Account",Toast.LENGTH_SHORT).show()
 
                         }
                     }
@@ -201,7 +203,8 @@ fun SignUpScreenPreview() {
     SignUpScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController()
+            .padding(20.dp), navController = rememberNavController(),
+        auth = Firebase.auth
     )
 }
 
