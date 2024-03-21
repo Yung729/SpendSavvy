@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -114,9 +115,9 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 )
 
                 Text(
-                    text = "Includes Cash Money,Bank and Ewallets",
+                    text = "Includes Cash Money , Bank and Ewallets",
                     fontSize = 10.sp,
-                    color = HeaderTitle
+                    color = Color.Gray
                 )
             }
 
@@ -136,6 +137,39 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
 
         }
+        Spacer(modifier = Modifier.height(5.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "Cash Money"
+
+                )
+
+                Text(
+                    text = "Available balance",
+                    color = Color.Gray,
+                    fontSize = 10.sp
+                )
+            }
+            Text(text = "RM5000")
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+        Divider(color = Color.Gray, thickness = 0.7.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Column {
+                Text(
+                    text = "Bank Accounts"
+                )
+            }
+            Text(text = "2 accounts")
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider(color = Color.Gray, thickness = 0.7.dp)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -154,7 +188,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 Text(
                     text = "Assets that Earn Interest",
                     fontSize = 10.sp,
-                    color = HeaderTitle
+                    color = Color.Gray
                 )
             }
 
@@ -174,7 +208,21 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
 
         }
+        Spacer(modifier = Modifier.height(5.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Column{
+                Text(
+                    text = "FD Account"
+                )
 
+            }
+            Text(text = "3 accounts")
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider(color = Color.Gray, thickness = 0.7.dp)
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
@@ -190,9 +238,9 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 )
 
                 Text(
-                    text = "Assets that Earn Interest",
+                    text = "Add and sell stocks",
                     fontSize = 10.sp,
-                    color = HeaderTitle
+                    color = Color.Gray
                 )
             }
 
@@ -211,6 +259,19 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 )
             }
 
+        }
+
+        Spacer(modifier = Modifier.height(5.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Column{
+                Text(
+                    text = "Stocks"
+                )
+
+            }
+            Text(text = "5 stocks")
         }
 
     }
