@@ -1,4 +1,4 @@
-package com.example.spendsavvy
+package com.example.spendsavvy.navigation
 
 sealed class Screen(val route: String) {
 

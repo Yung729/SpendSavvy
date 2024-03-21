@@ -1,12 +1,8 @@
-package com.example.spendsavvy
+package com.example.spendsavvy.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,9 +19,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
+import com.example.spendsavvy.screen.LoginScreen
+import com.example.spendsavvy.screen.OverviewScreen
+import com.example.spendsavvy.screen.SignUpScreen
+import com.example.spendsavvy.screen.WalletScreen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SetupNavGraph(navController: NavHostController) {
+fun SetupNavGraph(navController: NavHostController,auth: FirebaseAuth) {
 
     NavHost(
         navController = navController,
@@ -39,7 +41,8 @@ fun SetupNavGraph(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(20.dp),
-                navController = navController
+                navController = navController,
+                auth = auth
             )
         }
 
@@ -50,7 +53,8 @@ fun SetupNavGraph(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(20.dp),
-                navController = navController
+                navController = navController,
+                auth = auth
             )
         }
 

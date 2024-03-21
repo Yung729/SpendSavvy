@@ -1,4 +1,4 @@
-package com.example.spendsavvy
+package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
