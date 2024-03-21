@@ -46,10 +46,12 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, navController: NavController,auth: FirebaseAuth) {
+fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
 
 
     var email by remember { mutableStateOf("") }
@@ -62,7 +64,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController,auth
         painterResource(id = R.drawable.show_pass)
     else
         painterResource(id = R.drawable.hide_pass)
-    
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -125,7 +127,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController,auth
 
         Button(
             onClick = {
-
+                signIn(email, password, navController)
             },
             modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
             colors = ButtonDefaults.buttonColors(
@@ -162,12 +164,15 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController,auth
     }
 }
 
-private fun signIn(email: String, password: String,auth: FirebaseAuth) {
+private fun signIn(email: String, password: String, navController: NavController) {
+    val auth: FirebaseAuth = Firebase.auth
 
-    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
+    auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener() { task ->
         if (task.isSuccessful) {
 
             val user = auth.currentUser
+            navController.navigate(route = "EnterMainScreen")
 
         } else {
             // If sign in fails, display a message to the user.
@@ -183,6 +188,6 @@ fun LoginScreenPreview() {
     LoginScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController(),auth = FirebaseAuth.getInstance()
+            .padding(20.dp), navController = rememberNavController()
     )
 }

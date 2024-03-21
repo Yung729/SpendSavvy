@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
-    private lateinit var auth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,8 +20,7 @@ class MainActivity : ComponentActivity() {
             SpendSavvyTheme {
 
                 navController = rememberNavController()
-                auth = FirebaseAuth.getInstance()
-                SetupNavGraph(navController = navController,auth)
+                SetupNavGraph(navController = navController)
 
             }
         }

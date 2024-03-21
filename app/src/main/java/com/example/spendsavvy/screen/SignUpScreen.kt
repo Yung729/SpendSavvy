@@ -48,13 +48,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 @Composable
-fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController,auth: FirebaseAuth) {
+fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     var email by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val auth: FirebaseAuth = Firebase.auth
 
     val passIcon = if (passwordVisible)
         painterResource(id = R.drawable.show_pass)
@@ -164,9 +165,21 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController,aut
 
         Button(
             onClick = {
-                registerUser(email,password,auth,navController)
 
-                      },
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(){ task ->
+                        if (task.isSuccessful) {
+
+                            navController.navigate(route = Screen.Login.route)
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+
+                        }
+                    }
+                navController.navigate(route = Screen.Login.route)
+
+            },
             modifier = Modifier.padding(bottom = 10.dp, top = 10.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = ButtonColor
@@ -181,22 +194,6 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController,aut
     }
 }
 
-private fun registerUser(email: String, password: String,auth: FirebaseAuth,navController: NavController) {
-
-    auth.createUserWithEmailAndPassword(email,password)
-        .addOnCompleteListener() { task ->
-            if (task.isSuccessful) {
-
-                navController.navigate(route = Screen.Login.route)
-
-            } else {
-                // If sign in fails, display a message to the user.
-
-            }
-        }
-
-}
-
 
 @Preview(showBackground = true)
 @Composable
@@ -204,7 +201,7 @@ fun SignUpScreenPreview() {
     SignUpScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController(), auth = FirebaseAuth.getInstance()
+            .padding(20.dp), navController = rememberNavController()
     )
 }
 
