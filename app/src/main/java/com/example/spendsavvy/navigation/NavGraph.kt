@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.OverviewScreen
+import com.example.spendsavvy.screen.ProfileScreen
 import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.WalletScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -82,10 +83,11 @@ fun TabsNavGraph() {
                         icon = {
                             Icon(
                                 painter =
-                                if (screen.route == "overview_screen")
-                                    painterResource(id = R.drawable.bar_chart)
-                                else
-                                    painterResource(id = R.drawable.wallet),
+                                when (screen.route) {
+                                    "overview_screen" -> painterResource(id = R.drawable.bar_chart)
+                                    "wallet_screen" -> painterResource(id = R.drawable.wallet)
+                                    else -> painterResource(id = R.drawable.wallet)
+                                },
                                 contentDescription = null,
                                 Modifier.size(30.dp, 30.dp)
                             )
@@ -133,6 +135,15 @@ fun TabsNavGraph() {
                 )
             }
 
+            composable(route = Screen.Profile.route) {
+                ProfileScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
+
 
         }
 
@@ -142,6 +153,7 @@ fun TabsNavGraph() {
 val items = listOf(
     Screen.Overview,
     Screen.Wallet,
+    Screen.Profile,
 )
 
 

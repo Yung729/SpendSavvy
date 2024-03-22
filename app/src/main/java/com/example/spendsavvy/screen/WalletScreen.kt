@@ -159,7 +159,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
         Divider(color = Color.Gray, thickness = 0.7.dp)
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Column {
                 Text(
                     text = "Bank Accounts"
@@ -211,8 +211,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(5.dp))
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Column{
+        ) {
+            Column {
                 Text(
                     text = "FD Account"
                 )
@@ -264,8 +264,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(5.dp))
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Column{
+        ) {
+            Column {
                 Text(
                     text = "Stocks"
                 )

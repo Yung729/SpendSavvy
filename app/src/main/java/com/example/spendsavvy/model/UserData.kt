@@ -1,4 +1,4 @@
-package com.example.spendsavvy.data
+package com.example.spendsavvy.model
 
 data class UserData(
     val userName : String?,
