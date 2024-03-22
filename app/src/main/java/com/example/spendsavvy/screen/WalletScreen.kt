@@ -115,7 +115,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 )
 
                 Text(
-                    text = "Includes Cash Money , Bank and Ewallets",
+                    text = "Includes Cash Money , Bank and E wallets",
                     fontSize = 10.sp,
                     color = Color.Gray
                 )

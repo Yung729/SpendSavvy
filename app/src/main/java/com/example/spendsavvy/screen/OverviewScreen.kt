@@ -218,8 +218,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
                 text = transactions.amount.toString(),
                 fontWeight = FontWeight.SemiBold,
                 color =
-                    if (transactions.category.isExpenses) Color.Red else Color.Green
-                ,
+                if (transactions.category.isExpenses) Color.Red else Color.Green,
                 textAlign = TextAlign.End
             )
         }
