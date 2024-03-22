@@ -7,6 +7,8 @@ sealed class Screen(val route: String) {
     object Overview : Screen(route = "overview_screen")
     object Wallet : Screen(route = "wallet_screen")
     object Profile : Screen(route = "profile_screen")
+    object Settings : Screen(route = "settings_screen")
+    object Analysis : Screen(route = "analysis_screen")
 
 
 }

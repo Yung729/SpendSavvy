@@ -4,11 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -16,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -27,9 +21,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.OverviewScreen
 import com.example.spendsavvy.screen.ProfileScreen
+import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.WalletScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -78,7 +74,7 @@ fun TabsNavGraph() {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            NavigationBar(modifier = Modifier.height(65.dp)) {
+            NavigationBar(modifier = Modifier.height(70.dp)) {
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = backStackEntry?.destination
 
@@ -93,10 +89,11 @@ fun TabsNavGraph() {
                                 when (screen.route) {
                                     "overview_screen" -> painterResource(id = R.drawable.bar_chart)
                                     "wallet_screen" -> painterResource(id = R.drawable.wallet)
-                                    else -> painterResource(id = R.drawable.wallet)
+                                    "analysis_screen" -> painterResource(id = R.drawable.analysis_icon)
+                                    else -> painterResource(id = R.drawable.settings_icon)
                                 },
                                 contentDescription = null,
-                                Modifier.size(20.dp, 20.dp),
+                                Modifier.size(20.dp, 20.dp)
                             )
                         },
                         onClick = {
@@ -116,31 +113,8 @@ fun TabsNavGraph() {
                 }
             }
 
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            val backStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = backStackEntry?.destination
-            if (currentDestination?.route == Screen.Overview.route) {
-                FloatingActionButton(
-                    onClick = {
-                        // Define action for FAB click in Overview screen
-                    },
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .padding(bottom = 28.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = "Add Expensed and Income",
-                        tint = Color.Black,
-                    )
-                }
-            }
-        },
-
-
-        ) { innerPadding ->
+        }
+    ) { innerPadding ->
 
         NavHost(
             navController = navController,
@@ -166,8 +140,17 @@ fun TabsNavGraph() {
                 )
             }
 
-            composable(route = Screen.Profile.route) {
-                ProfileScreen(
+            composable(route = Screen.Analysis.route) {
+                AnalysisScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
+
+            composable(route = Screen.Settings.route) {
+                SettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),
@@ -184,7 +167,8 @@ fun TabsNavGraph() {
 val items = listOf(
     Screen.Overview,
     Screen.Wallet,
-    Screen.Profile,
+    Screen.Analysis,
+    Screen.Settings
 )
 
 
