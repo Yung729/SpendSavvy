@@ -4,6 +4,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -11,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -72,7 +78,7 @@ fun TabsNavGraph() {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            NavigationBar(modifier = Modifier.height(70.dp)) {
+            NavigationBar(modifier = Modifier.height(65.dp)) {
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = backStackEntry?.destination
 
@@ -90,7 +96,7 @@ fun TabsNavGraph() {
                                     else -> painterResource(id = R.drawable.wallet)
                                 },
                                 contentDescription = null,
-                                Modifier.size(20.dp, 20.dp)
+                                Modifier.size(20.dp, 20.dp),
                             )
                         },
                         onClick = {
@@ -110,8 +116,31 @@ fun TabsNavGraph() {
                 }
             }
 
-        }
-    ) { innerPadding ->
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            val backStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = backStackEntry?.destination
+            if (currentDestination?.route == Screen.Overview.route) {
+                FloatingActionButton(
+                    onClick = {
+                        // Define action for FAB click in Overview screen
+                    },
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .padding(bottom = 28.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Add Expensed and Income",
+                        tint = Color.Black,
+                    )
+                }
+            }
+        },
+
+
+        ) { innerPadding ->
 
         NavHost(
             navController = navController,
