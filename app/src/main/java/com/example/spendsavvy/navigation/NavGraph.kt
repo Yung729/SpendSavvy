@@ -1,6 +1,7 @@
 package com.example.spendsavvy.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -71,7 +72,7 @@ fun TabsNavGraph() {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            NavigationBar(modifier = Modifier.height(70.dp)) {
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = backStackEntry?.destination
 
@@ -89,7 +90,7 @@ fun TabsNavGraph() {
                                     else -> painterResource(id = R.drawable.wallet)
                                 },
                                 contentDescription = null,
-                                Modifier.size(30.dp, 30.dp)
+                                Modifier.size(20.dp, 20.dp)
                             )
                         },
                         onClick = {
@@ -108,6 +109,7 @@ fun TabsNavGraph() {
                     )
                 }
             }
+
         }
     ) { innerPadding ->
 
