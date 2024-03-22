@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -84,9 +85,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(text = "User Name") },
+            label = { Text(text = "Email") },
             leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "User Name")
+                Icon(Icons.Default.Email, contentDescription = "Email")
             },
             maxLines = 1,
             modifier = Modifier
