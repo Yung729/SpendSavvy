@@ -55,15 +55,14 @@ import com.google.firebase.auth.auth
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
 
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
     var passwordVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val passIcon = if (passwordVisible)
-        painterResource(id = R.drawable.show_pass)
-    else
-        painterResource(id = R.drawable.hide_pass)
+
+    val passIcon = if (passwordVisible) painterResource(id = R.drawable.show_pass)
+    else painterResource(id = R.drawable.hide_pass)
 
     Column(
         modifier = modifier,
@@ -126,22 +125,19 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         Button(
             onClick = {
 
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener() { task ->
-                        if (task.isSuccessful) {
+                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
+                    if (task.isSuccessful) {
 
-                            val user = auth.currentUser
-                            navController.navigate(route = "EnterMainScreen")
+                        val user = auth.currentUser
+                        navController.navigate(route = "EnterMainScreen")
 
-                        } else if (!task.isSuccessful) {
-                            Toast.makeText(
-                                context,
-                                "Unsuccessful to Sign In Account",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                    } else if (!task.isSuccessful) {
+                        Toast.makeText(
+                            context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
+                        ).show()
 
-                        }
                     }
+                }
             },
             modifier = Modifier
                 .padding(bottom = 10.dp, top = 10.dp)
@@ -161,8 +157,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
 
             },
             style = TextStyle(
-                color = ButtonColor,
-                fontFamily = poppinsFontFamily
+                color = ButtonColor, fontFamily = poppinsFontFamily
             ),
         )
 
@@ -172,8 +167,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 navController.navigate(route = Screen.SignUp.route)
             },
             style = TextStyle(
-                color = ButtonColor,
-                fontFamily = poppinsFontFamily
+                color = ButtonColor, fontFamily = poppinsFontFamily
             ),
         )
 

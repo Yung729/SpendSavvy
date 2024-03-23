@@ -24,7 +24,6 @@ import com.example.spendsavvy.R
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.OverviewScreen
-import com.example.spendsavvy.screen.ProfileScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.WalletScreen

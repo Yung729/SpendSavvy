@@ -41,7 +41,6 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 @Composable
 fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) {
 
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Top,
@@ -78,80 +77,7 @@ fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) 
             color = HeaderTitle
         )
 
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = CardColor,
-                contentColor = Color.White
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 5.dp
-            ),
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-
-        ) {
-            Column(
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Text(
-                    text = "Total Balance",
-                    modifier = Modifier,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp
-                )
-
-                Text(
-                    text = "RM 5000.00",
-                    modifier = Modifier,
-                    textAlign = TextAlign.Center,
-
-                    )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    Column {
-                        Text(
-                            text = "Income",
-                            modifier = Modifier,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 15.sp
-                        )
-
-                        Text(
-                            text = "RM 6000.00",
-                            modifier = Modifier,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-
-                    Column {
-                        Text(
-                            text = "Expenses",
-                            modifier = Modifier,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 15.sp
-                        )
-
-                        Text(
-                            text = "RM 1000.00",
-                            modifier = Modifier,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-
-
-                }
-            }
-        }
+        OverViewCard()
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -167,12 +93,88 @@ fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) 
                 color = HeaderTitle
             )
 
-
         }
 
         TransactionList(TransactionData().loadTransactions())
 
+    }
+}
 
+@Composable
+fun OverViewCard() {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = CardColor,
+            contentColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        ),
+        shape = RoundedCornerShape(15.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Text(
+                text = "Total Balance",
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp
+            )
+
+            Text(
+                text = "RM 5000.00",
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+
+                )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Column {
+                    Text(
+                        text = "Income",
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    )
+
+                    Text(
+                        text = "RM 6000.00",
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+
+                Column {
+                    Text(
+                        text = "Expenses",
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    )
+
+                    Text(
+                        text = "RM 1000.00",
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+
+
+            }
+        }
     }
 }
 
@@ -191,24 +193,29 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
+
         ) {
 
             Image(
-                painter = painterResource(id = transactions.imageResourceId),
+                painter = painterResource(id = transactions.category.imageResourceId),
                 contentDescription = "",
-                Modifier.size(30.dp, 30.dp)
+                modifier = Modifier
+                    .size(30.dp, 30.dp)
+                    .padding(end = 10.dp)
             )
 
-            Column() {
+            Column(
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier
+            ) {
                 Text(
                     text = transactions.category.name,
-                    textAlign = TextAlign.Start
+                    fontWeight = FontWeight.SemiBold
                 )
 
                 Text(
                     text = transactions.date.toString(),
-                    textAlign = TextAlign.Start,
                     fontSize = 10.sp
                 )
             }
@@ -219,7 +226,9 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
                 fontWeight = FontWeight.SemiBold,
                 color =
                 if (transactions.category.isExpenses) Color.Red else Color.Green,
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
 

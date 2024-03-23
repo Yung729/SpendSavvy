@@ -117,7 +117,8 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            isError = email.isEmpty() && !emailValidation(email)
         )
 
 
@@ -144,7 +145,8 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
-            singleLine = true
+            singleLine = true,
+            isError = passwordValidation(password)
         )
 
         OutlinedTextField(
@@ -170,7 +172,8 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
-            singleLine = true
+            singleLine = true,
+            isError = (password != confirmPassword)
         )
 
         Button(
@@ -240,6 +243,21 @@ fun Modifier.bounceClick() = composed {
 
 enum class ButtonState { Pressed, Idle }
 
+//validation
+fun emailValidation(email: String): Boolean {
+    return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex())
+}
+
+fun passwordValidation(password: String): Boolean {
+    if (password.isEmpty())
+        return false
+    else if (password.count() != 8)
+        return false
+
+
+
+    return true
+}
 
 @Preview(showBackground = true)
 @Composable
