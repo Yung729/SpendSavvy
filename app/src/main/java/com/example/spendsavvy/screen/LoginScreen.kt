@@ -159,6 +159,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             style = TextStyle(
                 color = ButtonColor, fontFamily = poppinsFontFamily
             ),
+            modifier = Modifier.bounceClick()
         )
 
         ClickableText(
@@ -169,6 +170,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             style = TextStyle(
                 color = ButtonColor, fontFamily = poppinsFontFamily
             ),
+            modifier = Modifier.bounceClick()
         )
 
     }

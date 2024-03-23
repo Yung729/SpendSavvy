@@ -64,7 +64,9 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+
     var passwordVisible by remember { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     val passIcon = if (passwordVisible)
@@ -173,28 +175,38 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
             singleLine = true,
-            isError = (password != confirmPassword)
-        )
+            isError = (password != confirmPassword),
+
+            )
 
         Button(
             onClick = {
 
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener() { task ->
-                        if (task.isSuccessful) {
+                if (!emailValidation(email) || !passwordValidation(password) || password != confirmPassword) {
+                    isError = true
+                    Toast.makeText(
+                        context,
+                        "Details Not Fulfill Requirement",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    isError = false
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener() { task ->
+                            if (task.isSuccessful) {
 
-                            navController.navigate(route = Screen.Login.route)
+                                navController.navigate(route = Screen.Login.route)
 
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "Unsuccessful to Sign Up Account",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Unsuccessful to Sign Up Account",
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
+                            }
                         }
-                    }
-                navController.navigate(route = Screen.Login.route)
+                }
 
             },
             modifier = Modifier
@@ -251,7 +263,7 @@ fun emailValidation(email: String): Boolean {
 fun passwordValidation(password: String): Boolean {
     if (password.isEmpty())
         return false
-    else if (password.count() != 8)
+    else if (password.count() < 8)
         return false
 
 
