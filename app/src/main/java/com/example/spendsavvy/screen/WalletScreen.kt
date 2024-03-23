@@ -37,12 +37,11 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
+        modifier = modifier
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = "Wallet",
@@ -66,9 +65,11 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             colors = CardDefaults.cardColors(
                 containerColor = Color.White, //later need change to brush color
                 contentColor = Color.Black
-            ), elevation = CardDefaults.cardElevation(
+            ),
+            elevation = CardDefaults.cardElevation(
                 defaultElevation = 5.dp
-            ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
+            ),
+            shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(text = "Available Balance")
@@ -80,7 +81,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(35.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = "Assets",
@@ -103,7 +105,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             Column {
@@ -115,7 +118,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 )
 
                 Text(
-                    text = "Includes Cash Money , Bank and E wallets",
+                    text = "Includes Cash Money , Bank and E-wallets",
                     fontSize = 10.sp,
                     color = Color.Gray
                 )
@@ -137,28 +140,30 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
 
         }
+
         Spacer(modifier = Modifier.height(5.dp))
+
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(
-                    text = "Cash Money"
 
-                )
+            Text(
+                text = "Cash Money"
 
-                Text(
-                    text = "Available balance",
-                    color = Color.Gray,
-                    fontSize = 10.sp
-                )
-            }
+            )
+
             Text(text = "RM5000")
         }
+
         Spacer(modifier = Modifier.height(5.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
+
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
                 Text(
@@ -168,13 +173,15 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             Text(text = "2 accounts")
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Column {
@@ -209,8 +216,11 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         }
         Spacer(modifier = Modifier.height(5.dp))
+
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
                 Text(
@@ -221,12 +231,14 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             Text(text = "3 accounts")
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             Column {
@@ -263,7 +275,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Spacer(modifier = Modifier.height(5.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
                 Text(
