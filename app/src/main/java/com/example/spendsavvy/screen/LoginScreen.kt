@@ -51,6 +51,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.example.spendsavvy.animation.bounceClick
+import com.example.spendsavvy.component.*
 
 
 @Composable
@@ -123,34 +124,22 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             singleLine = true
         )
 
-        Button(
-            onClick = {
+        ButtonComponent(onButtonClick = {
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
+                if (task.isSuccessful) {
 
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
-                    if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    navController.navigate(route = "EnterMainScreen")
 
-                        val user = auth.currentUser
-                        navController.navigate(route = "EnterMainScreen")
+                } else if (!task.isSuccessful) {
+                    Toast.makeText(
+                        context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
+                    ).show()
 
-                    } else if (!task.isSuccessful) {
-                        Toast.makeText(
-                            context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
-                        ).show()
-
-                    }
                 }
-            },
-            modifier = Modifier
-                .padding(bottom = 10.dp, top = 10.dp)
-                .bounceClick(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ButtonColor
-            )
-        ) {
-            Text(
-                text = "LOGIN", textAlign = TextAlign.Center
-            )
-        }
+            }
+        }, text = "LOGIN")
+
 
         ClickableText(
             text = AnnotatedString("Forgot Password ?"),

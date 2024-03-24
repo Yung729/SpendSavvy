@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.animation.bounceClick
+import com.example.spendsavvy.component.ButtonComponent
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
@@ -172,9 +173,8 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
 
             )
 
-        Button(
-            onClick = {
-
+        ButtonComponent(
+            onButtonClick = {
                 if (!emailValidation(email) || !passwordValidation(password) || password != confirmPassword) {
                     isError = true
                     Toast.makeText(
@@ -200,20 +200,10 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                             }
                         }
                 }
+                            },
+            text = "SIGN UP" )
 
-            },
-            modifier = Modifier
-                .padding(bottom = 10.dp, top = 10.dp)
-                .bounceClick(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ButtonColor,
 
-                )
-        ) {
-            Text(
-                text = "SIGN UP", textAlign = TextAlign.Center
-            )
-        }
 
 
     }

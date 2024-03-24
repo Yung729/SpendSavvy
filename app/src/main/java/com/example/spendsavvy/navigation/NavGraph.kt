@@ -26,6 +26,7 @@ import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.OverviewScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
+import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.WalletScreen
 import com.google.firebase.auth.FirebaseAuth
 
@@ -154,6 +155,16 @@ fun TabsNavGraph() {
                         .fillMaxSize()
                         .padding(20.dp),
                     navController = navController
+                )
+            }
+
+            composable(
+                route = Screen.Stock.route
+            ) {
+                StockScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
                 )
             }
 

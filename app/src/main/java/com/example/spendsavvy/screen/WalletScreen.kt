@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.component.HeaderTitle
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.GreenColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -43,14 +45,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Wallet",
-                fontFamily = poppinsFontFamily,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                color = HeaderTitle,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
+            HeaderTitle(text = "Wallet")
 
             Icon(
                 Icons.Default.Notifications,
@@ -258,7 +253,9 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
 
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          navController.navigate(route = Screen.Stock.route)
+                },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
                 border = BorderStroke(1.dp, Color.Black)
