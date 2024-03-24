@@ -15,8 +15,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -43,6 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.animation.bounceClick
+import com.example.spendsavvy.component.ButtonComponent
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
@@ -50,8 +50,6 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.example.spendsavvy.animation.bounceClick
-import com.example.spendsavvy.component.*
 
 
 @Composable
@@ -129,7 +127,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 if (task.isSuccessful) {
 
                     val user = auth.currentUser
-                    navController.navigate(route = "EnterMainScreen"){
+                    navController.navigate(route = "EnterMainScreen") {
                         popUpTo(navController.graph.id) {
                             inclusive = true
                         }

@@ -20,7 +20,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.spendsavvy.R
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.OverviewScreen
@@ -87,7 +86,7 @@ fun TabsNavGraph() {
                         } == true,
                         icon = {
                             Icon(
-                                painter =  painterResource(id = screen.iconResourceId) ,
+                                painter = painterResource(id = screen.iconResourceId),
                                 contentDescription = null,
                                 Modifier.size(20.dp, 20.dp)
                             )
