@@ -50,6 +50,7 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.example.spendsavvy.animation.bounceClick
 
 
 @Composable
