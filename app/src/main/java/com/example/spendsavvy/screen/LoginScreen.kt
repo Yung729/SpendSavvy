@@ -129,7 +129,11 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 if (task.isSuccessful) {
 
                     val user = auth.currentUser
-                    navController.navigate(route = "EnterMainScreen")
+                    navController.navigate(route = "EnterMainScreen"){
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                    }
 
                 } else if (!task.isSuccessful) {
                     Toast.makeText(

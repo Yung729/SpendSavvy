@@ -49,6 +49,7 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
                 auth = auth
 
             )
+
         }
 
         composable(
@@ -66,6 +67,7 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
         composable(route = "EnterMainScreen") {
             TabsNavGraph()
         }
+
     }
 }
 
@@ -85,13 +87,7 @@ fun TabsNavGraph() {
                         } == true,
                         icon = {
                             Icon(
-                                painter =
-                                when (screen.route) {
-                                    "overview_screen" -> painterResource(id = R.drawable.bar_chart)
-                                    "wallet_screen" -> painterResource(id = R.drawable.wallet)
-                                    "analysis_screen" -> painterResource(id = R.drawable.analysis_icon)
-                                    else -> painterResource(id = R.drawable.settings_icon)
-                                },
+                                painter =  painterResource(id = screen.iconResourceId) ,
                                 contentDescription = null,
                                 Modifier.size(20.dp, 20.dp)
                             )
@@ -101,10 +97,10 @@ fun TabsNavGraph() {
 
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
+                                    inclusive = true
                                 }
 
                                 launchSingleTop = true
-
                                 restoreState = true
 
                             }

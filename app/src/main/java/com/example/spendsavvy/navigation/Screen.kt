@@ -1,15 +1,18 @@
 package com.example.spendsavvy.navigation
 
-sealed class Screen(val route: String) {
+import com.example.spendsavvy.R
 
-    object Login : Screen(route = "login_screen")
-    object SignUp : Screen(route = "signUp_screen")
-    object Overview : Screen(route = "overview_screen")
-    object Wallet : Screen(route = "wallet_screen")
+sealed class Screen(val route: String, val iconResourceId: Int) {
 
-    object Settings : Screen(route = "settings_screen")
-    object Analysis : Screen(route = "analysis_screen")
-    object Stock : Screen(route = "stock_screen")
+    object Login : Screen(route = "login_screen",R.drawable.bar_chart)
+    object SignUp : Screen(route = "signUp_screen",R.drawable.bar_chart)
+    object Overview : Screen(route = "overview_screen", R.drawable.bar_chart)
+    object Wallet : Screen(route = "wallet_screen",R.drawable.wallet)
+
+    object Settings : Screen(route = "settings_screen",R.drawable.settings_icon)
+    object Analysis : Screen(route = "analysis_screen",R.drawable.analysis_icon)
+    object Stock : Screen(route = "stock_screen",R.drawable.bar_chart)
+    object MainScreen : Screen(route = "EnterMainScreen",R.drawable.bar_chart)
 
 
 }
