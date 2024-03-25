@@ -19,11 +19,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MoneyScreen(modifier: Modifier = Modifier, navController: NavController){
+fun MoneyScreen(modifier: Modifier = Modifier, navController: NavController) {
     Spacer(modifier = Modifier.height(30.dp))
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Column {
             Text(text = "Cash")
             Text(

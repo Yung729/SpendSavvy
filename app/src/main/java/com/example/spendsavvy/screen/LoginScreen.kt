@@ -13,10 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -43,6 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.animation.bounceClick
+import com.example.spendsavvy.component.ButtonComponent
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
@@ -55,15 +55,14 @@ import com.google.firebase.auth.auth
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
 
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
     var passwordVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val passIcon = if (passwordVisible)
-        painterResource(id = R.drawable.show_pass)
-    else
-        painterResource(id = R.drawable.hide_pass)
+
+    val passIcon = if (passwordVisible) painterResource(id = R.drawable.show_pass)
+    else painterResource(id = R.drawable.hide_pass)
 
     Column(
         modifier = modifier,
@@ -84,9 +83,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(text = "User Name") },
+            label = { Text(text = "Email") },
             leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "User Name")
+                Icon(Icons.Default.Email, contentDescription = "Email")
             },
             maxLines = 1,
             modifier = Modifier
@@ -123,37 +122,26 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             singleLine = true
         )
 
-        Button(
-            onClick = {
+        ButtonComponent(onButtonClick = {
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
+                if (task.isSuccessful) {
 
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener() { task ->
-                        if (task.isSuccessful) {
-
-                            val user = auth.currentUser
-                            navController.navigate(route = "EnterMainScreen")
-
-                        } else if (!task.isSuccessful) {
-                            Toast.makeText(
-                                context,
-                                "Unsuccessful to Sign In Account",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
+                    val user = auth.currentUser
+                    navController.navigate(route = "EnterMainScreen") {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
                         }
                     }
-            },
-            modifier = Modifier
-                .padding(bottom = 10.dp, top = 10.dp)
-                .bounceClick(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ButtonColor
-            )
-        ) {
-            Text(
-                text = "LOGIN", textAlign = TextAlign.Center
-            )
-        }
+
+                } else if (!task.isSuccessful) {
+                    Toast.makeText(
+                        context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
+                    ).show()
+
+                }
+            }
+        }, text = "LOGIN")
+
 
         ClickableText(
             text = AnnotatedString("Forgot Password ?"),
@@ -161,9 +149,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
 
             },
             style = TextStyle(
-                color = ButtonColor,
-                fontFamily = poppinsFontFamily
+                color = ButtonColor, fontFamily = poppinsFontFamily
             ),
+            modifier = Modifier.bounceClick()
         )
 
         ClickableText(
@@ -172,9 +160,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 navController.navigate(route = Screen.SignUp.route)
             },
             style = TextStyle(
-                color = ButtonColor,
-                fontFamily = poppinsFontFamily
+                color = ButtonColor, fontFamily = poppinsFontFamily
             ),
+            modifier = Modifier.bounceClick()
         )
 
     }

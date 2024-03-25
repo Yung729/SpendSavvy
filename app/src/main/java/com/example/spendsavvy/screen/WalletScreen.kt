@@ -23,12 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.component.HeaderTitle
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.GreenColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -37,21 +38,13 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
+        modifier = modifier
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Wallet",
-                fontFamily = poppinsFontFamily,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                color = HeaderTitle,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
+            HeaderTitle(text = "Wallet")
 
             Icon(
                 Icons.Default.Notifications,
@@ -66,9 +59,11 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             colors = CardDefaults.cardColors(
                 containerColor = Color.White, //later need change to brush color
                 contentColor = Color.Black
-            ), elevation = CardDefaults.cardElevation(
+            ),
+            elevation = CardDefaults.cardElevation(
                 defaultElevation = 5.dp
-            ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
+            ),
+            shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(text = "Available Balance")
@@ -80,7 +75,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(35.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = "Assets",
@@ -103,7 +99,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             Column {
@@ -115,7 +112,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 )
 
                 Text(
-                    text = "Includes Cash Money , Bank and Ewallets",
+                    text = "Includes Cash Money , Bank and E-wallets",
                     fontSize = 10.sp,
                     color = Color.Gray
                 )
@@ -137,28 +134,30 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
 
         }
+
         Spacer(modifier = Modifier.height(5.dp))
+
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(
-                    text = "Cash Money"
 
-                )
+            Text(
+                text = "Cash Money"
 
-                Text(
-                    text = "Available balance",
-                    color = Color.Gray,
-                    fontSize = 10.sp
-                )
-            }
+            )
+
             Text(text = "RM5000")
         }
+
         Spacer(modifier = Modifier.height(5.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
+
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
                 Text(
@@ -168,13 +167,15 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             Text(text = "2 accounts")
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Column {
@@ -209,8 +210,11 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         }
         Spacer(modifier = Modifier.height(5.dp))
+
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
                 Text(
@@ -221,12 +225,14 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
             Text(text = "3 accounts")
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             Column {
@@ -246,7 +252,9 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
 
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    navController.navigate(route = Screen.Stock.route)
+                },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
                 border = BorderStroke(1.dp, Color.Black)
@@ -263,7 +271,8 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Spacer(modifier = Modifier.height(5.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
                 Text(
