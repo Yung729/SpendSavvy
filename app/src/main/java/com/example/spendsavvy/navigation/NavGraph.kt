@@ -20,13 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.spendsavvy.R
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.OverviewScreen
-import com.example.spendsavvy.screen.ProfileScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
+import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.WalletScreen
 import com.google.firebase.auth.FirebaseAuth
 
@@ -49,6 +48,7 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
                 auth = auth
 
             )
+
         }
 
         composable(
@@ -66,6 +66,7 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
         composable(route = "EnterMainScreen") {
             TabsNavGraph()
         }
+
     }
 }
 
@@ -85,13 +86,7 @@ fun TabsNavGraph() {
                         } == true,
                         icon = {
                             Icon(
-                                painter =
-                                when (screen.route) {
-                                    "overview_screen" -> painterResource(id = R.drawable.bar_chart)
-                                    "wallet_screen" -> painterResource(id = R.drawable.wallet)
-                                    "analysis_screen" -> painterResource(id = R.drawable.analysis_icon)
-                                    else -> painterResource(id = R.drawable.settings_icon)
-                                },
+                                painter = painterResource(id = screen.iconResourceId),
                                 contentDescription = null,
                                 Modifier.size(20.dp, 20.dp)
                             )
@@ -101,10 +96,10 @@ fun TabsNavGraph() {
 
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
+                                    inclusive = true
                                 }
 
                                 launchSingleTop = true
-
                                 restoreState = true
 
                             }
@@ -155,6 +150,16 @@ fun TabsNavGraph() {
                         .fillMaxSize()
                         .padding(20.dp),
                     navController = navController
+                )
+            }
+
+            composable(
+                route = Screen.Stock.route
+            ) {
+                StockScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
                 )
             }
 

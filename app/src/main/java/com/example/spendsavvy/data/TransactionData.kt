@@ -16,13 +16,13 @@ class TransactionData {
         val categories = CategoryData().loadCategory()
 
         return listOf<Transactions>(
-           Transactions(R.drawable.wallet,20.00,categories[0],"", formatDate(Date())),
-           Transactions(R.drawable.wallet,20.00,categories[1],"", formatDate(Date())),
-           Transactions(R.drawable.wallet,20.00,categories[2],"", formatDate(Date())),
-           Transactions(R.drawable.wallet,20.00,categories[3],"", formatDate(Date())),
-           Transactions(R.drawable.wallet,20.00,categories[4],"", formatDate(Date())),
-           Transactions(R.drawable.wallet,20.00,categories[5],"", formatDate(Date())),
-           Transactions(R.drawable.wallet,20.00,categories[7],"", formatDate(Date()))
+           Transactions(20.00,categories[0],"", formatDate(Date())),
+           Transactions(20.00,categories[1],"", formatDate(Date())),
+           Transactions(20.00,categories[2],"", formatDate(Date())),
+           Transactions(20.00,categories[3],"", formatDate(Date())),
+           Transactions(20.00,categories[4],"", formatDate(Date())),
+           Transactions(20.00,categories[5],"", formatDate(Date())),
+           Transactions(20.00,categories[7],"", formatDate(Date()))
         )
 
     }
