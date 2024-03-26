@@ -85,9 +85,18 @@ fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) 
                 color = HeaderTitle
             )
 
+            Text(
+                text = "See All",
+                fontFamily = poppinsFontFamily,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Green,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+
         }
 
-        TransactionList(TransactionData().loadTransactions())
+        TransactionList(TransactionData().loadTodayTransactions())
 
     }
 }
