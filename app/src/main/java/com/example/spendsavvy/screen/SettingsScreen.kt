@@ -86,7 +86,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             )
-
+//asdasdasdsd
             Row(
                 modifier = Modifier
                     .padding(vertical = 5.dp)
