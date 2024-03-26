@@ -21,7 +21,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.screen.AnalysisScreen
+import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.LoginScreen
+import com.example.spendsavvy.screen.MyProfileScreen
 import com.example.spendsavvy.screen.OverviewScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
@@ -154,8 +156,7 @@ fun TabsNavGraph() {
             }
 
             composable(
-                route = Screen.Stock.route
-            ) {
+                route = Screen.Stock.route) {
                 StockScreen(
                     modifier = Modifier
                         .fillMaxSize()
@@ -163,7 +164,25 @@ fun TabsNavGraph() {
                 )
             }
 
+            composable(
+                route = Screen.MyProfile.route) {
+                MyProfileScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
 
+            composable(
+                route = Screen.ChangeProfile.route) {
+                ChangeProfileScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
         }
 
     }
