@@ -52,7 +52,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                 contentDescription = "Up",
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-//yh
+
             Text(
                 text = "Settings",
                 fontFamily = poppinsFontFamily,
@@ -76,7 +76,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                     .padding(vertical = 16.dp)
                     .align(Alignment.CenterHorizontally)
             )
-//test2
 
             Text(
                 text = "User nameeee",
