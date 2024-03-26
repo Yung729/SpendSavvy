@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.SemanticsProperties.EditableText
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +67,7 @@ import com.google.firebase.auth.auth
 
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     Column(
         modifier = Modifier
@@ -84,9 +87,8 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                     .align(Alignment.CenterVertically)
                     .size(40.dp)
             )
-
             Text(
-                text = "Settings",
+                text = "My Profile",
                 fontFamily = poppinsFontFamily,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -95,7 +97,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                     .padding(end = 130.dp)
             )
         }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,116 +114,66 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                     .background(Color.Gray),
             )
 
-            Text(
-                text = "User nameeee",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            )
-
-            Row(
-                modifier = Modifier.padding(vertical = 5.dp)
-            ) {
-                Text(
-                    text = "Personal Info",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Medium
+            Card(
+                modifier = Modifier.padding(vertical = 15.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Black
                 )
-            }
-
-            List(R.drawable.profile_icon, "User Profile",navController, Screen.MyProfile.route)
-//            List(R.drawable.expense_icon, "Recent Expenses",navController, Screen.Stock.route)
-
-            Row(
-                modifier = Modifier.padding(vertical = 5.dp)
             ) {
                 Text(
-                    text = "Security",
+                    text = "User Name",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Medium,
+                    color = Color.Gray
                 )
-            }
-
-            List(R.drawable.changepassword_icon, "Change Password",navController, Screen.Stock.route)
-            List(R.drawable.forgotpassword_icon, "Forgot Password",navController, Screen.Stock.route)
-
-            Row(
-                modifier = Modifier.padding(vertical = 5.dp)
-            ) {
+//                EditableText(
+//                    text = userName,
+//                    onTextChanged = { userName = it },
+//                    placeholder = "Enter your name"
+//                )
+                LineDivider()
                 Text(
-                    text = "General",
+                    text = "Email",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Medium,
+                    color = Color.Gray
                 )
-            }
-
-            List(R.drawable.bell_icon, "Notifications",navController, Screen.Stock.route)
-            List(R.drawable.language_icon, "Languages",navController, Screen.Stock.route)
-            List(R.drawable.help_icon, "Help and Support",navController, Screen.Stock.route)
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 5.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
+                LineDivider()
                 Text(
-                    text = "Logout",
-                    fontSize = 20.sp,
-                    color = Color.Red,
+                    text = "Phone Number",
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Medium,
+                    color = Color.Gray
                 )
+                LineDivider()
+                Text(
+                    text = "Address",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Gray
+                )
+                LineDivider()
             }
         }
     }
 }
-
-@Composable
-fun List(imgId: Int, text: String, navController: NavController, route: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {navController.navigate(route = route)}
-            .padding(vertical = 8.dp, horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = imgId),
-            contentDescription = "",
-            modifier = Modifier
-                .size(30.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f),
-            color = Color.Gray
-
-        )
-    }
-    LineDivider()
-}
-@Composable
-fun LineDivider() {
-    Divider(
-        color = Color.Gray,
-        thickness = 0.8.dp,
-        modifier = Modifier
-            .padding(vertical = 10.dp)
-            .padding(horizontal = 10.dp)
-            .fillMaxWidth()
-    )
-}
-
-
+//@Composable
+//fun EditableUserDataScreen() {
+//    var userName by remember { mutableStateOf("John Doe") }
+//
+//    Column(modifier = Modifier.padding(16.dp)) {
+//        EditableText(
+//            text = userName,
+//            onTextChanged = { userName = it },
+//            placeholder = "Enter your name"
+//        )
+//    }
+//}
 @Preview(showBackground = true)
 @Composable
-fun SettingsScreenPreview() {
-    SettingsScreen(
+fun ChangeProfileScreenPreview() {
+    ChangeProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
