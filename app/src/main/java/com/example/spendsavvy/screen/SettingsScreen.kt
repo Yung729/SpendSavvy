@@ -123,11 +123,11 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
             Row(
                 modifier = Modifier.padding(vertical = 5.dp)
             ) {
-//                Text(
-//                    text = "Personal Info",
-//                    fontSize = 22.sp,
-//                    fontWeight = FontWeight.Medium
-//                )
+                Text(
+                    text = "Personal Info",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
 
             List(R.drawable.profile_icon, "User Profile",navController, Screen.MyProfile.route)
