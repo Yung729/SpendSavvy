@@ -123,7 +123,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         )
 
         ButtonComponent(onButtonClick = {
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
 
                     val user = auth.currentUser
@@ -160,7 +160,8 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 navController.navigate(route = Screen.SignUp.route)
             },
             style = TextStyle(
-                color = ButtonColor, fontFamily = poppinsFontFamily
+                color = ButtonColor,
+                fontFamily = poppinsFontFamily
             ),
             modifier = Modifier.bounceClick()
         )

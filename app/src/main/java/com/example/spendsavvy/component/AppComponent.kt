@@ -12,12 +12,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendsavvy.animation.bounceClick
-import com.example.spendsavvy.ui.theme.ButtonColor
-import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.ui.theme.HeaderTitle
+import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
-fun ButtonComponent(onButtonClick : () -> Unit,text : String){
+fun ButtonComponent(onButtonClick: () -> Unit, text: String) {
     Button(
         onClick = onButtonClick,
         modifier = Modifier
@@ -36,12 +35,12 @@ fun ButtonComponent(onButtonClick : () -> Unit,text : String){
 }
 
 @Composable
-fun HeaderTitle(text : String){
+fun HeaderTitle(text: String) {
     Text(
         text = text,
         fontFamily = poppinsFontFamily,
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold,
-        color = HeaderTitle
+        color = HeaderTitle,
     )
 }
