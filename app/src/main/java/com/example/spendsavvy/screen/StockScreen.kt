@@ -21,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +39,11 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
 fun StockScreen(modifier: Modifier = Modifier) {
+
+    // Calculate total stock balance
+    val totalStockBalance = remember {
+        StockData().loadStock().sumOf { it.originalPrice * it.quantity }
+    }
 
     Column(modifier = modifier) {
         Row(
@@ -70,11 +76,11 @@ fun StockScreen(modifier: Modifier = Modifier) {
         ) {
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(
-                    text = "Available Balance",
+                    text = "Stock Balance",
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Text(text = "RM 9,000")
+                Text(text = "RM $totalStockBalance")
             }
         }
 

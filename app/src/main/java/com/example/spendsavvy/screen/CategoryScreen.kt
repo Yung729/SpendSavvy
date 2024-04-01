@@ -93,7 +93,7 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            CategoryList(categoryList = CategoryData().loadCategory(1))
+            CategoryList(categoryList = CategoryData().loadCategory(selectedIndex))
 
             Box(
                 modifier = Modifier

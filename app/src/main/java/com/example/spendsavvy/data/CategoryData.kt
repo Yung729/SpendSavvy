@@ -5,7 +5,7 @@ import com.example.spendsavvy.model.Category
 import com.example.spendsavvy.model.Transactions
 
 class CategoryData {
-    fun loadCategory(mode : Int): List<Category> {
+    fun loadCategory(mode : Int = 10): List<Category> {
 
         val filterCatData = mutableListOf<Category>()
 
@@ -20,18 +20,20 @@ class CategoryData {
             Category(R.drawable.wallet,"Subscription",false)
         )
 
-        if (mode == 1) {
+        if (mode == 0) {
             for (category in categoryData) {
                 if (category.isExpenses) {
                     filterCatData.add(category)
                 }
             }
-        }else if (mode == 2){
+        }else if (mode == 1){
             for (category in categoryData) {
                 if (!category.isExpenses) {
                     filterCatData.add(category)
                 }
             }
+        }else{
+            return categoryData
         }
 
         return filterCatData
