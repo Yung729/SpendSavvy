@@ -87,7 +87,7 @@ fun StockScreen(modifier: Modifier = Modifier) {
             color = com.example.spendsavvy.ui.theme.HeaderTitle
         )
 
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.fillMaxSize()) {
             StockList(stockList = StockData().loadStock())
 
             Box(
@@ -97,7 +97,8 @@ fun StockScreen(modifier: Modifier = Modifier) {
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
                 ) {
                     Button(
                         onClick = { },
