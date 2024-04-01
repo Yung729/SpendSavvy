@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -27,10 +28,12 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,7 +52,7 @@ import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.model.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) {
 
@@ -57,6 +60,7 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
     var selectedIndex by remember {
         mutableIntStateOf(0)
     }
+    val openAlertDialog = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         Row {
@@ -106,7 +110,7 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
                     horizontalAlignment = Alignment.End
                 ) {
                     Button(
-                        onClick = { },
+                        onClick = { openAlertDialog.value = true },
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .bounceClick()
@@ -123,7 +127,7 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
                     }
 
                     Button(
-                        onClick = { },
+                        onClick = {},
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .bounceClick()
@@ -143,7 +147,51 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
         }
     }
 
+    if (openAlertDialog.value){
+        AddCatPopUpScreen(
+            onDismissRequest = {openAlertDialog.value = false},
+            onConfirmation = { /*TODO*/ }
+        )
+    }
 
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddCatPopUpScreen(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit
+) {
+    AlertDialog(
+        title = {
+            Text(text = "dialogTitle")
+        },
+        text = {
+            Text(text = "dialogText")
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
 }
 
 @Composable

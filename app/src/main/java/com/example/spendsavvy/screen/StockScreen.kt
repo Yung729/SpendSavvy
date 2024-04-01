@@ -186,14 +186,14 @@ fun StockCard(stock: Stock, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "RM ${(stock.originalPrice * stock.quantity).toString()}",
+                    text = "RM ${(stock.originalPrice * stock.quantity)}",
                     fontSize = 10.sp
                 )
             }
 
 
             Text(
-                text = "Qty : ${stock.quantity.toString()}",
+                text = "Qty : ${stock.quantity}",
                 fontWeight = FontWeight.SemiBold,
                 color = Color.Green,
                 textAlign = TextAlign.End,
