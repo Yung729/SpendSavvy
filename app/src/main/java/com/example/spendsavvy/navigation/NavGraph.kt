@@ -2,8 +2,13 @@ package com.example.spendsavvy.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -20,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.LoginScreen
@@ -75,11 +81,13 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
 @Composable
 fun TabsNavGraph() {
     val navController = rememberNavController()
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+
     Scaffold(
         bottomBar = {
             NavigationBar(modifier = Modifier.height(70.dp)) {
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = backStackEntry?.destination
+
 
                 items.forEach { screen ->
                     NavigationBarItem(
@@ -105,12 +113,31 @@ fun TabsNavGraph() {
                                 restoreState = true
 
                             }
-                        },
+                        }
                     )
                 }
             }
 
-        }
+        },
+        floatingActionButton = {
+
+            if (currentDestination?.route == Screen.Overview.route) {
+                FloatingActionButton(
+                    onClick = {
+
+                    },
+                    modifier = Modifier
+                        .size(55.dp)
+                        .offset(y = 50.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Add"
+                    )
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
 
         NavHost(

@@ -70,7 +70,7 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController)
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(top = 10.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start

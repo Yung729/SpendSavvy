@@ -2,10 +2,14 @@ package com.example.spendsavvy.data
 
 import com.example.spendsavvy.R
 import com.example.spendsavvy.model.Category
+import com.example.spendsavvy.model.Transactions
 
 class CategoryData {
-    fun loadCategory(): List<Category> {
-        return listOf<Category>(
+    fun loadCategory(mode : Int = 10): List<Category> {
+
+        val filterCatData = mutableListOf<Category>()
+
+        val categoryData = listOf(
             Category(R.drawable.wallet,"Salary",true),
             Category(R.drawable.wallet,"Transportation",true),
             Category(R.drawable.wallet,"Office Rental",true),
@@ -15,6 +19,24 @@ class CategoryData {
             Category(R.drawable.wallet,"Sales",false),
             Category(R.drawable.wallet,"Subscription",false)
         )
+
+        if (mode == 0) {
+            for (category in categoryData) {
+                if (category.isExpenses) {
+                    filterCatData.add(category)
+                }
+            }
+        }else if (mode == 1){
+            for (category in categoryData) {
+                if (!category.isExpenses) {
+                    filterCatData.add(category)
+                }
+            }
+        }else{
+            return categoryData
+        }
+
+        return filterCatData
 
     }
 }

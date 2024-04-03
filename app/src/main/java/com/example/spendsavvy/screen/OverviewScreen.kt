@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
@@ -25,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +43,7 @@ import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) {
 
@@ -85,13 +90,20 @@ fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) 
                 color = HeaderTitle
             )
 
-            Text(
-                text = "See All",
-                fontFamily = poppinsFontFamily,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Green,
-                modifier = Modifier.align(Alignment.CenterVertically)
+            ClickableText(text = AnnotatedString("See All"),
+                onHover = {
+
+                },
+                onClick = {
+
+                },
+                modifier = Modifier.align(Alignment.CenterVertically),
+                style = TextStyle(
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Green,
+                )
             )
 
         }
