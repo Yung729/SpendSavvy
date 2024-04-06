@@ -5,7 +5,7 @@ import com.example.spendsavvy.model.Category
 import com.example.spendsavvy.model.Transactions
 
 class CategoryData {
-    fun loadCategory(mode : Int = 10): List<Category> {
+    fun loadCategory(mode : Int = 2): List<Category> {
 
         val filterCatData = mutableListOf<Category>()
 
@@ -32,7 +32,7 @@ class CategoryData {
                     filterCatData.add(category)
                 }
             }
-        }else{
+        }else if (mode == 2){
             return categoryData
         }
 

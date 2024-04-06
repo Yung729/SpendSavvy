@@ -157,7 +157,6 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCatPopUpScreen(
     onDismissRequest: () -> Unit,
