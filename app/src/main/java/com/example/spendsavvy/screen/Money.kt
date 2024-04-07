@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,15 +20,17 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MoneyScreen(modifier: Modifier = Modifier, navController: NavController) {
-    Spacer(modifier = Modifier.height(30.dp))
+fun MoneyScreen(modifier: Modifier = Modifier) {
+
+    Column( modifier = Modifier) {
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(text = "Cash")
+            Text(text = "Csh")
+
             Text(
-                text = "Includes cash money , bank accounts and eWallet",
+                text = "Include cash money , bank accounts and eWallet",
                 color = Color.Gray,
                 fontSize = 10.sp
             )
@@ -35,7 +38,7 @@ fun MoneyScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     }
     Spacer(modifier = Modifier.height(30.dp))
-
+    }
 }
 
 @Preview(showBackground = true)
@@ -44,7 +47,7 @@ fun MoneyScreenPreview() {
     MoneyScreen(
         Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController()
+            .padding(20.dp)
     )
 
 }
