@@ -40,7 +40,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
     ) {
-        Row(
+       /* Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -51,7 +51,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
                 contentDescription = "Notifications",
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-        }
+        }*/
 
         Spacer(modifier = Modifier.height(25.dp))
 

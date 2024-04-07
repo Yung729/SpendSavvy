@@ -29,6 +29,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -44,17 +45,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.animation.bounceClick
 import com.example.spendsavvy.component.HeaderTitle
+import com.example.spendsavvy.component.HeaderTopBar
 import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.model.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun CategoryScreen(modifier: Modifier = Modifier) {
 
     val options = mutableStateListOf("Expenses", "Income")
     var selectedIndex by remember {
@@ -62,16 +62,10 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
     }
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
-        Row {
-            Icon(
-                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Back Key",
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
 
-            HeaderTitle(text = "Category")
-        }
+
+    Column(modifier = modifier) {
+        HeaderTopBar(text = "Category", canNavBack = true) {}
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -147,9 +141,9 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
         }
     }
 
-    if (openAlertDialog.value){
+    if (openAlertDialog.value) {
         AddCatPopUpScreen(
-            onDismissRequest = {openAlertDialog.value = false},
+            onDismissRequest = { openAlertDialog.value = false },
             onConfirmation = { /*TODO*/ }
         )
     }
@@ -189,7 +183,8 @@ fun AddCatPopUpScreen(
             ) {
                 Text("Dismiss")
             }
-        }
+        },
+        modifier = Modifier.fillMaxSize()
     )
 }
 
@@ -259,6 +254,6 @@ fun CategoryScreenPreview() {
     CategoryScreen(
         Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController()
+            .padding(20.dp)
     )
 }

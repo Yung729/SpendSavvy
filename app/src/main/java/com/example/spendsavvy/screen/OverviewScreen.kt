@@ -45,13 +45,14 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun OverviewScreen(modifier: Modifier = Modifier) {
+
 
     Column(
         modifier = modifier
     ) {
 
-        Row(
+        /*Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -62,7 +63,7 @@ fun OverviewScreen(modifier: Modifier = Modifier, navController: NavController) 
                 contentDescription = "Notifications",
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-        }
+        }*/
 
         Spacer(modifier = Modifier.height(25.dp))
 
@@ -268,6 +269,6 @@ fun OverviewScreenPreview() {
     OverviewScreen(
         Modifier
             .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController()
+            .padding(20.dp)
     )
 }

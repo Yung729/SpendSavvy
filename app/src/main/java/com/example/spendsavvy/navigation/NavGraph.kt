@@ -25,8 +25,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.spendsavvy.R
+import com.example.spendsavvy.component.HeaderTopBar
 import com.example.spendsavvy.screen.AnalysisScreen
+import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.MyProfileScreen
@@ -71,7 +72,7 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
             )
         }
 
-        composable(route = "EnterMainScreen") {
+        composable(route = Screen.MainScreen.route) {
             TabsNavGraph()
         }
 
@@ -83,11 +84,24 @@ fun TabsNavGraph() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
+    val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
     Scaffold(
-        bottomBar = {
-            NavigationBar(modifier = Modifier.height(70.dp)) {
+        topBar = {
 
+            HeaderTopBar(
+                text = currentScreenName,
+                canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf (Screen.Overview.route,
+                    Screen.Wallet.route,
+                    Screen.Analysis.route,
+                    Screen.Settings.route
+                ),
+            navUp = { navController.navigateUp() }
+            )
+
+        }, bottomBar = {
+
+            NavigationBar(modifier = Modifier.height(70.dp)) {
 
                 items.forEach { screen ->
                     NavigationBarItem(
@@ -138,6 +152,7 @@ fun TabsNavGraph() {
             }
         },
         floatingActionButtonPosition = FabPosition.Center
+
     ) { innerPadding ->
 
         NavHost(
@@ -150,8 +165,7 @@ fun TabsNavGraph() {
                 OverviewScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp)
                 )
             }
 
@@ -183,7 +197,8 @@ fun TabsNavGraph() {
             }
 
             composable(
-                route = Screen.Stock.route) {
+                route = Screen.Stock.route
+            ) {
                 StockScreen(
                     modifier = Modifier
                         .fillMaxSize()
@@ -192,7 +207,18 @@ fun TabsNavGraph() {
             }
 
             composable(
-                route = Screen.MyProfile.route) {
+                route = Screen.Category.route
+            ) {
+                CategoryScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                )
+            }
+
+            composable(
+                route = Screen.MyProfile.route
+            ) {
                 MyProfileScreen(
                     modifier = Modifier
                         .fillMaxSize()
@@ -202,7 +228,8 @@ fun TabsNavGraph() {
             }
 
             composable(
-                route = Screen.ChangeProfile.route) {
+                route = Screen.ChangeProfile.route
+            ) {
                 ChangeProfileScreen(
                     modifier = Modifier
                         .fillMaxSize()
