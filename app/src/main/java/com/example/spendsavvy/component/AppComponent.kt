@@ -1,5 +1,7 @@
 package com.example.spendsavvy.component
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -70,4 +72,5 @@ fun HeaderTopBar(text: String,canNavBack : Boolean,navUp : () -> Unit) {
             }
         }
     )
+    Spacer(modifier = Modifier.height(20.dp))
 }

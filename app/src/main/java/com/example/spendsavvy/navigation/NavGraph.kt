@@ -83,7 +83,6 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
 fun TabsNavGraph() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = backStackEntry?.destination
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
     Scaffold(
@@ -91,12 +90,13 @@ fun TabsNavGraph() {
 
             HeaderTopBar(
                 text = currentScreenName,
-                canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf (Screen.Overview.route,
+                canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
+                    Screen.Overview.route,
                     Screen.Wallet.route,
                     Screen.Analysis.route,
                     Screen.Settings.route
                 ),
-            navUp = { navController.navigateUp() }
+                navUp = { navController.navigateUp() }
             )
 
         }, bottomBar = {
@@ -105,7 +105,7 @@ fun TabsNavGraph() {
 
                 items.forEach { screen ->
                     NavigationBarItem(
-                        selected = currentDestination?.hierarchy?.any {
+                        selected = backStackEntry?.destination?.hierarchy?.any {
                             it.route == screen.route
                         } == true,
                         icon = {
@@ -135,7 +135,7 @@ fun TabsNavGraph() {
         },
         floatingActionButton = {
 
-            if (currentDestination?.route == Screen.Overview.route) {
+            if (currentScreenName == Screen.Overview.route) {
                 FloatingActionButton(
                     onClick = {
 
