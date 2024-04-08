@@ -1,8 +1,8 @@
 package com.example.spendsavvy.data
 
 import com.example.spendsavvy.R
-import com.example.spendsavvy.model.Category
-import com.example.spendsavvy.model.Transactions
+import com.example.spendsavvy.State.Category
+import com.example.spendsavvy.State.Transactions
 
 class CategoryData {
     fun loadCategory(mode : Int = 2): List<Category> {

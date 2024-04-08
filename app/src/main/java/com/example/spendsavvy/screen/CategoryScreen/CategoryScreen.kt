@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen
+package com.example.spendsavvy.screen.CategoryScreen
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -56,7 +56,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.spendsavvy.animation.bounceClick
 import com.example.spendsavvy.data.CategoryData
-import com.example.spendsavvy.model.Category
+import com.example.spendsavvy.State.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")

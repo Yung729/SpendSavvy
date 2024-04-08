@@ -38,7 +38,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.component.HeaderTitle
 import com.example.spendsavvy.data.TransactionData
-import com.example.spendsavvy.model.Transactions
+import com.example.spendsavvy.State.Transactions
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily

@@ -37,8 +37,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.animation.bounceClick
 import com.example.spendsavvy.data.BankAccountData
 import com.example.spendsavvy.data.StockData
-import com.example.spendsavvy.model.BankAccount
-import com.example.spendsavvy.model.Stock
+import com.example.spendsavvy.State.BankAccount
+import com.example.spendsavvy.State.Stock
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable

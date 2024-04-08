@@ -27,7 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.component.HeaderTopBar
 import com.example.spendsavvy.screen.AnalysisScreen
-import com.example.spendsavvy.screen.CategoryScreen
+import com.example.spendsavvy.screen.CategoryScreen.CategoryScreen
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.MyProfileScreen
