@@ -182,8 +182,7 @@ fun TabsNavGraph() {
                 AnalysisScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp)
                 )
             }
 

@@ -65,7 +65,6 @@ fun OverviewScreen(modifier: Modifier = Modifier) {
             )
         }*/
 
-        Spacer(modifier = Modifier.height(25.dp))
 
         Text(
             text = "Hi, User",
