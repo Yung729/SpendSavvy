@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.CategoryScreen
+package com.example.spendsavvy.screen.categoryScreen
 
 import androidx.lifecycle.ViewModel
 

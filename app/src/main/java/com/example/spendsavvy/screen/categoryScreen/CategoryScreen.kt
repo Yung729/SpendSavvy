@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.CategoryScreen
+package com.example.spendsavvy.screen.categoryScreen
 
 import android.annotation.SuppressLint
 import android.net.Uri
