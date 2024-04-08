@@ -27,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.component.HeaderTopBar
 import com.example.spendsavvy.screen.AnalysisScreen
+import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.categoryScreen.CategoryScreen
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.LoginScreen
@@ -230,6 +231,17 @@ fun TabsNavGraph() {
                 route = Screen.ChangeProfile.route
             ) {
                 ChangeProfileScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
+
+            composable(
+                route = Screen.ChangePassword.route
+            ) {
+                ChangePassword(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),

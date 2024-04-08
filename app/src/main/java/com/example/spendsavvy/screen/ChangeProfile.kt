@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -69,7 +70,6 @@ import com.google.firebase.auth.auth
 
 @Composable
 fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,24 +94,17 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                     .background(Color.Gray),
             )
 
-//            Card(
-//                modifier = Modifier.padding(vertical = 15.dp),
-//                colors = CardDefaults.cardColors(
-//                    containerColor = Color.Transparent,
-//                    contentColor = Color.Black
-//                )
-//            )
             Column(
                 modifier = Modifier.padding(vertical = 15.dp)
             ){
-                TextFieldItem(
+                OutlinedTextFieldItem(
                     label = "User Name",
                     value = "User Name",
                     onValueChange = { /* Implement logic to change the user name */ }
                 )
                 Spacer(modifier = Modifier.height(15.dp))
 
-                TextFieldItem(
+                OutlinedTextFieldItem(
                     label = "Email Address",
                     value = "Email Address",
                     keyboardType = KeyboardType.Email,
@@ -119,7 +112,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                 )
                 Spacer(modifier = Modifier.height(15.dp))
 
-                TextFieldItem(
+                OutlinedTextFieldItem(
                     label = "Phone Number",
                     value = "Phone Number",
                     keyboardType = KeyboardType.Phone,
@@ -127,40 +120,51 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                 )
                 Spacer(modifier = Modifier.height(15.dp))
 
-                TextFieldItem(
+                OutlinedTextFieldItem(
                     label = "Home Address",
                     value = "Home Address",
-                    keyboardType = KeyboardType.Phone,
                     onValueChange = { /* Implement logic to change the phone number */ }
                 )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                ) {
+                    Text(text = "Save Changes")
+                }
             }
         }
     }
 }
 
 @Composable
-fun TextFieldItem(
+fun OutlinedTextFieldItem(
     label: String,
     value: String,
-    backgroundColor: Color = Color.White,
     keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit
 ) {
     val (textValue, setTextValue) = remember { mutableStateOf(value) }
 
-    TextField(
+    OutlinedTextField(
         value = textValue,
         onValueChange = {
             setTextValue(it)
             onValueChange(it)
         },
-        label = { Text(label) }, // Label for the text field
         modifier = Modifier
-            .fillMaxWidth(),
-        textStyle = TextStyle(color = Color.Gray),
+            .fillMaxWidth()
+            .background(Color.White),
+        textStyle = TextStyle(color = Color.Gray, fontSize = 20.sp),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
+        label = { Text(text = label, color = Color.Black) },
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
