@@ -1,6 +1,5 @@
 package com.example.spendsavvy.data
 
-import com.example.spendsavvy.R
 import com.example.spendsavvy.State.BankAccount
 
 val bankName =  listOf(
