@@ -1,7 +1,7 @@
 package com.example.spendsavvy.data
 
 import com.example.spendsavvy.R
-import com.example.spendsavvy.State.Stock
+import com.example.spendsavvy.models.Stock
 
 
 val toyNames = listOf(

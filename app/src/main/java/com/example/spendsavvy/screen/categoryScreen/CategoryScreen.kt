@@ -56,7 +56,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.spendsavvy.animation.bounceClick
 import com.example.spendsavvy.data.CategoryData
-import com.example.spendsavvy.State.Category
+import com.example.spendsavvy.models.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")

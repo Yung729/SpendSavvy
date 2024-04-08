@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendsavvy.animation.bounceClick
 import com.example.spendsavvy.data.StockData
-import com.example.spendsavvy.State.Stock
+import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
