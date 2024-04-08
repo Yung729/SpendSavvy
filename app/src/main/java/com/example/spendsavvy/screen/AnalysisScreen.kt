@@ -1,11 +1,12 @@
 package com.example.spendsavvy.screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -21,9 +22,10 @@ import com.example.spendsavvy.animation.bounceClick
 
 @Composable
 fun AnalysisScreen(modifier: Modifier = Modifier) {
+    val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier
+        modifier = modifier.verticalScroll(state = scrollState)
     ) {
         Button(
             onClick = { },
@@ -44,13 +46,14 @@ fun AnalysisScreen(modifier: Modifier = Modifier) {
 
         PieChart(
             data = mapOf(
-                Pair("Sample-1", 150),
+                Pair("Income-1", 150),
                 Pair("Sample-2", 120),
                 Pair("Sample-3", 110),
                 Pair("Sample-4", 170),
                 Pair("Sample-5", 120),
             )
         )
+
 
     }
 }
