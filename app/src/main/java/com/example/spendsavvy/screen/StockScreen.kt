@@ -32,9 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendsavvy.animation.bounceClick
-import com.example.spendsavvy.component.HeaderTitle
 import com.example.spendsavvy.data.StockData
-import com.example.spendsavvy.model.Stock
+import com.example.spendsavvy.State.Stock
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
@@ -50,7 +49,7 @@ fun StockScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                HeaderTitle(text = "Stock Account")
+                /*HeaderTitle(text = "Stock Account")*/
                 Text(
                     text = "Add and Sell Stocks",
                     color = Color.Gray,

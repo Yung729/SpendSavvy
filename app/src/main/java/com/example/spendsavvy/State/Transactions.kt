@@ -1,6 +1,4 @@
-package com.example.spendsavvy.model
-
-import androidx.annotation.DrawableRes
+package com.example.spendsavvy.State
 
 data class Transactions(
     val amount: Double,
