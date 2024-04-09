@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.animation.bounceClick
-import com.example.spendsavvy.component.ButtonComponent
+import com.example.spendsavvy.components.bounceClick
+import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle

@@ -1,4 +1,4 @@
-package com.example.spendsavvy.State
+package com.example.spendsavvy.models
 
 import androidx.annotation.DrawableRes
 

@@ -15,8 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -41,10 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.animation.bounceClick
-import com.example.spendsavvy.component.ButtonComponent
+import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.google.firebase.Firebase

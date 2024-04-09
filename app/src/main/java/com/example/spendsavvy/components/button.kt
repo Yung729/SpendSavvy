@@ -1,4 +1,4 @@
-package com.example.spendsavvy.animation
+package com.example.spendsavvy.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable

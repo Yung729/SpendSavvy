@@ -31,8 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.spendsavvy.R
 import com.example.spendsavvy.data.TransactionData
-import com.example.spendsavvy.State.Transactions
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -205,7 +206,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
         ) {
 
             Image(
-                painter = painterResource(id = transactions.category.imageResourceId),
+                painter = painterResource(id = R.drawable.wallet),
                 contentDescription = "",
                 modifier = Modifier
                     .size(30.dp, 30.dp)
@@ -217,7 +218,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
                 modifier = Modifier
             ) {
                 Text(
-                    text = transactions.category.name,
+                    text = transactions.category.categoryName,
                     fontWeight = FontWeight.SemiBold
                 )
 
