@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -146,7 +147,7 @@ fun AddCatPopUpScreen(
     onDismissRequest: () -> Unit,
     catViewModel: CategoryViewModel
 ) {
-
+    val context = LocalContext.current
     var categoryType by remember { mutableStateOf("") }
     var categoryName by remember { mutableStateOf("") }
     var selectedImageUri by remember {
@@ -281,7 +282,8 @@ fun AddCatPopUpScreen(
 
                 Button(
                     onClick = {
-                        catViewModel.addCategoryToDatabase(Category(imageUri = selectedImageUri,categoryName = categoryName,isExpenses = categoryType == "Expenses"))
+                        catViewModel.addCategoryToDatabase(Category(imageUri = selectedImageUri,categoryName = categoryName,isExpenses = categoryType == "Expenses"),selectedImageUri,context)
+
                     },
                     modifier = Modifier
                         .padding(bottom = 10.dp)
