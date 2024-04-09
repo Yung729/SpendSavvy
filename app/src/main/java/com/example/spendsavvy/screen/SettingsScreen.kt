@@ -147,27 +147,48 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
 
         if (showDialog) {
             AlertDialog(
-                onDismissRequest = {
-                    showDialog = false
-                }, // Dismiss dialog when clicked outside
+                onDismissRequest = { showDialog = false }, // Dismiss dialog when clicked outside
                 title = {
-                    Text(
-                        text = AnnotatedString("Are you sure want to\nLog Out ?"),
-                        textAlign = TextAlign.Center
-                    )
-                        },
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.cross_icon),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { showDialog = false }
+                                .padding(bottom = 10.dp)
+                        )
+                        Text(
+                            text = "Are you sure you want to\nLog Out ?",
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                },
                 confirmButton = {
                     Button(
-                        onClick = { showDialog = false } ,
-                        modifier = Modifier.weight(1f).padding(end = 8.dp)
+                        onClick = { showDialog = false },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.Red)
                     ) {
-                        Text(text = "Log Out", color = Color.Red)
+                        Text(text = "Log Out")
                     }
                 },
                 dismissButton = {
                     Button(
                         onClick = { showDialog = false },
-                        modifier = Modifier.weight(1f).padding(start = 8.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp)
                     ) {
                         Text(text = "Cancel")
                     }
