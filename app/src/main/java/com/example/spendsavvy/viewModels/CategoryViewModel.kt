@@ -24,50 +24,7 @@ class CategoryViewModel : ViewModel() {
     val uiState: StateFlow<Category> = _uiState.asStateFlow()
 
 
-    fun addCategoryToDatabase(category: Category) {
-        val database = Firebase.database
-        val newCategoryRef = database.getReference("Categories")
 
-        val categoryKey = newCategoryRef.push().key
-        if (categoryKey != null) {
-            val cat = Category(category.imageUri, categoryName = category.categoryName, isExpenses = category.isExpenses)
-            val categoryNode = newCategoryRef.child(categoryKey)
-
-            categoryNode.setValue(cat)
-                .addOnSuccessListener {
-                    Log.d(TAG, "Category added successfully.")
-                }
-                .addOnFailureListener { e ->
-                    Log.e(TAG, "Failed to add category: $e")
-                }
-        } else {
-            Log.e(TAG, "Failed to generate a key for the category.")
-        }
-    }
-
-    fun readCategoriesFromDatabase(): StateFlow<List<Category>> {
-        val categoryListState = MutableStateFlow<List<Category>>(emptyList())
-
-        Firebase.database.getReference("Categories")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val categoryList = mutableListOf<Category>()
-                    for (childSnapshot in snapshot.children) {
-                        val category = childSnapshot.getValue(Category::class.java)
-                        category?.let {
-                            categoryList.add(it)
-                        }
-                    }
-                    categoryListState.value = categoryList
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e(TAG, "Failed to read categories: ${error.message}")
-                }
-            })
-
-        return categoryListState
-    }
 
     fun addCategory(name: String, imageUri: Uri?, isExpenses: Boolean) {
         _uiState.update { current ->

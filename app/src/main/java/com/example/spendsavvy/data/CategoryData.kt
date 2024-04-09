@@ -9,16 +9,16 @@ class CategoryData {
         val filterCatData = mutableListOf<Category>()
 
         val categoryData = listOf(
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
-            Category(imageResourceId = R.drawable.wallet,categoryName = "Sales",isExpenses = false),
-            Category(imageResourceId = R.drawable.wallet,categoryName = "Sales",isExpenses = false)
+            Category( categoryName = "Salary", isExpenses = true),
+            Category( categoryName = "Salary", isExpenses = true),
+            Category( categoryName = "Salary", isExpenses = true),
+            Category( categoryName = "Salary", isExpenses = true),
+            Category( categoryName = "Salary", isExpenses = true),
+            Category( categoryName = "Salary", isExpenses = true),
+            Category( categoryName = "Salary", isExpenses = true),
+            Category( categoryName = "Salary", isExpenses = true),
+            Category(categoryName = "Sales",isExpenses = false),
+            Category(categoryName = "Sales",isExpenses = false)
         )
 
         when (mode) {

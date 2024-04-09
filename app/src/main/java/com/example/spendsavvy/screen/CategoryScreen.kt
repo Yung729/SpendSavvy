@@ -37,7 +37,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -58,6 +57,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.animation.bounceClick
 import com.example.spendsavvy.models.Category
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.viewModels.CategoryViewModel
 
 @SuppressLint("UnrememberedMutableState")
@@ -68,7 +68,7 @@ fun CategoryScreen(
     catViewModel: CategoryViewModel = viewModel()
 ) {
 
-    val categoryList by catViewModel.readCategoriesFromDatabase().collectAsState()
+
     val options = mutableStateListOf("Expenses", "Income")
     var selectedIndex by remember {
         mutableIntStateOf(0)
@@ -100,7 +100,7 @@ fun CategoryScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            CategoryList(categoryList = categoryList)
+            CategoryList(categoryList = CategoryData().loadCategory())
 
             Box(
                 modifier = Modifier
@@ -281,13 +281,7 @@ fun AddCatPopUpScreen(
 
                 Button(
                     onClick = {
-                        catViewModel.addCategoryToDatabase(
-                            Category(
-                                imageUri = selectedImageUri,
-                                categoryName = categoryName,
-                                isExpenses = categoryType == "Expenses"
-                            )
-                        )
+                        
                     },
                     modifier = Modifier
                         .padding(bottom = 10.dp)
@@ -331,7 +325,7 @@ fun CategoryCard(
         ) {
 
             Image(
-                painter = rememberAsyncImagePainter(model = category.imageResourceId),
+                painter = rememberAsyncImagePainter(model = category.imageUri),
                 contentDescription = "",
                 modifier = Modifier
                     .size(30.dp, 30.dp)
