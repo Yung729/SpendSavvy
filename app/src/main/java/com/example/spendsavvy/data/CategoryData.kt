@@ -9,30 +9,36 @@ class CategoryData {
         val filterCatData = mutableListOf<Category>()
 
         val categoryData = listOf(
-            Category(R.drawable.wallet,"Salary",true),
-            Category(R.drawable.wallet,"Transportation",true),
-            Category(R.drawable.wallet,"Office Rental",true),
-            Category(R.drawable.wallet,"Office Equipment",true),
-            Category(R.drawable.wallet,"Utilities",true),
-            Category(R.drawable.wallet,"Team Building",true),
-            Category(R.drawable.wallet,"Sales",false),
-            Category(R.drawable.wallet,"Subscription",false)
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet, categoryName = "Salary", isExpenses = true),
+            Category(imageResourceId = R.drawable.wallet,categoryName = "Sales",isExpenses = false),
+            Category(imageResourceId = R.drawable.wallet,categoryName = "Sales",isExpenses = false)
         )
 
-        if (mode == 0) {
-            for (category in categoryData) {
-                if (category.isExpenses) {
-                    filterCatData.add(category)
+        when (mode) {
+            0 -> {
+                for (category in categoryData) {
+                    if (category.isExpenses) {
+                        filterCatData.add(category)
+                    }
                 }
             }
-        }else if (mode == 1){
-            for (category in categoryData) {
-                if (!category.isExpenses) {
-                    filterCatData.add(category)
+            1 -> {
+                for (category in categoryData) {
+                    if (!category.isExpenses) {
+                        filterCatData.add(category)
+                    }
                 }
             }
-        }else if (mode == 2){
-            return categoryData
+            2 -> {
+                return categoryData
+            }
         }
 
         return filterCatData

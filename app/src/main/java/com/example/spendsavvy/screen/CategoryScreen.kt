@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.categoryScreen
+package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -37,6 +37,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -48,21 +49,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.animation.bounceClick
-import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.models.Category
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.spendsavvy.viewModels.CategoryViewModel
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun CategoryScreen(modifier: Modifier = Modifier) {
+fun CategoryScreen(
+    modifier: Modifier = Modifier,
+    catViewModel: CategoryViewModel = viewModel()
+) {
 
+    val categoryList by catViewModel.readCategoriesFromDatabase().collectAsState()
     val options = mutableStateListOf("Expenses", "Income")
     var selectedIndex by remember {
         mutableIntStateOf(0)
@@ -94,7 +100,7 @@ fun CategoryScreen(modifier: Modifier = Modifier) {
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            CategoryList(categoryList = CategoryData().loadCategory(selectedIndex))
+            CategoryList(categoryList = categoryList)
 
             Box(
                 modifier = Modifier
@@ -126,7 +132,10 @@ fun CategoryScreen(modifier: Modifier = Modifier) {
     }
 
     if (openAlertDialog.value) {
-        AddCatPopUpScreen(onDismissRequest = { openAlertDialog.value = false })
+        AddCatPopUpScreen(
+            onDismissRequest = { openAlertDialog.value = false },
+            catViewModel = catViewModel
+        )
     }
 
 
@@ -134,10 +143,12 @@ fun CategoryScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun AddCatPopUpScreen(
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    catViewModel: CategoryViewModel
 ) {
 
-    var categoryState by remember { mutableStateOf(TextFieldValue()) }
+    var categoryType by remember { mutableStateOf("") }
+    var categoryName by remember { mutableStateOf("") }
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -243,8 +254,8 @@ fun AddCatPopUpScreen(
 
 
                 OutlinedTextField(
-                    value = categoryState,
-                    onValueChange = { categoryState = it },
+                    value = categoryName,
+                    onValueChange = { categoryName = it },
                     label = { Text(text = "Category Name") },
                     maxLines = 1,
                     modifier = Modifier
@@ -254,8 +265,30 @@ fun AddCatPopUpScreen(
                     singleLine = true,
                 )
 
+                OutlinedTextField(
+                    value = categoryType,
+                    onValueChange = { categoryType = it },
+                    label = { Text(text = "Category Type") },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp, top = 10.dp),
+                    shape = RoundedCornerShape(15.dp),
+                    singleLine = true,
+                )
+
+
+
                 Button(
-                    onClick = { },
+                    onClick = {
+                        catViewModel.addCategoryToDatabase(
+                            Category(
+                                imageUri = selectedImageUri,
+                                categoryName = categoryName,
+                                isExpenses = categoryType == "Expenses"
+                            )
+                        )
+                    },
                     modifier = Modifier
                         .padding(bottom = 10.dp)
                         .bounceClick(),
@@ -277,9 +310,11 @@ fun AddCatPopUpScreen(
 }
 
 
-
 @Composable
-fun CategoryCard(category: Category, modifier: Modifier = Modifier) {
+fun CategoryCard(
+    category: Category, modifier: Modifier = Modifier,
+) {
+
 
     Card(
         modifier = modifier, colors = CardDefaults.cardColors(
@@ -296,7 +331,7 @@ fun CategoryCard(category: Category, modifier: Modifier = Modifier) {
         ) {
 
             Image(
-                painter = painterResource(id = category.imageResourceId),
+                painter = rememberAsyncImagePainter(model = category.imageResourceId),
                 contentDescription = "",
                 modifier = Modifier
                     .size(30.dp, 30.dp)
@@ -307,7 +342,7 @@ fun CategoryCard(category: Category, modifier: Modifier = Modifier) {
                 horizontalAlignment = Alignment.Start, modifier = Modifier
             ) {
                 Text(
-                    text = category.name, fontWeight = FontWeight.SemiBold
+                    text = category.categoryName, fontWeight = FontWeight.SemiBold
                 )
 
 
@@ -337,7 +372,7 @@ fun CategoryList(categoryList: List<Category>, modifier: Modifier = Modifier) {
 @Composable
 fun CategoryScreenPreview() {
     CategoryScreen(
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
     )

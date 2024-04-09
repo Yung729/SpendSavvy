@@ -1,10 +1,12 @@
 package com.example.spendsavvy.models
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
 
 data class Category(
-    @DrawableRes val imageResourceId: Int,
-    val name: String,
-    val isExpenses: Boolean
+    var imageUri: Uri? = null,
+    @DrawableRes val imageResourceId: Int = 0,
+    var categoryName: String = "",
+    var isExpenses: Boolean = true
 ) {
 }

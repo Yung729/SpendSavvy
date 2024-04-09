@@ -217,7 +217,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
                 modifier = Modifier
             ) {
                 Text(
-                    text = transactions.category.name,
+                    text = transactions.category.categoryName,
                     fontWeight = FontWeight.SemiBold
                 )
 

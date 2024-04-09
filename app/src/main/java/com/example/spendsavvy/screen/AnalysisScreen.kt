@@ -17,18 +17,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.animation.bounceClick
+import com.example.spendsavvy.navigation.Screen
 
 
 @Composable
-fun AnalysisScreen(modifier: Modifier = Modifier) {
+fun AnalysisScreen(modifier: Modifier = Modifier, navController: NavController) {
     val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier.verticalScroll(state = scrollState)
     ) {
         Button(
-            onClick = { },
+            onClick = { navController.navigate(Screen.Category.route) },
             modifier = Modifier
                 .padding(bottom = 10.dp)
                 .bounceClick()
@@ -65,6 +68,6 @@ fun AnalysisScreenPreview() {
     AnalysisScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(20.dp), rememberNavController()
     )
 }
