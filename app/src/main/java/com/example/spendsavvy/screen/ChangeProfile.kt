@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,27 +77,6 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Up",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(40.dp)
-            )
-            Text(
-                text = "My Profile",
-                fontFamily = poppinsFontFamily,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = HeaderTitle,
-                modifier = Modifier
-                    .padding(end = 130.dp)
-            )
-        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,62 +94,74 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                     .background(Color.Gray),
             )
 
-            Card(
-                modifier = Modifier.padding(vertical = 15.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Black
-                )
-            ) {
-                Text(
-                    text = "User Name",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
-                )
-//                EditableText(
-//                    text = userName,
-//                    onTextChanged = { userName = it },
-//                    placeholder = "Enter your name"
+//            Card(
+//                modifier = Modifier.padding(vertical = 15.dp),
+//                colors = CardDefaults.cardColors(
+//                    containerColor = Color.Transparent,
+//                    contentColor = Color.Black
 //                )
-                LineDivider()
-                Text(
-                    text = "Email",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
+//            )
+            Column(
+                modifier = Modifier.padding(vertical = 15.dp)
+            ){
+                TextFieldItem(
+                    label = "User Name",
+                    value = "User Name",
+                    onValueChange = { /* Implement logic to change the user name */ }
                 )
-                LineDivider()
-                Text(
-                    text = "Phone Number",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
+                Spacer(modifier = Modifier.height(15.dp))
+
+                TextFieldItem(
+                    label = "Email Address",
+                    value = "Email Address",
+                    keyboardType = KeyboardType.Email,
+                    onValueChange = { /* Implement logic to change the email address */ }
                 )
-                LineDivider()
-                Text(
-                    text = "Address",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
+                Spacer(modifier = Modifier.height(15.dp))
+
+                TextFieldItem(
+                    label = "Phone Number",
+                    value = "Phone Number",
+                    keyboardType = KeyboardType.Phone,
+                    onValueChange = { /* Implement logic to change the phone number */ }
                 )
-                LineDivider()
+                Spacer(modifier = Modifier.height(15.dp))
+
+                TextFieldItem(
+                    label = "Home Address",
+                    value = "Home Address",
+                    keyboardType = KeyboardType.Phone,
+                    onValueChange = { /* Implement logic to change the phone number */ }
+                )
             }
         }
     }
 }
-//@Composable
-//fun EditableUserDataScreen() {
-//    var userName by remember { mutableStateOf("John Doe") }
-//
-//    Column(modifier = Modifier.padding(16.dp)) {
-//        EditableText(
-//            text = userName,
-//            onTextChanged = { userName = it },
-//            placeholder = "Enter your name"
-//        )
-//    }
-//}
+
+@Composable
+fun TextFieldItem(
+    label: String,
+    value: String,
+    backgroundColor: Color = Color.White,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    onValueChange: (String) -> Unit
+) {
+    val (textValue, setTextValue) = remember { mutableStateOf(value) }
+
+    TextField(
+        value = textValue,
+        onValueChange = {
+            setTextValue(it)
+            onValueChange(it)
+        },
+        label = { Text(label) }, // Label for the text field
+        modifier = Modifier
+            .fillMaxWidth(),
+        textStyle = TextStyle(color = Color.Gray),
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ChangeProfileScreenPreview() {

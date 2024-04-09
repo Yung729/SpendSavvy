@@ -27,7 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.component.HeaderTopBar
 import com.example.spendsavvy.screen.AnalysisScreen
-import com.example.spendsavvy.screen.CategoryScreen
+import com.example.spendsavvy.screen.categoryScreen.CategoryScreen
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.MyProfileScreen
@@ -182,8 +182,7 @@ fun TabsNavGraph() {
                 AnalysisScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp)
                 )
             }
 

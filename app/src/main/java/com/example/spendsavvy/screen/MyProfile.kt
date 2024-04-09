@@ -73,38 +73,23 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController)
             .fillMaxSize()
             .padding(top = 10.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Up",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(40.dp)
-            )
-            Text(
-                text = "My Profile",
-                fontFamily = poppinsFontFamily,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = HeaderTitle,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-            )
+            Spacer(modifier = Modifier.weight(1f))
+
             Image(
                 painter = painterResource(R.drawable.edit_profile_icon),
-                contentDescription = "",
+                contentDescription = "editButton",
                 modifier = Modifier
                     .size(35.dp)
-                    .align(Alignment.CenterVertically)
-                    .clickable {navController.navigate( Screen.ChangeProfile.route )}
+                    .clickable { navController.navigate(Screen.ChangeProfile.route) }
             )
-
         }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()

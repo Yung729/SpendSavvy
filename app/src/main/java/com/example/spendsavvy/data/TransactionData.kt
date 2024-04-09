@@ -1,6 +1,6 @@
 package com.example.spendsavvy.data
 
-import com.example.spendsavvy.model.Transactions
+import com.example.spendsavvy.models.Transactions
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

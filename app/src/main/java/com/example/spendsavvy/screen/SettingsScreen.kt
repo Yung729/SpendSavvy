@@ -39,35 +39,34 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Up",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(40.dp)
-            )
-            Text(
-                text = "Settings",
-                fontFamily = poppinsFontFamily,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = HeaderTitle,
-                modifier = Modifier
-                    .padding(end = 130.dp)
-            )
-        }
-//sadf
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(top = 10.dp),
+//        verticalArrangement = Arrangement.Top,
+//        horizontalAlignment = Alignment.Start
+//    ) {
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Icon(
+//                Icons.Default.KeyboardArrowLeft,
+//                contentDescription = "Up",
+//                modifier = Modifier
+//                    .align(Alignment.CenterVertically)
+//                    .size(40.dp)
+//            )
+//            Text(
+//                text = "Settings",
+//                fontFamily = poppinsFontFamily,
+//                fontSize = 25.sp,
+//                fontWeight = FontWeight.SemiBold,
+//                color = HeaderTitle,
+//                modifier = Modifier
+//                    .padding(end = 130.dp)
+//            )
+//        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -158,7 +157,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
             }
         }
     }
-}
 
 @Composable
 fun List(imgId: Int, text: String, navController: NavController, route: String) {
