@@ -16,11 +16,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -31,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +44,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.data.BankAccountData
+import com.example.spendsavvy.data.bankName
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
@@ -160,6 +166,22 @@ fun MoneyPopUpScreen(
     onCancelClick: () -> Unit,          //nothing to be returned
     onConfirmClick: () -> Unit
 ) {
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var searchBank by remember {
+        mutableStateOf("Affin Bank Berhad")
+    }
+
+    var incAmt by remember {
+        mutableStateOf("")
+    }
+
+    var decAmt by remember {
+        mutableStateOf("")
+    }
+
     val options = mutableStateListOf<String>("Cash", "Bank")
     var selectedIndex by remember {
         mutableStateOf(0)
@@ -208,25 +230,152 @@ fun MoneyPopUpScreen(
                 }
             }
 
-            if(selectedIndex == 0){
+            Spacer(modifier = Modifier.height(15.dp))
+
+            if(selectedIndex == 1){
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 15.dp, top = 15.dp)) {
+                        .padding(start = 15.dp, top = 15.dp)
+                ) {
 
-                    Text(text = "Increase Amount",
+                    Text(
+                        text = "Select your bank",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
 
-                    Text(text = "Decrease Amount",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
+                    ExposedDropdownMenuBox(
+                        expanded = isExpanded,
+                        onExpandedChange = { isExpanded = it }
+                    ) {
+                        TextField(
+                            value = searchBank,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = isExpanded,
+                            onDismissRequest = { isExpanded = false }
+                        ) {
+                            for(i in bankName) {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = i)
+                                    },
+                                    onClick = {
+                                        searchBank = i
+                                        isExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.dp, top = 15.dp)
+            ) {
+
+                Text(text = "Increase Amount",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
+
+                TextField(
+                    value = incAmt,
+                    onValueChange = {
+                        incAmt = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0.00",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                            )
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Text(
+                    text = "Decrease Amount",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
+
+                TextField(
+                    value = decAmt,
+                    onValueChange = {
+                        decAmt = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0.00",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    }
+                )
+            }
+
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row(
+                modifier = Modifier
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.spacedBy(30.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Button(
+                    onClick = {
+                        onCancelClick()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Cancel",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
                     )
                 }
-            }
-            else{
-                Text("Bank Name: ")
+
+                Button(
+                    onClick = {
+                        onConfirmClick()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Add",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
             }
         }
     }
