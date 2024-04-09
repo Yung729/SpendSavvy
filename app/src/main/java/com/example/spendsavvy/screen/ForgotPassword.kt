@@ -14,18 +14,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,11 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,17 +47,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
-import com.example.spendsavvy.ui.theme.RedColor
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 
-
-
 @Composable
-fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) {
-    var oldPassword by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
+fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) {
 
     Column(
         modifier = Modifier
@@ -69,13 +60,13 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
         verticalArrangement = Arrangement.Top,
     ) {
         Text(
-            text = "Change Password",
+            text = "Forgot Password",
             fontSize = 25.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Text(
-            text = "Enter a new password that you wish to change",
+            text = "Recover your account password",
             color = Color.Gray,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
@@ -85,20 +76,12 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
                 .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         )
 
-        PasswordTextField(
-            labelText = "Current Password",
-            value = oldPassword,
-            onValueChange = { oldPassword = it },
-            passwordVisible = passwordVisible,
-            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible }
-        )
+        var email by remember { mutableStateOf("") }
 
-        PasswordTextField(
-            labelText = "New Password",
-            value = newPassword,
-            onValueChange = { newPassword = it },
-            passwordVisible = passwordVisible,
-            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible }
+        EmailTextField(
+            email = email,
+            onEmailChange = { newEmail -> email = newEmail },
+            label = "Enter your email address"
         )
 
         Button(
@@ -112,7 +95,7 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
             )
         ) {
             Text(
-                text = "Save New Password",
+                text = "Next",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -121,53 +104,27 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
 }
 
 @Composable
-fun PasswordTextField(
-    labelText: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    passwordVisible: Boolean,
-    onPasswordVisibilityToggle: () -> Unit
+fun EmailTextField(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier
 ) {
-    val passIcon = if (passwordVisible) painterResource(id = R.drawable.show_pass)
-    else painterResource(id = R.drawable.hide_pass)
-
-    Column {
-        Text(
-            text = labelText,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-        )
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = TextStyle(color = Color.Gray, fontSize = 20.sp),
-            label = { Text(text = labelText) },
-            trailingIcon = {
-                IconButton(onClick = onPasswordVisibilityToggle) {
-                    Icon(
-                        painter = passIcon,
-                        contentDescription = "PassIcon",
-                        modifier = Modifier.size(35.dp)
-                    )
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp, top = 10.dp)
-                .background(Color.White),
-            shape = RoundedCornerShape(15.dp),
+    Column(modifier = modifier) {
+        Text(text = label)
+        OutlinedTextField(
+            value = email,
+            onValueChange = { onEmailChange(it) },
+            label = { Text("Email") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (passwordVisible) VisualTransformation.None
-            else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
         )
     }
 }
-
 @Preview(showBackground = true)
 @Composable
-fun ChangePasswordPreview() {
-    ChangePassword(
+fun ForgotPasswordPreview() {
+    ForgotPassword(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),

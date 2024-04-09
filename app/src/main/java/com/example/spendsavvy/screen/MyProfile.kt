@@ -83,7 +83,7 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController)
 
             Image(
                 painter = painterResource(R.drawable.edit_profile_icon),
-                contentDescription = "editButton",
+                contentDescription = "",
                 modifier = Modifier
                     .size(35.dp)
                     .clickable { navController.navigate(Screen.ChangeProfile.route) }

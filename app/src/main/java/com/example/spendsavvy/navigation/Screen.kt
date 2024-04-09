@@ -15,10 +15,18 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Category : Screen(route = "Category", R.drawable.bar_chart)
     object MainScreen : Screen(route = "EnterMainScreen", R.drawable.bar_chart)
 
-    object ChangeProfile : Screen(route = "Edit Profile", R.drawable.edit_profile_icon)
-    object MyProfile : Screen(route = "Profile", R.drawable.profile_icon)
+    object ChangeProfile : Screen(route = "editProfile", R.drawable.edit_profile_icon)
+    object MyProfile : Screen(route = "myProfile", R.drawable.profile_icon)
 
-    object ChangePassword : Screen(route = "Change Password", R.drawable.changepassword_icon)
+    object ChangePassword : Screen(route = "changePassword", R.drawable.changepassword_icon)
+    object ForgotPassword : Screen(route = "forgotPassword", R.drawable.forgotpassword_icon)
+    object Notifications : Screen(route = "Notifications", R.drawable.bell_icon)
+    object Language : Screen(route = "Language", R.drawable.language_icon)
+    object HelpAndSupport : Screen(route = "HelpAndSupport", R.drawable.help_icon)
+    object ManageBillsAndInstalment : Screen(route = "ManageBillsAndInstalment", R.drawable.bills_icon)
+    object TaxCalculator : Screen(route = "TaxCalculator", R.drawable.calculator_icon)
+    object ManageCategory : Screen(route = "ManageCategory", R.drawable.category_icon)
+
 
 
 }

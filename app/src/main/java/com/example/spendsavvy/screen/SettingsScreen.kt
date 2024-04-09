@@ -88,8 +88,9 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
             )
         }
 
-        List(R.drawable.profile_icon, "User Profile", navController, Screen.MyProfile.route)
-//            List(R.drawable.expense_icon, "Recent Expenses",navController, Screen.Stock.route)
+        List(R.drawable.profile_icon, "My Profile", navController, Screen.MyProfile.route)
+        //        List(R.drawable.expense_icon, "Recent Expenses",navController, Screen.Stock.route)
+
 
         Row(
             modifier = Modifier.padding(vertical = 5.dp)
@@ -101,18 +102,22 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
             )
         }
 
-        List(
-            R.drawable.changepassword_icon,
-            "Change Password",
-            navController,
-            Screen.Stock.route
-        )
-        List(
-            R.drawable.forgotpassword_icon,
-            "Forgot Password",
-            navController,
-            Screen.Stock.route
-        )
+        List(R.drawable.changepassword_icon, "Change Password", navController, Screen.ChangePassword.route)
+        List(R.drawable.forgotpassword_icon, "Forgot Password", navController, Screen.ForgotPassword.route)
+
+        Row(
+            modifier = Modifier.padding(vertical = 5.dp)
+        ) {
+            Text(
+                text = "Tools",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+
+        List(R.drawable.bills_icon, "Manage Bills and Instalments", navController, Screen.ManageBillsAndInstalment.route)
+        List(R.drawable.calculator_icon, "Tax Calculator", navController, Screen.TaxCalculator.route)
+        List(R.drawable.category_icon, "Manage Category", navController, Screen.ManageCategory.route)
 
         Row(
             modifier = Modifier.padding(vertical = 5.dp)
