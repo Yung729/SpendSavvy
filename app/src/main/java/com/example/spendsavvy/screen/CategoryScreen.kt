@@ -281,7 +281,7 @@ fun AddCatPopUpScreen(
 
                 Button(
                     onClick = {
-                        
+                        catViewModel.addCategoryToDatabase(Category(imageUri = selectedImageUri,categoryName = categoryName,isExpenses = categoryType == "Expenses"))
                     },
                     modifier = Modifier
                         .padding(bottom = 10.dp)
