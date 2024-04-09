@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberAsyncImagePainter
-import com.example.spendsavvy.animation.bounceClick
+import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.spendsavvy.data.CategoryData

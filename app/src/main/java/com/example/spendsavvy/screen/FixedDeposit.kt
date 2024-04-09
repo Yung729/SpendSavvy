@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.spendsavvy.animation.bounceClick
+import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.data.BankAccountData
 import com.example.spendsavvy.models.BankAccount
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
