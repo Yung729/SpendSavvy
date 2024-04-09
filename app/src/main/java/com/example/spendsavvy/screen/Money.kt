@@ -178,19 +178,55 @@ fun MoneyPopUpScreen(
                 .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
                 .shadow(elevation = 15.dp)
         ) {
-            SingleChoiceSegmentedButtonRow {
-                options.forEachIndexed{
-                    index, option ->
-                    SegmentedButton(
-                    selected = selectedIndex == index,
-                    onClick = { selectedIndex = index },
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index, count = options.size
-                        )
-                    ) {
-                    
+            Text(
+                text = "Account",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp,
+                modifier = Modifier
+                    .padding(start = 15.dp, top = 15.dp)
+                )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ){
+                SingleChoiceSegmentedButtonRow {
+                    options.forEachIndexed{
+                        index, option ->
+                        SegmentedButton(
+                        selected = selectedIndex == index,
+                        onClick = { selectedIndex = index },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index, count = options.size
+                            )
+                        ) {
+                            Text(text = option)
+                        }
                     }
                 }
+            }
+
+            if(selectedIndex == 0){
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 15.dp, top = 15.dp)) {
+
+                    Text(text = "Increase Amount",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
+                    )
+
+                    Text(text = "Decrease Amount",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
+                    )
+                }
+            }
+            else{
+                Text("Bank Name: ")
             }
         }
     }
