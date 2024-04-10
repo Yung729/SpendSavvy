@@ -2,13 +2,16 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AnalysisScreenPreview">
-        <State />
-      </entry>
       <entry key="CategoryScreenPreview">
         <State />
       </entry>
+      <entry key="FixedDepositScreenPreview">
+        <State />
+      </entry>
       <entry key="MoneyScreenPreview">
+        <State />
+      </entry>
+      <entry key="StockScreenPreview">
         <State />
       </entry>
       <entry key="app">

@@ -5,26 +5,26 @@ import com.example.spendsavvy.models.Stock
 
 
 val toyNames = listOf(
-    "Slinky",
-    "Buzzy",
-    "Twisty",
-    "Gizmo",
-    "Zoomer",
-    "Flutter",
-    "Rumble",
-    "Whirl",
     "Blaze",
+    "Buzzy",
     "Dazzle",
-    "Zigzag",
-    "Squiggle",
-    "Fizzle",
-    "Tinker",
-    "Flare",
-    "Jumble",
-    "Sparkle",
-    "Whiz",
     "Fidget",
-)
+    "Fizzle",
+    "Flare",
+    "Flutter",
+    "Gizmo",
+    "Jumble",
+    "Rumble",
+    "Slinky",
+    "Sparkle",
+    "Squiggle",
+    "Tinker",
+    "Twisty",
+    "Whirl",
+    "Whiz",
+    "Zigzag",
+    "Zoomer"
+    )
 
 fun getRandomToyName(): String {
     return toyNames.random()

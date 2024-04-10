@@ -163,7 +163,7 @@ fun MoneyScreen(modifier: Modifier) {
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun MoneyPopUpScreen(
-    onCancelClick: () -> Unit,          //nothing to be returned
+    onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit
 ) {
     var isExpanded by remember {
@@ -280,13 +280,6 @@ fun MoneyPopUpScreen(
                     }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 15.dp, top = 15.dp)
-            ) {
 
                 Text(text = "Increase Amount",
                     fontFamily = poppinsFontFamily,
