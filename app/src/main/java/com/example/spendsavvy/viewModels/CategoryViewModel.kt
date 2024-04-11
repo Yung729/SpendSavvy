@@ -21,17 +21,20 @@ class CategoryViewModel : ViewModel() {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    private val _categoryList = MutableStateFlow<List<Category>>(emptyList())
-    val categoryList = MutableStateFlow<List<Category>>(emptyList())
+
+    val expensesList = MutableStateFlow<List<Category>>(emptyList())
+    val incomeList= MutableStateFlow<List<Category>>(emptyList())
+
 
     private val storage = FirebaseStorage.getInstance()
     private val storageRef = storage.reference
 
-    private fun getCategoriesList(){
+    private fun getCategoriesList() {
         viewModelScope.launch {
             try {
-                val categories = readCategoriesFromDatabase()
-                categoryList.value = categories
+                val (expenses, income) = readCategoriesFromDatabase()
+                expensesList.value = expenses
+                incomeList.value = income
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
             }
@@ -88,25 +91,30 @@ class CategoryViewModel : ViewModel() {
     }
 }
 
-suspend fun readCategoriesFromDatabase(): List<Category> {
+suspend fun readCategoriesFromDatabase():Pair<List<Category>, List<Category>> {
     val firestore = FirebaseFirestore.getInstance()
-    val categoryList = mutableListOf<Category>()
+    val expensesList = mutableListOf<Category>()
+    val incomeList = mutableListOf<Category>()
 
     try {
         val querySnapshot = firestore.collection("Categories").get().await()
         for (document in querySnapshot.documents) {
             val imageUriString = document.getString("imageUri")
             val categoryName = document.getString("categoryName") ?: ""
-            val isExpenses = document.getBoolean("isExpenses") ?: true
+            val isExpenses = document.getBoolean("expenses") ?: true
 
             val imageUri = imageUriString?.let { Uri.parse(it) }
 
             val category = Category(imageUri, categoryName, isExpenses)
-            categoryList.add(category)
+            if (isExpenses) {
+                expensesList.add(category)
+            } else if (!isExpenses){
+                incomeList.add(category)
+            }
         }
     } catch (e: Exception) {
         Log.e(TAG, "Error getting categories", e)
     }
 
-    return categoryList
+    return Pair(expensesList, incomeList)
 }

@@ -37,7 +37,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -56,11 +55,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.viewModels.CategoryViewModel
 
 @SuppressLint("UnrememberedMutableState")
@@ -78,8 +76,8 @@ fun CategoryScreen(
     }
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    val categoryList by catViewModel.categoryList.collectAsState()
-
+    val expenseList by catViewModel.expensesList.collectAsState()
+    val incomeList by catViewModel.incomeList.collectAsState()
 
 
     Column(modifier = modifier) {
@@ -105,7 +103,12 @@ fun CategoryScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            CategoryList(categoryList = categoryList)
+            if (selectedIndex == 0) {
+                CategoryList(categoryList = expenseList)
+            } else if (selectedIndex == 1) {
+                CategoryList(categoryList = incomeList)
+            }
+
 
             Box(
                 modifier = Modifier
@@ -287,7 +290,13 @@ fun AddCatPopUpScreen(
 
                 Button(
                     onClick = {
-                        catViewModel.addCategoryToDatabase(Category(imageUri = selectedImageUri,categoryName = categoryName,isExpenses = categoryType == "Expenses"),selectedImageUri,context)
+                        catViewModel.addCategoryToDatabase(
+                            Category(
+                                imageUri = selectedImageUri,
+                                categoryName = categoryName,
+                                isExpenses = categoryType == "Expenses"
+                            ), selectedImageUri, context
+                        )
 
                     },
                     modifier = Modifier
