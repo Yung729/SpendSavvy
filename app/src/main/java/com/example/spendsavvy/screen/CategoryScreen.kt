@@ -37,6 +37,8 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -76,6 +78,8 @@ fun CategoryScreen(
     }
     val openAlertDialog = remember { mutableStateOf(false) }
 
+    val categoryList by catViewModel.categoryList.collectAsState()
+
 
 
     Column(modifier = modifier) {
@@ -101,7 +105,7 @@ fun CategoryScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            CategoryList(categoryList = CategoryData().loadCategory())
+            CategoryList(categoryList = categoryList)
 
             Box(
                 modifier = Modifier
@@ -159,6 +163,7 @@ fun AddCatPopUpScreen(
             onResult = {
                 selectedImageUri = it
             })
+
 
 
 
