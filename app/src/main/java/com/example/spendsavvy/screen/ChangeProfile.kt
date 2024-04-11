@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -72,71 +74,64 @@ import com.google.firebase.auth.auth
 fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp),
+            .fillMaxSize()
+            .padding(top = 10.dp)
+            .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        Column(
+        Image(
+            painter = painterResource(R.drawable.add_image_icon),
+            contentDescription = "User profile image",
+            modifier = Modifier
+                .size(125.dp)
+                .align(Alignment.CenterHorizontally)
+                .clip(CircleShape)
+                .background(Color.Gray),
+        )
+
+        Spacer(modifier = Modifier.height(15.dp)) // Spacer added here
+
+        OutlinedTextFieldItem(
+            label = "User Name",
+            value = "User Name",
+            onValueChange = { /* Implement logic to change the user name */ },
+            height = 60.dp
+        )
+
+        OutlinedTextFieldItem(
+            label = "Email Address",
+            value = "Email Address",
+            keyboardType = KeyboardType.Email,
+            onValueChange = { /* Implement logic to change the email address */ },
+            height = 60.dp
+        )
+
+        OutlinedTextFieldItem(
+            label = "Phone Number",
+            value = "Phone Number",
+            keyboardType = KeyboardType.Phone,
+            onValueChange = { /* Implement logic to change the phone number */ },
+            height = 60.dp
+        )
+
+        OutlinedTextFieldItem(
+            label = "Home Address",
+            value = "Home Address",
+            onValueChange = { /* Implement logic to change the home address */ },
+            height = 110.dp
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Button(
+            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+            onClick = { /*TODO*/ },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.Top,
+                .padding(16.dp),
         ) {
-            Image(
-                painter = painterResource(R.drawable.add_image_icon),
-                contentDescription = "User profile image",
-                modifier = Modifier
-                    .size(125.dp)
-                    .padding(vertical = 16.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .clip(CircleShape)
-                    .background(Color.Gray),
-            )
-
-            Column(
-                modifier = Modifier.padding(vertical = 15.dp)
-            ){
-                OutlinedTextFieldItem(
-                    label = "User Name",
-                    value = "User Name",
-                    onValueChange = { /* Implement logic to change the user name */ }
-                )
-                Spacer(modifier = Modifier.height(15.dp))
-
-                OutlinedTextFieldItem(
-                    label = "Email Address",
-                    value = "Email Address",
-                    keyboardType = KeyboardType.Email,
-                    onValueChange = { /* Implement logic to change the email address */ }
-                )
-                Spacer(modifier = Modifier.height(15.dp))
-
-                OutlinedTextFieldItem(
-                    label = "Phone Number",
-                    value = "Phone Number",
-                    keyboardType = KeyboardType.Phone,
-                    onValueChange = { /* Implement logic to change the phone number */ }
-                )
-                Spacer(modifier = Modifier.height(15.dp))
-
-                OutlinedTextFieldItem(
-                    label = "Home Address",
-                    value = "Home Address",
-                    onValueChange = { /* Implement logic to change the phone number */ }
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Button(
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    Text(text = "Save Changes")
-                }
-            }
+            Text(text = "Save Changes")
         }
     }
 }
@@ -146,7 +141,8 @@ fun OutlinedTextFieldItem(
     label: String,
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    height: Dp = TextFieldDefaults.MinHeight
 ) {
     val (textValue, setTextValue) = remember { mutableStateOf(value) }
 
@@ -158,13 +154,14 @@ fun OutlinedTextFieldItem(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White),
+            .padding(bottom = 20.dp)
+            .background(Color.White)
+            .height(height), // Adjusted height here
         textStyle = TextStyle(color = Color.Gray, fontSize = 20.sp),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
         label = { Text(text = label, color = Color.Black) },
     )
 }
-
 
 @Preview(showBackground = true)
 @Composable

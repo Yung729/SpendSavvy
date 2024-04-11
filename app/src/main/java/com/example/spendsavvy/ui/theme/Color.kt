@@ -15,3 +15,7 @@ val ButtonColor = Color(0xFF423E3E)
 val CardColor = Color(0xFF746D6D)
 val GreenColor = Color(0xFF4BAA06)
 val RedColor = Color(0xFFFF0000)
+
+val LightGray = Color(0xFFCCCCCC)
+val MediumGray = Color(0xFF888888)
+val DarkGray = Color(0xFF333333)

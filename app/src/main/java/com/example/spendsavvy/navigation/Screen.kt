@@ -9,23 +9,24 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Overview : Screen(route = "Overview", R.drawable.bar_chart)
     object Wallet : Screen(route = "Wallet", R.drawable.wallet)
 
-    object Settings : Screen(route = "Setting", R.drawable.settings_icon)
+    object Settings : Screen(route = "Settings", R.drawable.settings_icon)
     object Analysis : Screen(route = "Analysis", R.drawable.analysis_icon)
     object Stock : Screen(route = "Stock", R.drawable.bar_chart)
     object Category : Screen(route = "Category", R.drawable.bar_chart)
     object MainScreen : Screen(route = "EnterMainScreen", R.drawable.bar_chart)
 
-    object ChangeProfile : Screen(route = "editProfile", R.drawable.edit_profile_icon)
-    object MyProfile : Screen(route = "myProfile", R.drawable.profile_icon)
+    object ChangeProfile : Screen(route = "Edit Profile", R.drawable.edit_profile_icon)
+    object MyProfile : Screen(route = "My Profile", R.drawable.profile_icon)
 
-    object ChangePassword : Screen(route = "changePassword", R.drawable.changepassword_icon)
-    object ForgotPassword : Screen(route = "forgotPassword", R.drawable.forgotpassword_icon)
-    object Notifications : Screen(route = "Notifications", R.drawable.bell_icon)
+    object ChangePassword : Screen(route = "Change Password", R.drawable.changepassword_icon)
+    object ForgotPassword : Screen(route = "Forgot Password", R.drawable.forgotpassword_icon)
+    object CreatePassword : Screen(route = "Create Password", 0)
+    object Notifications : Screen(route = "Notification", R.drawable.bell_icon)
     object Language : Screen(route = "Language", R.drawable.language_icon)
-    object HelpAndSupport : Screen(route = "HelpAndSupport", R.drawable.help_icon)
-    object ManageBillsAndInstalment : Screen(route = "ManageBillsAndInstalment", R.drawable.bills_icon)
-    object TaxCalculator : Screen(route = "TaxCalculator", R.drawable.calculator_icon)
-    object ManageCategory : Screen(route = "ManageCategory", R.drawable.category_icon)
+    object HelpAndSupport : Screen(route = "Help And Support", R.drawable.help_icon)
+    object ManageBillsAndInstalment : Screen(route = "Bills & Instalment", R.drawable.bills_icon)
+    object TaxCalculator : Screen(route = "Tax Calculator", R.drawable.calculator_icon)
+    object ManageCategory : Screen(route = "Manage Category", R.drawable.category_icon)
 
 
 

@@ -55,7 +55,7 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
     ) {
@@ -73,7 +73,7 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 20.dp)
         )
 
         var email by remember { mutableStateOf("") }
@@ -85,10 +85,10 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
         )
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { navController.navigate(Screen.CreatePassword.route) },   //check whether if the email is valid
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp) ,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.DarkGray,
                 contentColor = Color.White
@@ -98,7 +98,7 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
                 text = "Next",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
-            )
+            ) //then go to the create password page for user to create new password
         }
     }
 }

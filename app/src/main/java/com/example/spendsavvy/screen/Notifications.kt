@@ -1,9 +1,8 @@
 package com.example.spendsavvy.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,15 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,8 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -42,58 +31,90 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.ui.theme.HeaderTitle
-import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.CoroutineScope
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun Notifications(modifier: Modifier = Modifier, navController: NavController) {
+fun Notification(modifier: Modifier = Modifier, navController: NavController) {
 
-    var showDialog by remember { mutableStateOf(false) }
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    var isToggled by remember { mutableStateOf(true) }
 
-    Column(
+    androidx.compose.material.Scaffold(
+        scaffoldState = scaffoldState,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Top,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.add_image_icon),
-            contentDescription = "User profile image",
-            modifier = Modifier
-                .size(125.dp)
-                .padding(vertical = 16.dp)
-                .align(Alignment.CenterHorizontally)
-                .clip(CircleShape)
-                .background(Color.Gray),
-        )
+            .fillMaxSize(),
+        content = {
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxSize()
+            ) {
+                Text(
+                    text = "Set your notifications",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "User nameeee",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        )
-        Spacer(modifier = Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.bell_icon),
+                        contentDescription = "",
+                        modifier = Modifier.size(25.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
 
-        Row(
-            modifier = Modifier.padding(vertical = 5.dp)
-        ) {
-            Text(
-                text = "Personal Info",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
-            )
+                    Text(
+                        text = "Notifications",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(10.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Image(
+                            painter = painterResource(if (isToggled) R.drawable.toggle_on_icon else R.drawable.toggle_off_icon),
+                            contentDescription = if (isToggled) "TOGGLE ON" else "TOGGLE OFF",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    isToggled = !isToggled
+
+                                    val message =
+                                        if (isToggled) "Notification is on" else "Notification is off"
+                                    coroutineScope.launch {
+                                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss() // Dismiss previous snackbar if any
+                                        scaffoldState.snackbarHostState.showSnackbar(message = message)
+                                    }
+                                }
+                        )
+                    }
+                }
+                LineDivider()
+            }
         }
-    }
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun NotificationsPreview() {
-    Notifications(
+fun NotificationPreview() {
+    Notification(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),

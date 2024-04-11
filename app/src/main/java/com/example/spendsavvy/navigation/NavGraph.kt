@@ -30,6 +30,7 @@ import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
+import com.example.spendsavvy.screen.CreatePassword
 import com.example.spendsavvy.screen.ForgotPassword
 import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
@@ -37,7 +38,7 @@ import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.ManageBillsAndInstalment
 import com.example.spendsavvy.screen.ManageCategory
 import com.example.spendsavvy.screen.MyProfileScreen
-import com.example.spendsavvy.screen.Notifications
+import com.example.spendsavvy.screen.Notification
 import com.example.spendsavvy.screen.OverviewScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
@@ -268,6 +269,16 @@ fun TabsNavGraph() {
                 )
             }
             composable(
+                route = Screen.CreatePassword.route
+            ) {
+                CreatePassword(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
+            composable(
                 route = Screen.ManageBillsAndInstalment.route
             ) {
                 ManageBillsAndInstalment(
@@ -301,7 +312,7 @@ fun TabsNavGraph() {
             composable(
                 route = Screen.Notifications.route
             ) {
-                Notifications(
+                Notification(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),

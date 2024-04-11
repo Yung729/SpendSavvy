@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,7 +59,7 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 
 @Composable
-fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) {
+fun CreatePassword(modifier: Modifier = Modifier, navController: NavController) {
     var oldPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -73,24 +74,27 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
         verticalArrangement = Arrangement.Top,
     ) {
         Text(
-            text = "Change Password",
-            fontSize = 25.sp,
+            text = "Create a\nNew Password",
+            textAlign = TextAlign.Center,
+            fontSize = 30.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(5.dp)
         )
         Text(
-            text = "Enter a new password that you wish to change",
+            text = "Enter your new password",
             color = Color.Gray,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 20.dp)
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         )
 
         PasswordTextField(
-            labelText = "Current Password",
+            labelText = "New Password",
             value = oldPassword,
             onValueChange = { oldPassword = it },
             passwordVisible = passwordVisible,
@@ -98,7 +102,7 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
         )
 
         PasswordTextField(
-            labelText = "New Password",
+            labelText = "Confirm Password",
             value = newPassword,
             onValueChange = { newPassword = it },
             passwordVisible = passwordVisible,
@@ -119,7 +123,7 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
             )
         ) {
             Text(
-                text = "Save New Password",
+                text = "Next",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -140,7 +144,7 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
                 },
                 text = {
                     Text(
-                        text = "Your password has been changed successfully",
+                        text = "Your password is successfully created",
                         textAlign = TextAlign.Center,
                         fontSize = 18.sp,
                         color = Color.Black,
@@ -214,55 +218,10 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
 //        }
     }
 }
-
-@Composable
-fun PasswordTextField(
-    labelText: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    passwordVisible: Boolean,
-    onPasswordVisibilityToggle: () -> Unit
-) {
-    val passIcon = if (passwordVisible) painterResource(id = R.drawable.show_pass)
-    else painterResource(id = R.drawable.hide_pass)
-
-    Column {
-        Text(
-            text = labelText,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-        )
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = TextStyle(color = Color.Gray, fontSize = 20.sp),
-            label = { Text(text = labelText) },
-            trailingIcon = {
-                IconButton(onClick = onPasswordVisibilityToggle) {
-                    Icon(
-                        painter = passIcon,
-                        contentDescription = "PassIcon",
-                        modifier = Modifier.size(35.dp)
-                    )
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp, top = 10.dp)
-                .background(Color.White),
-            shape = RoundedCornerShape(15.dp),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (passwordVisible) VisualTransformation.None
-            else PasswordVisualTransformation(),
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
-fun ChangePasswordPreview() {
-    ChangePassword(
+fun CreatePasswordPreview() {
+    CreatePassword(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),

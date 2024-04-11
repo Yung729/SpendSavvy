@@ -50,43 +50,20 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 @Composable
 fun ManageCategory(modifier: Modifier = Modifier, navController: NavController) {
 
-    var showDialog by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
     ) {
-        Image(
-            painter = painterResource(R.drawable.add_image_icon),
-            contentDescription = "User profile image",
-            modifier = Modifier
-                .size(125.dp)
-                .padding(vertical = 16.dp)
-                .align(Alignment.CenterHorizontally)
-                .clip(CircleShape)
-                .background(Color.Gray),
-        )
-
         Text(
-            text = "User nameeee",
+            text = "Category",
             fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(20.dp))
-
-        Row(
-            modifier = Modifier.padding(vertical = 5.dp)
-        ) {
-            Text(
-                text = "Personal Info",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
     }
 }
 

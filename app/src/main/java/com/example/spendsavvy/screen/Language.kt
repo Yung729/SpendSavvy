@@ -1,9 +1,8 @@
 package com.example.spendsavvy.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,83 +11,111 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
+import androidx.compose.material.Icon
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.ui.theme.HeaderTitle
-import com.example.spendsavvy.ui.theme.poppinsFontFamily
-
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun Language(modifier: Modifier = Modifier, navController: NavController) {
+fun Language(modifier: Modifier = Modifier,navController: NavController) {
 
-    var showDialog by remember { mutableStateOf(false) }
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Top,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.add_image_icon),
-            contentDescription = "User profile image",
-            modifier = Modifier
-                .size(125.dp)
-                .padding(vertical = 16.dp)
-                .align(Alignment.CenterHorizontally)
-                .clip(CircleShape)
-                .background(Color.Gray),
+    val selections = remember {
+        mutableStateListOf(
+            LanguageSelection(
+                id = 0,
+                isSelected = true,
+                text = "English"
+            ),
+            LanguageSelection(
+                id = 1,
+                isSelected = false,
+                text = "Chinese"
+            ),
+            LanguageSelection(
+                id = 2,
+                isSelected = false,
+                text = "Bahasa Melayu"
+            ),
         )
-
-        Text(
-            text = "User nameeee",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Row(
-            modifier = Modifier.padding(vertical = 5.dp)
-        ) {
-            Text(
-                text = "Personal Info",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
     }
+
+    androidx.compose.material.Scaffold(
+        scaffoldState = scaffoldState,
+        modifier = modifier,
+        content = {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = "Suggested Language",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                selections.forEachIndexed { index, info ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
+                                coroutineScope.launch {
+                                    scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                                    scaffoldState.snackbarHostState.showSnackbar(message = "Other language options are currently under development.")
+                                }
+                            }
+                            .padding(horizontal = 10.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = info.text,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        if (info.isSelected) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.tick_icon),
+                                contentDescription = "",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                    LineDivider()
+                }
+            }
+        }
+    )
 }
+data class LanguageSelection(
+    val id: Int,
+    var isSelected: Boolean,
+    val text: String
+)
+
 
 @Preview(showBackground = true)
 @Composable
