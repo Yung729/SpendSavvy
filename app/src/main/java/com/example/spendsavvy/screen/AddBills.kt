@@ -1,6 +1,5 @@
 package com.example.spendsavvy.screen
 
-import android.widget.DatePicker
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +11,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -168,27 +165,31 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            // Save bill details to database or perform necessary actions
-            // Reset fields after saving if needed
-            title = ""
-            category = ""
-            amount = ""
-            dueDate = null
-            selectedDuration = ""
-            // Hide keyboard after clicking the button
-            keyboardController?.hide()
-        },
+        Button(
+            onClick = {
+                // Save bill details to database or perform necessary actions
+                // Reset fields after saving if needed
+                title = ""
+                category = ""
+                amount = ""
+                dueDate = null
+                selectedDuration = ""
+                // Hide keyboard after clicking the button
+                keyboardController?.hide()
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp) ,
+                .padding(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.DarkGray,
-                contentColor = Color.White)) {
+                contentColor = Color.White
+            )
+        ) {
             Text("Add Bill")
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun AddBillsPreview() {

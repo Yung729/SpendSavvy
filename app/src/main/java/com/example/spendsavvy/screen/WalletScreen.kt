@@ -36,18 +36,18 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
     ) {
-       /* Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            HeaderTitle(text = "Wallet")
+        /* Row(
+             modifier = Modifier.fillMaxWidth(),
+             horizontalArrangement = Arrangement.SpaceBetween
+         ) {
+             HeaderTitle(text = "Wallet")
 
-            Icon(
-                Icons.Default.Notifications,
-                contentDescription = "Notifications",
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-        }*/
+             Icon(
+                 Icons.Default.Notifications,
+                 contentDescription = "Notifications",
+                 modifier = Modifier.align(Alignment.CenterVertically)
+             )
+         }*/
 
         Spacer(modifier = Modifier.height(25.dp))
 

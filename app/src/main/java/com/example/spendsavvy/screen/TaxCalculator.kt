@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -90,10 +89,20 @@ fun TaxCalculator(modifier: Modifier = Modifier, navController: NavController) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Text( text = "Monthly", textAlign = TextAlign.Center, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = "Monthly",
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
+            )
 
 
-            Text( text = "Annually", textAlign = TextAlign.Center, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = "Annually",
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
+            )
 
         }
 

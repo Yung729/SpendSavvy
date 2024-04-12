@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -204,7 +203,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
             },
             confirmButton = {
                 Button(
-                    onClick = { navController.navigate(Screen.Login.route)},
+                    onClick = { navController.navigate(Screen.Login.route) },
                     modifier = Modifier
                         .padding(end = 8.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -227,6 +226,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
         )
     }
 }
+
 @Composable
 fun List(imgId: Int, text: String, navController: NavController, route: String) {
     Row(
