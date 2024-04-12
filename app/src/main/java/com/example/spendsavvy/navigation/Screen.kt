@@ -18,7 +18,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object ChangeProfile : Screen(route = "Edit Profile", R.drawable.edit_profile_icon)
     object MyProfile : Screen(route = "My Profile", R.drawable.profile_icon)
 
-    object ChangePassword : Screen(route = "Change Password", R.drawable.changepassword_icon)
+    object ChangePassword : Screen(route = "Change Password ", R.drawable.changepassword_icon)
     object ForgotPassword : Screen(route = "Forgot Password", R.drawable.forgotpassword_icon)
     object CreatePassword : Screen(route = "Create Password", 0)
     object Notifications : Screen(route = "Notification", R.drawable.bell_icon)
