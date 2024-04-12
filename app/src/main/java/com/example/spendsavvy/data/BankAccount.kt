@@ -2,7 +2,7 @@ package com.example.spendsavvy.data
 
 import com.example.spendsavvy.models.BankAccount
 
-public val bankName =  listOf(
+val bankName =  listOf(
     "Affin Bank Berhad",
     "Alliance Bank Malaysia Berhad",
     "AmBank Berhad",
