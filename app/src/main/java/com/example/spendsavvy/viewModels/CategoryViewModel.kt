@@ -8,10 +8,11 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.models.Category
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
@@ -21,18 +22,19 @@ class CategoryViewModel : ViewModel() {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-
     val expensesList = MutableStateFlow<List<Category>>(emptyList())
-    val incomeList= MutableStateFlow<List<Category>>(emptyList())
+    val incomeList = MutableStateFlow<List<Category>>(emptyList())
 
 
     private val storage = FirebaseStorage.getInstance()
     private val storageRef = storage.reference
 
+    val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
+
     private fun getCategoriesList() {
         viewModelScope.launch {
             try {
-                val (expenses, income) = readCategoriesFromDatabase()
+                val (expenses, income) = readCategoriesFromDatabase(userId)
                 expensesList.value = expenses
                 incomeList.value = income
             } catch (e: Exception) {
@@ -45,14 +47,43 @@ class CategoryViewModel : ViewModel() {
         getCategoriesList()
     }
 
+
     private fun addCategoryToFirestore(category: Category) {
-        firestore.collection("Categories")
-            .add(category)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot successfully written with ID: ${documentReference.id}")
+
+        val documentRef = firestore.collection("Users").document(userId).collection("Categories")
+
+        documentRef
+            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                var latestId = 0
+
+                // If there are documents, parse the latest ID
+                if (!querySnapshot.isEmpty) {
+                    val latestDocument = querySnapshot.documents[0]
+                    val latestDocumentId = latestDocument.id
+                    // Extract the numeric part of the document ID
+                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
+                }
+
+                // Generate the new document ID
+                val newId = "CT${"%04d".format(latestId + 1)}"
+
+                // Create a new document reference with the generated ID
+                val newDocumentRef = documentRef.document(newId)
+
+                // Set the category data for the new document
+                newDocumentRef.set(category)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "DocumentSnapshot successfully written with ID: $newId")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error writing document", e)
+                    }
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error writing document", e)
+                Log.w(TAG, "Error getting documents", e)
             }
     }
 
@@ -79,6 +110,7 @@ class CategoryViewModel : ViewModel() {
         }
     }
 
+
     fun addCategoryToDatabase(category: Category, imageUri: Uri?, context: Context) {
         if (imageUri != null) {
             uploadImageToStorage(imageUri, context) { downloadUri ->
@@ -91,13 +123,14 @@ class CategoryViewModel : ViewModel() {
     }
 }
 
-suspend fun readCategoriesFromDatabase():Pair<List<Category>, List<Category>> {
+suspend fun readCategoriesFromDatabase(userId: String): Pair<List<Category>, List<Category>> {
     val firestore = FirebaseFirestore.getInstance()
     val expensesList = mutableListOf<Category>()
     val incomeList = mutableListOf<Category>()
 
     try {
-        val querySnapshot = firestore.collection("Categories").get().await()
+        val querySnapshot = firestore.collection("Users").document(userId)
+            .collection("Categories").get().await()
         for (document in querySnapshot.documents) {
             val imageUriString = document.getString("imageUri")
             val categoryName = document.getString("categoryName") ?: ""
@@ -108,7 +141,7 @@ suspend fun readCategoriesFromDatabase():Pair<List<Category>, List<Category>> {
             val category = Category(imageUri, categoryName, isExpenses)
             if (isExpenses) {
                 expensesList.add(category)
-            } else if (!isExpenses){
+            } else if (!isExpenses) {
                 incomeList.add(category)
             }
         }
@@ -118,3 +151,4 @@ suspend fun readCategoriesFromDatabase():Pair<List<Category>, List<Category>> {
 
     return Pair(expensesList, incomeList)
 }
+
