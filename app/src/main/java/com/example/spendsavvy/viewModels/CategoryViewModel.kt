@@ -134,14 +134,14 @@ suspend fun readCategoriesFromDatabase(userId: String): Pair<List<Category>, Lis
         for (document in querySnapshot.documents) {
             val imageUriString = document.getString("imageUri")
             val categoryName = document.getString("categoryName") ?: ""
-            val isExpenses = document.getBoolean("expenses") ?: true
+            val categoryType = document.getString("categoryType") ?: ""
 
             val imageUri = imageUriString?.let { Uri.parse(it) }
 
-            val category = Category(imageUri, categoryName, isExpenses)
-            if (isExpenses) {
+            val category = Category(imageUri, categoryName, categoryType )
+            if (categoryType == "Expenses") {
                 expensesList.add(category)
-            } else if (!isExpenses) {
+            } else if (categoryType == "Incomes") {
                 incomeList.add(category)
             }
         }

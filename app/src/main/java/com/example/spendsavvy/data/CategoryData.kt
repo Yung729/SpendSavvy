@@ -9,29 +9,29 @@ class CategoryData {
         val filterCatData = mutableListOf<Category>()
 
         val categoryData = listOf(
-            Category( categoryName = "Salary", isExpenses = true),
-            Category( categoryName = "Salary", isExpenses = true),
-            Category( categoryName = "Salary", isExpenses = true),
-            Category( categoryName = "Salary", isExpenses = true),
-            Category( categoryName = "Salary", isExpenses = true),
-            Category( categoryName = "Salary", isExpenses = true),
-            Category( categoryName = "Salary", isExpenses = true),
-            Category( categoryName = "Salary", isExpenses = true),
-            Category(categoryName = "Sales",isExpenses = false),
-            Category(categoryName = "Sales",isExpenses = false)
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category( categoryName = "Salary", categoryType = "Expenses"),
+            Category(categoryName = "Sales",categoryType = "Incomes"),
+            Category(categoryName = "Sales",categoryType = "Incomes")
         )
 
         when (mode) {
             0 -> {
                 for (category in categoryData) {
-                    if (category.isExpenses) {
+                    if (category.categoryType == "Expenses") {
                         filterCatData.add(category)
                     }
                 }
             }
             1 -> {
                 for (category in categoryData) {
-                    if (!category.isExpenses) {
+                    if (category.categoryType == "Incomes") {
                         filterCatData.add(category)
                     }
                 }

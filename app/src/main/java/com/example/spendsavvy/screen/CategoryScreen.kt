@@ -149,17 +149,26 @@ fun CategoryScreen(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun AddCatPopUpScreen(
     onDismissRequest: () -> Unit,
     catViewModel: CategoryViewModel
 ) {
+    val options = mutableStateListOf("Expenses", "Income")
+    var selectedIndex by remember {
+        mutableIntStateOf(0)
+    }
+
     val context = LocalContext.current
     var categoryType by remember { mutableStateOf("") }
     var categoryName by remember { mutableStateOf("") }
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
+    var error by remember { mutableStateOf(false) }
+
 
     val photoPickerLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
@@ -274,29 +283,53 @@ fun AddCatPopUpScreen(
                     singleLine = true,
                 )
 
-                OutlinedTextField(
-                    value = categoryType,
-                    onValueChange = { categoryType = it },
-                    label = { Text(text = "Category Type") },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp, top = 10.dp),
-                    shape = RoundedCornerShape(15.dp),
-                    singleLine = true,
-                )
+                Spacer(modifier = Modifier.height(8.dp))
 
+                Row(
+                    horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+                ) {
+                    SingleChoiceSegmentedButtonRow {
+                        options.forEachIndexed { index, option ->
+                            SegmentedButton(
+                                selected = selectedIndex == index,
+                                onClick = { selectedIndex = index },
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index, count = options.size
+                                )
+                            ) {
+                                Text(text = option)
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                categoryType = if (selectedIndex == 0) {
+                    "Expenses"
+                } else {
+                    "Incomes"
+                }
 
 
                 Button(
                     onClick = {
-                        catViewModel.addCategoryToDatabase(
-                            Category(
-                                imageUri = selectedImageUri,
-                                categoryName = categoryName,
-                                isExpenses = categoryType == "Expenses"
-                            ), selectedImageUri, context
-                        )
+                        if (selectedImageUri != null && categoryName.isNotEmpty()) {
+                            // If all fields have data, add the category
+                            catViewModel.addCategoryToDatabase(
+                                Category(
+                                    imageUri = selectedImageUri,
+                                    categoryName = categoryName,
+                                    categoryType = categoryType
+                                ),
+                                selectedImageUri,
+                                context
+                            )
+                            onDismissRequest()
+                        } else {
+                            // If any field is empty, show error
+                            error = true
+                        }
 
                     },
                     modifier = Modifier
@@ -310,6 +343,15 @@ fun AddCatPopUpScreen(
                         text = "Add",
                         textAlign = TextAlign.Center,
                         color = Color.White
+                    )
+                }
+
+                if (error) {
+                    Text(
+                        text = "All fields are required",
+                        color = Color.Red,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
 

@@ -50,7 +50,7 @@ fun AnalysisScreen(modifier: Modifier = Modifier, navController: NavController) 
         modifier = modifier.verticalScroll(state = scrollState)
     ) {
         Button(
-            onClick = { navController.navigate(Screen.Category.route)},
+            onClick = { },
             modifier = Modifier
                 .padding(bottom = 10.dp)
                 .bounceClick()

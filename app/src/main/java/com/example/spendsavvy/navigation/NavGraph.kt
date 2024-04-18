@@ -36,7 +36,6 @@ import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.ManageBillsAndInstalment
-import com.example.spendsavvy.screen.ManageCategory
 import com.example.spendsavvy.screen.MyProfileScreen
 import com.example.spendsavvy.screen.Notification
 import com.example.spendsavvy.screen.OverviewScreen
@@ -298,16 +297,7 @@ fun TabsNavGraph() {
                     navController = navController
                 )
             }
-            composable(
-                route = Screen.ManageCategory.route
-            ) {
-                ManageCategory(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
-                )
-            }
+
 
             composable(
                 route = Screen.Notifications.route
