@@ -44,7 +44,7 @@ import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddExpensesScreen(
+fun AddIncomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     transactionViewModel: OverviewViewModel = viewModel()
@@ -80,7 +80,7 @@ fun AddExpensesScreen(
             mutableStateOf("")
         }
 
-        val expenseList by catViewModel.expensesList.collectAsState()
+        val incomeList by catViewModel.incomeList.collectAsState()
 
         val calendarState = rememberSheetState()
         val selectedDate = remember { mutableStateOf("") }
@@ -129,7 +129,7 @@ fun AddExpensesScreen(
                 expanded = isExpanded,
                 onDismissRequest = { isExpanded = false }
             ) {
-                for (data in expenseList) {
+                for (data in incomeList) {
                     DropdownMenuItem(
                         text = {
                             Text(text = data.categoryName)
@@ -195,7 +195,7 @@ fun AddExpensesScreen(
                 expanded = isExpanded1,
                 onDismissRequest = { isExpanded1 = false }
             ) {
-                for (data in expenseList) {
+                for (data in incomeList) {
                     DropdownMenuItem(
                         text = {
                             Text(text = data.categoryName)
@@ -241,7 +241,7 @@ fun AddExpensesScreen(
                         description = description,
                         date = selectedDate.toString(),
                         category = selectedCategory,
-                        transactionType = "Expenses"
+                        transactionType = "Incomes"
                     )
                 )
 
@@ -266,8 +266,8 @@ fun AddExpensesScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun AddExpensesPreview() {
-    AddExpensesScreen(
+fun AddIncomePreview() {
+    AddIncomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),

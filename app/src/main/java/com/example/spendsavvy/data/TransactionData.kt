@@ -20,21 +20,69 @@ class TransactionData {
         val todayTransactions = mutableListOf<Transactions>()
 
         val transactionsRecord = listOf<Transactions>(
-            Transactions(20.00, categories[0], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[1], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[2], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[3], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[4], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[5], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[6], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[7], "", formatDate(Date(2023, 3, 25, 5, 20, 50))),
-            Transactions(20.00, categories[0], "", today),
-            Transactions(20.00, categories[2], "", today),
-            Transactions(20.00, categories[7], "", today),
-            Transactions(20.00, categories[7], "", today),
-            Transactions(20.00, categories[7], "", today),
-            Transactions(20.00, categories[7], "", today),
-            Transactions(20.00, categories[7], "", today)
+            Transactions(
+                20.00,
+                categories[0],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[0].categoryType
+            ),
+            Transactions(
+                20.00,
+                categories[1],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[1].categoryType
+            ),
+            Transactions(
+                20.00,
+                categories[2],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[2].categoryType
+            ),
+            Transactions(
+                20.00,
+                categories[3],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[0].categoryType
+            ),
+            Transactions(
+                20.00,
+                categories[4],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[0].categoryType
+            ),
+            Transactions(
+                20.00,
+                categories[5],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[0].categoryType
+            ),
+            Transactions(
+                20.00,
+                categories[6],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[0].categoryType
+            ),
+            Transactions(
+                20.00,
+                categories[7],
+                "",
+                formatDate(Date(2023, 3, 25, 5, 20, 50)),
+                categories[0].categoryType
+            ),
+            Transactions(20.00, categories[0], "", today, categories[0].categoryType),
+            Transactions(20.00, categories[2], "", today, categories[0].categoryType),
+            Transactions(20.00, categories[7], "", today, categories[0].categoryType),
+            Transactions(20.00, categories[7], "", today, categories[0].categoryType),
+            Transactions(20.00, categories[7], "", today, categories[0].categoryType),
+            Transactions(20.00, categories[7], "", today, categories[0].categoryType),
+            Transactions(20.00, categories[7], "", today, categories[0].categoryType)
         )
 
         for (transaction in transactionsRecord) {
