@@ -85,6 +85,8 @@ class CategoryViewModel : ViewModel() {
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error getting documents", e)
             }
+
+
     }
 
     private fun uploadImageToStorage(imageUri: Uri, context: Context, onComplete: (Uri?) -> Unit) {
@@ -116,6 +118,7 @@ class CategoryViewModel : ViewModel() {
             uploadImageToStorage(imageUri, context) { downloadUri ->
                 category.imageUri = downloadUri
                 addCategoryToFirestore(category)
+
             }
         } else {
             addCategoryToFirestore(category)
@@ -138,7 +141,7 @@ suspend fun readCategoriesFromDatabase(userId: String): Pair<List<Category>, Lis
 
             val imageUri = imageUriString?.let { Uri.parse(it) }
 
-            val category = Category(imageUri, categoryName, categoryType )
+            val category = Category(imageUri, categoryName, categoryType)
             if (categoryType == "Expenses") {
                 expensesList.add(category)
             } else if (categoryType == "Incomes") {
