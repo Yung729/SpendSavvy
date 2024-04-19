@@ -42,7 +42,6 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 @Composable
 fun OverviewScreen(modifier: Modifier = Modifier) {
 
-
     Column(
         modifier = modifier
     ) {
@@ -106,6 +105,7 @@ fun OverviewScreen(modifier: Modifier = Modifier) {
         TransactionList(TransactionData().loadTodayTransactions())
 
     }
+
 }
 
 @Composable
@@ -223,7 +223,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
                 )
 
                 Text(
-                    text = transactions.date.toString(),
+                    text = transactions.date,
                     fontSize = 10.sp
                 )
             }

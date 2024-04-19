@@ -29,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.HeaderTopBar
+import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
@@ -169,7 +170,7 @@ fun TabsNavGraph() {
 
                     FloatingActionButton(
                         onClick = {
-                            // Handle expenses action
+                            navController.navigate(Screen.AddExpenses.route)
                         },
                         modifier = Modifier
                             .size(55.dp)
@@ -360,6 +361,16 @@ fun TabsNavGraph() {
                 route = Screen.HelpAndSupport.route
             ) {
                 HelpAndSupport(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
+            composable(
+                route = Screen.AddExpenses.route
+            ) {
+                AddExpensesScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),
