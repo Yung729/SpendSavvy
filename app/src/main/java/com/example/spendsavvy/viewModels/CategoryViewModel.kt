@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.models.Category
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -81,6 +82,51 @@ class CategoryViewModel : ViewModel() {
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error writing document", e)
                     }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error getting documents", e)
+            }
+
+
+    }
+
+    private fun initializeCategoryToFirestore() {
+        val categoryData = CategoryData().loadCategory()
+        val documentRef = firestore.collection("Users").document(userId).collection("Categories")
+
+        documentRef
+            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                var latestId = 0
+
+                // If there are documents, parse the latest ID
+                if (!querySnapshot.isEmpty) {
+                    val latestDocument = querySnapshot.documents[0]
+                    val latestDocumentId = latestDocument.id
+                    // Extract the numeric part of the document ID
+                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
+                }
+
+                for (category in categoryData) {
+                    // Generate the new document ID
+                    val newId = "CT${"%04d".format(latestId + 1)}"
+
+                    // Create a new document reference with the generated ID
+                    val newDocumentRef = documentRef.document(newId)
+
+                    // Set the category data for the new document
+                    newDocumentRef.set(category)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Category successfully written to Firestore: $newId")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(TAG, "Error writing category to Firestore: $newId", e)
+                        }
+
+                    latestId++ // Increment latestId for the next category
+                }
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error getting documents", e)

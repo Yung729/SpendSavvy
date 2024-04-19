@@ -13,8 +13,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -93,6 +96,9 @@ fun TabsNavGraph() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
+    val showOption = remember { mutableStateOf(false) }
+
+
     Scaffold(
         topBar = {
 
@@ -146,7 +152,7 @@ fun TabsNavGraph() {
             if (currentScreenName == Screen.Overview.route) {
                 FloatingActionButton(
                     onClick = {
-
+                        showOption.value = !showOption.value
                     },
                     modifier = Modifier
                         .size(55.dp)
@@ -157,6 +163,35 @@ fun TabsNavGraph() {
                         contentDescription = "Add"
                     )
                 }
+
+                if (showOption.value) {
+                    val buttonOffset = 70.dp
+
+                    FloatingActionButton(
+                        onClick = {
+                            // Handle expenses action
+                        },
+                        modifier = Modifier
+                            .size(55.dp)
+                            .offset(y = 50.dp - buttonOffset, x = (-30).dp)
+                            .padding(2.dp)
+                    ) {
+                        Text(text = "Expense")
+                    }
+
+                    FloatingActionButton(
+                        onClick = {
+                            // Handle income action
+                        },
+                        modifier = Modifier
+                            .size(55.dp)
+                            .offset(y = 50.dp - buttonOffset, x = 30.dp)
+                            .padding(2.dp)
+                    ) {
+                        Text(text = "Income")
+                    }
+                }
+
             }
         },
         floatingActionButtonPosition = FabPosition.Center
