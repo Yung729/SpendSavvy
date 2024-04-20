@@ -20,10 +20,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -31,37 +32,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.spendsavvy.R
-import com.example.spendsavvy.data.TransactionData
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.OverviewViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OverviewScreen(modifier: Modifier = Modifier) {
+fun OverviewScreen(
+    modifier: Modifier = Modifier,
+    transactionViewModel: OverviewViewModel = viewModel()
+) {
+
+    val transactionList by transactionViewModel.transactionsList.collectAsState()
+
 
     Column(
         modifier = modifier
     ) {
 
-        /*Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            HeaderTitle(text = "Overview")
-
-            Icon(
-                Icons.Default.Notifications,
-                contentDescription = "Notifications",
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-        }*/
-
-
         Text(
-            text = "Hi, User",
+            text = "Hi, User", //current User
             fontFamily = poppinsFontFamily,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
@@ -84,12 +80,13 @@ fun OverviewScreen(modifier: Modifier = Modifier) {
                 color = HeaderTitle
             )
 
-            ClickableText(text = AnnotatedString("See All"),
+            ClickableText(
+                text = AnnotatedString("See All"),
                 onHover = {
 
                 },
                 onClick = {
-
+                    //Show All
                 },
                 modifier = Modifier.align(Alignment.CenterVertically),
                 style = TextStyle(
@@ -102,7 +99,7 @@ fun OverviewScreen(modifier: Modifier = Modifier) {
 
         }
 
-        TransactionList(TransactionData().loadTodayTransactions())
+        TransactionList(transactionList)
 
     }
 
@@ -189,6 +186,9 @@ fun OverViewCard() {
 @Composable
 fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) {
 
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -206,7 +206,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.wallet),
+                painter = rememberAsyncImagePainter(model = transactions.category.imageUri),
                 contentDescription = "",
                 modifier = Modifier
                     .size(30.dp, 30.dp)
@@ -223,7 +223,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
                 )
 
                 Text(
-                    text = transactions.date,
+                    text = dateFormat.format(transactions.date),
                     fontSize = 10.sp
                 )
             }
@@ -233,7 +233,7 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
                 text = transactions.amount.toString(),
                 fontWeight = FontWeight.SemiBold,
                 color =
-                if (transactions.category.categoryType == "Expenses") Color.Red else Color.Green,
+                if (transactions.transactionType == "Expenses") Color.Red else Color.Green,
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .fillMaxWidth()

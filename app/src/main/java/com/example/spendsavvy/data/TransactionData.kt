@@ -19,7 +19,7 @@ class TransactionData {
 
         val todayTransactions = mutableListOf<Transactions>()
 
-        val transactionsRecord = listOf<Transactions>(
+       /* val transactionsRecord = listOf<Transactions>(
             Transactions(
                 20.00,
                 categories[0],
@@ -89,7 +89,7 @@ class TransactionData {
             if (transaction.date == today) {
                 todayTransactions.add(transaction)
             }
-        }
+        }*/
 
         return todayTransactions
 

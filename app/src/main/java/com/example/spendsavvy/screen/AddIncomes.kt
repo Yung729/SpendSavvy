@@ -41,6 +41,10 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,8 +86,10 @@ fun AddIncomeScreen(
 
         val incomeList by catViewModel.incomeList.collectAsState()
 
+        val todayDate = Date()
         val calendarState = rememberSheetState()
-        val selectedDate = remember { mutableStateOf("") }
+        val selectedDate = remember { mutableStateOf<Date>(todayDate) }
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         CalendarDialog(
             state = calendarState,
@@ -93,12 +99,13 @@ fun AddIncomeScreen(
                 style = CalendarStyle.MONTH
             ),
             selection = CalendarSelection.Date { date ->
-                selectedDate.value = date.toString()
+                val selectedDateValue = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                selectedDate.value = selectedDateValue
             })
 
 
         OutlinedButton(onClick = { calendarState.show() }) {
-            Text(text = selectedDate.value.ifEmpty { "Select Date" })
+            Text(text = selectedDate.value.let { dateFormat.format(it) } ?: "Select Date")
         }
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -239,7 +246,7 @@ fun AddIncomeScreen(
                     Transactions(
                         amount = amount.toDoubleOrNull() ?: 0.0,
                         description = description,
-                        date = selectedDate.toString(),
+                        date = selectedDate.value,
                         category = selectedCategory,
                         transactionType = "Incomes"
                     )
