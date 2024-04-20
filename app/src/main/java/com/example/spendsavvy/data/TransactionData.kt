@@ -7,19 +7,16 @@ import java.util.Locale
 
 
 class TransactionData {
-    private fun formatDate(date: Date): String {
-        val dataFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
-        return dataFormat.format(date)
-    }
 
-    fun loadTodayTransactions(): List<Transactions> {
+
+    /*fun loadTodayTransactions(): List<Transactions> {
         val categories = CategoryData().loadCategory()
         val today = formatDate(Date())
 
 
         val todayTransactions = mutableListOf<Transactions>()
 
-       /* val transactionsRecord = listOf<Transactions>(
+       *//* val transactionsRecord = listOf<Transactions>(
             Transactions(
                 20.00,
                 categories[0],
@@ -89,10 +86,10 @@ class TransactionData {
             if (transaction.date == today) {
                 todayTransactions.add(transaction)
             }
-        }*/
+        }*//*
 
         return todayTransactions
 
 
-    }
+    }*/
 }
