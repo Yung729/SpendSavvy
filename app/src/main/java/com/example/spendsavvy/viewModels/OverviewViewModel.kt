@@ -3,6 +3,7 @@ package com.example.spendsavvy.viewModels
 import android.content.ContentValues
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.models.Category
@@ -20,13 +21,13 @@ class OverviewViewModel : ViewModel() {
 
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
-    val transactionsList = MutableStateFlow<List<Transactions>>(emptyList())
+    val transactionsList = MutableLiveData<List<Transactions>>(emptyList())
 
     private fun getTransactionRecord() {
         viewModelScope.launch {
             try {
                 val transactions = readTransactionFromDatabase(userId)
-                transactionsList.value = transactions
+                transactionsList.postValue(transactions)
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error getting transactions", e)
             }
@@ -64,6 +65,7 @@ class OverviewViewModel : ViewModel() {
                 transactionsCollectionRef.document(newTransactionId).set(transaction)
                     .addOnSuccessListener {
                         Log.d(ContentValues.TAG, "Transaction added successfully")
+                        getTransactionRecord()
                     }
                     .addOnFailureListener { e ->
                         Log.w(ContentValues.TAG, "Error adding transaction", e)

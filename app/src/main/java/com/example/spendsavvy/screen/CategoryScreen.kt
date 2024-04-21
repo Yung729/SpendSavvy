@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -76,8 +77,10 @@ fun CategoryScreen(
     }
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    val expenseList by catViewModel.expensesList.collectAsState()
-    val incomeList by catViewModel.incomeList.collectAsState()
+    val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
+    val incomeList by catViewModel.incomeList.observeAsState(initial = emptyList())
+
+
 
 
     Column(modifier = modifier) {

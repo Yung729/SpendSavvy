@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.data.CategoryData
@@ -23,8 +24,8 @@ class CategoryViewModel : ViewModel() {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    val expensesList = MutableStateFlow<List<Category>>(emptyList())
-    val incomeList = MutableStateFlow<List<Category>>(emptyList())
+    val expensesList = MutableLiveData<List<Category>>()
+    val incomeList = MutableLiveData<List<Category>>()
 
 
     private val storage = FirebaseStorage.getInstance()
@@ -36,8 +37,8 @@ class CategoryViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val (expenses, income) = readCategoriesFromDatabase(userId)
-                expensesList.value = expenses
-                incomeList.value = income
+                expensesList.postValue(expenses)
+                incomeList.postValue(income)
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
             }
@@ -78,6 +79,7 @@ class CategoryViewModel : ViewModel() {
                 newDocumentRef.set(category)
                     .addOnSuccessListener {
                         Log.d(TAG, "DocumentSnapshot successfully written with ID: $newId")
+                        getCategoriesList()
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error writing document", e)
