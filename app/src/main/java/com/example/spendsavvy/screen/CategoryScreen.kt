@@ -37,7 +37,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -66,8 +65,7 @@ import com.example.spendsavvy.viewModels.CategoryViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
-    modifier: Modifier = Modifier,
-    catViewModel: CategoryViewModel = viewModel()
+    modifier: Modifier = Modifier, catViewModel: CategoryViewModel = viewModel()
 ) {
 
 
@@ -144,8 +142,7 @@ fun CategoryScreen(
 
     if (openAlertDialog.value) {
         AddCatPopUpScreen(
-            onDismissRequest = { openAlertDialog.value = false },
-            catViewModel = catViewModel
+            onDismissRequest = { openAlertDialog.value = false }, catViewModel = catViewModel
         )
     }
 
@@ -156,8 +153,7 @@ fun CategoryScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun AddCatPopUpScreen(
-    onDismissRequest: () -> Unit,
-    catViewModel: CategoryViewModel
+    onDismissRequest: () -> Unit, catViewModel: CategoryViewModel
 ) {
     val options = mutableStateListOf("Expenses", "Income")
     var selectedIndex by remember {
@@ -173,11 +169,11 @@ fun AddCatPopUpScreen(
     var error by remember { mutableStateOf(false) }
 
 
-    val photoPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = {
-                selectedImageUri = it
-            })
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectedImageUri = it
+        })
 
 
 
@@ -193,8 +189,7 @@ fun AddCatPopUpScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Row(
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()
             ) {
                 IconButton(onClick = { onDismissRequest() }) {
                     Icon(
@@ -256,8 +251,7 @@ fun AddCatPopUpScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Image added",
-                            color = Color.Green
+                            text = "Image added", color = Color.Green
                         )
                         IconButton(
                             onClick = { selectedImageUri = null },
@@ -324,9 +318,7 @@ fun AddCatPopUpScreen(
                                     imageUri = selectedImageUri,
                                     categoryName = categoryName,
                                     categoryType = categoryType
-                                ),
-                                selectedImageUri,
-                                context
+                                ), selectedImageUri, context
                             )
                             onDismissRequest()
                         } else {
@@ -343,9 +335,7 @@ fun AddCatPopUpScreen(
                     )
                 ) {
                     Text(
-                        text = "Add",
-                        textAlign = TextAlign.Center,
-                        color = Color.White
+                        text = "Add", textAlign = TextAlign.Center, color = Color.White
                     )
                 }
 

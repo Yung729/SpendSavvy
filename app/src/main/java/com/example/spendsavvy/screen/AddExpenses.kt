@@ -16,7 +16,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -100,7 +99,8 @@ fun AddExpensesScreen(
                 style = CalendarStyle.MONTH
             ),
             selection = CalendarSelection.Date { date ->
-                val selectedDateValue = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                val selectedDateValue =
+                    Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
                 selectedDate.value = selectedDateValue
             })
 
