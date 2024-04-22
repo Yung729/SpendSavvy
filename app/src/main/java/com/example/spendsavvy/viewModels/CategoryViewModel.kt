@@ -8,9 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendsavvy.dao.CategoryDao
 import com.example.spendsavvy.data.CategoryData
-import com.example.spendsavvy.db.DatabaseProvider
 import com.example.spendsavvy.models.Category
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,7 +25,6 @@ class CategoryViewModel : ViewModel() {
 
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
-
 
     private val storage = FirebaseStorage.getInstance()
     private val storageRef = storage.reference
@@ -93,7 +90,7 @@ class CategoryViewModel : ViewModel() {
 
     }
 
-    public fun deleteCategoryFromFirestore(categoryName : String){
+    public fun deleteCategoryFromFirestore(categoryName: String) {
         val documentRef = firestore.collection("Users").document(userId).collection("Categories")
 
         documentRef.whereEqualTo("categoryName", categoryName)
@@ -103,7 +100,10 @@ class CategoryViewModel : ViewModel() {
                     // Delete the document using its ID
                     document.reference.delete()
                         .addOnSuccessListener {
-                            Log.d(TAG, "Category successfully deleted from Firestore: $categoryName")
+                            Log.d(
+                                TAG,
+                                "Category successfully deleted from Firestore: $categoryName"
+                            )
                         }
                         .addOnFailureListener { e ->
                             Log.d(TAG, "Error deleting category from Firestore: $e")
@@ -113,8 +113,6 @@ class CategoryViewModel : ViewModel() {
             .addOnFailureListener { e ->
                 Log.d(TAG, "Error querying category in Firestore: $e")
             }
-
-
 
 
     }
@@ -216,7 +214,11 @@ suspend fun readCategoriesFromDatabase(userId: String): Pair<List<Category>, Lis
 
             val imageUri = imageUriString?.let { Uri.parse(it) }
 
-            val category = Category(imageUri = imageUri, categoryName =  categoryName, categoryType =  categoryType)
+            val category = Category(
+                imageUri = imageUri,
+                categoryName = categoryName,
+                categoryType = categoryType
+            )
             if (categoryType == "Expenses") {
                 expensesList.add(category)
             } else if (categoryType == "Incomes") {
