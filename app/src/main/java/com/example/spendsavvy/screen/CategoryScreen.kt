@@ -5,12 +5,16 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,9 +24,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,8 +49,8 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +58,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -62,11 +75,10 @@ import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.viewModels.CategoryViewModel
 
 @SuppressLint("UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun CategoryScreen(
-    modifier: Modifier = Modifier,
-    catViewModel: CategoryViewModel = viewModel()
+    modifier: Modifier = Modifier, catViewModel: CategoryViewModel = viewModel()
 ) {
 
 
@@ -76,8 +88,10 @@ fun CategoryScreen(
     }
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    val expenseList by catViewModel.expensesList.collectAsState()
-    val incomeList by catViewModel.incomeList.collectAsState()
+    val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
+    val incomeList by catViewModel.incomeList.observeAsState(initial = emptyList())
+
+
 
 
     Column(modifier = modifier) {
@@ -103,11 +117,15 @@ fun CategoryScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
 
+
             if (selectedIndex == 0) {
                 CategoryList(categoryList = expenseList)
             } else if (selectedIndex == 1) {
                 CategoryList(categoryList = incomeList)
             }
+
+
+
 
 
             Box(
@@ -141,31 +159,38 @@ fun CategoryScreen(
 
     if (openAlertDialog.value) {
         AddCatPopUpScreen(
-            onDismissRequest = { openAlertDialog.value = false },
-            catViewModel = catViewModel
+            onDismissRequest = { openAlertDialog.value = false }, catViewModel = catViewModel
         )
     }
 
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun AddCatPopUpScreen(
-    onDismissRequest: () -> Unit,
-    catViewModel: CategoryViewModel
+    onDismissRequest: () -> Unit, catViewModel: CategoryViewModel
 ) {
+    val options = mutableStateListOf("Expenses", "Income")
+    var selectedIndex by remember {
+        mutableIntStateOf(0)
+    }
+
     val context = LocalContext.current
     var categoryType by remember { mutableStateOf("") }
     var categoryName by remember { mutableStateOf("") }
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
+    var error by remember { mutableStateOf(false) }
 
-    val photoPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = {
-                selectedImageUri = it
-            })
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectedImageUri = it
+        })
 
 
 
@@ -181,8 +206,7 @@ fun AddCatPopUpScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Row(
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()
             ) {
                 IconButton(onClick = { onDismissRequest() }) {
                     Icon(
@@ -244,8 +268,7 @@ fun AddCatPopUpScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Image added",
-                            color = Color.Green
+                            text = "Image added", color = Color.Green
                         )
                         IconButton(
                             onClick = { selectedImageUri = null },
@@ -274,29 +297,51 @@ fun AddCatPopUpScreen(
                     singleLine = true,
                 )
 
-                OutlinedTextField(
-                    value = categoryType,
-                    onValueChange = { categoryType = it },
-                    label = { Text(text = "Category Type") },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp, top = 10.dp),
-                    shape = RoundedCornerShape(15.dp),
-                    singleLine = true,
-                )
+                Spacer(modifier = Modifier.height(8.dp))
 
+                Row(
+                    horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+                ) {
+                    SingleChoiceSegmentedButtonRow {
+                        options.forEachIndexed { index, option ->
+                            SegmentedButton(
+                                selected = selectedIndex == index,
+                                onClick = { selectedIndex = index },
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index, count = options.size
+                                )
+                            ) {
+                                Text(text = option)
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                categoryType = if (selectedIndex == 0) {
+                    "Expenses"
+                } else {
+                    "Incomes"
+                }
 
 
                 Button(
                     onClick = {
-                        catViewModel.addCategoryToDatabase(
-                            Category(
-                                imageUri = selectedImageUri,
-                                categoryName = categoryName,
-                                isExpenses = categoryType == "Expenses"
-                            ), selectedImageUri, context
-                        )
+                        if (selectedImageUri != null && categoryName.isNotEmpty()) {
+                            // If all fields have data, add the category
+                            catViewModel.addCategoryToDatabase(
+                                Category(
+                                    imageUri = selectedImageUri,
+                                    categoryName = categoryName,
+                                    categoryType = categoryType
+                                ), selectedImageUri, context
+                            )
+                            onDismissRequest()
+                        } else {
+                            // If any field is empty, show error
+                            error = true
+                        }
 
                     },
                     modifier = Modifier
@@ -307,9 +352,16 @@ fun AddCatPopUpScreen(
                     )
                 ) {
                     Text(
-                        text = "Add",
+                        text = "Add", textAlign = TextAlign.Center, color = Color.White
+                    )
+                }
+
+                if (error) {
+                    Text(
+                        text = "All fields are required",
+                        color = Color.Red,
                         textAlign = TextAlign.Center,
-                        color = Color.White
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
 
@@ -320,48 +372,61 @@ fun AddCatPopUpScreen(
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryCard(
     category: Category, modifier: Modifier = Modifier,
 ) {
+    val catViewModel: CategoryViewModel = viewModel()
+
+    val dismissState = rememberDismissState()
+    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+        catViewModel.deleteCategoryFromFirestore(category.categoryName)
+    }
+    if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
 
 
-    Card(
-        modifier = modifier, colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        ), border = BorderStroke(width = 1.dp, Color.Black)
-    ) {
+        SwipeToDeleteItem(state = dismissState) {
 
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-
-        ) {
-
-            Image(
-                painter = rememberAsyncImagePainter(model = category.imageUri),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(30.dp, 30.dp)
-                    .padding(end = 10.dp)
-            )
-
-            Column(
-                horizontalAlignment = Alignment.Start, modifier = Modifier
+            Card(
+                modifier = modifier, colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ), border = BorderStroke(width = 1.dp, Color.Black)
             ) {
-                Text(
-                    text = category.categoryName, fontWeight = FontWeight.SemiBold
-                )
 
+                Row(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+
+                ) {
+
+                    Image(
+                        painter = rememberAsyncImagePainter(model = category.imageUri),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(30.dp, 30.dp)
+                            .padding(end = 10.dp)
+                    )
+
+                    Column(
+                        horizontalAlignment = Alignment.Start, modifier = Modifier
+                    ) {
+                        Text(
+                            text = category.categoryName, fontWeight = FontWeight.SemiBold
+                        )
+
+
+                    }
+
+
+                }
 
             }
-
-
         }
-
     }
+
 }
 
 @Composable
@@ -377,6 +442,52 @@ fun CategoryList(categoryList: List<Category>, modifier: Modifier = Modifier) {
     }
 }
 
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SwipeToDeleteItem(
+    state: DismissState,
+    content: @Composable RowScope.() -> Unit
+) {
+    SwipeToDismiss(
+        state = state,
+        directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
+        dismissThresholds = { direction ->
+            FractionalThreshold(if (direction == DismissDirection.StartToEnd) 0.25f else 0.5f)
+        },
+        background = {
+            val direction = state.dismissDirection ?: return@SwipeToDismiss
+            val color by animateColorAsState(
+                when (state.targetValue) {
+                    DismissValue.Default -> Color.LightGray.copy(alpha = 0.5f)
+                    else -> Color.Red
+                }
+            )
+            val alignment = when (direction) {
+                DismissDirection.StartToEnd -> Alignment.CenterStart
+                DismissDirection.EndToStart -> Alignment.CenterEnd
+            }
+            val scale by animateFloatAsState(
+                if (state.targetValue == DismissValue.Default) 0.75f else 1f
+            )
+
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(color)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = alignment
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Remove item",
+                    modifier = Modifier.scale(scale)
+                )
+            }
+        },
+        dismissContent = content
+    )
+}
 
 @Preview(showBackground = true)
 @Composable

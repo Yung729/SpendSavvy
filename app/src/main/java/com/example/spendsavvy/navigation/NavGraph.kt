@@ -9,13 +9,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -26,6 +32,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.HeaderTopBar
+import com.example.spendsavvy.screen.AddExpensesScreen
+import com.example.spendsavvy.screen.AddIncomeScreen
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
@@ -36,7 +44,6 @@ import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
 import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.ManageBillsAndInstalment
-import com.example.spendsavvy.screen.ManageCategory
 import com.example.spendsavvy.screen.MyProfileScreen
 import com.example.spendsavvy.screen.Notification
 import com.example.spendsavvy.screen.OverviewScreen
@@ -45,6 +52,7 @@ import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.WalletScreen
+import com.example.spendsavvy.ui.theme.ButtonColor
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -93,6 +101,9 @@ fun TabsNavGraph() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
+
+    val showOption = remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -144,20 +155,61 @@ fun TabsNavGraph() {
         },
         floatingActionButton = {
 
+
             if (currentScreenName == Screen.Overview.route) {
+
                 FloatingActionButton(
                     onClick = {
-
+                        showOption.value = !showOption.value
                     },
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                    containerColor = ButtonColor,
+                    contentColor = Color.White,
                     modifier = Modifier
-                        .size(55.dp)
                         .offset(y = 50.dp)
+                        .offset(x = 0.dp)
+                        .size(50.dp)
+
                 ) {
                     Icon(
                         Icons.Default.Add,
                         contentDescription = "Add"
                     )
                 }
+
+                if (showOption.value) {
+
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(Screen.AddExpenses.route)
+                        },
+                        modifier = Modifier
+                            .size(95.dp, 55.dp)
+                            .offset(y = 0.dp)
+                            .offset(x = (-65).dp), // Position to the left of the main FAB
+                        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                        containerColor = ButtonColor,
+                        contentColor = Color.White
+                    ) {
+                        Text(text = "Expense")
+                    }
+
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(Screen.AddIncomes.route)
+                        },
+                        modifier = Modifier
+                            .size(95.dp, 55.dp)
+                            .offset(y = 0.dp)
+                            .offset(x = 65.dp), // Position to the right of the main FAB
+                        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                        containerColor = ButtonColor,
+                        contentColor = Color.White
+                    ) {
+                        Text(text = "Income")
+                    }
+                }
+
             }
         },
         floatingActionButtonPosition = FabPosition.Center
@@ -171,6 +223,11 @@ fun TabsNavGraph() {
         ) {
 
             composable(route = Screen.Overview.route) {
+                DisposableEffect(Unit) {
+
+                    onDispose { showOption.value = false }
+                }
+
                 OverviewScreen(
                     modifier = Modifier
                         .fillMaxSize()
@@ -298,16 +355,7 @@ fun TabsNavGraph() {
                     navController = navController
                 )
             }
-            composable(
-                route = Screen.ManageCategory.route
-            ) {
-                ManageCategory(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
-                )
-            }
+
 
             composable(
                 route = Screen.Notifications.route
@@ -335,6 +383,27 @@ fun TabsNavGraph() {
                 route = Screen.HelpAndSupport.route
             ) {
                 HelpAndSupport(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
+            composable(
+                route = Screen.AddExpenses.route
+            ) {
+                AddExpensesScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    navController = navController
+                )
+            }
+
+            composable(
+                route = Screen.AddIncomes.route
+            ) {
+                AddIncomeScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),

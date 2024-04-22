@@ -128,7 +128,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                 R.drawable.category_icon,
                 "Manage Category",
                 navController,
-                Screen.ManageCategory.route
+                Screen.Category.route
             )
         }
 

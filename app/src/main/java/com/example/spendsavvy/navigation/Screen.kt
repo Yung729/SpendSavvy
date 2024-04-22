@@ -12,7 +12,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Settings : Screen(route = "Settings", R.drawable.settings_icon)
     object Analysis : Screen(route = "Analysis", R.drawable.analysis_icon)
     object Stock : Screen(route = "Stock", R.drawable.bar_chart)
-    object Category : Screen(route = "Category", R.drawable.bar_chart)
+    object Category : Screen(route = "Category", R.drawable.category_icon)
     object MainScreen : Screen(route = "EnterMainScreen", R.drawable.bar_chart)
 
     object ChangeProfile : Screen(route = "Edit Profile", R.drawable.edit_profile_icon)
@@ -26,7 +26,8 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object HelpAndSupport : Screen(route = "Help And Support", R.drawable.help_icon)
     object ManageBillsAndInstalment : Screen(route = "Bills & Instalment", R.drawable.bills_icon)
     object TaxCalculator : Screen(route = "Tax Calculator", R.drawable.calculator_icon)
-    object ManageCategory : Screen(route = "Manage Category", R.drawable.category_icon)
+    object AddExpenses : Screen(route = "Expenses", R.drawable.calculator_icon)
+    object AddIncomes : Screen(route = "Incomes", R.drawable.calculator_icon)
 
 
 

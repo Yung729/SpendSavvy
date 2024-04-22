@@ -7,6 +7,6 @@ import java.io.Serializable
 data class Category(
     var imageUri: Uri? = null,
     var categoryName: String = "",
-    var isExpenses: Boolean = true
+    var categoryType: String = ""
 ) : Serializable{
 }
