@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -20,10 +21,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -33,7 +33,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.screen.AddExpensesScreen
-import com.example.spendsavvy.screen.AddIncomePreview
 import com.example.spendsavvy.screen.AddIncomeScreen
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.CategoryScreen
@@ -53,6 +52,7 @@ import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.WalletScreen
+import com.example.spendsavvy.ui.theme.ButtonColor
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -155,14 +155,21 @@ fun TabsNavGraph() {
         },
         floatingActionButton = {
 
+
             if (currentScreenName == Screen.Overview.route) {
+
                 FloatingActionButton(
                     onClick = {
                         showOption.value = !showOption.value
                     },
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                    containerColor = ButtonColor,
+                    contentColor = Color.White,
                     modifier = Modifier
-                        .size(55.dp)
                         .offset(y = 50.dp)
+                        .offset(x = 0.dp)
+                        .size(50.dp)
+
                 ) {
                     Icon(
                         Icons.Default.Add,
@@ -171,16 +178,18 @@ fun TabsNavGraph() {
                 }
 
                 if (showOption.value) {
-                    val buttonOffset = 70.dp
 
                     FloatingActionButton(
                         onClick = {
                             navController.navigate(Screen.AddExpenses.route)
                         },
                         modifier = Modifier
-                            .size(55.dp)
-                            .offset(y = 50.dp - buttonOffset, x = (-30).dp)
-                            .padding(2.dp)
+                            .size(95.dp, 55.dp)
+                            .offset(y = 0.dp)
+                            .offset(x = (-65).dp), // Position to the left of the main FAB
+                        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                        containerColor = ButtonColor,
+                        contentColor = Color.White
                     ) {
                         Text(text = "Expense")
                     }
@@ -190,9 +199,12 @@ fun TabsNavGraph() {
                             navController.navigate(Screen.AddIncomes.route)
                         },
                         modifier = Modifier
-                            .size(55.dp)
-                            .offset(y = 50.dp - buttonOffset, x = 30.dp)
-                            .padding(2.dp)
+                            .size(95.dp, 55.dp)
+                            .offset(y = 0.dp)
+                            .offset(x = 65.dp), // Position to the right of the main FAB
+                        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                        containerColor = ButtonColor,
+                        contentColor = Color.White
                     ) {
                         Text(text = "Income")
                     }
@@ -211,6 +223,11 @@ fun TabsNavGraph() {
         ) {
 
             composable(route = Screen.Overview.route) {
+                DisposableEffect(Unit) {
+
+                    onDispose { showOption.value = false }
+                }
+
                 OverviewScreen(
                     modifier = Modifier
                         .fillMaxSize()

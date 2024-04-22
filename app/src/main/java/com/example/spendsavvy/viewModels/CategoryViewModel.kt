@@ -91,6 +91,32 @@ class CategoryViewModel : ViewModel() {
 
     }
 
+    public fun deleteCategoryFromFirestore(categoryName : String){
+        val documentRef = firestore.collection("Users").document(userId).collection("Categories")
+
+        documentRef.whereEqualTo("categoryName", categoryName)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    // Delete the document using its ID
+                    document.reference.delete()
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Category successfully deleted from Firestore: $categoryName")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.d(TAG, "Error deleting category from Firestore: $e")
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "Error querying category in Firestore: $e")
+            }
+
+
+
+
+    }
+
     private fun initializeCategoryToFirestore() {
         val categoryData = CategoryData().loadCategory()
         val documentRef = firestore.collection("Users").document(userId).collection("Categories")

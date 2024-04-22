@@ -23,7 +23,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,7 +37,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.bounceClick
-import com.example.spendsavvy.navigation.Screen
 
 
 @Composable
@@ -68,16 +66,16 @@ fun AnalysisScreen(modifier: Modifier = Modifier, navController: NavController) 
 
         PieChart(
             data = mapOf(
-                Pair("Income-1", 150),
-                Pair("Sample-2", 120),
+                Pair("Expenses-1", 150),
+                Pair("Expenses-2", 120),
                 Pair("Sample-3", 110),
                 Pair("Sample-4", 170),
                 Pair("Sample-5", 120),
             )
         )
 
-        if (openPopUp.value){
-            BudgetAddScreen(onDismissRequest = {openPopUp.value = false})
+        if (openPopUp.value) {
+            BudgetAddScreen(onDismissRequest = { openPopUp.value = false })
         }
     }
 }
@@ -89,7 +87,7 @@ fun BudgetAddScreen(
 
 
     var budgetAmountText by remember { mutableStateOf("0") }
-    var budgetAmount : Double = budgetAmountText.toDoubleOrNull() ?: 0.0
+    var budgetAmount: Double = budgetAmountText.toDoubleOrNull() ?: 0.0
 
 
     Dialog(
