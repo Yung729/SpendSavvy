@@ -17,7 +17,7 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE categoryType = 'Expenses'")
     suspend fun getExpenses(): List<Category>
 
-    @Query("SELECT * FROM categories WHERE categoryType = 'Income'")
+    @Query("SELECT * FROM categories WHERE categoryType = 'Incomes'")
     suspend fun getIncome(): List<Category>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

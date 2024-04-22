@@ -7,8 +7,6 @@ import java.io.Serializable
 
 @Entity(tableName = "categories")
 data class Category(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
     var imageUri: Uri? = null,
     var categoryName: String = "",
     var categoryType: String = ""
