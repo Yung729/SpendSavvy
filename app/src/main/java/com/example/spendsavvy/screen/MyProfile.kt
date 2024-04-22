@@ -80,7 +80,6 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController)
                 UserInfoRow(label = "User Name", data ="XXXXXX")
                 UserInfoRow(label = "Email", data ="XXXXXX")
                 UserInfoRow(label = "Phone Number", data ="XXXXXX")
-                UserInfoRow(label = "Address", data ="XXXXXX")
             }
     }
 }
