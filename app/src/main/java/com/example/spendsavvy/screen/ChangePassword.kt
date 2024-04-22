@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -215,7 +216,7 @@ fun PasswordTextField(
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
         )
-        TextField(
+        OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             textStyle = TextStyle(color = Color.Gray, fontSize = 20.sp),

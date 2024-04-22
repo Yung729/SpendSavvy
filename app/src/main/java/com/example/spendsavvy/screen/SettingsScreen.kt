@@ -2,6 +2,7 @@ package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,12 +58,16 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(R.drawable.add_image_icon),
+                    painter = painterResource(id = R.drawable.profile_icon),
                     contentDescription = "User profile image",
                     modifier = Modifier
-                        .size(125.dp)
+                        .size(150.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray),
+                        .border(
+                            width = 1.dp,
+                            color = Color.Gray,
+                            shape = CircleShape
+                        )
                 )
                 Text(
                     text = "User name",
