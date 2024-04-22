@@ -335,7 +335,7 @@ fun AddCatPopUpScreen(
                                     imageUri = selectedImageUri,
                                     categoryName = categoryName,
                                     categoryType = categoryType
-                                ), selectedImageUri, context
+                                ), selectedImageUri
                             )
                             onDismissRequest()
                         } else {
@@ -381,7 +381,7 @@ fun CategoryCard(
 
     val dismissState = rememberDismissState()
     if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        catViewModel.deleteCategoryFromFirestore(category.categoryName)
+        catViewModel.deleteCategory(category.categoryName)
     }
     if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
 
