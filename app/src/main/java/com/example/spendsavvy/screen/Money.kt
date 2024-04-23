@@ -119,7 +119,15 @@ fun MoneyScreen(modifier: Modifier) {
         Spacer(modifier = Modifier.height(15.dp))
 
         Box(modifier = Modifier.fillMaxSize()) {
-            BankList(bankList = BankAccountData().loadBank())
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                BankList(bankList = BankAccountData().loadBank())
+
+                Button(onClick = { /*TODO*/ }) {
+                    Text(text = "Check")
+                }
+            }
 
             Box(
                 modifier = Modifier
@@ -374,6 +382,10 @@ fun MoneyPopUpScreen(
     }
 }
 
+@Composable
+fun BankDetails(modifier: Modifier = Modifier){
+
+}
 
 @Preview(showBackground = true)
 @Composable

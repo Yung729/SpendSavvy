@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.widget.HorizontalScrollView
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -93,6 +94,7 @@ fun FixedDepositScreen(modifier: Modifier, navController: NavController){
         Spacer(modifier = Modifier.height(15.dp))
 
         Box(modifier = Modifier.fillMaxSize()) {
+
             BankList(bankList = BankAccountData().loadBank())
 
             Box(
@@ -181,13 +183,20 @@ fun BankCard(bankAccount: BankAccount,modifier: Modifier){
 @Composable
 fun BankList(bankList: List<BankAccount>, modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
-        items(bankList) { item: BankAccount ->
-            BankCard(
-                bankAccount = item,
-                modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxWidth()
-            )
+        items(bankList) { bankAccount ->
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                BankCard(
+                    bankAccount = bankAccount,
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxWidth()
+                )
+
+
+            }
+
         }
     }
 }
@@ -411,6 +420,10 @@ fun FixedDepositPopUpScreen(
     }
 }
 
+@Composable
+fun FdDetails(){
+
+}
 
 @Composable
 @Preview(showBackground = true)

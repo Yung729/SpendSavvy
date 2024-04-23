@@ -132,7 +132,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                             inclusive = true
                         }
                     }
-
+                    
                 } else if (!task.isSuccessful) {
                     Toast.makeText(
                         context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT

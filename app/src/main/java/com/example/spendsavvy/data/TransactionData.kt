@@ -89,7 +89,11 @@ class TransactionData {
         }*//*
 
         return todayTransactions
+<<<<<<< Updated upstream
 
 
     }*/
+=======
+    }
+>>>>>>> Stashed changes
 }
