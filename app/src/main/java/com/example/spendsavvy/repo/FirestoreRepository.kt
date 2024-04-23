@@ -1,15 +1,17 @@
 package com.example.spendsavvy.repo
 
 
-
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
+import com.example.spendsavvy.models.Category
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
+import java.security.Timestamp
+import java.util.Date
 import java.util.UUID
 
 class FirestoreRepository {
@@ -127,7 +129,7 @@ class FirestoreRepository {
         collectionName: String,
         itemClass: Class<T>,
 
-    ): List<T> {
+        ): List<T> {
         val firestore = FirebaseFirestore.getInstance()
         val itemList = mutableListOf<T>()
 
@@ -140,18 +142,35 @@ class FirestoreRepository {
                 val item = itemClass.newInstance()
                 // Set the values of item fields
                 if (itemData != null) {
+
                     for ((fieldName, value) in itemData) {
                         try {
+
                             val field = itemClass.getDeclaredField(fieldName)
                             field.isAccessible = true
-                            if (fieldName == "imageUri") {
+
+                            // Check if the field is the category field
+                            if (fieldName == "category") {
+                                val categoryMap =
+                                    value as Map<String, Any> // Assuming the category is stored as a Map<String, Any>
+                                val category = Category(
+                                    categoryName = categoryMap["categoryName"] as? String ?: "",
+                                    categoryType = categoryMap["categoryType"] as? String ?: "",
+                                    imageUri = categoryMap["imageUri"]?.let { Uri.parse(it as String) }
+                                )
+                                field.set(item, category)
+                            } else if (fieldName == "imageUri") {
                                 val imageUriString = value as String
                                 val imageUri =
                                     if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
                                 field.set(item, imageUri)
+                            } else if (fieldName == "date") {
+                                val date = document.getDate("date") ?: Date()
+                                field.set(item, date)
                             } else {
                                 field.set(item, value)
                             }
+
                         } catch (e: NoSuchFieldException) {
                             Log.e(TAG, "Field '$fieldName' not found in $itemClass", e)
                         }
