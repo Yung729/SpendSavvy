@@ -16,6 +16,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -34,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
@@ -105,8 +109,11 @@ fun OverviewScreen(
 
 }
 
+
 @Composable
 fun OverViewCard() {
+
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = CardColor,
@@ -181,65 +188,78 @@ fun OverViewCard() {
             }
         }
     }
+
+
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) {
 
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val transactionViewModel: OverviewViewModel = viewModel()
 
+    val dismissState = rememberDismissState()
+    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+        transactionViewModel.deleteTransaction(transactions)
+    }
 
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        ),
-        border = BorderStroke(width = 1.dp, Color.Black)
-    ) {
+    if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
 
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-
-        ) {
-
-            Image(
-                painter = rememberAsyncImagePainter(model = transactions.category.imageUri),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(30.dp, 30.dp)
-                    .padding(end = 10.dp)
-            )
-
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier
+        SwipeToDeleteItem(state = dismissState) {
+            Card(
+                modifier = modifier,
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ),
+                border = BorderStroke(width = 1.dp, Color.Black)
             ) {
-                Text(
-                    text = transactions.category.categoryName,
-                    fontWeight = FontWeight.SemiBold
-                )
 
-                Text(
-                    text = dateFormat.format(transactions.date),
-                    fontSize = 10.sp
-                )
+                Row(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+
+                ) {
+
+                    Image(
+                        painter = rememberAsyncImagePainter(model = transactions.category.imageUri),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(30.dp, 30.dp)
+                            .padding(end = 10.dp)
+                    )
+
+                    Column(
+                        horizontalAlignment = Alignment.Start,
+                        modifier = Modifier
+                    ) {
+                        Text(
+                            text = transactions.category.categoryName,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Text(
+                            text = dateFormat.format(transactions.date),
+                            fontSize = 10.sp
+                        )
+                    }
+
+
+                    Text(
+                        text = transactions.amount.toString(),
+                        fontWeight = FontWeight.SemiBold,
+                        color =
+                        if (transactions.transactionType == "Expenses") Color.Red else Color.Green,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+
             }
-
-
-            Text(
-                text = transactions.amount.toString(),
-                fontWeight = FontWeight.SemiBold,
-                color =
-                if (transactions.transactionType == "Expenses") Color.Red else Color.Green,
-                textAlign = TextAlign.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
         }
-
     }
 }
 

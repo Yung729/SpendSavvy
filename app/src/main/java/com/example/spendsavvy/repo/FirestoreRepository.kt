@@ -70,7 +70,7 @@ class FirestoreRepository {
 
     }
 
-    fun deleteItemFromFirestore(
+    fun deleteItemFromFirestoreBySearhing(
         userId: String,
         collectionName: String,
         fieldName: String,
@@ -94,6 +94,22 @@ class FirestoreRepository {
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "Error querying document in Firestore: $e")
+            }
+    }
+
+    fun deleteItemFromFirestoreById(
+        userId: String,
+        collectionName: String,
+        documentId: String
+    ) {
+        val documentRef = firestore.collection("Users").document(userId).collection(collectionName).document(documentId)
+
+        documentRef.delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "Document successfully deleted from Firestore")
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "Error deleting document from Firestore: $e")
             }
     }
 
@@ -150,25 +166,30 @@ class FirestoreRepository {
                             field.isAccessible = true
 
                             // Check if the field is the category field
-                            if (fieldName == "category") {
-                                val categoryMap =
-                                    value as Map<String, Any> // Assuming the category is stored as a Map<String, Any>
-                                val category = Category(
-                                    categoryName = categoryMap["categoryName"] as? String ?: "",
-                                    categoryType = categoryMap["categoryType"] as? String ?: "",
-                                    imageUri = categoryMap["imageUri"]?.let { Uri.parse(it as String) }
-                                )
-                                field.set(item, category)
-                            } else if (fieldName == "imageUri") {
-                                val imageUriString = value as String
-                                val imageUri =
-                                    if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
-                                field.set(item, imageUri)
-                            } else if (fieldName == "date") {
-                                val date = document.getDate("date") ?: Date()
-                                field.set(item, date)
-                            } else {
-                                field.set(item, value)
+                            when (fieldName) {
+                                "category" -> {
+                                    val categoryMap =
+                                        value as Map<*, *> // Assuming the category is stored as a Map<String, Any>
+                                    val category = Category(
+                                        categoryName = categoryMap["categoryName"] as? String ?: "",
+                                        categoryType = categoryMap["categoryType"] as? String ?: "",
+                                        imageUri = categoryMap["imageUri"]?.let { Uri.parse(it as String) }
+                                    )
+                                    field.set(item, category)
+                                }
+                                "imageUri" -> {
+                                    val imageUriString = value as String
+                                    val imageUri =
+                                        if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
+                                    field.set(item, imageUri)
+                                }
+                                "date" -> {
+                                    val date = document.getDate("date") ?: Date()
+                                    field.set(item, date)
+                                }
+                                else -> {
+                                    field.set(item, value)
+                                }
                             }
 
                         } catch (e: NoSuchFieldException) {
@@ -185,5 +206,69 @@ class FirestoreRepository {
         return itemList
     }
 
+    suspend fun getDocumentId(collectionName: String, userId: String, data: Any): String {
+        try {
+            val querySnapshot = firestore.collection("Users").document(userId)
+                .collection(collectionName).get().await()
+
+            for (document in querySnapshot.documents) {
+                val itemData = document.data
+
+                val item = data::class.java.newInstance()
+                // Set the values of item fields
+                if (itemData != null) {
+
+                    for ((fieldName, value) in itemData) {
+                        try {
+
+                            val field = item::class.java.getDeclaredField(fieldName)
+                            field.isAccessible = true
+
+                            // Check if the field is the category field
+                            when (fieldName) {
+                                "category" -> {
+                                    val categoryMap =
+                                        value as Map<*, *> // Assuming the category is stored as a Map<String, Any>
+                                    val category = Category(
+                                        categoryName = categoryMap["categoryName"] as? String ?: "",
+                                        categoryType = categoryMap["categoryType"] as? String ?: "",
+                                        imageUri = categoryMap["imageUri"]?.let { Uri.parse(it as String) }
+                                    )
+                                    field.set(item, category)
+                                }
+                                "imageUri" -> {
+                                    val imageUriString = value as String
+                                    val imageUri =
+                                        if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
+                                    field.set(item, imageUri)
+                                }
+                                "date" -> {
+                                    val date = document.getDate("date") ?: Date()
+                                    field.set(item, date)
+                                }
+                                else -> {
+                                    field.set(item, value)
+                                }
+                            }
+
+                        } catch (e: NoSuchFieldException) {
+                            Log.e(TAG, "Field '$fieldName' not found in ${data::class.java}", e)
+                        }
+                    }
+                    if (data == item) {
+                        return document.id
+                    }
+                }
+
+
+
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting document ID from $collectionName", e)
+        }
+        return ""
+    }
+
 
 }
+

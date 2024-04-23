@@ -1,5 +1,6 @@
 package com.example.spendsavvy.viewModels
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
@@ -58,13 +59,22 @@ class CategoryViewModel : ViewModel() {
     }
 
 
-    fun deleteCategory(categoryName: String) {
-        firestoreRepository.deleteItemFromFirestore(
-            userId,
-            "Categories",
-            "categoryName",
-            categoryName
-        )
+    fun deleteCategory(category: Category) {
+        viewModelScope.launch {
+            try {
+                val categoryId: String =
+                    firestoreRepository.getDocumentId("Categories", userId, category)
+
+                firestoreRepository.deleteItemFromFirestoreById(
+                    userId,
+                    "Categories",
+                    categoryId
+                )
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error deleting category", e)
+            }
+        }
     }
 
     private fun initializeCategoryToFirestore() {

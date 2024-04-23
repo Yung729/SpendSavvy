@@ -37,13 +37,22 @@ class OverviewViewModel : ViewModel() {
         getTransactionRecord()
     }
 
-    fun deleteTransaction(transactionID: String) {
-        firestoreRepository.deleteItemFromFirestore(
-            userId,
-            "Categories",
-            "categoryName",
-            transactionID
-        )
+    fun deleteTransaction(transaction: Transactions) {
+        viewModelScope.launch {
+            try {
+                val transactionId: String =
+                    firestoreRepository.getDocumentId("Transactions", userId, transaction)
+
+                firestoreRepository.deleteItemFromFirestoreById(
+                    userId,
+                    "Transactions",
+                    transactionId
+                )
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error deleting transaction", e)
+            }
+        }
     }
 
     fun addTransactionToFirestore(transaction: Transactions) {
@@ -63,4 +72,5 @@ class OverviewViewModel : ViewModel() {
             }
         )
     }
+
 }

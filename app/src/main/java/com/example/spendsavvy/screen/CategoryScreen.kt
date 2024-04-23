@@ -70,6 +70,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.viewModels.CategoryViewModel
@@ -381,7 +382,7 @@ fun CategoryCard(
 
     val dismissState = rememberDismissState()
     if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        catViewModel.deleteCategory(category.categoryName)
+        catViewModel.deleteCategory(category)
     }
     if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
 
@@ -443,51 +444,7 @@ fun CategoryList(categoryList: List<Category>, modifier: Modifier = Modifier) {
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun SwipeToDeleteItem(
-    state: DismissState,
-    content: @Composable RowScope.() -> Unit
-) {
-    SwipeToDismiss(
-        state = state,
-        directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
-        dismissThresholds = { direction ->
-            FractionalThreshold(if (direction == DismissDirection.StartToEnd) 0.25f else 0.5f)
-        },
-        background = {
-            val direction = state.dismissDirection ?: return@SwipeToDismiss
-            val color by animateColorAsState(
-                when (state.targetValue) {
-                    DismissValue.Default -> Color.LightGray.copy(alpha = 0.5f)
-                    else -> Color.Red
-                }
-            )
-            val alignment = when (direction) {
-                DismissDirection.StartToEnd -> Alignment.CenterStart
-                DismissDirection.EndToStart -> Alignment.CenterEnd
-            }
-            val scale by animateFloatAsState(
-                if (state.targetValue == DismissValue.Default) 0.75f else 1f
-            )
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(color)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = alignment
-            ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Remove item",
-                    modifier = Modifier.scale(scale)
-                )
-            }
-        },
-        dismissContent = content
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
