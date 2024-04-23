@@ -56,7 +56,7 @@ import com.example.spendsavvy.ui.theme.ButtonColor
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
+fun SetupNavGraph(navController: NavHostController = rememberNavController(), auth: FirebaseAuth) {
 
     NavHost(
         navController = navController,
@@ -97,8 +97,8 @@ fun SetupNavGraph(navController: NavHostController, auth: FirebaseAuth) {
 }
 
 @Composable
-fun TabsNavGraph() {
-    val navController = rememberNavController()
+fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
@@ -155,7 +155,6 @@ fun TabsNavGraph() {
         },
         floatingActionButton = {
 
-
             if (currentScreenName == Screen.Overview.route) {
 
                 FloatingActionButton(
@@ -166,8 +165,7 @@ fun TabsNavGraph() {
                     containerColor = ButtonColor,
                     contentColor = Color.White,
                     modifier = Modifier
-                        .offset(y = 50.dp)
-                        .offset(x = 0.dp)
+                        .offset(y = 50.dp, x = if (showOption.value) 21.dp else 0.dp)
                         .size(50.dp)
 
                 ) {
@@ -184,9 +182,8 @@ fun TabsNavGraph() {
                             navController.navigate(Screen.AddExpenses.route)
                         },
                         modifier = Modifier
-                            .size(95.dp, 55.dp)
-                            .offset(y = 0.dp)
-                            .offset(x = (-65).dp), // Position to the left of the main FAB
+                            .size(95.dp, 50.dp)
+                            .offset(x = (-65).dp, y = (-25).dp), // Position to the left of the main FAB
                         elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         containerColor = ButtonColor,
                         contentColor = Color.White
@@ -199,9 +196,8 @@ fun TabsNavGraph() {
                             navController.navigate(Screen.AddIncomes.route)
                         },
                         modifier = Modifier
-                            .size(95.dp, 55.dp)
-                            .offset(y = 0.dp)
-                            .offset(x = 65.dp), // Position to the right of the main FAB
+                            .size(95.dp, 50.dp)
+                            .offset(x = 65.dp, y = (-25).dp), // Position to the right of the main FAB
                         elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         containerColor = ButtonColor,
                         contentColor = Color.White

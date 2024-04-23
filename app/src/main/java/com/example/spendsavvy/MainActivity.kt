@@ -16,8 +16,6 @@ private lateinit var auth: FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var navController: NavHostController
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -27,8 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpendSavvyTheme {
 
-                navController = rememberNavController()
-                SetupNavGraph(navController = navController, auth = auth)
+                SetupNavGraph(auth = auth)
 
             }
         }
