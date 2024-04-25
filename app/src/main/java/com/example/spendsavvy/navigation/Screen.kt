@@ -13,6 +13,8 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Analysis : Screen(route = "Analysis", R.drawable.analysis_icon)
     object Stock : Screen(route = "Stock", R.drawable.bar_chart)
     object Category : Screen(route = "Category", R.drawable.category_icon)
+    object AddCategory : Screen(route = "Add Category", R.drawable.category_icon)
+    object CategoryDetail : Screen(route = "Category Details", R.drawable.category_icon)
     object MainScreen : Screen(route = "EnterMainScreen", R.drawable.bar_chart)
 
     object ChangeProfile : Screen(route = "Edit Profile", R.drawable.edit_profile_icon)

@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -32,9 +33,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.HeaderTopBar
+import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.screen.AddCategoryScreen
 import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AddIncomeScreen
 import com.example.spendsavvy.screen.AnalysisScreen
+import com.example.spendsavvy.screen.CategoryDetail
 import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
@@ -53,6 +57,7 @@ import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
+import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -103,7 +108,7 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
     val showOption = remember { mutableStateOf(false) }
-
+    val categoryViewModel : CategoryViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -142,9 +147,8 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
                                     saveState = true
                                     inclusive = true
                                 }
-
-                                launchSingleTop = true
                                 restoreState = true
+                                launchSingleTop = false
 
                             }
                         }
@@ -218,6 +222,8 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
             modifier = Modifier.padding(innerPadding)
         ) {
 
+
+
             composable(route = Screen.Overview.route) {
                 DisposableEffect(Unit) {
 
@@ -274,7 +280,9 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
                 CategoryScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp)
+                        .padding(20.dp),
+                    catViewModel = categoryViewModel,
+                    navController = navController
                 )
             }
 
@@ -406,6 +414,34 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
                     navController = navController
                 )
             }
+
+
+            composable(
+                route = Screen.AddCategory.route
+            ) {
+
+                AddCategoryScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    catViewModel = categoryViewModel
+                )
+            }
+
+            composable(
+                route = Screen.CategoryDetail.route
+            ) {
+
+                CategoryDetail(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    catViewModel = categoryViewModel,
+                    category = Category()
+                )
+            }
+
+
         }
 
     }

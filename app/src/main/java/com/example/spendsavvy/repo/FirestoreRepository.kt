@@ -269,6 +269,23 @@ class FirestoreRepository {
         return ""
     }
 
+    fun updateItemInFirestoreById(
+        userId: String,
+        collectionName: String,
+        documentId: String,
+        item: Any
+    ) {
+        val documentRef = firestore.collection("Users").document(userId).collection(collectionName).document(documentId)
+
+        documentRef.set(item)
+            .addOnSuccessListener {
+                Log.d(TAG, "Document successfully updated in Firestore")
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "Error updating document in Firestore: $e")
+            }
+    }
+
 
 }
 

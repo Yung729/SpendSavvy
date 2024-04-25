@@ -59,6 +59,25 @@ class CategoryViewModel : ViewModel() {
     }
 
 
+    fun editCategory(category: Category) {
+        viewModelScope.launch {
+            try {
+                val categoryId: String =
+                    firestoreRepository.getDocumentId("Categories", userId, category)
+
+                firestoreRepository.updateItemInFirestoreById(
+                    userId,
+                    "Categories",
+                    categoryId,
+                    category
+                )
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error editing category", e)
+            }
+        }
+    }
+
     fun deleteCategory(category: Category) {
         viewModelScope.launch {
             try {
