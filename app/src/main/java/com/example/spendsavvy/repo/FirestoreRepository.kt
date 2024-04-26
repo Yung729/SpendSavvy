@@ -171,9 +171,9 @@ class FirestoreRepository {
                                     val categoryMap =
                                         value as Map<*, *> // Assuming the category is stored as a Map<String, Any>
                                     val category = Category(
-                                        categoryName = categoryMap["categoryName"] as? String ?: "",
-                                        categoryType = categoryMap["categoryType"] as? String ?: "",
-                                        imageUri = categoryMap["imageUri"]?.let { Uri.parse(it as String) }
+                                        categoryName = categoryMap["categoryName"] as String ,
+                                        categoryType = categoryMap["categoryType"] as String ,
+                                        imageUri = categoryMap["imageUri"].let { Uri.parse(it as String) }
                                     )
                                     field.set(item, category)
                                 }

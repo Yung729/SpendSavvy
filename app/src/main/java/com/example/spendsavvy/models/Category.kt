@@ -7,8 +7,10 @@ import java.io.Serializable
 
 @Entity(tableName = "categories")
 data class Category(
-    var imageUri: Uri? = null,
-    var categoryName: String = "",
-    var categoryType: String = ""
-) : Serializable {
+    var imageUri: Uri? ,
+    var categoryName: String ,
+    var categoryType: String
+):Serializable  {
+    constructor() : this(null, "", "")
+
 }

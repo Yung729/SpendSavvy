@@ -66,15 +66,15 @@ fun CategoryDetail(
     }
 
     var updatedCategoryName by remember {
-        mutableStateOf("")
+        mutableStateOf(category.categoryName)
     }
 
     var updatedImageUri by remember {
-        mutableStateOf<Uri?>(null)
+        mutableStateOf<Uri?>(category.imageUri)
     }
 
     var updatedCategoryType by remember {
-        mutableStateOf("")
+        mutableStateOf(category.categoryType)
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(

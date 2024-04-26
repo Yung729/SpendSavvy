@@ -433,20 +433,21 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
             }
 
             composable(
-                route = Screen.CategoryDetail.route ,
+                route = Screen.CategoryDetail.route,
+            ) {
 
-            ) {backStackEntry->
 
+                val selectedCategory = navController.previousBackStackEntry?.savedStateHandle?.get<Category>("currentCategory")
 
-                CategoryDetail(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    catViewModel = categoryViewModel,
-                    category = Category()
-                )
+                if (selectedCategory != null) {
+                    CategoryDetail(
+                        modifier = Modifier.fillMaxSize().padding(20.dp),
+                        category = selectedCategory,
+                        catViewModel = categoryViewModel
+                    )
+                }
+
             }
-
 
         }
 

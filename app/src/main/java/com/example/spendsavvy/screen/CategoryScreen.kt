@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -157,6 +158,11 @@ fun CategoryCard(
 
             Card(
                 modifier = modifier.clickable {
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        key = "currentCategory",
+                        value = category
+                    )
+
                     navController.navigate(Screen.CategoryDetail.route)
                 }
                 , colors = CardDefaults.cardColors(

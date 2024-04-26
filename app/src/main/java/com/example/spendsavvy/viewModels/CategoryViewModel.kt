@@ -33,7 +33,6 @@ class CategoryViewModel : ViewModel() {
                     "Categories",
                     Category::class.java
                 )
-
                 val expenseCategories = mutableListOf<Category>()
                 val incomeCategories = mutableListOf<Category>()
 
@@ -72,7 +71,7 @@ class CategoryViewModel : ViewModel() {
                     userId,
                     "Categories",
                     categoryId,
-                    category
+                    updatedCategory
                 )
 
             } catch (e: Exception) {
