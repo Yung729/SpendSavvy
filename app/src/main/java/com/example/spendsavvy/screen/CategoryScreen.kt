@@ -3,6 +3,7 @@ package com.example.spendsavvy.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -94,9 +95,9 @@ fun CategoryScreen(
 
 
             if (selectedIndex == 0) {
-                CategoryList(categoryList = expenseList, catViewModel = catViewModel)
+                CategoryList(categoryList = expenseList, catViewModel = catViewModel, navController = navController)
             } else if (selectedIndex == 1) {
-                CategoryList(categoryList = incomeList, catViewModel = catViewModel)
+                CategoryList(categoryList = incomeList, catViewModel = catViewModel,navController = navController)
             }
 
 
@@ -139,7 +140,7 @@ fun CategoryScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryCard(
-    category: Category, modifier: Modifier = Modifier, catViewModel: CategoryViewModel
+    category: Category, modifier: Modifier = Modifier, catViewModel: CategoryViewModel,navController: NavController
 ) {
 
 
@@ -155,7 +156,10 @@ fun CategoryCard(
 
 
             Card(
-                modifier = modifier, colors = CardDefaults.cardColors(
+                modifier = modifier.clickable {
+                    navController.navigate(Screen.CategoryDetail.route)
+                }
+                , colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
                 ), border = BorderStroke(width = 1.dp, Color.Black)
             ) {
@@ -202,7 +206,8 @@ fun CategoryCard(
 fun CategoryList(
     categoryList: List<Category>,
     modifier: Modifier = Modifier,
-    catViewModel: CategoryViewModel
+    catViewModel: CategoryViewModel,
+    navController: NavController
 ) {
     LazyColumn(modifier = modifier) {
         items(categoryList) { item: Category ->
@@ -210,7 +215,8 @@ fun CategoryList(
                 category = item, modifier = Modifier
                     .padding(5.dp)
                     .fillMaxWidth(),
-                catViewModel = catViewModel
+                catViewModel = catViewModel,
+                navController = navController
             )
         }
     }

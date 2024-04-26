@@ -53,6 +53,9 @@ fun CategoryDetail(
     category: Category,
     catViewModel: CategoryViewModel
 ) {
+
+
+
     val options = mutableStateListOf("Expenses", "Income")
 
     var selectedIndex by remember {
@@ -185,7 +188,6 @@ fun CategoryDetail(
 
         Button(
             onClick = {
-                // If all fields have data, add the category
                 catViewModel.editCategory(
                     Category(
                         imageUri = category.imageUri,

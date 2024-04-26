@@ -59,11 +59,14 @@ class CategoryViewModel : ViewModel() {
     }
 
 
+    suspend fun getCategoryId(category: Category) : String{
+        return firestoreRepository.getDocumentId("Categories", userId, category)
+    }
+
     fun editCategory(category: Category) {
         viewModelScope.launch {
             try {
-                val categoryId: String =
-                    firestoreRepository.getDocumentId("Categories", userId, category)
+                val categoryId: String = getCategoryId(category)
 
                 firestoreRepository.updateItemInFirestoreById(
                     userId,
@@ -81,8 +84,7 @@ class CategoryViewModel : ViewModel() {
     fun deleteCategory(category: Category) {
         viewModelScope.launch {
             try {
-                val categoryId: String =
-                    firestoreRepository.getDocumentId("Categories", userId, category)
+                val categoryId: String = getCategoryId(category)
 
                 firestoreRepository.deleteItemFromFirestoreById(
                     userId,

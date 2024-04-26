@@ -1,5 +1,7 @@
 package com.example.spendsavvy.navigation
 
+import android.net.Uri
+import android.os.Parcelable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -28,10 +30,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.screen.AddCategoryScreen
@@ -429,8 +433,10 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
             }
 
             composable(
-                route = Screen.CategoryDetail.route
-            ) {
+                route = Screen.CategoryDetail.route ,
+
+            ) {backStackEntry->
+
 
                 CategoryDetail(
                     modifier = Modifier
