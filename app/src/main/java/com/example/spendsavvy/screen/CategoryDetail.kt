@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -40,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.viewModels.CategoryViewModel
@@ -62,14 +65,22 @@ fun CategoryDetail(
         mutableIntStateOf(0)
     }
 
-    var selectedImageUri by remember {
+    var updatedCategoryName by remember {
+        mutableStateOf("")
+    }
+
+    var updatedImageUri by remember {
         mutableStateOf<Uri?>(null)
+    }
+
+    var updatedCategoryType by remember {
+        mutableStateOf("")
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = {
-            selectedImageUri = it
+            updatedImageUri = it
         })
 
     selectedIndex = if (category.categoryType == "Expenses")
@@ -83,15 +94,18 @@ fun CategoryDetail(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
+        if (category.imageUri != null) {
+            Image(
+                painter = rememberAsyncImagePainter(model = category.imageUri),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(30.dp, 30.dp)
+                    .padding(end = 10.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = "Pick Icon Photo",
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Button(modifier = Modifier
             .fillMaxWidth()
@@ -122,32 +136,12 @@ fun CategoryDetail(
             }
         }
 
-        if (selectedImageUri != null) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Image added", color = Color.Green
-                )
-                IconButton(
-                    onClick = { selectedImageUri = null },
-                    modifier = Modifier.padding(start = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear Image"
-                    )
-                }
-            }
-        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-
         OutlinedTextField(
-            value = category.categoryName,
-            onValueChange = { category.categoryName = it },
+            value = updatedCategoryName,
+            onValueChange = { updatedCategoryName = it},
             label = { Text(text = "Category Name") },
             maxLines = 1,
             modifier = Modifier
@@ -179,7 +173,7 @@ fun CategoryDetail(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        category.categoryType = if (selectedIndex == 0) {
+        updatedCategoryType = if (selectedIndex == 0) {
             "Expenses"
         } else {
             "Incomes"
@@ -189,10 +183,11 @@ fun CategoryDetail(
         Button(
             onClick = {
                 catViewModel.editCategory(
-                    Category(
-                        imageUri = category.imageUri,
-                        categoryName = category.categoryName,
-                        categoryType = category.categoryType
+                    category = category,
+                    updatedCategory =  Category(
+                        imageUri = updatedImageUri,
+                        categoryName = updatedCategoryName,
+                        categoryType = updatedCategoryType
                     )
                 )
 
