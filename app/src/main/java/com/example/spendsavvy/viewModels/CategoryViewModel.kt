@@ -63,7 +63,7 @@ class CategoryViewModel : ViewModel() {
         return firestoreRepository.getDocumentId("Categories", userId, category)
     }
 
-    fun editCategory(category: Category) {
+    fun editCategory(category: Category,updatedCategory: Category) {
         viewModelScope.launch {
             try {
                 val categoryId: String = getCategoryId(category)
