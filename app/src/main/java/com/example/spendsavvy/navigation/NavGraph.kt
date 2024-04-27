@@ -114,6 +114,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
     val categoryViewModel: CategoryViewModel = viewModel()
     val transactionsViewModel: OverviewViewModel = viewModel()
 
+
     Scaffold(
         topBar = {
 
