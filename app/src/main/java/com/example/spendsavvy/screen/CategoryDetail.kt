@@ -57,8 +57,6 @@ fun CategoryDetail(
     catViewModel: CategoryViewModel
 ) {
 
-
-
     val options = mutableStateListOf("Expenses", "Income")
 
     var selectedIndex by remember {

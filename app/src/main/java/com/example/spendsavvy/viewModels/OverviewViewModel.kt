@@ -14,7 +14,7 @@ class OverviewViewModel : ViewModel() {
 
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
-    val transactionsList = MutableLiveData<List<Transactions>>(emptyList())
+    val transactionsList = MutableLiveData<List<Transactions>>()
 
     private fun getTransactionRecord() {
         viewModelScope.launch {

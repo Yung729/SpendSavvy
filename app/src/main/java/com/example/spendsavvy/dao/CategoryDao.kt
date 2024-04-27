@@ -1,5 +1,6 @@
 package com.example.spendsavvy.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,7 +13,7 @@ interface CategoryDao {
     suspend fun insertCategory(category: Category)
 
     @Query("SELECT * FROM categories")
-    suspend fun getAllCategories(): List<Category>
+    fun getAllCategories(): LiveData<List<Category>>
 
     @Query("SELECT * FROM categories WHERE categoryType = 'Expenses'")
     suspend fun getExpenses(): List<Category>

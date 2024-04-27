@@ -51,7 +51,7 @@ import java.util.Locale
 fun AddIncomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    transactionViewModel: OverviewViewModel = viewModel()
+    transactionViewModel: OverviewViewModel
 ) {
 
     val catViewModel = CategoryViewModel()
@@ -279,6 +279,7 @@ fun AddIncomePreview() {
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        transactionViewModel = viewModel()
     )
 }

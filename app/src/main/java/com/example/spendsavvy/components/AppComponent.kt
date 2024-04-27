@@ -94,7 +94,7 @@ fun SwipeToDeleteItem(
 ) {
     SwipeToDismiss(
         state = state,
-        directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
+        directions = setOf(DismissDirection.StartToEnd),
         dismissThresholds = { direction ->
             FractionalThreshold(if (direction == DismissDirection.StartToEnd) 0.25f else 0.5f)
         },

@@ -234,8 +234,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
 
 
             composable(route = Screen.Overview.route) {
-                DisposableEffect(Unit) {
 
+                DisposableEffect(Unit) {
                     onDispose { showOption.value = false }
                 }
 
@@ -411,7 +411,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),
-                    navController = navController
+                    navController = navController,
+                    transactionViewModel = transactionsViewModel
                 )
             }
 
@@ -422,7 +423,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),
-                    navController = navController
+                    navController = navController,
+                    transactionViewModel = transactionsViewModel
                 )
             }
 
