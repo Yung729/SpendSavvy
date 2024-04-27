@@ -100,13 +100,15 @@ class FirestoreRepository {
     fun deleteItemFromFirestoreById(
         userId: String,
         collectionName: String,
-        documentId: String
+        documentId: String,
+        onSuccess: () -> Unit
     ) {
         val documentRef = firestore.collection("Users").document(userId).collection(collectionName).document(documentId)
 
         documentRef.delete()
             .addOnSuccessListener {
                 Log.d(TAG, "Document successfully deleted from Firestore")
+                onSuccess()
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "Error deleting document from Firestore: $e")
@@ -273,13 +275,15 @@ class FirestoreRepository {
         userId: String,
         collectionName: String,
         documentId: String,
-        item: Any
+        item: Any,
+        onSuccess: () -> Unit
     ) {
         val documentRef = firestore.collection("Users").document(userId).collection(collectionName).document(documentId)
 
         documentRef.set(item)
             .addOnSuccessListener {
                 Log.d(TAG, "Document successfully updated in Firestore")
+                onSuccess()
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "Error updating document in Firestore: $e")

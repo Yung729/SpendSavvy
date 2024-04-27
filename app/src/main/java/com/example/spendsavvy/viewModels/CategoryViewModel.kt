@@ -71,7 +71,10 @@ class CategoryViewModel : ViewModel() {
                     userId,
                     "Categories",
                     categoryId,
-                    updatedCategory
+                    updatedCategory,
+                    onSuccess = {
+                        getCategoriesList()
+                    }
                 )
 
             } catch (e: Exception) {
@@ -88,7 +91,10 @@ class CategoryViewModel : ViewModel() {
                 firestoreRepository.deleteItemFromFirestoreById(
                     userId,
                     "Categories",
-                    categoryId
+                    categoryId,
+                    onSuccess = {
+                        getCategoriesList()
+                    }
                 )
 
             } catch (e: Exception) {

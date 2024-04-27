@@ -50,7 +50,10 @@ class OverviewViewModel : ViewModel() {
                     userId,
                     "Transactions",
                     categoryId,
-                    updatedTransactions
+                    updatedTransactions,
+                    onSuccess = {
+                        getTransactionRecord()
+                    }
                 )
 
             } catch (e: Exception) {
@@ -68,7 +71,10 @@ class OverviewViewModel : ViewModel() {
                 firestoreRepository.deleteItemFromFirestoreById(
                     userId,
                     "Transactions",
-                    transactionId
+                    transactionId,
+                    onSuccess = {
+                        getTransactionRecord()
+                    }
                 )
 
             } catch (e: Exception) {

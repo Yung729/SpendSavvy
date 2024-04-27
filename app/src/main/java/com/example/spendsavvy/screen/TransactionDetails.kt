@@ -90,7 +90,7 @@ fun TransactionDetail(
         OutlinedTextField(
             value = updatedTransactionDescription,
             onValueChange = { updatedTransactionDescription = it },
-            label = { Text(text = "Amount") },
+            label = { Text(text = "Description") },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
