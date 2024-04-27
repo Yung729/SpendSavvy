@@ -13,7 +13,7 @@ interface CategoryDao {
     suspend fun insertCategory(category: Category)
 
     @Query("SELECT * FROM categories")
-    suspend fun getAllCategories(): LiveData<List<Category>>
+    fun getAllCategories(): LiveData<List<Category>>
 
     @Query("SELECT * FROM categories WHERE categoryType = 'Expenses'")
     suspend fun getExpenses(): List<Category>

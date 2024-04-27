@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -109,15 +110,13 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
-
+    val context = LocalContext.current
     val showOption = remember { mutableStateOf(false) }
-    val categoryViewModel: CategoryViewModel = viewModel()
+    val categoryViewModel = CategoryViewModel(context)
     val transactionsViewModel: OverviewViewModel = viewModel()
-
 
     Scaffold(
         topBar = {
-
             HeaderTopBar(
                 text = currentScreenName,
                 canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
@@ -413,7 +412,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                         .fillMaxSize()
                         .padding(20.dp),
                     navController = navController,
-                    transactionViewModel = transactionsViewModel
+                    transactionViewModel = transactionsViewModel,
+                    catViewModel = categoryViewModel
                 )
             }
 
@@ -425,7 +425,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                         .fillMaxSize()
                         .padding(20.dp),
                     navController = navController,
-                    transactionViewModel = transactionsViewModel
+                    transactionViewModel = transactionsViewModel,
+                    catViewModel = categoryViewModel
                 )
             }
 

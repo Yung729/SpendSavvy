@@ -68,6 +68,7 @@ dependencies {
     implementation("androidx.compose.material3:material3-android:1.2.1")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -13,6 +13,7 @@ class CategoryRoomRepository(
     private val categoryDao: CategoryDao,
     private val firestoreRepository: FirestoreRepository
 ) {
+
     val allCategories: LiveData<List<Category>> = categoryDao.getAllCategories()
 
     suspend fun syncCategoriesWithFirestore(userId: String) {

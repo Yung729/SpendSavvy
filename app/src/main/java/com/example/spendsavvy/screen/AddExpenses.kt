@@ -51,10 +51,9 @@ import java.util.Locale
 fun AddExpensesScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    transactionViewModel: OverviewViewModel
+    transactionViewModel: OverviewViewModel,
+    catViewModel : CategoryViewModel
 ) {
-
-    val catViewModel = CategoryViewModel()
 
     Column(
         modifier = modifier
@@ -280,6 +279,7 @@ fun AddExpensesPreview() {
             .fillMaxSize()
             .padding(20.dp),
         navController = rememberNavController(),
-        transactionViewModel = viewModel()
+        transactionViewModel = viewModel(),
+        catViewModel = viewModel()
     )
 }

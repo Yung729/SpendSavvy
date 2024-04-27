@@ -2,13 +2,16 @@ package com.example.spendsavvy.viewModels
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.data.CategoryData
+import com.example.spendsavvy.db.AppDatabase
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.repo.CategoryRoomRepository
 import com.example.spendsavvy.repo.FirestoreRepository
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,9 +20,11 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 
 
-class CategoryViewModel : ViewModel() {
+class CategoryViewModel(context: Context) : ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
+
+
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
 
