@@ -1,7 +1,5 @@
 package com.example.spendsavvy.navigation
 
-import android.net.Uri
-import android.os.Parcelable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -30,14 +28,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.screen.AddCategoryScreen
 import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AddIncomeScreen
@@ -59,9 +56,11 @@ import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
+import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.CategoryViewModel
+import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -106,13 +105,14 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), au
 }
 
 @Composable
-fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
+fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
     val showOption = remember { mutableStateOf(false) }
-    val categoryViewModel : CategoryViewModel = viewModel()
+    val categoryViewModel: CategoryViewModel = viewModel()
+    val transactionsViewModel: OverviewViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -191,7 +191,10 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
                         },
                         modifier = Modifier
                             .size(95.dp, 50.dp)
-                            .offset(x = (-65).dp, y = (-25).dp), // Position to the left of the main FAB
+                            .offset(
+                                x = (-65).dp,
+                                y = (-25).dp
+                            ), // Position to the left of the main FAB
                         elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         containerColor = ButtonColor,
                         contentColor = Color.White
@@ -205,7 +208,10 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
                         },
                         modifier = Modifier
                             .size(95.dp, 50.dp)
-                            .offset(x = 65.dp, y = (-25).dp), // Position to the right of the main FAB
+                            .offset(
+                                x = 65.dp,
+                                y = (-25).dp
+                            ), // Position to the right of the main FAB
                         elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         containerColor = ButtonColor,
                         contentColor = Color.White
@@ -227,7 +233,6 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
         ) {
 
 
-
             composable(route = Screen.Overview.route) {
                 DisposableEffect(Unit) {
 
@@ -237,7 +242,9 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
                 OverviewScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp)
+                        .padding(20.dp),
+                    transactionViewModel = transactionsViewModel,
+                    navController = navController
                 )
             }
 
@@ -437,13 +444,36 @@ fun TabsNavGraph(navController: NavHostController =  rememberNavController()) {
             ) {
 
 
-                val selectedCategory = navController.previousBackStackEntry?.savedStateHandle?.get<Category>("currentCategory")
+                val selectedCategory =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<Category>("currentCategory")
 
                 if (selectedCategory != null) {
                     CategoryDetail(
-                        modifier = Modifier.fillMaxSize().padding(20.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
                         category = selectedCategory,
                         catViewModel = categoryViewModel
+                    )
+                }
+
+            }
+
+            composable(
+                route = Screen.TransactionDetails.route,
+            ) {
+
+
+                val selectedTransactions =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<Transactions>("currentTransaction")
+
+                if (selectedTransactions != null) {
+                    TransactionDetail(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        transactions = selectedTransactions,
+                        transactionViewModel = transactionsViewModel
                     )
                 }
 

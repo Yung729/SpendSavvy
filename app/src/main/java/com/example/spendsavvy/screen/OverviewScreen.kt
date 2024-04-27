@@ -3,6 +3,7 @@ package com.example.spendsavvy.screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,9 +37,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -50,7 +54,8 @@ import java.util.Locale
 @Composable
 fun OverviewScreen(
     modifier: Modifier = Modifier,
-    transactionViewModel: OverviewViewModel = viewModel()
+    transactionViewModel: OverviewViewModel,
+    navController: NavController
 ) {
 
     val transactionList by transactionViewModel.transactionsList.observeAsState(initial = emptyList())
@@ -103,7 +108,7 @@ fun OverviewScreen(
 
         }
 
-        TransactionList(transactionList)
+        TransactionList(transactionList, navController = navController)
 
     }
 
@@ -194,7 +199,11 @@ fun OverViewCard() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) {
+fun TransactionsCard(
+    transactions: Transactions,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
 
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val transactionViewModel: OverviewViewModel = viewModel()
@@ -208,7 +217,14 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
 
         SwipeToDeleteItem(state = dismissState) {
             Card(
-                modifier = modifier,
+                modifier = modifier.clickable {
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        key = "currentTransaction",
+                        value = transactions
+                    )
+
+                    navController.navigate(Screen.TransactionDetails.route)
+                },
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
                 ),
@@ -264,14 +280,19 @@ fun TransactionsCard(transactions: Transactions, modifier: Modifier = Modifier) 
 }
 
 @Composable
-fun TransactionList(transactionsList: List<Transactions>, modifier: Modifier = Modifier) {
+fun TransactionList(
+    transactionsList: List<Transactions>,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     LazyColumn(modifier = modifier) {
         items(transactionsList) { item: Transactions ->
             TransactionsCard(
                 transactions = item,
                 modifier = Modifier
                     .padding(5.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                navController = navController
             )
         }
     }
@@ -283,6 +304,8 @@ fun OverviewScreenPreview() {
     OverviewScreen(
         Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(20.dp),
+        transactionViewModel = viewModel(),
+        navController = rememberNavController()
     )
 }

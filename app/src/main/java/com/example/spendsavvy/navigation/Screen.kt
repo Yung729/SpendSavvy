@@ -7,6 +7,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Login : Screen(route = "login_screen", R.drawable.bar_chart)
     object SignUp : Screen(route = "signUp_screen", R.drawable.bar_chart)
     object Overview : Screen(route = "Overview", R.drawable.bar_chart)
+    object TransactionDetails : Screen(route = "Transaction Details", R.drawable.bar_chart)
     object Wallet : Screen(route = "Wallet", R.drawable.wallet)
 
     object Settings : Screen(route = "Settings", R.drawable.settings_icon)

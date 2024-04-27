@@ -37,6 +37,28 @@ class OverviewViewModel : ViewModel() {
         getTransactionRecord()
     }
 
+    private suspend fun getTransactionId(transactions: Transactions): String {
+        return firestoreRepository.getDocumentId("Transactions", userId, transactions)
+    }
+
+    fun editTransaction(transactions: Transactions, updatedTransactions: Transactions) {
+        viewModelScope.launch {
+            try {
+                val categoryId: String = getTransactionId(transactions)
+
+                firestoreRepository.updateItemInFirestoreById(
+                    userId,
+                    "Transactions",
+                    categoryId,
+                    updatedTransactions
+                )
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error editing Transactions", e)
+            }
+        }
+    }
+
     fun deleteTransaction(transaction: Transactions) {
         viewModelScope.launch {
             try {

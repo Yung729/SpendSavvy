@@ -58,11 +58,11 @@ class CategoryViewModel : ViewModel() {
     }
 
 
-    suspend fun getCategoryId(category: Category) : String{
+    private suspend fun getCategoryId(category: Category): String {
         return firestoreRepository.getDocumentId("Categories", userId, category)
     }
 
-    fun editCategory(category: Category,updatedCategory: Category) {
+    fun editCategory(category: Category, updatedCategory: Category) {
         viewModelScope.launch {
             try {
                 val categoryId: String = getCategoryId(category)
