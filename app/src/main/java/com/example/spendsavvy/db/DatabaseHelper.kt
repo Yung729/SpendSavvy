@@ -1,6 +1,5 @@
 package com.example.spendsavvy.db
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -70,7 +69,7 @@ class DatabaseHelper(context: Context) :
     }
 
     companion object {
-        private const val DATABASE_NAME = "spendsavvy_database.db"
+        private const val DATABASE_NAME = "spendsavvyDB"
         private const val DATABASE_VERSION = 1
     }
 }
