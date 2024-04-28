@@ -9,6 +9,7 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,6 +35,7 @@ class CategoryViewModel(
     val currentContext = context
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
+    val categoryList = MutableLiveData<List<Category>>()
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
 
@@ -85,6 +87,7 @@ class CategoryViewModel(
             }
         }
 
+        categoryList.postValue(categories)
         expensesList.postValue(expenseCategories)
         incomeList.postValue(incomeCategories)
     }
@@ -187,6 +190,12 @@ class CategoryViewModel(
 
 
     fun addCategoryToDatabase(category: Category, imageUri: Uri?) {
+
+        if (categoryList.value?.any { it.categoryName == category.categoryName } == true) {
+            Toast.makeText(currentContext, "Category with the same name already exists", Toast.LENGTH_LONG).show()
+            return
+        }
+
         if (imageUri != null) {
             val storageRef = FirebaseStorage.getInstance().reference
 
