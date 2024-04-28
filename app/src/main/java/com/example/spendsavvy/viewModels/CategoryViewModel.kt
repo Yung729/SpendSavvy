@@ -1,5 +1,6 @@
 package com.example.spendsavvy.viewModels
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -29,22 +30,41 @@ class CategoryViewModel(
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
 
+    @SuppressLint("StaticFieldLeak")
+    val currentContext = context
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
 
-    private fun getCategoriesList() {
+    private fun getCategoriesList(context: Context = currentContext) {
         viewModelScope.launch {
             try {
-                val categories = firestoreRepository.readItemsFromDatabase(
-                    userId,
-                    "Categories",
-                    Category::class.java
-                )
+                if (isInternetAvailable(context)) {
+                    val categoriesFromFirestore = firestoreRepository.readItemsFromDatabase(
+                        userId,
+                        "Categories",
+                        Category::class.java
+                    )
 
-                updateCategories(categories)
+                    updateCategories(categoriesFromFirestore)
 
+                    dbHelper.deleteAllCategories()
+                    // Update SQLite with Firestore data
+                    categoriesFromFirestore.forEach { category ->
+                        dbHelper.addNewCategory(
+                            category.imageUri,
+                            category.categoryName,
+                            category.categoryType
+                        )
+                    }
+                    Log.e(TAG, "Have Internet")
+                } else {
+                    // Fetch data from SQLite
+                    val categoriesFromSQLite = dbHelper.readCategory()
+                    updateCategories(categoriesFromSQLite)
+                    Log.e(TAG, "No Internet")
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
             }
@@ -67,18 +87,6 @@ class CategoryViewModel(
         incomeList.postValue(incomeCategories)
     }
 
-
-    /*private fun getCategoriesFromSQLite() {
-        viewModelScope.launch {
-            try {
-                val categories = dbHelper.getAllCategories()
-                updateCategories(categories)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error getting categories from SQLite", e)
-            }
-        }
-    }*/
-
     init {
         getCategoriesList()
     }
@@ -99,7 +107,7 @@ class CategoryViewModel(
                     categoryId,
                     updatedCategory,
                     onSuccess = {
-                        getCategoriesList()
+                        getCategoriesList(currentContext)
                     }
                 )
 
@@ -119,7 +127,7 @@ class CategoryViewModel(
                     "Categories",
                     categoryId,
                     onSuccess = {
-                        getCategoriesList()
+                        getCategoriesList(currentContext)
                     }
                 )
 
@@ -188,7 +196,7 @@ class CategoryViewModel(
                     category,
                     "CT%04d",
                     onSuccess = {
-                        getCategoriesList()
+                        getCategoriesList(currentContext)
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Error adding category", exception)
@@ -206,7 +214,7 @@ class CategoryViewModel(
                 category,
                 "CT%04d",
                 onSuccess = {
-                    getCategoriesList()
+                    getCategoriesList(currentContext)
                 },
                 onFailure = {
 
@@ -218,18 +226,32 @@ class CategoryViewModel(
 
 
     private fun isInternetAvailable(context: Context): Boolean {
+        var result = false
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork ?: return false
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(network) ?: return false
-            return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw =
+                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+            result = when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
         } else {
-            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
-            return networkInfo.isConnected
+            connectivityManager.run {
+                connectivityManager.activeNetworkInfo?.run {
+                    result = when (type) {
+                        ConnectivityManager.TYPE_WIFI -> true
+                        ConnectivityManager.TYPE_MOBILE -> true
+                        ConnectivityManager.TYPE_ETHERNET -> true
+                        else -> false
+                    }
+                }
+            }
         }
+        return result
     }
 
 }

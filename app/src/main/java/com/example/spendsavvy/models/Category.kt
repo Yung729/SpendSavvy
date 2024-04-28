@@ -8,13 +8,10 @@ import java.io.Serializable
 
 @Entity(tableName = "categories")
 data class Category(
-    @PrimaryKey(autoGenerate = false)
-    @get:Exclude // Exclude from Firestore serialization
-    val roomId: String? = null,
     var imageUri: Uri? ,
     var categoryName: String ,
     var categoryType: String
 ):Serializable  {
-    constructor() : this("",null, "", "")
+    constructor() : this(null, "", "")
 
 }
