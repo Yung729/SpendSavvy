@@ -28,13 +28,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.viewModels.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun MyProfileScreen(profileViewModel: ProfileViewModel = viewModel(), modifier: Modifier = Modifier, navController: NavController) {
+
+    val auth = FirebaseAuth.getInstance()
+
+    val getData = profileViewModel.state.value
+    val userName = getData.userName
+    val email = getData.email
+    val phoneNo = getData.phoneNo
 
     Column(
         modifier = Modifier
@@ -43,7 +53,7 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController)
         verticalArrangement = Arrangement.Top,
     ) {
             Row() {
-                Spacer(modifier = Modifier.weight(1.5f)) // Spacer to push position
+                Spacer(modifier = Modifier.weight(1.5f))
 
                 Image(
                     painter = painterResource(id = R.drawable.profile_icon),
@@ -77,9 +87,9 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController)
                     contentColor = Color.Black
                 )
             ) {
-                UserInfoRow(label = "User Name", data ="XXXXXX")
-                UserInfoRow(label = "Email", data ="XXXXXX")
-                UserInfoRow(label = "Phone Number", data ="XXXXXX")
+                UserInfoRow(label = "User Name", data = userName)
+                UserInfoRow(label = "Email", data = email)
+                UserInfoRow(label = "Phone Number", data = phoneNo)
             }
     }
 }

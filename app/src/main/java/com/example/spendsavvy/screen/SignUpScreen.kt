@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
@@ -40,18 +41,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.components.ButtonComponent
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.database.database
 
 @Composable
 fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
 
+    val database = Firebase.database
+    var photoURL by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
+    var phoneNo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
@@ -94,6 +100,23 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
             singleLine = true
+        )
+
+        OutlinedTextField(
+            value = phoneNo,
+            onValueChange = { phoneNo = it },
+            label = { Text(text = "Phone NO ") },
+            leadingIcon = {
+                Icon(Icons.Default.AccountBox, contentDescription = "Phone Number")
+            },
+            maxLines = 1,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 10.dp),
+            shape = RoundedCornerShape(15.dp),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            isError = phoneNo.isEmpty() && !phoneValidation(phoneNo)
         )
 
         OutlinedTextField(
@@ -171,7 +194,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
 
         ButtonComponent(
             onButtonClick = {
-                if (!emailValidation(email) || !passwordValidation(password) || password != confirmPassword) {
+                if (!emailValidation(email) || !passwordValidation(password) || password != confirmPassword || !phoneValidation(phoneNo)) {
                     isError = true
                     Toast.makeText(
                         context,
@@ -184,6 +207,10 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                         .addOnCompleteListener() { task ->
                             if (task.isSuccessful) {
 
+                                val usersRef = database.reference.child("Users")
+                                val userRef = usersRef.child(userName)
+                                val user = UserData("", userName, phoneNo, email, password)
+                                userRef.setValue(user)
                                 navController.navigate(route = Screen.Login.route)
 
                             } else {
@@ -198,10 +225,6 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                 }
                             },
             text = "SIGN UP" )
-
-
-
-
     }
 }
 
@@ -217,9 +240,11 @@ fun passwordValidation(password: String): Boolean {
     else if (password.count() < 8)
         return false
 
-
-
     return true
+}
+fun phoneValidation(phoneNo: String): Boolean {
+    val pattern = "^\\+?0?(\\d{2})[- ]?(\\d{3})[- ]?(\\d{4})\$"
+    return phoneNo.matches(pattern.toRegex())
 }
 
 @Preview(showBackground = true)

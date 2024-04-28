@@ -127,9 +127,12 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 if (task.isSuccessful) {
 
                     val user = auth.currentUser
-                    navController.navigate(route = "EnterMainScreen") {
-                        popUpTo(navController.graph.id) {
-                            inclusive = true
+                    if(user != null)
+                    {
+                        navController.navigate(route = "EnterMainScreen") {
+                            popUpTo(navController.graph.id) {
+                                inclusive = true
+                            }
                         }
                     }
                     
@@ -146,7 +149,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         ClickableText(
             text = AnnotatedString("Forgot Password ?"),
             onClick = {
-
+                navController.navigate(route = Screen.ForgotPassword.route)
             },
             style = TextStyle(
                 color = ButtonColor, fontFamily = poppinsFontFamily

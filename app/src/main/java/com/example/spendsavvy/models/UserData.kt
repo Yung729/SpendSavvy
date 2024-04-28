@@ -1,12 +1,11 @@
 package com.example.spendsavvy.models
 
-import android.net.Uri
-
 data class UserData(
-    var imageUrl: Uri? = null,
-    val userName : String?,
-    val email : String?,
-    val password : String?
+    val photoURL: String = "",
+    val userName: String = "",
+    val phoneNo: String = "",
+    val email: String = "",
+    val password: String = "",
 ){
-    constructor() : this(null, null,null,null)
+//    constructor() : this(null, null,null,null, null)
 }
