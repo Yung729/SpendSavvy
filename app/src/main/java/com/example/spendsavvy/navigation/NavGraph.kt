@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -40,6 +39,7 @@ import com.example.spendsavvy.screen.AddCategoryScreen
 import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AddIncomeScreen
 import com.example.spendsavvy.screen.AnalysisScreen
+import com.example.spendsavvy.screen.BudgetScreen
 import com.example.spendsavvy.screen.CategoryDetail
 import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
@@ -113,7 +113,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
     val context = LocalContext.current
     val showOption = remember { mutableStateOf(false) }
     val categoryViewModel = CategoryViewModel(context)
-    val transactionsViewModel: OverviewViewModel = viewModel()
+    val transactionsViewModel = OverviewViewModel()
 
     Scaffold(
         topBar = {
@@ -262,7 +262,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),
-                    navController = navController
+                    navController = navController,
+                    transactionViewModel = transactionsViewModel
                 )
             }
 
@@ -480,6 +481,16 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                         transactionViewModel = transactionsViewModel
                     )
                 }
+
+            }
+
+            composable(
+                route = Screen.BudgetScreen.route,
+            ) {
+
+                BudgetScreen(
+                )
+
 
             }
 

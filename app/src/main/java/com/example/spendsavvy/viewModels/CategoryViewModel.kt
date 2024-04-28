@@ -9,9 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.data.CategoryData
-import com.example.spendsavvy.db.AppDatabase
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.repo.CategoryRoomRepository
 import com.example.spendsavvy.repo.FirestoreRepository
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore

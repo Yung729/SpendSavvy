@@ -34,6 +34,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
 
     object FdDetails : Screen(route = "FD_Details", R.drawable.cross_icon)
     object BankDetails : Screen(route = "FD_Details", R.drawable.cross_icon)
+    object BudgetScreen : Screen(route = "Budget", R.drawable.cross_icon)
 
 
 }
