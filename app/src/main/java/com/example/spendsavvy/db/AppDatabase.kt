@@ -1,30 +1,38 @@
 package com.example.spendsavvy.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import com.example.spendsavvy.dao.CategoryDao
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 import com.example.spendsavvy.models.Category
 
-@Database(entities = [Category::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun categoryDao(): CategoryDao
+class DatabaseHelper(context: Context) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    override fun onCreate(db: SQLiteDatabase) {
+        // Create tables and initial database structure
+        db.execSQL(CREATE_CATEGORY_TABLE)
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Handle database schema upgrades
+    }
+
+
+
+
+
 
     companion object {
-        @Volatile
-        private var instance: AppDatabase? = null
+        private const val DATABASE_NAME = "spendsavvy_database.db"
+        private const val DATABASE_VERSION = 1
 
-        fun getInstance(context: Context): AppDatabase {
-            return instance ?: synchronized(this) {
-                val newInstance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "app_database"
-                ).build()
-                instance = newInstance
-                newInstance
-            }
-        }
+        private const val CREATE_CATEGORY_TABLE = """
+            CREATE TABLE categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                categoryName TEXT NOT NULL,
+                categoryType TEXT NOT NULL,
+                imageUri TEXT
+            )
+        """
     }
 }
+

@@ -3,12 +3,16 @@ package com.example.spendsavvy.viewModels
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.data.CategoryData
+import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.repo.FirestoreRepository
 import com.google.firebase.firestore.FieldPath
@@ -18,10 +22,12 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 
 
-class CategoryViewModel(context: Context) : ViewModel() {
+class CategoryViewModel(
+    context: Context
+) : ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
-
+    private val dbHelper = DatabaseHelper(context)
 
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
@@ -36,25 +42,42 @@ class CategoryViewModel(context: Context) : ViewModel() {
                     "Categories",
                     Category::class.java
                 )
-                val expenseCategories = mutableListOf<Category>()
-                val incomeCategories = mutableListOf<Category>()
 
-                categories.forEach { category ->
-                    if (category.categoryType == "Expenses") {
-                        expenseCategories.add(category)
-                    } else if (category.categoryType == "Incomes") {
-                        incomeCategories.add(category)
-                    }
-                }
-
-                expensesList.postValue(expenseCategories)
-                incomeList.postValue(incomeCategories)
+                updateCategories(categories)
 
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
             }
         }
     }
+
+    private fun updateCategories(categories: List<Category>) {
+        val expenseCategories = mutableListOf<Category>()
+        val incomeCategories = mutableListOf<Category>()
+
+        categories.forEach { category ->
+            if (category.categoryType == "Expenses") {
+                expenseCategories.add(category)
+            } else if (category.categoryType == "Incomes") {
+                incomeCategories.add(category)
+            }
+        }
+
+        expensesList.postValue(expenseCategories)
+        incomeList.postValue(incomeCategories)
+    }
+
+
+    /*private fun getCategoriesFromSQLite() {
+        viewModelScope.launch {
+            try {
+                val categories = dbHelper.getAllCategories()
+                updateCategories(categories)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error getting categories from SQLite", e)
+            }
+        }
+    }*/
 
     init {
         getCategoriesList()
@@ -192,6 +215,23 @@ class CategoryViewModel(context: Context) : ViewModel() {
             )
         }
     }
+
+
+    private fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(network) ?: return false
+            return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+        } else {
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+            return networkInfo.isConnected
+        }
+    }
+
 }
 
 
