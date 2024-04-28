@@ -78,8 +78,7 @@ fun OverviewScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = "Record",
@@ -89,26 +88,21 @@ fun OverviewScreen(
                 color = HeaderTitle
             )
 
-            ClickableText(
-                text = AnnotatedString("See All"),
-                onHover = {
+            ClickableText(text = AnnotatedString("See All"), onHover = {
 
-                },
-                onClick = {
-                    //Show All
-                },
-                modifier = Modifier.align(Alignment.CenterVertically),
-                style = TextStyle(
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Green,
-                )
+            }, onClick = {
+                //Show All
+            }, modifier = Modifier.align(Alignment.CenterVertically), style = TextStyle(
+                fontFamily = poppinsFontFamily,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Green,
+            )
             )
 
         }
 
-        TransactionList(transactionList, navController = navController)
+        TransactionList(transactionList, navController = navController, transactionViewModel = transactionViewModel)
 
     }
 
@@ -121,15 +115,10 @@ fun OverViewCard() {
 
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = CardColor,
-            contentColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(
+            containerColor = CardColor, contentColor = Color.White
+        ), elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
-        ),
-        shape = RoundedCornerShape(15.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
 
     ) {
         Column(
@@ -153,8 +142,7 @@ fun OverViewCard() {
             Spacer(modifier = Modifier.height(20.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
             ) {
 
                 Column {
@@ -202,11 +190,11 @@ fun OverViewCard() {
 fun TransactionsCard(
     transactions: Transactions,
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    transactionViewModel: OverviewViewModel
 ) {
 
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val transactionViewModel: OverviewViewModel = viewModel()
 
     val dismissState = rememberDismissState()
     if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
@@ -219,16 +207,13 @@ fun TransactionsCard(
             Card(
                 modifier = modifier.clickable {
                     navController.currentBackStackEntry?.savedStateHandle?.set(
-                        key = "currentTransaction",
-                        value = transactions
+                        key = "currentTransaction", value = transactions
                     )
 
                     navController.navigate(Screen.TransactionDetails.route)
-                },
-                colors = CardDefaults.cardColors(
+                }, colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
-                ),
-                border = BorderStroke(width = 1.dp, Color.Black)
+                ), border = BorderStroke(width = 1.dp, Color.Black)
             ) {
 
                 Row(
@@ -248,8 +233,7 @@ fun TransactionsCard(
                     )
 
                     Column(
-                        horizontalAlignment = Alignment.Start,
-                        modifier = Modifier
+                        horizontalAlignment = Alignment.Start, modifier = Modifier
                     ) {
                         Text(
                             text = transactions.category.categoryName,
@@ -257,8 +241,7 @@ fun TransactionsCard(
                         )
 
                         Text(
-                            text = dateFormat.format(transactions.date),
-                            fontSize = 10.sp
+                            text = dateFormat.format(transactions.date), fontSize = 10.sp
                         )
                     }
 
@@ -266,11 +249,9 @@ fun TransactionsCard(
                     Text(
                         text = transactions.amount.toString(),
                         fontWeight = FontWeight.SemiBold,
-                        color =
-                        if (transactions.transactionType == "Expenses") Color.Red else Color.Green,
+                        color = if (transactions.transactionType == "Expenses") Color.Red else Color.Green,
                         textAlign = TextAlign.End,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 
@@ -283,7 +264,8 @@ fun TransactionsCard(
 fun TransactionList(
     transactionsList: List<Transactions>,
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    transactionViewModel: OverviewViewModel
 ) {
     LazyColumn(modifier = modifier) {
         items(transactionsList) { item: Transactions ->
@@ -292,7 +274,8 @@ fun TransactionList(
                 modifier = Modifier
                     .padding(5.dp)
                     .fillMaxWidth(),
-                navController = navController
+                navController = navController,
+                transactionViewModel = transactionViewModel
             )
         }
     }
