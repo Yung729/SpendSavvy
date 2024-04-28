@@ -51,6 +51,8 @@ class CategoryViewModel(
 
                     dbHelper.deleteAllCategories()
                     // Update SQLite with Firestore data
+                    dbHelper.resetPrimaryKey("categories")
+
                     categoriesFromFirestore.forEach { category ->
                         dbHelper.addNewCategory(
                             category.imageUri,
@@ -107,7 +109,7 @@ class CategoryViewModel(
                     categoryId,
                     updatedCategory,
                     onSuccess = {
-                        getCategoriesList(currentContext)
+                        getCategoriesList()
                     }
                 )
 
@@ -127,7 +129,7 @@ class CategoryViewModel(
                     "Categories",
                     categoryId,
                     onSuccess = {
-                        getCategoriesList(currentContext)
+                        getCategoriesList()
                     }
                 )
 
@@ -196,7 +198,7 @@ class CategoryViewModel(
                     category,
                     "CT%04d",
                     onSuccess = {
-                        getCategoriesList(currentContext)
+                        getCategoriesList()
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Error adding category", exception)
@@ -214,7 +216,7 @@ class CategoryViewModel(
                 category,
                 "CT%04d",
                 onSuccess = {
-                    getCategoriesList(currentContext)
+                    getCategoriesList()
                 },
                 onFailure = {
 

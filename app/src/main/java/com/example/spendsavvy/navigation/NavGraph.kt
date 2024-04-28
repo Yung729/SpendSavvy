@@ -113,7 +113,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
     val context = LocalContext.current
     val showOption = remember { mutableStateOf(false) }
     val categoryViewModel = CategoryViewModel(context)
-    val transactionsViewModel = OverviewViewModel()
+    val transactionsViewModel = OverviewViewModel(context)
 
     Scaffold(
         topBar = {
