@@ -15,6 +15,9 @@ class OverviewViewModel : ViewModel() {
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
     val transactionsList = MutableLiveData<List<Transactions>>()
+    val expensesTotal = MutableLiveData<Double>()
+    val incomesTotal = MutableLiveData<Double>()
+
 
     private fun getTransactionRecord() {
         viewModelScope.launch {
@@ -25,7 +28,24 @@ class OverviewViewModel : ViewModel() {
                     Transactions::class.java
                 )
 
+                var totalExpenses = 0.0
+                var totalIncomes = 0.0
+
+
+                for (transaction in transactions) {
+                    if (transaction.transactionType == "Expenses") {
+                        totalExpenses += transaction.amount
+
+                    } else if (transaction.transactionType == "Incomes") {
+                        totalIncomes += transaction.amount
+                    }
+                }
+
+                expensesTotal.postValue(totalExpenses)
+                incomesTotal.postValue(totalIncomes)
+
                 transactionsList.postValue(transactions)
+
 
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error getting transactions", e)

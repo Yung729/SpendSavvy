@@ -1,17 +1,20 @@
 package com.example.spendsavvy.viewModels
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.data.CategoryData
-import com.example.spendsavvy.db.AppDatabase
+import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.repo.CategoryRoomRepository
 import com.example.spendsavvy.repo.FirestoreRepository
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,42 +23,68 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 
 
-class CategoryViewModel(context: Context) : ViewModel() {
+class CategoryViewModel(
+    context: Context
+) : ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
+    private val dbHelper = DatabaseHelper(context)
 
-
+    @SuppressLint("StaticFieldLeak")
+    val currentContext = context
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
 
-    private fun getCategoriesList() {
+    private fun getCategoriesList(context: Context = currentContext) {
         viewModelScope.launch {
             try {
-                val categories = firestoreRepository.readItemsFromDatabase(
-                    userId,
-                    "Categories",
-                    Category::class.java
-                )
-                val expenseCategories = mutableListOf<Category>()
-                val incomeCategories = mutableListOf<Category>()
+                if (isInternetAvailable(context)) {
+                    val categoriesFromFirestore = firestoreRepository.readItemsFromDatabase(
+                        userId,
+                        "Categories",
+                        Category::class.java
+                    )
 
-                categories.forEach { category ->
-                    if (category.categoryType == "Expenses") {
-                        expenseCategories.add(category)
-                    } else if (category.categoryType == "Incomes") {
-                        incomeCategories.add(category)
+                    updateCategories(categoriesFromFirestore)
+
+                    dbHelper.deleteAllCategories()
+                    // Update SQLite with Firestore data
+                    categoriesFromFirestore.forEach { category ->
+                        dbHelper.addNewCategory(
+                            category.imageUri,
+                            category.categoryName,
+                            category.categoryType
+                        )
                     }
+                    Log.e(TAG, "Have Internet")
+                } else {
+                    // Fetch data from SQLite
+                    val categoriesFromSQLite = dbHelper.readCategory()
+                    updateCategories(categoriesFromSQLite)
+                    Log.e(TAG, "No Internet")
                 }
-
-                expensesList.postValue(expenseCategories)
-                incomeList.postValue(incomeCategories)
-
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
             }
         }
+    }
+
+    private fun updateCategories(categories: List<Category>) {
+        val expenseCategories = mutableListOf<Category>()
+        val incomeCategories = mutableListOf<Category>()
+
+        categories.forEach { category ->
+            if (category.categoryType == "Expenses") {
+                expenseCategories.add(category)
+            } else if (category.categoryType == "Incomes") {
+                incomeCategories.add(category)
+            }
+        }
+
+        expensesList.postValue(expenseCategories)
+        incomeList.postValue(incomeCategories)
     }
 
     init {
@@ -78,7 +107,7 @@ class CategoryViewModel(context: Context) : ViewModel() {
                     categoryId,
                     updatedCategory,
                     onSuccess = {
-                        getCategoriesList()
+                        getCategoriesList(currentContext)
                     }
                 )
 
@@ -98,7 +127,7 @@ class CategoryViewModel(context: Context) : ViewModel() {
                     "Categories",
                     categoryId,
                     onSuccess = {
-                        getCategoriesList()
+                        getCategoriesList(currentContext)
                     }
                 )
 
@@ -167,7 +196,7 @@ class CategoryViewModel(context: Context) : ViewModel() {
                     category,
                     "CT%04d",
                     onSuccess = {
-                        getCategoriesList()
+                        getCategoriesList(currentContext)
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Error adding category", exception)
@@ -185,7 +214,7 @@ class CategoryViewModel(context: Context) : ViewModel() {
                 category,
                 "CT%04d",
                 onSuccess = {
-                    getCategoriesList()
+                    getCategoriesList(currentContext)
                 },
                 onFailure = {
 
@@ -194,6 +223,37 @@ class CategoryViewModel(context: Context) : ViewModel() {
             )
         }
     }
+
+
+    private fun isInternetAvailable(context: Context): Boolean {
+        var result = false
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw =
+                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+            result = when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            connectivityManager.run {
+                connectivityManager.activeNetworkInfo?.run {
+                    result = when (type) {
+                        ConnectivityManager.TYPE_WIFI -> true
+                        ConnectivityManager.TYPE_MOBILE -> true
+                        ConnectivityManager.TYPE_ETHERNET -> true
+                        else -> false
+                    }
+                }
+            }
+        }
+        return result
+    }
+
 }
 
 
