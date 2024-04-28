@@ -1,11 +1,13 @@
 package com.example.spendsavvy.screen
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,6 +36,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,11 +60,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 import java.util.UUID
 
 @Composable
 fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
+
+    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
+
+    // Retrieve user data from Firestore
+    val auth = FirebaseAuth.getInstance()
+    getUserData(auth.currentUser?.uid ?: "") { user ->
+        userData = user
+    }
 
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
@@ -191,24 +206,27 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
 
         OutlinedTextFieldItem(
             label = "User Name",
-            value = "User Name",
-            onValueChange = { /* Implement logic to change the user name */ },
+            placeholder = userData.userName,
+            value = userData.userName,
+            onValueChange = { userData.userName = it },
             height = 60.dp
         )
 
         OutlinedTextFieldItem(
             label = "Email Address",
-            value = "Email Address",
+            placeholder = userData.email,
+            value = userData.email,
             keyboardType = KeyboardType.Email,
-            onValueChange = { /* Implement logic to change the email address */ },
+            onValueChange = { userData.email = it},
             height = 60.dp
         )
 
         OutlinedTextFieldItem(
             label = "Phone Number",
-            value = "Phone Number",
+            placeholder = userData.phoneNo,
+            value = userData.phoneNo,
             keyboardType = KeyboardType.Phone,
-            onValueChange = { /* Implement logic to change the phone number */ },
+            onValueChange = { userData.phoneNo = it},
             height = 60.dp
         )
 
@@ -216,7 +234,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
 
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-            onClick = { /*TODO*/ },
+            onClick = { saveChangesToFirebase(context,userData) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -227,16 +245,43 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
 
 }
 
+private fun saveChangesToFirebase(context: Context, userData: UserData) {
+    // Update user data in Firestore
+    val auth = FirebaseAuth.getInstance()
+    val uid = auth.currentUser?.uid ?: ""
+    val db = Firebase.firestore
+
+    val usersCollection = db.collection("Users")
+    usersCollection.document(uid)
+        .set(userData)
+        .addOnSuccessListener {
+            // Handle success
+            Log.d(TAG, "User data updated successfully")
+            Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+        }
+        .addOnFailureListener { e ->
+            // Handle failure
+            Log.w(TAG, "Error updating user data", e)
+            Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
+        }
+}
+
 
 @Composable
 fun OutlinedTextFieldItem(
     label: String,
+    placeholder: String,
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit,
     height: Dp = TextFieldDefaults.MinHeight
 ) {
     val (textValue, setTextValue) = remember { mutableStateOf(value) }
+
+    // Update textValue with the value of 'value' when it changes
+    LaunchedEffect(value) {
+        setTextValue(value)
+    }
 
     OutlinedTextField(
         value = textValue,
@@ -248,12 +293,14 @@ fun OutlinedTextFieldItem(
             .fillMaxWidth()
             .padding(bottom = 20.dp)
             .background(Color.White)
-            .height(height), // Adjusted height here
+            .height(height),
         textStyle = TextStyle(color = Color.Gray, fontSize = 20.sp),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
         label = { Text(text = label, color = Color.Black) },
+        placeholder = { Text(text = placeholder, color = Color.Gray) }
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable

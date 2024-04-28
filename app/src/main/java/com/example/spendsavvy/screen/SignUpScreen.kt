@@ -45,10 +45,12 @@ import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.database
+import com.google.firebase.firestore.firestore
 
 @Composable
 fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
@@ -207,10 +209,17 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                         .addOnCompleteListener() { task ->
                             if (task.isSuccessful) {
 
-                                val usersRef = database.reference.child("Users")
-                                val userRef = usersRef.child(userName)
-                                val user = UserData("", userName, phoneNo, email, password)
-                                userRef.setValue(user)
+                                val user = auth.currentUser
+                                if (user != null) {
+                                    val uid = user.uid
+                                    val userData = UserData("", "", userName, phoneNo, email, password)
+
+                                    val db = Firebase.firestore
+                                    val usersCollection = db.collection("Users")
+                                    usersCollection.document(uid)
+                                        .set(userData)
+                                }
+
                                 navController.navigate(route = Screen.Login.route)
 
                             } else {

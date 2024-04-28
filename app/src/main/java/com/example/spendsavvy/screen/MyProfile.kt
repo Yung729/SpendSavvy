@@ -1,5 +1,7 @@
 package com.example.spendsavvy.screen
 
+import android.content.ContentValues
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,32 +21,38 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun MyProfileScreen(profileViewModel: ProfileViewModel = viewModel(), modifier: Modifier = Modifier, navController: NavController) {
+fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
 
+    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
+
+    // Retrieve user data from Firestore
     val auth = FirebaseAuth.getInstance()
-
-    val getData = profileViewModel.state.value
-    val userName = getData.userName
-    val email = getData.email
-    val phoneNo = getData.phoneNo
+    getUserData(auth.currentUser?.uid ?: "") { user ->
+        userData = user
+    }
 
     Column(
         modifier = Modifier
@@ -87,9 +95,9 @@ fun MyProfileScreen(profileViewModel: ProfileViewModel = viewModel(), modifier: 
                     contentColor = Color.Black
                 )
             ) {
-                UserInfoRow(label = "User Name", data = userName)
-                UserInfoRow(label = "Email", data = email)
-                UserInfoRow(label = "Phone Number", data = phoneNo)
+                UserInfoRow(label = "User Name", data = userData.userName)
+                UserInfoRow(label = "Email", data = userData.email)
+                UserInfoRow(label = "Phone Number", data = userData.phoneNo)
             }
     }
 }
@@ -111,6 +119,25 @@ fun UserInfoRow(label: String, data: String) {
         LineDivider()
     }
 }
+fun getUserData(userId: String, onDataReceived: (UserData) -> Unit) {
+    val db = FirebaseFirestore.getInstance()
+    val docRef = db.collection("Users").document(userId)
+
+    docRef.get()
+        .addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                val userData = document.toObject(UserData::class.java)
+                if (userData != null) {
+                    onDataReceived(userData)
+                }
+            }
+        }
+        .addOnFailureListener { e ->
+            // Handle failure
+            Log.w(ContentValues.TAG, "Error getting user data", e)
+        }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MyProfileScreenPreview() {

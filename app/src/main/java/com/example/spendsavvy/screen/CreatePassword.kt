@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.models.UserData
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -35,6 +37,14 @@ fun CreatePassword(modifier: Modifier = Modifier, navController: NavController) 
 
     var success by remember { mutableStateOf(false) }
     var fail by remember { mutableStateOf(false) }
+
+    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
+
+    // Retrieve user data from Firestore
+    val auth = FirebaseAuth.getInstance()
+    getUserData(auth.currentUser?.uid ?: "") { user ->
+        userData = user
+    }
 
     Column(
         modifier = Modifier
@@ -67,7 +77,8 @@ fun CreatePassword(modifier: Modifier = Modifier, navController: NavController) 
             value = oldPassword,
             onValueChange = { oldPassword = it },
             passwordVisible = passwordVisible,
-            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible }
+            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
+            userData = userData // Pass userData to the PasswordTextField
         )
 
         PasswordTextField(
@@ -75,7 +86,8 @@ fun CreatePassword(modifier: Modifier = Modifier, navController: NavController) 
             value = newPassword,
             onValueChange = { newPassword = it },
             passwordVisible = passwordVisible,
-            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible }
+            onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
+            userData = userData // Pass userData to the PasswordTextField
         )
 
         Button(
