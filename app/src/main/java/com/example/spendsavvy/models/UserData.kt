@@ -1,11 +1,12 @@
 package com.example.spendsavvy.models
 
 data class UserData(
-    val photoURL: String = "",
-    val userName: String = "",
-    val phoneNo: String = "",
-    val email: String = "",
-    val password: String = "",
+    val userID: String,
+    val photoURL: String,
+    var userName: String,
+    var phoneNo: String,
+    var email: String,
+    val password: String,
 ){
-//    constructor() : this(null, null,null,null, null)
+    constructor() : this("","", "","","", "")
 }
