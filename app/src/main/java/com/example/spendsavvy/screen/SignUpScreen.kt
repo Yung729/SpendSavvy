@@ -45,17 +45,14 @@ import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
-import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.database.database
 import com.google.firebase.firestore.firestore
 
 @Composable
 fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
 
-    val database = Firebase.database
     var photoURL by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
@@ -107,7 +104,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
         OutlinedTextField(
             value = phoneNo,
             onValueChange = { phoneNo = it },
-            label = { Text(text = "Phone NO ") },
+            label = { Text(text = "Phone Number ") },
             leadingIcon = {
                 Icon(Icons.Default.AccountBox, contentDescription = "Phone Number")
             },

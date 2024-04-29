@@ -202,7 +202,7 @@ fun SavePasswordButton(
         )
     }
 }
-private fun saveNewPasswordToFirestore(newPassword: String) {
+fun saveNewPasswordToFirestore(newPassword: String) {
     val auth = FirebaseAuth.getInstance()
     val uid = auth.currentUser?.uid ?: ""
     val db = Firebase.firestore

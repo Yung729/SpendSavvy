@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
@@ -64,11 +67,14 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController)
                 Spacer(modifier = Modifier.weight(1.5f))
 
                 Image(
-                    painter = painterResource(id = R.drawable.profile_icon),
+                    painter = if (userData.photoURL!!.isNotEmpty()) {
+                        rememberAsyncImagePainter(model = userData.photoURL)
+                    } else {
+                        painterResource(id = R.drawable.profile_icon)
+                    },
                     contentDescription = "User profile image",
                     modifier = Modifier
                         .size(150.dp)
-                        .align(Alignment.CenterVertically)
                         .clip(CircleShape)
                         .border(
                             width = 1.dp,

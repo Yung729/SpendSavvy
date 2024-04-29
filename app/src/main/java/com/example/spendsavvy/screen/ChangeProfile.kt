@@ -1,5 +1,8 @@
+@file:Suppress("NAME_SHADOWING")
+
 package com.example.spendsavvy.screen
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
@@ -32,6 +35,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -50,7 +54,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,27 +62,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
-import java.util.UUID
+import com.google.firebase.storage.storage
+import java.io.IOException
 
 @Composable
 fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
-
-    // Retrieve user data from Firestore
     val auth = FirebaseAuth.getInstance()
     getUserData(auth.currentUser?.uid ?: "") { user ->
         userData = user
     }
-
+    var showOption by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -90,15 +94,10 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                 val source = ImageDecoder.createSource(context.contentResolver, it)
                 ImageDecoder.decodeBitmap(source)
             }
+            // Upload image to Firebase Storage
+            uploadImageToFirebaseStorage(context, it, userData)
         }
     }
-
-    val cLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicturePreview()
-    ) {
-        bitmap = it
-    }
-    var showOption by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -122,11 +121,15 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                         shape = CircleShape
                     )
                     .clickable { showOption = true },
-                )
+            )
         }
         else {
             Image(
-                painter = painterResource(id = R.drawable.profile_icon),
+                painter = if (userData.photoURL!!.isNotEmpty()) {
+                    rememberAsyncImagePainter(model = userData.photoURL)
+                } else {
+                    painterResource(id = R.drawable.profile_icon)
+                },
                 contentDescription = "User profile image",
                 modifier = Modifier
                     .size(150.dp)
@@ -140,65 +143,62 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                     .clickable { showOption = true },
                 )
         }
-
         if (showOption) {
             AlertDialog(
                 onDismissRequest = { showOption = false },
                 title = {
-                    Column(
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.End
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(R.drawable.cross_icon),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable { showOption = false }
-                                .padding(bottom = 10.dp)
-                        )
                         Text(
                             text = "Choose Image Source",
-                            textAlign = TextAlign.Center,
                             fontSize = 20.sp,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
                         )
-                    }
-                },
-                 dismissButton = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-
-                        Button(
-                            onClick = { cLauncher.launch() },
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.camera_icon),
-                                contentDescription = "Camera Icon",
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "Camera")
-                        }
+                        Image(
+                            painter = painterResource(R.drawable.cross_icon),
+                            contentDescription = "Close",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable { showOption = false }
+                                .padding(8.dp)
+                        )
                     }
                 },
                 confirmButton = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-
-                        Button(
-                            onClick = { launcher.launch("image/*") },
-                        ) {
+                    Button(
+                        onClick = {
+                            launcher.launch("image/*")
+                            showOption = false
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 painter = painterResource(id = R.drawable.gallery_icon),
                                 contentDescription = "Gallery Icon",
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-
                             Text(text = "Gallery")
                         }
                     }
-                }
+                },
+                dismissButton = {
+                    OutlinedButton(
+                        onClick = { showOption = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                },
+                modifier = Modifier.width(280.dp)
             )
         }
 
@@ -234,7 +234,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
 
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-            onClick = { saveChangesToFirebase(context,userData) },
+            onClick = { saveChangesToFirebase(context, userData) }, // Pass photoUrl to saveChangesToFirebase
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -244,6 +244,30 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
     }
 
 }
+private fun uploadImageToFirebaseStorage(context: Context, uri: Uri, userData: UserData) {
+    val auth = FirebaseAuth.getInstance()
+    val uid = auth.currentUser?.uid ?: ""
+    val storageRef = Firebase.storage.reference
+
+    // Create a reference to "user_photos/$uid.jpg"
+    val photoRef = storageRef.child("user_photos/$uid.jpg")
+
+    // Upload the image to Firebase Storage
+    val uploadTask = photoRef.putFile(uri)
+    uploadTask.addOnSuccessListener { taskSnapshot ->
+        // Get the download URL from the task snapshot
+        taskSnapshot.storage.downloadUrl.addOnSuccessListener { url ->
+            // Update the photoURL field in the userData object
+            val updatedUserData = userData.copy(photoURL = url.toString())
+            saveChangesToFirebase(context, updatedUserData)
+        }
+    }.addOnFailureListener { e ->
+        // Handle failure
+        Log.w(TAG, "Error uploading image", e)
+        Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
+    }
+}
+
 
 private fun saveChangesToFirebase(context: Context, userData: UserData) {
     // Update user data in Firestore
@@ -265,7 +289,6 @@ private fun saveChangesToFirebase(context: Context, userData: UserData) {
             Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
         }
 }
-
 
 @Composable
 fun OutlinedTextFieldItem(
@@ -300,7 +323,6 @@ fun OutlinedTextFieldItem(
         placeholder = { Text(text = placeholder, color = Color.Gray) }
     )
 }
-
 
 @Preview(showBackground = true)
 @Composable
