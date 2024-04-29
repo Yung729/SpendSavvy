@@ -35,12 +35,10 @@ fun CreatePassword(modifier: Modifier = Modifier, navController: NavController) 
     var newPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    var success by remember { mutableStateOf(false) }
-    var fail by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    var isPasswordValid by remember { mutableStateOf(false) }
 
-    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
-
-    // Retrieve user data from Firestore
+    var userData by remember { mutableStateOf(UserData("", "", "", "", "", "")) }
     val auth = FirebaseAuth.getInstance()
     getUserData(auth.currentUser?.uid ?: "") { user ->
         userData = user
@@ -78,7 +76,7 @@ fun CreatePassword(modifier: Modifier = Modifier, navController: NavController) 
             onValueChange = { oldPassword = it },
             passwordVisible = passwordVisible,
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-            userData = userData // Pass userData to the PasswordTextField
+            userData = userData
         )
 
         PasswordTextField(
@@ -87,116 +85,114 @@ fun CreatePassword(modifier: Modifier = Modifier, navController: NavController) 
             onValueChange = { newPassword = it },
             passwordVisible = passwordVisible,
             onPasswordVisibilityToggle = { passwordVisible = !passwordVisible },
-            userData = userData // Pass userData to the PasswordTextField
+            userData = userData
         )
 
-        Button(
-            onClick = {
-                success = true
-                //fail = true
-            }, //check then if success save password then success == true
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.DarkGray,
-                contentColor = Color.White
-            )
-        ) {
-            Text(
-                text = "Next",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+        CreatePasswordButton(
+            oldPassword = oldPassword,
+            newPassword = newPassword,
+            showDialog = showDialog,
+            isPasswordValid = isPasswordValid,
+            onShowDialogChange = { showDialog = it },
+            onIsPasswordValidChange = { isPasswordValid = it },
+            navController
+        )
+    }
+}
+@Composable
+fun CreatePasswordButton(
+    oldPassword: String,
+    newPassword: String,
+    showDialog: Boolean,
+    isPasswordValid: Boolean,
+    onShowDialogChange: (Boolean) -> Unit,
+    onIsPasswordValidChange: (Boolean) -> Unit,
+    navController: NavController
+) {
+    var success by remember { mutableStateOf(false) }
 
-        if (success) {
-            AlertDialog(
-                onDismissRequest = { success = false },
-                title = {
-                    Text(
-                        text = "Success",
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 22.sp,
-                        color = Color.Green,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
-                text = {
-                    Text(
-                        text = "Your password is successfully created",
-                        textAlign = TextAlign.Center,
-                        fontSize = 18.sp,
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
-                confirmButton = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+    Button(
+        onClick = {
+            if (oldPassword.isNotEmpty() && newPassword.isNotEmpty() && passwordValidation(oldPassword) && passwordValidation(newPassword)) {
+                if (newPassword == oldPassword) {
+                    saveNewPasswordToFirestore(newPassword)
+                    onShowDialogChange(true)
+                    onIsPasswordValidChange(true)
+                    success = true
+                } else {
+                    onShowDialogChange(true)
+                    onIsPasswordValidChange(false)
+                }
+            } else {
+                onShowDialogChange(true)
+                onIsPasswordValidChange(false)
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.DarkGray,
+            contentColor = Color.White
+        )
+    ) {
+        Text(
+            text = "Save New Password",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+
+    if (showDialog) {
+        val title = if (isPasswordValid) "Success" else "Fail"
+        val message = if (isPasswordValid) "New password has been created successfully" else "Unable to create new password \n Please Try Again"
+
+        AlertDialog(
+            onDismissRequest = { onShowDialogChange(false) },
+            title = {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp,
+                    color = if (isPasswordValid) Color.Green else Color.Red,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = message,
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = {
+                            onShowDialogChange(false)
+                            if (isPasswordValid) {
+                                navController.navigate("Settings")
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray,
+                            contentColor = Color.White
+                        )
                     ) {
-                        Button(
-                            onClick = { success = false },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 8.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.DarkGray,
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(text = "Continue")
-                        }
+                        Text(text = if (isPasswordValid) "Continue" else "Try Again")
                     }
                 }
-            )
-        }
-
-//        if(fail = true) {
-//            AlertDialog(
-//                onDismissRequest = { fail = false },
-//                title = {
-//                    Text(
-//                        text = "Fail",
-//                        textAlign = TextAlign.Center,
-//                        fontWeight = FontWeight.SemiBold,
-//                        fontSize = 22.sp,
-//                        color = Color.Red,
-//                        modifier = Modifier.fillMaxWidth()
-//                    )
-//                },
-//                text = {
-//                    Text(
-//                        text = "Unable to change password \n Please Try Again",
-//                        textAlign = TextAlign.Center,
-//                        fontSize = 18.sp,
-//                        color = Color.Black,
-//                        modifier = Modifier.fillMaxWidth()
-//                    )
-//                },
-//                confirmButton = {
-//                    Row(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        horizontalArrangement = Arrangement.Center
-//                    ) {
-//                        Button(
-//                            onClick = { fail = false },
-//                            modifier = Modifier
-//                                .weight(1f)
-//                                .padding(end = 8.dp),
-//                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = Color.DarkGray,
-//                                contentColor = Color.White
-//                            )
-//                        ) {
-//                            Text(text = "Try Again")
-//                        }
-//                    }
-//                }
-//            )
-//        }
+            }
+        )
     }
 }
 

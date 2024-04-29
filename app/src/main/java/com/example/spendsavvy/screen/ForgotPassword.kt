@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -26,11 +28,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
 fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) {
+
+    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
+    val auth = FirebaseAuth.getInstance()
+    getUserData(auth.currentUser?.uid ?: "") { user ->
+        userData = user
+    }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -64,7 +75,26 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
         )
 
         Button(
-            onClick = { navController.navigate(Screen.CreatePassword.route) },   //check whether if the email is valid
+            onClick = {
+                if (emailValidation(email)) {
+                    if (email == userData.email) {
+                        navController.navigate(Screen.CreatePassword.route)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "User Email incorrect",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                else{
+                    Toast.makeText(
+                        context,
+                        "Please enter a valid email",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -77,7 +107,7 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
                 text = "Next",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
-            ) //then go to the create password page for user to create new password
+            )
         }
     }
 }

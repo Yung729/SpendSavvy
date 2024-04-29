@@ -38,17 +38,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
+    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
+    val auth = FirebaseAuth.getInstance()
+    getUserData(auth.currentUser?.uid ?: "") { user ->
+        userData = user
+    }
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White), // Set the background color
+            .background(Color.White),
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(vertical = 2.dp)
     ) {
@@ -58,7 +66,11 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile_icon),
+                    painter = if (userData.photoURL!!.isNotEmpty()) {
+                        rememberAsyncImagePainter(model = userData.photoURL)
+                    } else {
+                        painterResource(id = R.drawable.profile_icon)
+                    },
                     contentDescription = "User profile image",
                     modifier = Modifier
                         .size(150.dp)
@@ -70,7 +82,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                         )
                 )
                 Text(
-                    text = "User name",
+                    text = userData.userName,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
@@ -150,7 +162,11 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                 navController,
                 Screen.Notifications.route
             )
-            List(R.drawable.language_icon, "Languages", navController, Screen.Language.route)
+            List(
+                R.drawable.language_icon,
+                "Languages", navController,
+                Screen.Language.route
+            )
             List(
                 R.drawable.help_icon,
                 "Help and Support",
