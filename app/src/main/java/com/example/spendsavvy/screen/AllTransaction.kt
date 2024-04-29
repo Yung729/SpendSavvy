@@ -17,7 +17,7 @@ fun AllTransactionScreen(
 
     val transactionList by transactionViewModel.transactionsList.observeAsState(initial = emptyList())
 
-    val sortedTransactions = transactionList.sortedBy { it.date }
+    val sortedTransactions = transactionList.sortedByDescending { it.date }
 
     Column(
         modifier = modifier

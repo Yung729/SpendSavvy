@@ -49,6 +49,7 @@ import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -274,13 +275,19 @@ fun TransactionList(
     transactionViewModel: OverviewViewModel
 ) {
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-    var lastDate  = ""
+    var lastDate = ""
+    val todayDate = Calendar.getInstance().time
 
     LazyColumn(modifier = modifier) {
         items(transactionsList) { item: Transactions ->
 
-            if (dateFormat.format(item.date) != lastDate){
-                Text(text = dateFormat.format(item.date))
+            if (dateFormat.format(item.date) != lastDate) {
+
+                if (dateFormat.format(todayDate) == dateFormat.format(item.date)) {
+                    Text(text = "Today")
+                } else {
+                    Text(text = dateFormat.format(item.date))
+                }
 
                 Divider()
             }
