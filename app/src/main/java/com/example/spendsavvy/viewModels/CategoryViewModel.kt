@@ -13,15 +13,12 @@ import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.repo.FirestoreRepository
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 
 
 class CategoryViewModel(
-    context: Context, isOnline: Boolean
+    context: Context, isOnline: Boolean, userId: String
 ) : ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
@@ -35,7 +32,7 @@ class CategoryViewModel(
     val incomeList = MutableLiveData<List<Category>>()
     val categoryList = MutableLiveData<List<Category>>()
 
-    val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
+    val userId = userId
 
     private fun getCategoriesList() {
         viewModelScope.launch {
@@ -132,44 +129,16 @@ class CategoryViewModel(
         }
     }
 
-    private fun initializeCategoryToFirestore() {
-        val firestore = FirebaseFirestore.getInstance()
+    fun initializeCategoryToFirestore(userId: String) {
+
         val categoryData = CategoryData().loadCategory()
-        val documentRef = firestore.collection("Users").document(userId).collection("Categories")
 
-        documentRef.orderBy(FieldPath.documentId(), Query.Direction.DESCENDING).limit(1).get()
-            .addOnSuccessListener { querySnapshot ->
-                var latestId = 0
-
-                // If there are documents, parse the latest ID
-                if (!querySnapshot.isEmpty) {
-                    val latestDocument = querySnapshot.documents[0]
-                    val latestDocumentId = latestDocument.id
-                    // Extract the numeric part of the document ID
-                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
-                }
-
-                for (category in categoryData) {
-                    // Generate the new document ID
-                    val newId = "CT${"%04d".format(latestId + 1)}"
-
-                    // Create a new document reference with the generated ID
-                    val newDocumentRef = documentRef.document(newId)
-
-                    // Set the category data for the new document
-                    newDocumentRef.set(category).addOnSuccessListener {
-                        Log.d(TAG, "Category successfully written to Firestore: $newId")
-                    }.addOnFailureListener { e ->
-                        Log.w(TAG, "Error writing category to Firestore: $newId", e)
-                    }
-
-                    latestId++ // Increment latestId for the next category
-                }
-            }.addOnFailureListener { e ->
-                Log.w(TAG, "Error getting documents", e)
-            }
-
-
+        firestoreRepository.addItemList(userId, "Categories", categoryData, "CT%04d", onSuccess = {
+            getCategoriesList()
+        }, onFailure = { exception ->
+            Log.e(TAG, "Error adding category", exception)
+            // Handle failure
+        })
     }
 
 

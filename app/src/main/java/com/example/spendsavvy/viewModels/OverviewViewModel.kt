@@ -15,7 +15,8 @@ import java.util.Calendar
 
 class OverviewViewModel(
     context: Context,
-    isOnline: Boolean
+    isOnline: Boolean,
+    userId : String
 ) : ViewModel() {
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
@@ -24,7 +25,7 @@ class OverviewViewModel(
     val currentContext = context
     val internet = isOnline
 
-    val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
+    val userId = userId
 
     val transactionsList = MutableLiveData<List<Transactions>>()
     val todayTransactionsList = MutableLiveData<List<Transactions>>()

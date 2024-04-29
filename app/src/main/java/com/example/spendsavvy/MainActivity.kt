@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 
-private lateinit var auth: FirebaseAuth
+
 
 class MainActivity : ComponentActivity() {
 
@@ -21,11 +21,11 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        auth = Firebase.auth
+
         setContent {
             SpendSavvyTheme {
 
-                SetupNavGraph(auth = auth)
+                SetupNavGraph()
 
             }
         }
