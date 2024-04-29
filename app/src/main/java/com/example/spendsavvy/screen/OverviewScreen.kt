@@ -274,7 +274,7 @@ fun TransactionList(
     transactionViewModel: OverviewViewModel
 ) {
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-    var lastDate : String = ""
+    var lastDate  = ""
 
     LazyColumn(modifier = modifier) {
         items(transactionsList) { item: Transactions ->
