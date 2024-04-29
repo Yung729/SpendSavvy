@@ -124,9 +124,6 @@ fun MoneyScreen(modifier: Modifier) {
             ){
                 BankList(bankList = BankAccountData().loadBank())
 
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Check")
-                }
             }
 
             Box(
