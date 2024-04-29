@@ -12,7 +12,6 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import java.util.Date
 
 class OverviewViewModel(
     context: Context,
@@ -45,6 +44,7 @@ class OverviewViewModel(
                         Transactions::class.java
                     )
 
+                    //sync to SQLite
                     dbHelper.deleteAllTransaction()
                     dbHelper.resetPrimaryKey("transactions")
                     transactionsFromFirestore.forEach { transaction ->
@@ -102,7 +102,7 @@ class OverviewViewModel(
                 set(Calendar.MILLISECOND, 0)
             }.time
 
-            if (transactionDate == todayDate ){
+            if (transactionDate == todayDate) {
                 todayTransaction.add(transaction)
             }
 

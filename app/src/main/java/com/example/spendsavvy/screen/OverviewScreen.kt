@@ -58,7 +58,7 @@ fun OverviewScreen(
     navController: NavController
 ) {
 
-    val transactionList by transactionViewModel.transactionsList.observeAsState(initial = emptyList())
+    val transactionList by transactionViewModel.todayTransactionsList.observeAsState(initial = emptyList())
 
 
     Column(
@@ -91,7 +91,7 @@ fun OverviewScreen(
             ClickableText(text = AnnotatedString("See All"), onHover = {
 
             }, onClick = {
-                //Show All
+                navController.navigate(Screen.AllTransaction.route)
             }, modifier = Modifier.align(Alignment.CenterVertically), style = TextStyle(
                 fontFamily = poppinsFontFamily,
                 fontSize = 10.sp,
@@ -102,7 +102,11 @@ fun OverviewScreen(
 
         }
 
-        TransactionList(transactionList, navController = navController, transactionViewModel = transactionViewModel)
+        TransactionList(
+            transactionList,
+            navController = navController,
+            transactionViewModel = transactionViewModel
+        )
 
     }
 

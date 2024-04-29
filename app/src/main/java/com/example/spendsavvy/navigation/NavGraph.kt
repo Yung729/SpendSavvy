@@ -43,6 +43,7 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.screen.AddCategoryScreen
 import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AddIncomeScreen
+import com.example.spendsavvy.screen.AllTransactionScreen
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.BudgetScreen
 import com.example.spendsavvy.screen.CategoryDetail
@@ -73,10 +74,8 @@ import com.google.firebase.auth.FirebaseAuth
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), auth: FirebaseAuth) {
 
     NavHost(
-        navController = navController,
-        startDestination = Screen.Login.route
-    )
-    {
+        navController = navController, startDestination = Screen.Login.route
+    ) {
         composable(
             route = Screen.Login.route
         ) {
@@ -127,114 +126,102 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
 
 
 
-    Scaffold(
-        topBar = {
-            HeaderTopBar(
-                text = currentScreenName,
-                canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
-                    Screen.Overview.route,
-                    Screen.Wallet.route,
-                    Screen.Analysis.route,
-                    Screen.Settings.route
-                ),
-                navUp = { navController.navigateUp() }
-            )
+    Scaffold(topBar = {
+        HeaderTopBar(text = currentScreenName,
+            canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
+                Screen.Overview.route,
+                Screen.Wallet.route,
+                Screen.Analysis.route,
+                Screen.Settings.route
+            ),
+            navUp = { navController.navigateUp() })
 
-        }, bottomBar = {
+    }, bottomBar = {
 
-            NavigationBar(modifier = Modifier.height(70.dp)) {
+        NavigationBar(modifier = Modifier.height(70.dp)) {
 
-                items.forEach { screen ->
-                    NavigationBarItem(
-                        selected = backStackEntry?.destination?.hierarchy?.any {
-                            it.route == screen.route
-                        } == true,
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = screen.iconResourceId),
-                                contentDescription = null,
-                                Modifier.size(20.dp, 20.dp)
-                            )
-                        },
-                        onClick = {
-                            navController.navigate(screen.route) {
-
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                    inclusive = true
-                                }
-                                restoreState = true
-                                launchSingleTop = false
-
-                            }
-                        }
+            items.forEach { screen ->
+                NavigationBarItem(selected = backStackEntry?.destination?.hierarchy?.any {
+                    it.route == screen.route
+                } == true, icon = {
+                    Icon(
+                        painter = painterResource(id = screen.iconResourceId),
+                        contentDescription = null,
+                        Modifier.size(20.dp, 20.dp)
                     )
-                }
+                }, onClick = {
+                    navController.navigate(screen.route) {
+
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                            inclusive = true
+                        }
+                        restoreState = true
+                        launchSingleTop = false
+
+                    }
+                })
+            }
+        }
+
+    }, floatingActionButton = {
+
+        if (currentScreenName == Screen.Overview.route) {
+
+            FloatingActionButton(
+                onClick = {
+                    showOption.value = !showOption.value
+                },
+                elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                containerColor = ButtonColor,
+                contentColor = Color.White,
+                modifier = Modifier
+                    .offset(y = 50.dp, x = if (showOption.value) 21.dp else 0.dp)
+                    .size(50.dp)
+
+            ) {
+                Icon(
+                    Icons.Default.Add, contentDescription = "Add"
+                )
             }
 
-        },
-        floatingActionButton = {
-
-            if (currentScreenName == Screen.Overview.route) {
+            if (showOption.value) {
 
                 FloatingActionButton(
                     onClick = {
-                        showOption.value = !showOption.value
+                        navController.navigate(Screen.AddExpenses.route)
                     },
+                    modifier = Modifier
+                        .size(95.dp, 50.dp)
+                        .offset(
+                            x = (-65).dp, y = (-25).dp
+                        ), // Position to the left of the main FAB
                     elevation = FloatingActionButtonDefaults.elevation(8.dp),
                     containerColor = ButtonColor,
-                    contentColor = Color.White,
-                    modifier = Modifier
-                        .offset(y = 50.dp, x = if (showOption.value) 21.dp else 0.dp)
-                        .size(50.dp)
-
+                    contentColor = Color.White
                 ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = "Add"
-                    )
+                    Text(text = "Expense")
                 }
 
-                if (showOption.value) {
-
-                    FloatingActionButton(
-                        onClick = {
-                            navController.navigate(Screen.AddExpenses.route)
-                        },
-                        modifier = Modifier
-                            .size(95.dp, 50.dp)
-                            .offset(
-                                x = (-65).dp,
-                                y = (-25).dp
-                            ), // Position to the left of the main FAB
-                        elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                        containerColor = ButtonColor,
-                        contentColor = Color.White
-                    ) {
-                        Text(text = "Expense")
-                    }
-
-                    FloatingActionButton(
-                        onClick = {
-                            navController.navigate(Screen.AddIncomes.route)
-                        },
-                        modifier = Modifier
-                            .size(95.dp, 50.dp)
-                            .offset(
-                                x = 65.dp,
-                                y = (-25).dp
-                            ), // Position to the right of the main FAB
-                        elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                        containerColor = ButtonColor,
-                        contentColor = Color.White
-                    ) {
-                        Text(text = "Income")
-                    }
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate(Screen.AddIncomes.route)
+                    },
+                    modifier = Modifier
+                        .size(95.dp, 50.dp)
+                        .offset(
+                            x = 65.dp, y = (-25).dp
+                        ), // Position to the right of the main FAB
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                    containerColor = ButtonColor,
+                    contentColor = Color.White
+                ) {
+                    Text(text = "Income")
                 }
-
             }
-        },
-        floatingActionButtonPosition = FabPosition.Center
+
+        }
+    }, floatingActionButtonPosition = FabPosition.Center
 
     ) { innerPadding ->
 
@@ -266,8 +253,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 WalletScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -285,8 +271,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 SettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -318,8 +303,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 MyProfileScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -329,8 +313,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 ChangeProfileScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -340,8 +323,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 ChangePassword(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -351,8 +333,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 ForgotPassword(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
             composable(
@@ -361,8 +342,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 CreatePassword(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
             composable(
@@ -371,8 +351,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 ManageBillsAndInstalment(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
             composable(
@@ -381,8 +360,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 TaxCalculator(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -393,8 +371,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 Notification(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -404,8 +381,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 Language(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -415,8 +391,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
                 HelpAndSupport(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
             composable(
@@ -508,16 +483,28 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
 
             }
 
+            composable(
+                route = Screen.AllTransaction.route,
+            ) {
+
+                AllTransactionScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    transactionViewModel = transactionsViewModel,
+                    navController = navController
+                )
+
+
+            }
+
         }
 
     }
 }
 
 val items = listOf(
-    Screen.Overview,
-    Screen.Wallet,
-    Screen.Analysis,
-    Screen.Settings
+    Screen.Overview, Screen.Wallet, Screen.Analysis, Screen.Settings
 )
 
 private fun isInternetAvailable(context: Context): Boolean {
@@ -526,8 +513,7 @@ private fun isInternetAvailable(context: Context): Boolean {
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         val networkCapabilities = connectivityManager.activeNetwork ?: return false
-        val actNw =
-            connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+        val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
         result = when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
