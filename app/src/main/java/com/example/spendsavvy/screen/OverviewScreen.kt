@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
@@ -198,7 +199,7 @@ fun TransactionsCard(
     transactionViewModel: OverviewViewModel
 ) {
 
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
     val dismissState = rememberDismissState()
     if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
@@ -206,6 +207,7 @@ fun TransactionsCard(
     }
 
     if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
+
 
         SwipeToDeleteItem(state = dismissState) {
             Card(
@@ -271,8 +273,18 @@ fun TransactionList(
     navController: NavController,
     transactionViewModel: OverviewViewModel
 ) {
+    val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+    var lastDate : String = ""
+
     LazyColumn(modifier = modifier) {
         items(transactionsList) { item: Transactions ->
+
+            if (dateFormat.format(item.date) != lastDate){
+                Text(text = dateFormat.format(item.date))
+
+                Divider()
+            }
+
             TransactionsCard(
                 transactions = item,
                 modifier = Modifier
@@ -281,6 +293,8 @@ fun TransactionList(
                 navController = navController,
                 transactionViewModel = transactionViewModel
             )
+
+            lastDate = dateFormat.format(item.date)
         }
     }
 }
