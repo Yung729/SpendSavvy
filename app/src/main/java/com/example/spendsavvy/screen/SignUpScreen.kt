@@ -41,17 +41,17 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.components.ButtonComponent
-import com.example.spendsavvy.models.UserData
-import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import com.example.spendsavvy.viewModels.CategoryViewModel
 
 @Composable
-fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
+fun SignUpScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    fireAuthRepository: FireAuthRepository
+) {
 
     var photoURL by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -193,7 +193,10 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
 
         ButtonComponent(
             onButtonClick = {
-                if (!emailValidation(email) || !passwordValidation(password) || password != confirmPassword || !phoneValidation(phoneNo)) {
+                if (!emailValidation(email) || !passwordValidation(password) || password != confirmPassword || !phoneValidation(
+                        phoneNo
+                    )
+                ) {
                     isError = true
                     Toast.makeText(
                         context,
@@ -202,35 +205,12 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController, au
                     ).show()
                 } else {
                     isError = false
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener() { task ->
-                            if (task.isSuccessful) {
 
-                                val user = auth.currentUser
-                                if (user != null) {
-                                    val uid = user.uid
-                                    val userData = UserData("", "", userName, phoneNo, email, password)
-
-                                    val db = Firebase.firestore
-                                    val usersCollection = db.collection("Users")
-                                    usersCollection.document(uid)
-                                        .set(userData)
-                                }
-
-                                navController.navigate(route = Screen.Login.route)
-
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Unsuccessful to Sign Up Account",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                            }
-                        }
+                    fireAuthRepository.SignUp(email, password, userName, phoneNo)
                 }
-                            },
-            text = "SIGN UP" )
+            },
+            text = "SIGN UP"
+        )
     }
 }
 
@@ -248,6 +228,7 @@ fun passwordValidation(password: String): Boolean {
 
     return true
 }
+
 fun phoneValidation(phoneNo: String): Boolean {
     val pattern = "^\\+?0?(\\d{2})[- ]?(\\d{3})[- ]?(\\d{4})\$"
     return phoneNo.matches(pattern.toRegex())
@@ -260,7 +241,11 @@ fun SignUpScreenPreview() {
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp), navController = rememberNavController(),
-        auth = Firebase.auth
+        fireAuthRepository = FireAuthRepository(
+            LocalContext.current, rememberNavController(), categoryViewModel = CategoryViewModel(
+                LocalContext.current, false, ""
+            )
+        )
     )
 }
 

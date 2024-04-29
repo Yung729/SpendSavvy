@@ -10,7 +10,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
-import java.security.Timestamp
 import java.util.Date
 import java.util.UUID
 
@@ -70,6 +69,62 @@ class FirestoreRepository {
 
     }
 
+
+    fun addItemList(
+        userId: String,
+        collectionName: String,
+        item: List<Any>,
+        itemIdFormat: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+
+        val documentRef = firestore.collection("Users").document(userId).collection(collectionName)
+
+        documentRef
+            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                var latestId = 0
+
+                // If there are documents, parse the latest ID
+                if (!querySnapshot.isEmpty) {
+                    val latestDocument = querySnapshot.documents[0]
+                    val latestDocumentId = latestDocument.id
+                    // Extract the numeric part of the document ID
+                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
+                }
+
+
+                for (i in item) {
+                    // Generate the new document ID
+                    val newId = itemIdFormat.format(latestId + 1)
+
+                    // Create a new document reference with the generated ID
+                    val newDocumentRef = documentRef.document(newId)
+
+                    // Set the category data for the new document
+                    newDocumentRef.set(i).addOnSuccessListener {
+                        Log.d(TAG, "DocumentSnapshot successfully written with ID: $newId")
+
+                    }.addOnFailureListener { e ->
+                        Log.w(TAG, "DocumentSnapshot fail written with ID: $newId", e)
+                    }
+
+                    latestId++ // Increment latestId for the next category
+                }
+
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error getting documents", e)
+                onFailure(e)
+            }
+
+
+    }
+
     fun deleteItemFromFirestoreBySearhing(
         userId: String,
         collectionName: String,
@@ -103,7 +158,8 @@ class FirestoreRepository {
         documentId: String,
         onSuccess: () -> Unit
     ) {
-        val documentRef = firestore.collection("Users").document(userId).collection(collectionName).document(documentId)
+        val documentRef = firestore.collection("Users").document(userId).collection(collectionName)
+            .document(documentId)
 
         documentRef.delete()
             .addOnSuccessListener {
@@ -173,22 +229,25 @@ class FirestoreRepository {
                                     val categoryMap =
                                         value as Map<*, *> // Assuming the category is stored as a Map<String, Any>
                                     val category = Category(
-                                        categoryName = categoryMap["categoryName"] as String ,
-                                        categoryType = categoryMap["categoryType"] as String ,
+                                        categoryName = categoryMap["categoryName"] as String,
+                                        categoryType = categoryMap["categoryType"] as String,
                                         imageUri = categoryMap["imageUri"].let { Uri.parse(it as String) }
                                     )
                                     field.set(item, category)
                                 }
+
                                 "imageUri" -> {
                                     val imageUriString = value as String
                                     val imageUri =
                                         if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
                                     field.set(item, imageUri)
                                 }
+
                                 "date" -> {
                                     val date = document.getDate("date") ?: Date()
                                     field.set(item, date)
                                 }
+
                                 else -> {
                                     field.set(item, value)
                                 }
@@ -238,16 +297,19 @@ class FirestoreRepository {
                                     )
                                     field.set(item, category)
                                 }
+
                                 "imageUri" -> {
                                     val imageUriString = value as String
                                     val imageUri =
                                         if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
                                     field.set(item, imageUri)
                                 }
+
                                 "date" -> {
                                     val date = document.getDate("date") ?: Date()
                                     field.set(item, date)
                                 }
+
                                 else -> {
                                     field.set(item, value)
                                 }
@@ -261,7 +323,6 @@ class FirestoreRepository {
                         return document.id
                     }
                 }
-
 
 
             }
@@ -278,7 +339,8 @@ class FirestoreRepository {
         item: Any,
         onSuccess: () -> Unit
     ) {
-        val documentRef = firestore.collection("Users").document(userId).collection(collectionName).document(documentId)
+        val documentRef = firestore.collection("Users").document(userId).collection(collectionName)
+            .document(documentId)
 
         documentRef.set(item)
             .addOnSuccessListener {

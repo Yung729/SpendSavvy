@@ -38,22 +38,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, auth: FirebaseAuth) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    fireAuthRepository: FireAuthRepository
+) {
+
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -123,26 +131,8 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
         )
 
         ButtonComponent(onButtonClick = {
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
+            fireAuthRepository.SignIn(email = email, password = password)
 
-                    val user = auth.currentUser
-                    if(user != null)
-                    {
-                        navController.navigate(route = "EnterMainScreen") {
-                            popUpTo(navController.graph.id) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                    
-                } else if (!task.isSuccessful) {
-                    Toast.makeText(
-                        context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
-                    ).show()
-
-                }
-            }
         }, text = "LOGIN")
 
 
@@ -181,6 +171,10 @@ fun LoginScreenPreview() {
             .fillMaxSize()
             .padding(20.dp),
         navController = rememberNavController(),
-        auth = Firebase.auth
+        fireAuthRepository = FireAuthRepository(
+            LocalContext.current, rememberNavController(), categoryViewModel = CategoryViewModel(
+                LocalContext.current, false, ""
+            )
+        )
     )
 }

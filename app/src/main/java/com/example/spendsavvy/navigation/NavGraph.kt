@@ -40,6 +40,7 @@ import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.screen.AddCategoryScreen
 import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AddIncomeScreen
@@ -68,10 +69,17 @@ import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SetupNavGraph(navController: NavHostController = rememberNavController(), auth: FirebaseAuth) {
+fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
+
+    val context = LocalContext.current
+    val isConnected = isInternetAvailable(context)
+    val fireAuthRepository = FireAuthRepository(
+        context = context,
+        navController = navController,
+        CategoryViewModel(context, isConnected, "")
+    )
 
     NavHost(
         navController = navController, startDestination = Screen.Login.route
@@ -84,8 +92,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), au
                     .fillMaxSize()
                     .padding(20.dp),
                 navController = navController,
-                auth = auth
-
+                fireAuthRepository = fireAuthRepository
             )
 
         }
@@ -98,19 +105,19 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), au
                     .fillMaxSize()
                     .padding(20.dp),
                 navController = navController,
-                auth = auth
+                fireAuthRepository = fireAuthRepository
             )
         }
 
         composable(route = Screen.MainScreen.route) {
-            TabsNavGraph()
+            TabsNavGraph(userId = fireAuthRepository.getCurrentUser())
         }
 
     }
 }
 
 @Composable
-fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
+fun TabsNavGraph(navController: NavHostController = rememberNavController(), userId: String) {
 
 
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -121,8 +128,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
 
     val showOption = remember { mutableStateOf(false) }
 
-    val categoryViewModel = CategoryViewModel(context, isConnected)
-    val transactionsViewModel = OverviewViewModel(context, isConnected)
+    val categoryViewModel = CategoryViewModel(context, isConnected, userId)
+    val transactionsViewModel = OverviewViewModel(context, isConnected, userId)
 
 
 
