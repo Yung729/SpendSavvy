@@ -22,7 +22,7 @@ class FireAuthRepository(
     val navController = navController
     val categoryViewModel = categoryViewModel
 
-    fun SignIn(email: String, password: String) {
+    fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
 
@@ -44,7 +44,7 @@ class FireAuthRepository(
         }
     }
 
-    fun SignUp(email: String, password: String, userName: String, phoneNo: String) {
+    fun signUp(email: String, password: String, userName: String, phoneNo: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener() { task ->
                 if (task.isSuccessful) {

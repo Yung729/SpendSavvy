@@ -206,7 +206,7 @@ fun SignUpScreen(
                 } else {
                     isError = false
 
-                    fireAuthRepository.SignUp(email, password, userName, phoneNo)
+                    fireAuthRepository.signUp(email, password, userName, phoneNo)
                 }
             },
             text = "SIGN UP"
