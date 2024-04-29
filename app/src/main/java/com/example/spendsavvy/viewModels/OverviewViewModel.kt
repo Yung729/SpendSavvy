@@ -11,6 +11,8 @@ import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.Date
 
 class OverviewViewModel(
     context: Context,
@@ -24,7 +26,10 @@ class OverviewViewModel(
     val internet = isOnline
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
+
     val transactionsList = MutableLiveData<List<Transactions>>()
+    val todayTransactionsList = MutableLiveData<List<Transactions>>()
+
     val expensesTotal = MutableLiveData<Double>()
     val incomesTotal = MutableLiveData<Double>()
 
@@ -52,12 +57,12 @@ class OverviewViewModel(
                         )
                     }
 
-                    updateCTransactions(transactionsFromFirestore)
+                    updateTransactions(transactionsFromFirestore)
 
                 } else {
                     val transactionsFromSQLite = dbHelper.readTransactions()
 
-                    updateCTransactions(transactionsFromSQLite)
+                    updateTransactions(transactionsFromSQLite)
                 }
 
 
@@ -67,24 +72,47 @@ class OverviewViewModel(
         }
     }
 
-    private fun updateCTransactions(transactions: List<Transactions>) {
+    private fun updateTransactions(transactions: List<Transactions>) {
         var totalExpenses = 0.0
         var totalIncomes = 0.0
-
+        val todayTransaction = mutableListOf<Transactions>()
+        val todayDate = Calendar.getInstance().apply {
+            // Set the time part to 00:00:00
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
 
         for (transaction in transactions) {
+
             if (transaction.transactionType == "Expenses") {
                 totalExpenses += transaction.amount
 
             } else if (transaction.transactionType == "Incomes") {
                 totalIncomes += transaction.amount
             }
+
+            val transactionDate = Calendar.getInstance().apply {
+                time = transaction.date
+                // Set the time part to 00:00:00
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            if (transactionDate == todayDate ){
+                todayTransaction.add(transaction)
+            }
+
         }
 
         expensesTotal.postValue(totalExpenses)
         incomesTotal.postValue(totalIncomes)
 
         transactionsList.postValue(transactions)
+        todayTransactionsList.postValue(todayTransaction)
 
     }
 
