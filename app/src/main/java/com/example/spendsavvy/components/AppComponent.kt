@@ -1,5 +1,7 @@
 package com.example.spendsavvy.components
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -130,4 +132,15 @@ fun SwipeToDeleteItem(
         },
         dismissContent = content
     )
+}
+
+@Composable
+fun InternetAwareContent(
+    isConnected: Boolean,
+    context : Context
+) {
+    if (!isConnected) {
+        // Show message if no internet connection
+        Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show()
+    }
 }

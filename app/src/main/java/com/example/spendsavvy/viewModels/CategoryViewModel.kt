@@ -1,13 +1,9 @@
 package com.example.spendsavvy.viewModels
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -25,7 +21,7 @@ import kotlinx.coroutines.launch
 
 
 class CategoryViewModel(
-    context: Context
+    context: Context, isOnline: Boolean
 ) : ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
@@ -33,20 +29,20 @@ class CategoryViewModel(
 
     @SuppressLint("StaticFieldLeak")
     val currentContext = context
+    private val internet = isOnline
+
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
     val categoryList = MutableLiveData<List<Category>>()
 
     val userId = "JqPinxCQzIV5Tcs9dKxul6h49192"
 
-    private fun getCategoriesList(context: Context = currentContext) {
+    private fun getCategoriesList() {
         viewModelScope.launch {
             try {
-                if (isInternetAvailable(context)) {
+                if (internet) {
                     val categoriesFromFirestore = firestoreRepository.readItemsFromDatabase(
-                        userId,
-                        "Categories",
-                        Category::class.java
+                        userId, "Categories", Category::class.java
                     )
 
                     updateCategories(categoriesFromFirestore)
@@ -57,9 +53,7 @@ class CategoryViewModel(
 
                     categoriesFromFirestore.forEach { category ->
                         dbHelper.addNewCategory(
-                            category.imageUri,
-                            category.categoryName,
-                            category.categoryType
+                            category.imageUri, category.categoryName, category.categoryType
                         )
                     }
                     Log.e(TAG, "Have Internet")
@@ -106,18 +100,16 @@ class CategoryViewModel(
             try {
                 val categoryId: String = getCategoryId(category)
 
-                firestoreRepository.updateItemInFirestoreById(
-                    userId,
+                firestoreRepository.updateItemInFirestoreById(userId,
                     "Categories",
                     categoryId,
                     updatedCategory,
                     onSuccess = {
                         getCategoriesList()
-                    }
-                )
+                    })
 
             } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "Error editing category", e)
+                Log.e(TAG, "Error editing category", e)
             }
         }
     }
@@ -127,17 +119,15 @@ class CategoryViewModel(
             try {
                 val categoryId: String = getCategoryId(category)
 
-                firestoreRepository.deleteItemFromFirestoreById(
-                    userId,
+                firestoreRepository.deleteItemFromFirestoreById(userId,
                     "Categories",
                     categoryId,
                     onSuccess = {
                         getCategoriesList()
-                    }
-                )
+                    })
 
             } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "Error deleting category", e)
+                Log.e(TAG, "Error deleting category", e)
             }
         }
     }
@@ -147,10 +137,7 @@ class CategoryViewModel(
         val categoryData = CategoryData().loadCategory()
         val documentRef = firestore.collection("Users").document(userId).collection("Categories")
 
-        documentRef
-            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
+        documentRef.orderBy(FieldPath.documentId(), Query.Direction.DESCENDING).limit(1).get()
             .addOnSuccessListener { querySnapshot ->
                 var latestId = 0
 
@@ -170,18 +157,15 @@ class CategoryViewModel(
                     val newDocumentRef = documentRef.document(newId)
 
                     // Set the category data for the new document
-                    newDocumentRef.set(category)
-                        .addOnSuccessListener {
-                            Log.d(TAG, "Category successfully written to Firestore: $newId")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(TAG, "Error writing category to Firestore: $newId", e)
-                        }
+                    newDocumentRef.set(category).addOnSuccessListener {
+                        Log.d(TAG, "Category successfully written to Firestore: $newId")
+                    }.addOnFailureListener { e ->
+                        Log.w(TAG, "Error writing category to Firestore: $newId", e)
+                    }
 
                     latestId++ // Increment latestId for the next category
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 Log.w(TAG, "Error getting documents", e)
             }
 
@@ -192,7 +176,9 @@ class CategoryViewModel(
     fun addCategoryToDatabase(category: Category, imageUri: Uri?) {
 
         if (categoryList.value?.any { it.categoryName == category.categoryName } == true) {
-            Toast.makeText(currentContext, "Category with the same name already exists", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                currentContext, "Category with the same name already exists", Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
@@ -201,68 +187,24 @@ class CategoryViewModel(
 
             firestoreRepository.uploadImageToStorage(storageRef, imageUri, { downloadUri ->
                 category.imageUri = downloadUri
-                firestoreRepository.addItem(
-                    userId,
-                    "Categories",
-                    category,
-                    "CT%04d",
-                    onSuccess = {
-                        getCategoriesList()
-                    },
-                    onFailure = { exception ->
-                        Log.e(TAG, "Error adding category", exception)
-                        // Handle failure
-                    }
-                )
+                firestoreRepository.addItem(userId, "Categories", category, "CT%04d", onSuccess = {
+                    getCategoriesList()
+                }, onFailure = { exception ->
+                    Log.e(TAG, "Error adding category", exception)
+                    // Handle failure
+                })
             }, { exception ->
                 Log.e(TAG, "Error uploading image", exception)
                 // Handle failure
             })
         } else {
-            firestoreRepository.addItem(
-                userId,
-                "Categories",
-                category,
-                "CT%04d",
-                onSuccess = {
-                    getCategoriesList()
-                },
-                onFailure = {
+            firestoreRepository.addItem(userId, "Categories", category, "CT%04d", onSuccess = {
+                getCategoriesList()
+            }, onFailure = {
 
 
-                }
-            )
+            })
         }
-    }
-
-
-    private fun isInternetAvailable(context: Context): Boolean {
-        var result = false
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val networkCapabilities = connectivityManager.activeNetwork ?: return false
-            val actNw =
-                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
-            result = when {
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                else -> false
-            }
-        } else {
-            connectivityManager.run {
-                connectivityManager.activeNetworkInfo?.run {
-                    result = when (type) {
-                        ConnectivityManager.TYPE_WIFI -> true
-                        ConnectivityManager.TYPE_MOBILE -> true
-                        ConnectivityManager.TYPE_ETHERNET -> true
-                        else -> false
-                    }
-                }
-            }
-        }
-        return result
     }
 
 }

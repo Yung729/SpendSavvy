@@ -1,5 +1,9 @@
 package com.example.spendsavvy.navigation
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -33,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.HeaderTopBar
+import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.screen.AddCategoryScreen
@@ -108,12 +113,19 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), au
 @Composable
 fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
 
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
+
     val context = LocalContext.current
+    val isConnected = isInternetAvailable(context)
+
     val showOption = remember { mutableStateOf(false) }
-    val categoryViewModel = CategoryViewModel(context)
-    val transactionsViewModel = OverviewViewModel(context)
+
+    val categoryViewModel = CategoryViewModel(context, isConnected)
+    val transactionsViewModel = OverviewViewModel(context, isConnected)
+
+
 
     Scaffold(
         topBar = {
@@ -225,6 +237,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController()) {
         floatingActionButtonPosition = FabPosition.Center
 
     ) { innerPadding ->
+
+        InternetAwareContent(isConnected, context)
 
         NavHost(
             navController = navController,
@@ -506,4 +520,31 @@ val items = listOf(
     Screen.Settings
 )
 
-
+private fun isInternetAvailable(context: Context): Boolean {
+    var result = false
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val networkCapabilities = connectivityManager.activeNetwork ?: return false
+        val actNw =
+            connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+        result = when {
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
+        }
+    } else {
+        connectivityManager.run {
+            connectivityManager.activeNetworkInfo?.run {
+                result = when (type) {
+                    ConnectivityManager.TYPE_WIFI -> true
+                    ConnectivityManager.TYPE_MOBILE -> true
+                    ConnectivityManager.TYPE_ETHERNET -> true
+                    else -> false
+                }
+            }
+        }
+    }
+    return result
+}
