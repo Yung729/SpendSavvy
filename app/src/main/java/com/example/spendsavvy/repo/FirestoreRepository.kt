@@ -22,7 +22,7 @@ class FirestoreRepository {
         collectionName: String,
         item: Any,
         itemIdFormat: String,
-        onSuccess: () -> Unit,
+        onSuccess: (String) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
 
@@ -56,7 +56,7 @@ class FirestoreRepository {
                             TAG,
                             "DocumentSnapshot successfully written with ID: $newId"
                         )
-                        onSuccess()
+                        onSuccess(newId)
                     }
                     .addOnFailureListener { e ->
                         onFailure(e)
@@ -68,6 +68,7 @@ class FirestoreRepository {
 
 
     }
+
     fun addItemTwoCollection(
         userId: String,
         collectionName: String,
@@ -77,7 +78,9 @@ class FirestoreRepository {
         onFailure: (Exception) -> Unit
     ) {
 
-        val documentRef = firestore.collection("Users").document(userId).collection(collectionName).document("1").collection(collectionName)
+        val documentRef =
+            firestore.collection("Users").document(userId).collection(collectionName).document("1")
+                .collection(collectionName)
 
         documentRef
             .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
@@ -126,7 +129,7 @@ class FirestoreRepository {
         collectionName: String,
         item: List<Any>,
         itemIdFormat: String,
-        onSuccess: () -> Unit,
+        onSuccess: (List<String>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
 
@@ -147,6 +150,7 @@ class FirestoreRepository {
                     latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
                 }
 
+                val newIds = mutableListOf<String>()
 
                 for (i in item) {
                     // Generate the new document ID
@@ -158,6 +162,12 @@ class FirestoreRepository {
                     // Set the category data for the new document
                     newDocumentRef.set(i).addOnSuccessListener {
                         Log.d(TAG, "DocumentSnapshot successfully written with ID: $newId")
+                        newIds.add(newId)
+
+                        if (newIds.size == item.size) {
+                            // Call onSuccess only when all documents are written
+                            onSuccess(newIds)
+                        }
 
                     }.addOnFailureListener { e ->
                         Log.w(TAG, "DocumentSnapshot fail written with ID: $newId", e)
@@ -166,7 +176,6 @@ class FirestoreRepository {
                     latestId++ // Increment latestId for the next category
                 }
 
-                onSuccess()
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error getting documents", e)

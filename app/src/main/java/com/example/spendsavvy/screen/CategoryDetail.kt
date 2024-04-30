@@ -17,13 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -60,6 +57,10 @@ fun CategoryDetail(
     val options = mutableStateListOf("Expenses", "Income")
 
     var selectedIndex by remember {
+        mutableIntStateOf(if (category.categoryType == "Expenses") 0 else 1)
+    }
+
+    var updatedSelectedIndex by remember {
         mutableIntStateOf(0)
     }
 
@@ -81,10 +82,7 @@ fun CategoryDetail(
             updatedImageUri = it
         })
 
-    selectedIndex = if (category.categoryType == "Expenses")
-        0
-    else
-        1
+
 
 
     Column(
@@ -139,7 +137,7 @@ fun CategoryDetail(
 
         OutlinedTextField(
             value = updatedCategoryName,
-            onValueChange = { updatedCategoryName = it},
+            onValueChange = { updatedCategoryName = it },
             label = { Text(text = "Category Name") },
             maxLines = 1,
             modifier = Modifier
@@ -158,7 +156,10 @@ fun CategoryDetail(
                 options.forEachIndexed { index, option ->
                     SegmentedButton(
                         selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
+                        onClick = {
+                            updatedSelectedIndex = index
+                            selectedIndex = index
+                        },
                         shape = SegmentedButtonDefaults.itemShape(
                             index = index, count = options.size
                         )
@@ -171,7 +172,7 @@ fun CategoryDetail(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        updatedCategoryType = if (selectedIndex == 0) {
+        updatedCategoryType = if (updatedSelectedIndex == 0) {
             "Expenses"
         } else {
             "Incomes"
@@ -182,7 +183,7 @@ fun CategoryDetail(
             onClick = {
                 catViewModel.editCategory(
                     category = category,
-                    updatedCategory =  Category(
+                    updatedCategory = Category(
                         imageUri = updatedImageUri,
                         categoryName = updatedCategoryName,
                         categoryType = updatedCategoryType
