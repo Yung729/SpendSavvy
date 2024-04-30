@@ -49,7 +49,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.bounceClick
-import com.example.spendsavvy.data.BankAccountData
 import com.example.spendsavvy.data.bankName
 import com.example.spendsavvy.models.BankAccount
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -95,7 +94,9 @@ fun FixedDepositScreen(modifier: Modifier, navController: NavController){
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            BankList(bankList = BankAccountData().loadBank())
+            /*BankList(bankList = BankAccountData().loadBank())*/
+            //read FDAccount
+
 
             Box(
                 modifier = Modifier

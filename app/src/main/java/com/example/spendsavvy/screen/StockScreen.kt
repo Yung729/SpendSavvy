@@ -74,7 +74,8 @@ fun StockScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                /*HeaderTitle(text = "Stock Account")*/
+HeaderTitle(text = "Stock Account")
+
                 Text(
                     text = "Add and Sell Stocks",
                     color = Color.Gray,
