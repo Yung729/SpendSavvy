@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.db.DatabaseHelper
+import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ import java.util.Calendar
 class OverviewViewModel(
     context: Context,
     isOnline: Boolean,
-    userId : String
+    userId: String
 ) : ViewModel() {
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
@@ -34,7 +35,7 @@ class OverviewViewModel(
     val incomesTotal = MutableLiveData<Double>()
 
 
-    private fun getTransactionRecord(context: Context = currentContext) {
+    private fun getTransactionRecord() {
         viewModelScope.launch {
 
             try {
@@ -45,23 +46,10 @@ class OverviewViewModel(
                         Transactions::class.java
                     )
 
-                    //sync to SQLite
-                    dbHelper.deleteAllTransaction()
-                    dbHelper.resetPrimaryKey("transactions")
-                    transactionsFromFirestore.forEach { transaction ->
-                        dbHelper.addNewTransaction(
-                            amount = transaction.amount,
-                            categoryId = dbHelper.getCategoryId(transaction.category.categoryName),
-                            description = transaction.description,
-                            date = transaction.date,
-                            transactionType = transaction.transactionType
-                        )
-                    }
-
                     updateTransactions(transactionsFromFirestore)
 
                 } else {
-                    val transactionsFromSQLite = dbHelper.readTransactions()
+                    val transactionsFromSQLite = dbHelper.readTransactions(userId = userId)
 
                     updateTransactions(transactionsFromSQLite)
                 }
@@ -125,17 +113,33 @@ class OverviewViewModel(
         return firestoreRepository.getDocumentId("Transactions", userId, transactions)
     }
 
+    private suspend fun getCategoryId(category: Category): String {
+        return firestoreRepository.getDocumentId("Categories", userId, category)
+    }
+
     fun editTransaction(transactions: Transactions, updatedTransactions: Transactions) {
         viewModelScope.launch {
             try {
-                val categoryId: String = getTransactionId(transactions)
+                val transactionId: String = getTransactionId(transactions)
+                val categoryId: String = getCategoryId(transactions.category)
 
                 firestoreRepository.updateItemInFirestoreById(
                     userId,
                     "Transactions",
-                    categoryId,
+                    transactionId,
                     updatedTransactions,
                     onSuccess = {
+
+                        dbHelper.updateTransaction(
+                            transactionId = transactionId,
+                            amount = updatedTransactions.amount,
+                            categoryId = categoryId,
+                            description = updatedTransactions.description,
+                            date = updatedTransactions.date,
+                            transactionType = updatedTransactions.transactionType,
+                            userId = userId
+
+                        )
                         getTransactionRecord()
                     }
                 )
@@ -157,9 +161,11 @@ class OverviewViewModel(
                     "Transactions",
                     transactionId,
                     onSuccess = {
+                        dbHelper.deleteTransaction(transactionId, userId)
                         getTransactionRecord()
                     }
                 )
+
 
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error deleting transaction", e)
@@ -168,21 +174,37 @@ class OverviewViewModel(
     }
 
     fun addTransactionToFirestore(transaction: Transactions) {
+        viewModelScope.launch {
+            try {
+                val categoryId: String = getCategoryId(transaction.category)
 
-        // Get the latest transaction ID to generate a new one
-        firestoreRepository.addItem(
-            userId,
-            "Transactions",
-            transaction,
-            "T%04d",
-            onSuccess = {
-                getTransactionRecord()
-            },
-            onFailure = { exception ->
-                Log.e(ContentValues.TAG, "Error adding category", exception)
-                // Handle failure
+                firestoreRepository.addItem(
+                    userId,
+                    "Transactions",
+                    transaction,
+                    "T%04d",
+                    onSuccess = { documentId ->
+                        dbHelper.addNewTransaction(
+                            transactionId = documentId,
+                            amount = transaction.amount,
+                            categoryId = categoryId,
+                            description = transaction.description,
+                            date = transaction.date,
+                            transactionType = transaction.transactionType,
+                            userId = userId
+                        )
+                        getTransactionRecord()
+                    },
+                    onFailure = { exception ->
+                        Log.e(ContentValues.TAG, "Error adding transaction", exception)
+                        // Handle failure
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error adding transaction", e)
             }
-        )
+
+        }
     }
 
 

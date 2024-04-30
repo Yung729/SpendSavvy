@@ -131,7 +131,7 @@ fun LoginScreen(
         )
 
         ButtonComponent(onButtonClick = {
-            fireAuthRepository.SignIn(email = email, password = password)
+            fireAuthRepository.signIn(email = email, password = password)
 
         }, text = "LOGIN")
 

@@ -32,9 +32,9 @@ class CategoryViewModel(
     val incomeList = MutableLiveData<List<Category>>()
     val categoryList = MutableLiveData<List<Category>>()
 
-    val userId = userId
+    val currentUserId = userId
 
-    private fun getCategoriesList() {
+    private fun getCategoriesList(userId: String = currentUserId) {
         viewModelScope.launch {
             try {
                 if (internet) {
@@ -44,21 +44,11 @@ class CategoryViewModel(
 
                     updateCategories(categoriesFromFirestore)
 
-                    dbHelper.deleteAllCategories()
-                    // Update SQLite with Firestore data
-                    dbHelper.resetPrimaryKey("categories")
-
-                    categoriesFromFirestore.forEach { category ->
-                        dbHelper.addNewCategory(
-                            category.imageUri, category.categoryName, category.categoryType
-                        )
-                    }
-                    Log.e(TAG, "Have Internet")
                 } else {
                     // Fetch data from SQLite
-                    val categoriesFromSQLite = dbHelper.readCategory()
+                    val categoriesFromSQLite = dbHelper.readCategory(userId)
                     updateCategories(categoriesFromSQLite)
-                    Log.e(TAG, "No Internet")
+
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
@@ -89,7 +79,7 @@ class CategoryViewModel(
 
 
     private suspend fun getCategoryId(category: Category): String {
-        return firestoreRepository.getDocumentId("Categories", userId, category)
+        return firestoreRepository.getDocumentId("Categories", currentUserId, category)
     }
 
     fun editCategory(category: Category, updatedCategory: Category) {
@@ -97,11 +87,19 @@ class CategoryViewModel(
             try {
                 val categoryId: String = getCategoryId(category)
 
-                firestoreRepository.updateItemInFirestoreById(userId,
+
+                firestoreRepository.updateItemInFirestoreById(currentUserId,
                     "Categories",
                     categoryId,
                     updatedCategory,
                     onSuccess = {
+                        dbHelper.updateCategory(
+                            categoryId,
+                            updatedCategory.imageUri,
+                            updatedCategory.categoryName,
+                            updatedCategory.categoryType,
+                            currentUserId
+                        )
                         getCategoriesList()
                     })
 
@@ -116,12 +114,19 @@ class CategoryViewModel(
             try {
                 val categoryId: String = getCategoryId(category)
 
-                firestoreRepository.deleteItemFromFirestoreById(userId,
+
+
+                firestoreRepository.deleteItemFromFirestoreById(currentUserId,
                     "Categories",
                     categoryId,
                     onSuccess = {
+                        dbHelper.deleteCategory(
+                            categoryId,
+                            currentUserId
+                        )
                         getCategoriesList()
                     })
+
 
             } catch (e: Exception) {
                 Log.e(TAG, "Error deleting category", e)
@@ -133,12 +138,32 @@ class CategoryViewModel(
 
         val categoryData = CategoryData().loadCategory()
 
-        firestoreRepository.addItemList(userId, "Categories", categoryData, "CT%04d", onSuccess = {
-            getCategoriesList()
-        }, onFailure = { exception ->
-            Log.e(TAG, "Error adding category", exception)
-            // Handle failure
-        })
+
+        firestoreRepository.addItemList(userId, "Categories", categoryData, "CT%04d",
+
+            onSuccess = { documentIdList ->
+
+                if (documentIdList.isNotEmpty()) { // Check if the list is not empty
+                    categoryData.forEachIndexed { index, category ->
+                        val documentId =
+                            documentIdList[index % documentIdList.size] // Use modulo operator to cycle through the documentIdList
+                        dbHelper.addNewCategory(
+                            documentId,
+                            category.imageUri,
+                            category.categoryName,
+                            category.categoryType,
+                            userId
+                        )
+                    }
+                    getCategoriesList(userId)
+                } else {
+                    Log.e(TAG, "Document ID list is empty")
+                }
+            },
+            onFailure = { exception ->
+                Log.e(TAG, "Error adding category", exception)
+                // Handle failure
+            })
     }
 
 
@@ -151,28 +176,47 @@ class CategoryViewModel(
             return
         }
 
+
+
         if (imageUri != null) {
             val storageRef = FirebaseStorage.getInstance().reference
 
             firestoreRepository.uploadImageToStorage(storageRef, imageUri, { downloadUri ->
                 category.imageUri = downloadUri
-                firestoreRepository.addItem(userId, "Categories", category, "CT%04d", onSuccess = {
-                    getCategoriesList()
-                }, onFailure = { exception ->
-                    Log.e(TAG, "Error adding category", exception)
-                    // Handle failure
-                })
+                firestoreRepository.addItem(currentUserId, "Categories", category, "CT%04d",
+
+                    onSuccess = { documentId ->
+                        getCategoriesList()
+                        dbHelper.addNewCategory(
+                            documentId,
+                            category.imageUri,
+                            category.categoryName,
+                            category.categoryType,
+                            currentUserId
+                        )
+                    }, onFailure = { exception ->
+                        Log.e(TAG, "Error adding category", exception)
+                        // Handle failure
+                    })
             }, { exception ->
                 Log.e(TAG, "Error uploading image", exception)
                 // Handle failure
             })
         } else {
-            firestoreRepository.addItem(userId, "Categories", category, "CT%04d", onSuccess = {
-                getCategoriesList()
-            }, onFailure = {
+            firestoreRepository.addItem(currentUserId, "Categories", category, "CT%04d",
+                onSuccess = { documentId ->
+                    dbHelper.addNewCategory(
+                        documentId,
+                        category.imageUri,
+                        category.categoryName,
+                        category.categoryType,
+                        currentUserId
+                    )
+                    getCategoriesList()
+                }, onFailure = {
 
 
-            })
+                })
         }
     }
 
