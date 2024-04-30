@@ -45,7 +45,6 @@ class CategoryViewModel(
                     updateCategories(categoriesFromFirestore)
 
                     dbHelper.deleteAllCategories()
-                    // Update SQLite with Firestore data
                     dbHelper.resetPrimaryKey("categories")
 
                     categoriesFromFirestore.forEach { category ->

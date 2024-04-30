@@ -61,10 +61,55 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
+    fun updateCategory(
+        categoryId: Long,
+        imageUri: Uri?,
+        categoryName: String,
+        categoryType: String
+    ) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("imageUri", imageUri.toString())
+            put("categoryName", categoryName)
+            put("categoryType", categoryType)
+        }
+        db.update("categories", values, "id=?", arrayOf(categoryId.toString()))
+        db.close()
+    }
+
+    fun deleteCategory(categoryId: Long) {
+        val db = this.writableDatabase
+        db.delete("categories", "id=?", arrayOf(categoryId.toString()))
+        db.close()
+    }
+
+
     fun deleteAllCategories() {
         val db = this.writableDatabase
         db.delete("categories", null, null)
         db.close()
+    }
+
+    private fun getCategoryById(categoryId: Long): Category {
+        val db = this.readableDatabase
+        val cursor =
+            db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId.toString()))
+        cursor.moveToFirst()
+        val imageUri = Uri.parse(cursor.getString(1))
+        val categoryName = cursor.getString(2)
+        val categoryType = cursor.getString(3)
+        cursor.close()
+        return Category(imageUri, categoryName, categoryType)
+    }
+
+    fun getCategoryId(categoryName: String): Long {
+        val db = this.readableDatabase
+        val cursor =
+            db.rawQuery("SELECT * FROM categories WHERE categoryName=?", arrayOf(categoryName))
+        cursor.moveToFirst()
+        val categoryId = cursor.getLong(0) // Return the category row id
+        cursor.close()
+        return categoryId
     }
 
     fun readCategory(): ArrayList<Category> {
@@ -86,6 +131,8 @@ class DatabaseHelper(context: Context) :
         return categoryList
     }
 
+//------------------------------------------    Transaction ----------------------------------------------------------------------
+
     fun addNewTransaction(
         amount: Double,
         categoryId: Long,  // Category ID to link the transaction with a category
@@ -106,9 +153,36 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
+    fun updateTransaction(
+        transactionId: Long,
+        amount: Double,
+        categoryId: Long,
+        description: String,
+        date: Date,
+        transactionType: String
+    ) {
+        val currentDateMillis = date.time
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("amount", amount)
+            put("categoryId", categoryId)
+            put("description", description)
+            put("date", currentDateMillis)
+            put("transactionType", transactionType)
+        }
+        db.update("transactions", values, "id=?", arrayOf(transactionId.toString()))
+        db.close()
+    }
+
     fun deleteAllTransaction() {
         val db = this.writableDatabase
         db.delete("transactions", null, null)
+        db.close()
+    }
+
+    fun deleteTransaction(transactionId: Long) {
+        val db = this.writableDatabase
+        db.delete("transactions", "id=?", arrayOf(transactionId.toString()))
         db.close()
     }
 
@@ -138,27 +212,6 @@ class DatabaseHelper(context: Context) :
         return transactionList
     }
 
-    private fun getCategoryById(categoryId: Long): Category {
-        val db = this.readableDatabase
-        val cursor =
-            db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId.toString()))
-        cursor.moveToFirst()
-        val imageUri = Uri.parse(cursor.getString(1))
-        val categoryName = cursor.getString(2)
-        val categoryType = cursor.getString(3)
-        cursor.close()
-        return Category(imageUri, categoryName, categoryType)
-    }
-
-    fun getCategoryId(categoryName: String): Long {
-        val db = this.readableDatabase
-        val cursor =
-            db.rawQuery("SELECT * FROM categories WHERE categoryName=?", arrayOf(categoryName))
-        cursor.moveToFirst()
-        val categoryId = cursor.getLong(0) // Return the category row id
-        cursor.close()
-        return categoryId
-    }
 
     fun resetPrimaryKey(tableName: String) {
         val db = this.writableDatabase
@@ -169,8 +222,8 @@ class DatabaseHelper(context: Context) :
 
 
     companion object {
-        private const val DATABASE_NAME = "spendsavvyDB"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_NAME = "Local_Database"
+        private const val DATABASE_VERSION = 4
     }
 }
 
