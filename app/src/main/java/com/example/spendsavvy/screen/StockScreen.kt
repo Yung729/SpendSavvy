@@ -47,9 +47,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.spendsavvy.components.bounceClick
-import com.example.spendsavvy.data.StockData
+/*import com.example.spendsavvy.data.StockData*/
 import com.example.spendsavvy.data.bankName
-import com.example.spendsavvy.data.toyNames
+/*import com.example.spendsavvy.data.toyNames*/
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
@@ -65,16 +65,16 @@ fun StockScreen(modifier: Modifier = Modifier) {
     }
 
     // Calculate total stock balance
-    val totalStockBalance = remember {
+/*    val totalStockBalance = remember {
         StockData().loadStock().sumOf { it.originalPrice * it.quantity }
-    }
+    }*/
 
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-HeaderTitle(text = "Stock Account")
+            /*Column {
+HeaderTitle(text = "Stock Account")*/
 
                 Text(
                     text = "Add and Sell Stocks",
@@ -105,7 +105,7 @@ HeaderTitle(text = "Stock Account")
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Text(text = "RM $totalStockBalance")
+                //Text(text = "RM $totalStockBalance")
             }
         }
 
@@ -119,7 +119,7 @@ HeaderTitle(text = "Stock Account")
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
-            StockList(stockList = StockData().loadStock())
+            /*StockList(stockList = StockData().loadStock())*/
 
             Box(
                 modifier = Modifier
@@ -171,10 +171,10 @@ HeaderTitle(text = "Stock Account")
             AddStockSelectionScreen(onCancelClick = { isSelectionPopUp = false }, {})
         else if(isDialogPopUp)
             EditExistingStockScreen(onCancelClick = { isDialogPopUp = false }, {}, 2)
-    }
-
-
 }
+
+
+
 
 @Composable
 fun StockCard(stock: Stock, modifier: Modifier = Modifier) {
@@ -195,13 +195,13 @@ fun StockCard(stock: Stock, modifier: Modifier = Modifier) {
 
         ) {
 
-            Image(
+            /*Image(
                 painter = painterResource(id = stock.productImage),
                 contentDescription = "",
                 modifier = Modifier
                     .size(30.dp, 30.dp)
                     .padding(end = 10.dp)
-            )
+            )*/
 
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -566,7 +566,7 @@ fun EditExistingStockScreen(
                         expanded = isExpanded,
                         onDismissRequest = { isExpanded = false }
                     ) {
-                        for(i in toyNames) {
+                        /*for(i in toyNames) {          //read from existing stock items
                             DropdownMenuItem(
                                 text = {
                                     Text(text = i)
@@ -576,7 +576,7 @@ fun EditExistingStockScreen(
                                     isExpanded = false
                                 }
                             )
-                        }
+                        }*/
                     }
                 }
 

@@ -38,13 +38,9 @@ class WalletViewModel(
             //sync to SQLite
             dbHelper.deleteAllTransaction()
             dbHelper.resetPrimaryKey("cash")
-            transactionsFromFirestore.forEach { transaction ->
-                dbHelper.addNewTransaction(
-                    amount = transaction.amount,
-                    categoryId = dbHelper.getCategoryId(transaction.category.categoryName),
-                    description = transaction.description,
-                    date = transaction.date,
-                    transactionType = transaction.transactionType
+            transactionsFromFirestore.forEach { cash ->
+                dbHelper.addNewCashDetails(
+
                 )
         }
     }

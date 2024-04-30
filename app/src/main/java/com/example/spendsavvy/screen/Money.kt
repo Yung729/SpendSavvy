@@ -367,7 +367,7 @@ fun MoneyPopUpScreen(
                         .weight(1f)
                 ) {
                     Text(
-                        text = "Add",
+                        text = "Update",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily
                     )
