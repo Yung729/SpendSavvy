@@ -19,7 +19,8 @@ class DatabaseHelper(context: Context) :
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 imageUri TEXT,
                 categoryName TEXT NOT NULL,
-                categoryType TEXT NOT NULL
+                categoryType TEXT NOT NULL,
+                userId TEXT
             )
         """
         db.execSQL(CREATE_CATEGORY_TABLE)
@@ -32,6 +33,7 @@ class DatabaseHelper(context: Context) :
                 description TEXT,
                 date LONG,
                 transactionType TEXT,
+                userId TEXT,
                 FOREIGN KEY(categoryId) REFERENCES categories(id)
             )
         """
@@ -48,7 +50,8 @@ class DatabaseHelper(context: Context) :
     fun addNewCategory(
         imageUri: Uri?,
         categoryName: String,
-        categoryType: String
+        categoryType: String,
+        userId : String
     ) {
 
         val db = this.writableDatabase
@@ -56,6 +59,7 @@ class DatabaseHelper(context: Context) :
             put("imageUri", imageUri.toString())
             put("categoryName", categoryName)
             put("categoryType", categoryType)
+            put("userId", userId)
         }
         db.insert("categories", null, values)
         db.close()
@@ -138,7 +142,8 @@ class DatabaseHelper(context: Context) :
         categoryId: Long,  // Category ID to link the transaction with a category
         description: String,
         date: Date,
-        transactionType: String
+        transactionType: String,
+        userId: String
     ) {
         val currentDateMillis = date.time
         val db = this.writableDatabase
@@ -148,6 +153,7 @@ class DatabaseHelper(context: Context) :
             put("description", description)
             put("date", currentDateMillis)
             put("transactionType", transactionType)
+            put("userId", userId)
         }
         db.insert("transactions", null, values)
         db.close()
@@ -223,7 +229,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 4
+        private const val DATABASE_VERSION = 5
     }
 }
 

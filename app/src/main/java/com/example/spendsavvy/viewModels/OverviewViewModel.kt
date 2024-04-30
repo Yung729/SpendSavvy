@@ -54,7 +54,8 @@ class OverviewViewModel(
                             categoryId = dbHelper.getCategoryId(transaction.category.categoryName),
                             description = transaction.description,
                             date = transaction.date,
-                            transactionType = transaction.transactionType
+                            transactionType = transaction.transactionType,
+                            userId = userId
                         )
                     }
 

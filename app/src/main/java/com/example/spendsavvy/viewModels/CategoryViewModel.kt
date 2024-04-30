@@ -49,15 +49,15 @@ class CategoryViewModel(
 
                     categoriesFromFirestore.forEach { category ->
                         dbHelper.addNewCategory(
-                            category.imageUri, category.categoryName, category.categoryType
+                            category.imageUri, category.categoryName, category.categoryType, userId
                         )
                     }
-                    Log.e(TAG, "Have Internet")
+
                 } else {
                     // Fetch data from SQLite
                     val categoriesFromSQLite = dbHelper.readCategory()
                     updateCategories(categoriesFromSQLite)
-                    Log.e(TAG, "No Internet")
+
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
