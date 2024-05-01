@@ -133,8 +133,6 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId)
     val budgetViewModel = BudgetViewModel(context, isConnected, userId)
 
-
-
     Scaffold(topBar = {
         HeaderTopBar(text = currentScreenName,
             canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
@@ -369,7 +367,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 TaxCalculator(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp),
+                    navController = navController,
                 )
             }
 
@@ -380,7 +379,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 Notification(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp),
+                    navController = navController
                 )
             }
 
@@ -390,7 +390,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 Language(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp),
+                    navController = navController
                 )
             }
 
@@ -400,7 +401,8 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 HelpAndSupport(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp),
+                    navController = navController
                 )
             }
             composable(
