@@ -413,6 +413,8 @@ class DatabaseHelper(context: Context) :
     }
 
     fun addNewCashDetails() {
+    }
+    
 
     fun addNewCashDetails(
         balance: Double
