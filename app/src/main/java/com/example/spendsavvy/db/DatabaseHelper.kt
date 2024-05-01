@@ -342,7 +342,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 7
+        private const val DATABASE_VERSION = 9
     }
 }
 
