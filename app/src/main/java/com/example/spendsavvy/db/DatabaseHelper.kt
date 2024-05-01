@@ -57,7 +57,6 @@ class DatabaseHelper(context: Context) :
         onCreate(db)
     }
 
-
     fun addNewCategory(
         categoryId: String,
         imageUri: Uri?,
@@ -327,10 +326,32 @@ class DatabaseHelper(context: Context) :
         cursor.close()
         return  cashAccountList
     }
-    
-    fun addNewCashDetails(){
 
+    fun addNewCashDetails(
+        balance: Double
+    ) {
+
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("balance", balance)
+        }
+        db.insert("cash", null, values)
+        db.close()
     }
+
+    fun updateCashDetails(
+        balance: Double,
+        userId: String
+    ) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("balance", balance)
+        }
+        db.update("cash", values, "userId=?", arrayOf(userId))
+        db.close()
+    }
+
+
 
     fun resetPrimaryKey(tableName: String) {
         val db = this.writableDatabase
