@@ -84,4 +84,5 @@ dependencies {
     implementation ("androidx.compose.material:material:1.6.6")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.6")
     implementation ("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation ("androidx.datastore:datastore-preferences:1.1.0")
 }

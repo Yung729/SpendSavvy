@@ -1,15 +1,22 @@
 package com.example.spendsavvy.db
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
+import android.util.Log
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.repo.FirestoreRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class DatabaseHelper(context: Context) :
@@ -146,6 +153,42 @@ class DatabaseHelper(context: Context) :
         return categoryList
     }
 
+
+    private suspend fun getCategoryId(category: Category, userId: String): String {
+        return FirestoreRepository().getDocumentId("Categories", userId, category)
+    }
+
+
+    suspend fun addNewCategoryList(
+        categories: List<Category>,
+        userId: String
+    ) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+
+
+            for (category in categories) {
+                val values = ContentValues().apply {
+                    val categoryId = getCategoryId(category = category, userId = userId)
+                    put("id", categoryId)
+                    put("imageUri", category.imageUri.toString())
+                    put("categoryName", category.categoryName)
+                    put("categoryType", category.categoryType)
+                    put("userId", userId)
+                }
+                db.insert("categories", null, values)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error inserting categories into SQLite database", e)
+        } finally {
+            db.endTransaction()
+            db.close()
+        }
+
+    }
+
 //------------------------------------------    Transaction ----------------------------------------------------------------------
 
     fun addNewTransaction(
@@ -243,6 +286,48 @@ class DatabaseHelper(context: Context) :
         return transactionList
     }
 
+    private suspend fun getTransactionId(transactions: Transactions, userId: String): String {
+        return FirestoreRepository().getDocumentId("Transactions", userId, transactions)
+    }
+
+
+    suspend fun addNewTransactionsList(
+        transactions: List<Transactions>,
+        userId: String
+    ) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+
+
+            for (transaction in transactions) {
+                val values = ContentValues().apply {
+                    val transactionId =
+                        getTransactionId(transactions = transaction, userId = userId)
+                    val categoryId =
+                        getCategoryId(category = transaction.category, userId = userId)
+                    val currentDateMillis = transaction.date.time
+
+                    put("id", transactionId)
+                    put("amount", transaction.amount)
+                    put("categoryId", categoryId)
+                    put("description", transaction.description)
+                    put("date", currentDateMillis)
+                    put("transactionType", transaction.transactionType)
+                    put("userId", userId)
+                }
+                db.insert("categories", null, values)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error inserting categories into SQLite database", e)
+        } finally {
+            db.endTransaction()
+            db.close()
+        }
+
+    }
+
 //------------------------------------------    Budget   ----------------------------------------------------------------------
 
 
@@ -310,7 +395,7 @@ class DatabaseHelper(context: Context) :
     }
 
 
-//------------------------------ CASH ----------------------------------------
+    //------------------------------ CASH ----------------------------------------
     fun readCashDetails(): ArrayList<Cash> {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM cash", null)
@@ -325,10 +410,10 @@ class DatabaseHelper(context: Context) :
             } while (cursor.moveToNext())
         }
         cursor.close()
-        return  cashAccountList
+        return cashAccountList
     }
-    
-    fun addNewCashDetails(){
+
+    fun addNewCashDetails() {
 
     }
 
