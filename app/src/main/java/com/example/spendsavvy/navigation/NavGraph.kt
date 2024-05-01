@@ -67,6 +67,7 @@ import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
+import com.example.spendsavvy.viewModels.BudgetViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 
@@ -130,6 +131,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
 
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId)
+    val budgetViewModel = BudgetViewModel(context, isConnected, userId)
 
 
 
@@ -485,6 +487,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
             ) {
 
                 BudgetScreen(
+                    budgetViewModel = budgetViewModel
                 )
 
 

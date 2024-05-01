@@ -38,6 +38,15 @@ class DatabaseHelper(context: Context) :
             )
         """
         db.execSQL(CREATE_TRANSACTION_TABLE)
+
+        val CREATE_BUDGET_TABLE = """
+            CREATE TABLE budget (
+                userId TEXT PRIMARY KEY,
+                amount REAL NOT NULL
+            )
+        """
+        db.execSQL(CREATE_BUDGET_TABLE)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -101,8 +110,7 @@ class DatabaseHelper(context: Context) :
 
     private fun getCategoryById(categoryId: String): Category {
         val db = this.readableDatabase
-        val cursor =
-            db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId))
+        val cursor = db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId))
         cursor.moveToFirst()
         val imageUri = Uri.parse(cursor.getString(1))
         val categoryName = cursor.getString(2)
@@ -126,13 +134,18 @@ class DatabaseHelper(context: Context) :
         val cursorCategory: Cursor =
             db.rawQuery("SELECT * FROM categories WHERE userId=?", arrayOf(userId))
         val categoryList: ArrayList<Category> = ArrayList()
+
+        val imageUriIndex = cursorCategory.getColumnIndex("imageUri")
+        val categoryNameIndex = cursorCategory.getColumnIndex("categoryName")
+        val categoryTypeIndex = cursorCategory.getColumnIndex("categoryType")
+
         if (cursorCategory.moveToFirst()) {
             do {
                 categoryList.add(
                     Category(
-                        imageUri = Uri.parse(cursorCategory.getString(1)),
-                        categoryName = cursorCategory.getString(2),
-                        categoryType = cursorCategory.getString(3)
+                        imageUri = Uri.parse(cursorCategory.getString(imageUriIndex)),
+                        categoryName = cursorCategory.getString(categoryNameIndex),
+                        categoryType = cursorCategory.getString(categoryTypeIndex)
                     )
                 )
             } while (cursorCategory.moveToNext())
@@ -207,13 +220,22 @@ class DatabaseHelper(context: Context) :
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM transactions WHERE userId=?", arrayOf(userId))
         val transactionList: ArrayList<Transactions> = ArrayList()
+
+        val amountIndex = cursor.getColumnIndex("amount")
+        val categoryIdIndex = cursor.getColumnIndex("categoryId")
+        val descriptionIndex = cursor.getColumnIndex("description")
+        val dateIndex = cursor.getColumnIndex("date")
+        val transactionTypeIndex = cursor.getColumnIndex("transactionType")
+
         if (cursor.moveToFirst()) {
+
+
             do {
-                val amount = cursor.getDouble(1)
-                val categoryId = cursor.getString(2)
-                val description = cursor.getString(3)
-                val dateMillis = cursor.getLong(4)
-                val transactionType = cursor.getString(5)
+                val amount = cursor.getDouble(amountIndex)
+                val categoryId = cursor.getString(categoryIdIndex)
+                val description = cursor.getString(descriptionIndex)
+                val dateMillis = cursor.getLong(dateIndex)
+                val transactionType = cursor.getString(transactionTypeIndex)
 
                 val date = Date(dateMillis)
 
@@ -229,6 +251,49 @@ class DatabaseHelper(context: Context) :
         return transactionList
     }
 
+//------------------------------------------    Budget   ----------------------------------------------------------------------
+
+
+    fun addOrUpdateBudget(userId: String, amount: Double) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("userId", userId)
+            put("amount", amount)
+        }
+        val result =
+            db.insertWithOnConflict("budget", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+        if (result == -1L) {
+            updateBudget(userId, amount)
+        }
+        db.close()
+    }
+
+    private fun updateBudget(userId: String, amount: Double) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("amount", amount)
+        }
+        db.update("budget", values, "userId=?", arrayOf(userId))
+        db.close()
+    }
+
+    fun getBudget(userId: String): Double {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT amount FROM budget WHERE userId=?", arrayOf(userId))
+        var budget = 0.0
+
+        val amountIndex = cursor.getColumnIndex("amount")
+
+        if (cursor.moveToFirst()) {
+            budget = cursor.getDouble(amountIndex)
+        }
+        cursor.close()
+        return budget
+    }
+
+    fun resetBudget(userId: String) {
+        updateBudget(userId, 0.0)
+    }
 
     fun resetPrimaryKey(tableName: String) {
         val db = this.writableDatabase
@@ -240,7 +305,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 6
+        private const val DATABASE_VERSION = 7
     }
 }
 

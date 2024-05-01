@@ -69,6 +69,56 @@ class FirestoreRepository {
 
     }
 
+    fun addOrUpdateOneFieldItem(
+        userId: String,
+        collectionName: String,
+        fieldName: String,
+        fieldData: Any,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+
+        val documentRef = firestore.collection("Users").document(userId).collection(collectionName)
+            .document(fieldName)
+
+        val budgetData = hashMapOf(
+            fieldName to fieldData
+        )
+
+        documentRef.set(budgetData)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully written")
+                onSuccess("")
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "DocumentSnapshot unsuccessfully written")
+                onFailure(e)
+            }
+
+
+    }
+
+    suspend fun readSingleFieldValueFromDatabase(
+        userId: String,
+        collectionName: String,
+        fieldName: String
+    ): Any? {
+        try {
+            val querySnapshot = firestore.collection("Users").document(userId)
+                .collection(collectionName).get().await()
+
+            for (document in querySnapshot.documents) {
+                val fieldValue = document[fieldName]
+                if (fieldValue != null) {
+                    return fieldValue
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting items from $collectionName", e)
+        }
+        return null
+    }
+
     fun addItemTwoCollection(
         userId: String,
         collectionName: String,
