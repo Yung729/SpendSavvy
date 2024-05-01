@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.spendsavvy.components.bounceClick
-import com.example.spendsavvy.data.BankAccountData
 import com.example.spendsavvy.data.bankName
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
@@ -122,11 +121,7 @@ fun MoneyScreen(modifier: Modifier) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                BankList(bankList = BankAccountData().loadBank())
 
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Check")
-                }
             }
 
             Box(
@@ -372,7 +367,7 @@ fun MoneyPopUpScreen(
                         .weight(1f)
                 ) {
                     Text(
-                        text = "Add",
+                        text = "Update",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily
                     )
@@ -380,11 +375,6 @@ fun MoneyPopUpScreen(
             }
         }
     }
-}
-
-@Composable
-fun BankDetails(modifier: Modifier = Modifier){
-
 }
 
 @Preview(showBackground = true)

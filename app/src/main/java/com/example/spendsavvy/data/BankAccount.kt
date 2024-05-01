@@ -31,6 +31,7 @@ val bankName =  listOf(
     "United Overseas Bank (Malaysia) Berhad"
 )
 
+/*
 fun getBankName() : String{
     return bankName.random()
 }
@@ -44,4 +45,14 @@ class BankAccountData{
     )
     }
 }
+*/
 
+/*class BankAccountData{
+    fun loadBank() : List<BankAccount>{
+        return listOf<BankAccount>(
+            BankAccount(getBankName(),1000.00),
+            BankAccount(getBankName(),1599.00),
+            BankAccount(getBankName(),2000.00)
+        )
+    }
+}*/

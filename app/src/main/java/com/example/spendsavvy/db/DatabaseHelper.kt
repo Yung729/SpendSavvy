@@ -6,7 +6,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
+import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.models.Transactions
 import java.util.Date
 
@@ -117,16 +119,6 @@ class DatabaseHelper(context: Context) :
         val categoryType = cursor.getString(3)
         cursor.close()
         return Category(imageUri, categoryName, categoryType)
-    }
-
-    fun getCategoryId(categoryName: String): String {
-        val db = this.readableDatabase
-        val cursor =
-            db.rawQuery("SELECT * FROM categories WHERE categoryName=?", arrayOf(categoryName))
-        cursor.moveToFirst()
-        val categoryId = cursor.getString(0) // Return the category row id
-        cursor.close()
-        return categoryId
     }
 
     fun readCategory(userId: String): ArrayList<Category> {
@@ -293,6 +285,51 @@ class DatabaseHelper(context: Context) :
 
     fun resetBudget(userId: String) {
         updateBudget(userId, 0.0)
+    }
+
+    private fun getCategoryById(categoryId: Long): Category {
+        val db = this.readableDatabase
+        val cursor =
+            db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId.toString()))
+        cursor.moveToFirst()
+        val imageUri = Uri.parse(cursor.getString(1))
+        val categoryName = cursor.getString(2)
+        val categoryType = cursor.getString(3)
+        cursor.close()
+        return Category(imageUri, categoryName, categoryType)
+    }
+
+    fun getCategoryId(categoryName: String): Long {
+        val db = this.readableDatabase
+        val cursor =
+            db.rawQuery("SELECT * FROM categories WHERE categoryName=?", arrayOf(categoryName))
+        cursor.moveToFirst()
+        val categoryId = cursor.getLong(0) // Return the category row id
+        cursor.close()
+        return categoryId
+    }
+
+
+//------------------------------ CASH ----------------------------------------
+    fun readCashDetails(): ArrayList<Cash> {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM cash", null)
+        val cashAccountList: ArrayList<Cash> = ArrayList()
+        if (cursor.moveToFirst()) {
+            do {
+                val balance = cursor.getDouble(1)
+
+                // Create a Cash object and add it to the list
+                val cashAccount = Cash(balance)
+                cashAccountList.add(cashAccount)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return  cashAccountList
+    }
+    
+    fun addNewCashDetails(){
+
     }
 
     fun resetPrimaryKey(tableName: String) {
