@@ -1,13 +1,11 @@
 package com.example.spendsavvy.db
 
 import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
-import android.util.Log
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
@@ -159,29 +157,25 @@ class DatabaseHelper(context: Context) :
         userId: String
     ) {
         val db = this.writableDatabase
-        try {
 
 
-            for (category in categories) {
-                val categoryId = getCategoryId(category = category, userId = userId)
+        for (category in categories) {
+            val categoryId = getCategoryId(category = category, userId = userId)
 
-                val values = ContentValues().apply {
+            val values = ContentValues().apply {
 
 
-                    put("id", categoryId)
-                    put("imageUri", category.imageUri.toString())
-                    put("categoryName", category.categoryName)
-                    put("categoryType", category.categoryType)
-                    put("userId", userId)
-                }
-                db.insert("categories", null, values)
+                put("id", categoryId)
+                put("imageUri", category.imageUri.toString())
+                put("categoryName", category.categoryName)
+                put("categoryType", category.categoryType)
+                put("userId", userId)
             }
-
-            db.close()
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Error inserting categories into SQLite database", e)
+            db.insert("categories", null, values)
         }
+
+        db.close()
+
 
     }
 
@@ -292,36 +286,31 @@ class DatabaseHelper(context: Context) :
         userId: String
     ) {
         val db = this.writableDatabase
-        try {
+
+        for (transaction in transactions) {
+
+            val transactionId = getTransactionId(transactions = transaction, userId = userId)
+
+            val categoryId = getCategoryId(category = transaction.category, userId = userId)
+
+            val currentDateMillis = transaction.date.time
+
+            val values = ContentValues().apply {
 
 
-            for (transaction in transactions) {
-
-                val transactionId = getTransactionId(transactions = transaction, userId = userId)
-
-                val categoryId = getCategoryId(category = transaction.category, userId = userId)
-
-                val currentDateMillis = transaction.date.time
-
-                val values = ContentValues().apply {
-
-
-                    put("id", transactionId)
-                    put("amount", transaction.amount)
-                    put("categoryId", categoryId)
-                    put("description", transaction.description)
-                    put("date", currentDateMillis)
-                    put("transactionType", transaction.transactionType)
-                    put("userId", userId)
-                }
-                db.insert("transactions", null, values)
+                put("id", transactionId)
+                put("amount", transaction.amount)
+                put("categoryId", categoryId)
+                put("description", transaction.description)
+                put("date", currentDateMillis)
+                put("transactionType", transaction.transactionType)
+                put("userId", userId)
             }
-
-            db.close()
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Error inserting categories into SQLite database", e)
+            db.insert("transactions", null, values)
         }
+
+        db.close()
+
 
     }
 
@@ -487,7 +476,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 12
+        private const val DATABASE_VERSION = 13
     }
 }
 
