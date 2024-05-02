@@ -1,5 +1,6 @@
 package com.example.spendsavvy.navigation
 
+import TaxCalculator
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -63,13 +64,13 @@ import com.example.spendsavvy.screen.OverviewScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.StockScreen
-import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.BudgetViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.TaxViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
@@ -369,6 +370,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                         .fillMaxSize()
                         .padding(20.dp),
                     navController = navController,
+                    taxViewModel = TaxViewModel()
                 )
             }
 
