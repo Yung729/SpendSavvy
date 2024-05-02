@@ -3,6 +3,7 @@ package com.example.spendsavvy
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
 import com.example.spendsavvy.navigation.SetupNavGraph
 import com.example.spendsavvy.ui.theme.SpendSavvyTheme
 
@@ -14,11 +15,10 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-
         setContent {
             SpendSavvyTheme {
-
-                SetupNavGraph()
+                val context = LocalContext.current
+                SetupNavGraph(context = context)
 
             }
         }

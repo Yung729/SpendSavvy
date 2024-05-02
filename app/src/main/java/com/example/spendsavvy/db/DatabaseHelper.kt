@@ -1,22 +1,15 @@
 package com.example.spendsavvy.db
 
 import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
-import android.util.Log
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Date
 
 class DatabaseHelper(context: Context) :
@@ -51,7 +44,7 @@ class DatabaseHelper(context: Context) :
         val CREATE_BUDGET_TABLE = """
             CREATE TABLE budget (
                 userId TEXT PRIMARY KEY,
-                amount REAL NOT NULL
+                amount REAL 
             )
         """
         db.execSQL(CREATE_BUDGET_TABLE)
@@ -61,6 +54,7 @@ class DatabaseHelper(context: Context) :
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS categories")
         db.execSQL("DROP TABLE IF EXISTS transactions")
+        db.execSQL("DROP TABLE IF EXISTS budget")
         onCreate(db)
     }
 
@@ -162,29 +156,26 @@ class DatabaseHelper(context: Context) :
         categories: List<Category>,
         userId: String
     ) {
-        val db = writableDatabase
-        db.beginTransaction()
-        try {
+        val db = this.writableDatabase
 
 
-            for (category in categories) {
-                val values = ContentValues().apply {
-                    val categoryId = getCategoryId(category = category, userId = userId)
-                    put("id", categoryId)
-                    put("imageUri", category.imageUri.toString())
-                    put("categoryName", category.categoryName)
-                    put("categoryType", category.categoryType)
-                    put("userId", userId)
-                }
-                db.insert("categories", null, values)
+        for (category in categories) {
+            val categoryId = getCategoryId(category = category, userId = userId)
+
+            val values = ContentValues().apply {
+
+
+                put("id", categoryId)
+                put("imageUri", category.imageUri.toString())
+                put("categoryName", category.categoryName)
+                put("categoryType", category.categoryType)
+                put("userId", userId)
             }
-            db.setTransactionSuccessful()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error inserting categories into SQLite database", e)
-        } finally {
-            db.endTransaction()
-            db.close()
+            db.insert("categories", null, values)
         }
+
+        db.close()
+
 
     }
 
@@ -291,39 +282,35 @@ class DatabaseHelper(context: Context) :
 
 
     suspend fun addNewTransactionsList(
-        transactions: List<Transactions>,
+        transactions: List<Transactions>/*, categories: List<Category>, amount: Double*/,
         userId: String
     ) {
-        val db = writableDatabase
-        db.beginTransaction()
-        try {
+        val db = this.writableDatabase
+
+        for (transaction in transactions) {
+
+            val transactionId = getTransactionId(transactions = transaction, userId = userId)
+
+            val categoryId = getCategoryId(category = transaction.category, userId = userId)
+
+            val currentDateMillis = transaction.date.time
+
+            val values = ContentValues().apply {
 
 
-            for (transaction in transactions) {
-                val values = ContentValues().apply {
-                    val transactionId =
-                        getTransactionId(transactions = transaction, userId = userId)
-                    val categoryId =
-                        getCategoryId(category = transaction.category, userId = userId)
-                    val currentDateMillis = transaction.date.time
-
-                    put("id", transactionId)
-                    put("amount", transaction.amount)
-                    put("categoryId", categoryId)
-                    put("description", transaction.description)
-                    put("date", currentDateMillis)
-                    put("transactionType", transaction.transactionType)
-                    put("userId", userId)
-                }
-                db.insert("categories", null, values)
+                put("id", transactionId)
+                put("amount", transaction.amount)
+                put("categoryId", categoryId)
+                put("description", transaction.description)
+                put("date", currentDateMillis)
+                put("transactionType", transaction.transactionType)
+                put("userId", userId)
             }
-            db.setTransactionSuccessful()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error inserting categories into SQLite database", e)
-        } finally {
-            db.endTransaction()
-            db.close()
+            db.insert("transactions", null, values)
         }
+
+        db.close()
+
 
     }
 
@@ -414,7 +401,7 @@ class DatabaseHelper(context: Context) :
 
     fun addNewCashDetails() {
     }
-    
+
 
     fun addNewCashDetails(
         balance: Double
@@ -441,7 +428,6 @@ class DatabaseHelper(context: Context) :
     }
 
 
-
     fun resetPrimaryKey(tableName: String) {
         val db = this.writableDatabase
         db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE name='$tableName'")
@@ -449,10 +435,48 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
+    fun isDatabaseEmpty(): Boolean {
+        val db = this.readableDatabase
+        var isEmpty = true
+
+        // Check if the categories table has any records
+        val categoriesCursor = db.rawQuery("SELECT COUNT(*) FROM categories", null)
+        categoriesCursor.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                isEmpty = count == 0
+            }
+        }
+
+        // Check if the transactions table has any records
+        val transactionsCursor = db.rawQuery("SELECT COUNT(*) FROM transactions", null)
+        transactionsCursor.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                isEmpty = isEmpty && (count == 0)
+            }
+        }
+
+        // Check if the budget table has any records
+        val budgetCursor = db.rawQuery("SELECT COUNT(*) FROM budget", null)
+        budgetCursor.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                isEmpty = isEmpty && (count == 0)
+            }
+        }
+
+        // Optionally, you can check other tables as well if needed
+
+        db.close()
+
+        return isEmpty
+    }
+
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 9
+        private const val DATABASE_VERSION = 13
     }
 }
 

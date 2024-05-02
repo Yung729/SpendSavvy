@@ -1,6 +1,5 @@
 package com.example.spendsavvy.navigation
 
-import TaxCalculator
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -27,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -64,18 +62,20 @@ import com.example.spendsavvy.screen.OverviewScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.StockScreen
+import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.BudgetViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
+import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
-import com.example.spendsavvy.viewModels.TaxViewModel
 
 @Composable
-fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
+fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
 
-    val context = LocalContext.current
+
+    val context = context
     val isConnected = isInternetAvailable(context)
     val fireAuthRepository = FireAuthRepository(
         context = context,
@@ -112,27 +112,36 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         }
 
         composable(route = Screen.MainScreen.route) {
-            TabsNavGraph(userId = fireAuthRepository.getCurrentUser())
+            TabsNavGraph(userId = fireAuthRepository.getCurrentUser(), context = context)
         }
+
 
     }
 }
 
 @Composable
-fun TabsNavGraph(navController: NavHostController = rememberNavController(), userId: String) {
+fun TabsNavGraph(
+    navController: NavHostController = rememberNavController(),
+    userId: String,
+    context: Context
+) {
 
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
-    val context = LocalContext.current
+    val context = context
     val isConnected = isInternetAvailable(context)
 
     val showOption = remember { mutableStateOf(false) }
 
+    val mainViewModel = MainViewModel(context, isConnected, userId)
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId)
     val budgetViewModel = BudgetViewModel(context, isConnected, userId)
+
+
+    mainViewModel.syncDatabase()
 
     Scaffold(topBar = {
         HeaderTopBar(text = currentScreenName,
@@ -368,9 +377,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 TaxCalculator(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController,
-                    taxViewModel = TaxViewModel()
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -381,8 +388,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 Notification(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -392,8 +398,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 Language(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
 
@@ -403,8 +408,7 @@ fun TabsNavGraph(navController: NavHostController = rememberNavController(), use
                 HelpAndSupport(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController
+                        .padding(20.dp), navController = navController
                 )
             }
             composable(
