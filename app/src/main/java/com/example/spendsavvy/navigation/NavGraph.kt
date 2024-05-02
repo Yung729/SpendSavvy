@@ -26,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -69,12 +68,14 @@ import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.BudgetViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
+import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 
 @Composable
-fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
+fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
 
-    val context = LocalContext.current
+
+    val context = context
     val isConnected = isInternetAvailable(context)
     val fireAuthRepository = FireAuthRepository(
         context = context,
@@ -111,29 +112,36 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         }
 
         composable(route = Screen.MainScreen.route) {
-            TabsNavGraph(userId = fireAuthRepository.getCurrentUser())
+            TabsNavGraph(userId = fireAuthRepository.getCurrentUser(), context = context)
         }
+
 
     }
 }
 
 @Composable
-fun TabsNavGraph(navController: NavHostController = rememberNavController(), userId: String) {
+fun TabsNavGraph(
+    navController: NavHostController = rememberNavController(),
+    userId: String,
+    context: Context
+) {
 
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
-    val context = LocalContext.current
+    val context = context
     val isConnected = isInternetAvailable(context)
 
     val showOption = remember { mutableStateOf(false) }
 
+    val mainViewModel = MainViewModel(context, isConnected, userId)
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId)
     val budgetViewModel = BudgetViewModel(context, isConnected, userId)
 
 
+    mainViewModel.syncDatabase()
 
     Scaffold(topBar = {
         HeaderTopBar(text = currentScreenName,
