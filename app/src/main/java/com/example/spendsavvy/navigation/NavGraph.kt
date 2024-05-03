@@ -1,6 +1,6 @@
 package com.example.spendsavvy.navigation
 
-import TaxCalculator
+import com.example.spendsavvy.screen.TaxCalculator
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
