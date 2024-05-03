@@ -17,8 +17,6 @@ class BudgetViewModel(
     userId: String
 ) : ViewModel() {
 
-    @SuppressLint("StaticFieldLeak")
-    val currentContext = context
     private val internet = isOnline
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)

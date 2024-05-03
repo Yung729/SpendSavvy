@@ -1,6 +1,5 @@
 package com.example.spendsavvy.viewModels
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
@@ -22,11 +21,9 @@ class OverviewViewModel(
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
 
-    @SuppressLint("StaticFieldLeak")
-    val currentContext = context
-    val internet = isOnline
+    private val internet = isOnline
 
-    val userId = userId
+    private val userId = userId
 
     val transactionsList = MutableLiveData<List<Transactions>>()
     val todayTransactionsList = MutableLiveData<List<Transactions>>()
