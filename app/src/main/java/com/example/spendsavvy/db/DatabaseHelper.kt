@@ -282,8 +282,7 @@ class DatabaseHelper(context: Context) :
 
 
     suspend fun addNewTransactionsList(
-        transactions: List<Transactions>, categories: List<Category>, amount: Double,
-    userId: String
+        transactions: List<Transactions>,userId: String
     ) {
         val db = this.writableDatabase
 
