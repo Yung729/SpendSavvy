@@ -1,3 +1,5 @@
+package com.example.spendsavvy.screen
+
 import android.content.ContentValues
 import android.util.Log
 import android.widget.Toast
