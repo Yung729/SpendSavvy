@@ -282,8 +282,8 @@ class DatabaseHelper(context: Context) :
 
 
     suspend fun addNewTransactionsList(
-        transactions: List<Transactions>/*, categories: List<Category>, amount: Double*/,
-        userId: String
+        transactions: List<Transactions>, categories: List<Category>, amount: Double,
+    userId: String
     ) {
         val db = this.writableDatabase
 
@@ -479,4 +479,3 @@ class DatabaseHelper(context: Context) :
         private const val DATABASE_VERSION = 13
     }
 }
-
