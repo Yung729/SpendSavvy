@@ -1,26 +1,19 @@
 package com.example.spendsavvy.viewModels
 
-import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainViewModel(
     context: Context, isOnline: Boolean, userId: String
 ) : ViewModel() {
 
-    @SuppressLint("StaticFieldLeak")
-    private val currentContext = context
     private val databaseHelper = DatabaseHelper(context)
     private val currentUserId = userId
 
@@ -59,8 +52,8 @@ class MainViewModel(
             databaseHelper.addNewCategoryList(categories, userId)
             databaseHelper.addNewTransactionsList(transactions, userId)
 
-            if (budget != null){
-                databaseHelper.addOrUpdateBudget(userId, budget as Double )
+            if (budget != null) {
+                databaseHelper.addOrUpdateBudget(userId, budget as Double)
             }
 
 

@@ -282,7 +282,7 @@ class DatabaseHelper(context: Context) :
 
 
     suspend fun addNewTransactionsList(
-        transactions: List<Transactions>,userId: String
+        transactions: List<Transactions>, userId: String
     ) {
         val db = this.writableDatabase
 
@@ -425,7 +425,7 @@ class DatabaseHelper(context: Context) :
         db.update("cash", values, "userId=?", arrayOf(userId))
         db.close()
     }
-
+    //----------------------------------- Other ------------------------------------------------------
 
     fun resetPrimaryKey(tableName: String) {
         val db = this.writableDatabase
