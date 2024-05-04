@@ -47,6 +47,7 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.BudgetViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -57,58 +58,73 @@ import java.util.Locale
 fun OverviewScreen(
     modifier: Modifier = Modifier,
     transactionViewModel: OverviewViewModel,
+    budgetViewModel: BudgetViewModel,
     navController: NavController
 ) {
 
     val transactionList by transactionViewModel.todayTransactionsList.observeAsState(initial = emptyList())
+    val totalExpenses by transactionViewModel.expensesTotal.observeAsState(initial = 0.0)
+    val budgetAmount by budgetViewModel.budget.observeAsState(initial = 0.0)
 
-
-    Column(
-        modifier = modifier
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        Text(
-            text = "Hi, User", //current User
-            fontFamily = poppinsFontFamily,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = HeaderTitle
-        )
-
-        OverViewCard()
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        item {
             Text(
-                text = "Record",
+                text = "Hi, User", //current User
                 fontFamily = poppinsFontFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = HeaderTitle
             )
-
-            ClickableText(text = AnnotatedString("See All"), onHover = {
-
-            }, onClick = {
-                navController.navigate(Screen.AllTransaction.route)
-            }, modifier = Modifier.align(Alignment.CenterVertically), style = TextStyle(
-                fontFamily = poppinsFontFamily,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Green,
-            )
-            )
-
         }
 
-        TransactionList(
-            transactionList,
-            navController = navController,
-            transactionViewModel = transactionViewModel
-        )
+        item {
+            OverViewCard()
+        }
+
+        item {
+            BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
+        }
+
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Record",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = HeaderTitle
+                )
+
+                ClickableText(text = AnnotatedString("See All"), onHover = {
+
+                }, onClick = {
+                    navController.navigate(Screen.AllTransaction.route)
+                }, modifier = Modifier.align(Alignment.CenterVertically), style = TextStyle(
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Green,
+                )
+                )
+
+            }
+            
+            Spacer(modifier = Modifier.height(10.dp))
+            
+            TransactionList(
+                transactionList,
+                navController = navController,
+                transactionViewModel = transactionViewModel
+            )
+        }
+
 
     }
 
@@ -185,6 +201,63 @@ fun OverViewCard() {
 
 
             }
+        }
+    }
+
+
+}
+
+@Composable
+fun BudgetCard(
+    budgetAmount: Double,
+    totalExpenses: Double
+) {
+
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = CardColor, contentColor = Color.White
+        ), elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
+
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Text(
+                text = "Budget",
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp
+            )
+
+            Text(
+                text = budgetAmount.toString(),
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+
+                )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Available Balance",
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp
+            )
+
+            Text(
+                text = (budgetAmount - totalExpenses).toString(),
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+
+                )
+
+
         }
     }
 
@@ -278,7 +351,7 @@ fun TransactionList(
     var lastDate = ""
     val todayDate = Calendar.getInstance().time
 
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.height(400.dp)) {
         items(transactionsList) { item: Transactions ->
 
             if (dateFormat.format(item.date) != lastDate) {
@@ -314,6 +387,7 @@ fun OverviewScreenPreview() {
             .fillMaxSize()
             .padding(20.dp),
         transactionViewModel = viewModel(),
+        budgetViewModel = viewModel(),
         navController = rememberNavController()
     )
 }

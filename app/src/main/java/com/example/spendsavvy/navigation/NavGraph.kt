@@ -263,6 +263,7 @@ fun TabsNavGraph(
                         .fillMaxSize()
                         .padding(20.dp),
                     transactionViewModel = transactionsViewModel,
+                    budgetViewModel = budgetViewModel,
                     navController = navController
                 )
             }
