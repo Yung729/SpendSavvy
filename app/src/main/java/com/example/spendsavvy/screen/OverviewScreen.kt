@@ -172,7 +172,7 @@ fun OverviewScreen(
             item {
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
 
                     BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
@@ -236,15 +236,22 @@ fun OverViewCard(
         colors = CardDefaults.cardColors(
             containerColor = CardColor, contentColor = Color.White
         ), elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
+            defaultElevation = 8.dp
+        ), shape = RoundedCornerShape(16.dp), modifier = Modifier
+            .fillMaxWidth()
 
     ) {
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
+            Text(
+                text = "Overview",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.Black
+            )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
@@ -253,32 +260,30 @@ fun OverViewCard(
                 Column {
                     Text(
                         text = "Income",
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Black
                     )
 
                     Text(
                         text = "RM $incomes",
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center,
+                        fontSize = 14.sp,
+                        color = Color.Black
                     )
                 }
 
                 Column {
                     Text(
                         text = "Expenses",
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Black
                     )
 
                     Text(
                         text = "RM $expenses",
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center,
+                        fontSize = 14.sp,
+                        color = Color.Black
                     )
                 }
 
@@ -300,45 +305,37 @@ fun BudgetCard(
     Card(
         colors = CardDefaults.cardColors(
             containerColor = CardColor, contentColor = Color.White
-        ), elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth().size(200.dp)
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
 
     ) {
         Column(
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = "Budget",
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.Black
             )
-
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = budgetAmount.toString(),
+                text = "RM $budgetAmount",
                 modifier = Modifier,
-                textAlign = TextAlign.Center,
+                color = Color.Black
 
                 )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Available Balance",
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
+                text = "Available Balance : RM ${budgetAmount - totalExpenses}",
+                fontSize = 16.sp,
+                color = Color.Black
             )
-
-            Text(
-                text = (budgetAmount - totalExpenses).toString(),
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-
-                )
 
 
         }
@@ -357,48 +354,39 @@ fun GoalCard(
     Card(
         colors = CardDefaults.cardColors(
             containerColor = CardColor, contentColor = Color.White
-        ), elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth().size(200.dp)
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
 
     ) {
         Column(
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = "Goal",
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.Black
             )
-
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = goalAmount.toString(),
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-
-                )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = "Balance Need",
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
+                text = "RM $goalAmount",
+                fontSize = 16.sp,
+                color = Color.Black
             )
-
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = (goalAmount - totalIncomes).toString(),
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-
-                )
-
-
+                text = "Balance Needed: RM ${goalAmount - totalIncomes}",
+                fontSize = 16.sp,
+                color = Color.Black
+            )
         }
+
+
     }
 
 
