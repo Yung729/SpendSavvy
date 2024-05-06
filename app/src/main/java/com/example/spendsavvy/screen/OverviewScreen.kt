@@ -100,7 +100,7 @@ fun OverviewScreen(
     }
 
 
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -504,7 +504,7 @@ fun TransactionsCard(
 
                 Row(
                     modifier = Modifier
-                        .padding(15.dp)
+                        .padding(10.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
 
@@ -535,7 +535,7 @@ fun TransactionsCard(
                     Text(
                         text = transactions.amount.toString(),
                         fontWeight = FontWeight.SemiBold,
-                        color = if (transactions.transactionType == "Expenses") Color.Red else Color.Green,
+                        color = if (transactions.transactionType == "Expenses") Color.Red else Color(0xFF119316),
                         textAlign = TextAlign.End,
                         modifier = Modifier.fillMaxWidth()
                     )

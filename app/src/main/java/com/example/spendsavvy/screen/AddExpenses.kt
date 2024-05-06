@@ -1,19 +1,30 @@
 package com.example.spendsavvy.screen
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -24,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
@@ -58,7 +72,7 @@ fun AddExpensesScreen(
 ) {
 
     Column(
-        modifier = modifier
+        modifier = modifier.verticalScroll(rememberScrollState())
     ) {
 
         var isExpanded by remember {
@@ -90,158 +104,206 @@ fun AddExpensesScreen(
         val todayDate = Date()
         val calendarState = rememberSheetState()
         val selectedDate = remember { mutableStateOf<Date>(todayDate) }
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
-        CalendarDialog(
-            state = calendarState,
-            config = CalendarConfig(
-                monthSelection = true,
-                yearSelection = true,
-                style = CalendarStyle.MONTH
-            ),
-            selection = CalendarSelection.Date { date ->
-                val selectedDateValue =
-                    Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
-                selectedDate.value = selectedDateValue
-            })
+        CalendarDialog(state = calendarState, config = CalendarConfig(
+            monthSelection = true, yearSelection = true, style = CalendarStyle.MONTH
+        ), selection = CalendarSelection.Date { date ->
+            val selectedDateValue = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
+            selectedDate.value = selectedDateValue
+        })
 
+        Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedButton(onClick = { calendarState.show() }) {
-            Text(text = selectedDate.value.let { dateFormat.format(it) } ?: "Select Date")
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            ), shape = RoundedCornerShape(16.dp), modifier = Modifier
+                .fillMaxWidth()
+
+        ) {
+            Column(
+                modifier = Modifier.padding(10.dp)
+
+            ) {
+                Text(
+                    text = "Date", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                )
+
+                Row(
+                    modifier = Modifier.clickable(onClick = { calendarState.show() })
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.calendar),
+                        contentDescription = "Calendar",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = dateFormat.format(selectedDate.value),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
+            }
         }
+
 
         Spacer(modifier = Modifier.height(30.dp))
 
 
-        Text(
-            text = "Category",
-            fontFamily = poppinsFontFamily,
-            fontSize = 15.sp
-        )
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            ), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()
 
-        ExposedDropdownMenuBox(
-            expanded = isExpanded,
-            onExpandedChange = { isExpanded = it }
         ) {
-            TextField(
-                value = selectedCategory.categoryName,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    TrailingIcon(expanded = isExpanded)
-                },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor()
-            )
+            Column(
+                modifier = Modifier.padding(10.dp)
 
-            ExposedDropdownMenu(
-                expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
             ) {
-                for (data in expenseList) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = data.categoryName)
+
+                Text(
+                    text = "Category", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                )
+
+                ExposedDropdownMenuBox(expanded = isExpanded,
+                    onExpandedChange = { isExpanded = it }) {
+                    TextField(value = selectedCategory.categoryName,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            TrailingIcon(expanded = isExpanded)
                         },
-                        onClick = {
-                            selectedCategory = data
-                            isExpanded = false
-                        }
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
                     )
+
+                    ExposedDropdownMenu(expanded = isExpanded,
+                        onDismissRequest = { isExpanded = false }) {
+                        for (data in expenseList) {
+                            DropdownMenuItem(text = {
+                                Text(text = data.categoryName)
+                            }, onClick = {
+                                selectedCategory = data
+                                isExpanded = false
+                            })
+                        }
+                    }
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Text(
-            text = "Amount",
-            fontFamily = poppinsFontFamily,
-            fontSize = 15.sp
-        )
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            ), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()
 
-        TextField(
-            value = amount,
-            onValueChange = {
-                amount = it
-            },
-            placeholder = {
-                Text(
-                    text = "RM 0",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp,
-                    color = Color.Gray
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            maxLines = 1
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-
-
-        Text(
-            text = "Payment Method",
-            fontFamily = poppinsFontFamily,
-            fontSize = 15.sp
-        )
-
-        ExposedDropdownMenuBox(
-            expanded = isExpanded1,
-            onExpandedChange = { isExpanded1 = it }
         ) {
-            TextField(
-                value = selectedMethod,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    TrailingIcon(expanded = isExpanded1)
-                },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor()
-            )
+            Column(
+                modifier = Modifier.padding(10.dp)
 
-            ExposedDropdownMenu(
-                expanded = isExpanded1,
-                onDismissRequest = { isExpanded1 = false }
             ) {
-                for (data in expenseList) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = data.categoryName)
-                        },
-                        onClick = {
-                            selectedMethod = data.categoryName
-                            isExpanded1 = false
-                        }
-                    )
-                }
+                Text(
+                    text = "Amount", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                )
+
+                TextField(value = amount,
+                    onValueChange = {
+                        amount = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    maxLines = 1
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Text(
-            text = "Description",
-            fontFamily = poppinsFontFamily,
-            fontSize = 15.sp
-        )
 
-        TextField(
-            value = description,
-            onValueChange = {
-                description = it
-            },
-            placeholder = {
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            ), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()
+
+        ) {
+
+            Column(
+                modifier = Modifier.padding(10.dp)
+
+            ) {
                 Text(
-                    text = "Comment",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp,
-                    color = Color.Gray
+                    text = "Payment Method", fontFamily = poppinsFontFamily, fontSize = 15.sp
                 )
+
+                ExposedDropdownMenuBox(expanded = isExpanded1,
+                    onExpandedChange = { isExpanded1 = it }) {
+                    TextField(value = selectedMethod,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            TrailingIcon(expanded = isExpanded1)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(expanded = isExpanded1,
+                        onDismissRequest = { isExpanded1 = false }) {
+                        for (data in expenseList) {
+                            DropdownMenuItem(text = {
+                                Text(text = data.categoryName)
+                            }, onClick = {
+                                selectedMethod = data.categoryName
+                                isExpanded1 = false
+                            })
+                        }
+                    }
+                }
             }
-        )
+
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            ), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()
+
+        ) {
+
+            Column(
+                modifier = Modifier.padding(10.dp)
+
+            ) {
+                Text(
+                    text = "Description", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                )
+
+                TextField(value = description, onValueChange = {
+                    description = it
+                }, placeholder = {
+                    Text(
+                        text = "Comment",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp,
+                        color = Color.Gray
+                    )
+                })
+            }
+        }
 
         Button(
             onClick = {
@@ -265,9 +327,7 @@ fun AddExpensesScreen(
             )
         ) {
             Text(
-                text = "Add",
-                textAlign = TextAlign.Center,
-                color = Color.White
+                text = "Add", textAlign = TextAlign.Center, color = Color.White
             )
         }
 
