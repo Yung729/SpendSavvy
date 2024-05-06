@@ -25,10 +25,10 @@ class TargetViewModel(
     val goal = MutableLiveData<Double>()
 
     init {
-        getBudget()
+        getBudgetAndGoal()
     }
 
-    private fun getBudget(userId: String = currentUserId) {
+    private fun getBudgetAndGoal(userId: String = currentUserId) {
         viewModelScope.launch {
             try {
                 if (internet) {
@@ -62,7 +62,7 @@ class TargetViewModel(
                 // Handle success
                 Log.d(TAG, "Expense added successfully ")
                 dbHelper.addOrUpdateBudget(currentUserId, amount)
-                getBudget()
+                getBudgetAndGoal()
             },
             onFailure = {
                 // Handle failure
@@ -76,7 +76,7 @@ class TargetViewModel(
                 // Handle success
                 Log.d(TAG, "Expense added successfully ")
                 dbHelper.addOrUpdateGoal(currentUserId, amount)
-                getBudget()
+                getBudgetAndGoal()
             },
             onFailure = {
                 // Handle failure

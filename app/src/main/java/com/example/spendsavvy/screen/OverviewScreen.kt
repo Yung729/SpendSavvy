@@ -30,10 +30,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -57,6 +58,7 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
@@ -76,9 +78,9 @@ fun OverviewScreen(
     modifier: Modifier = Modifier,
     transactionViewModel: OverviewViewModel,
     budgetViewModel: TargetViewModel,
+    dateViewModel: DateSelectionViewModel,
     navController: NavController
 ) {
-
     val isLoading by transactionViewModel.isLoading.observeAsState(initial = false)
 
     val transactionList by transactionViewModel.selectedDateTransaction.observeAsState(initial = emptyList())
@@ -89,7 +91,7 @@ fun OverviewScreen(
 
 
     val calendarState = rememberSheetState()
-    val selectedDate = remember {
+    val selectedDate = rememberSaveable {
         mutableStateOf(Calendar.getInstance().apply {
             time = Date()
             set(Calendar.HOUR_OF_DAY, 0)
@@ -99,6 +101,15 @@ fun OverviewScreen(
         }.time)
     }
 
+    val updateSelectedDate: (Date) -> Unit = { newDate ->
+        selectedDate.value = newDate
+        dateViewModel.setSelectedDate(newDate)
+    }
+
+    LaunchedEffect(selectedDate.value) {
+        dateViewModel.setSelectedDate(selectedDate.value)
+    }
+
 
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
@@ -106,7 +117,6 @@ fun OverviewScreen(
 
 
         if (isLoading) {
-            transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
             LoadingScreen() // Display loading animation
         }
 
@@ -130,6 +140,7 @@ fun OverviewScreen(
                     calendar.set(Calendar.SECOND, 0)
                     calendar.set(Calendar.MILLISECOND, 0)
                     selectedDate.value = calendar.time
+                    updateSelectedDate(calendar.time)
                     transactionViewModel.getTransactionRecord()
                 }
             )
@@ -178,7 +189,7 @@ fun OverviewScreen(
                     )
                 }
 
-                transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
+
             }
 
             item {
@@ -535,7 +546,9 @@ fun TransactionsCard(
                     Text(
                         text = transactions.amount.toString(),
                         fontWeight = FontWeight.SemiBold,
-                        color = if (transactions.transactionType == "Expenses") Color.Red else Color(0xFF119316),
+                        color = if (transactions.transactionType == "Expenses") Color.Red else Color(
+                            0xFF119316
+                        ),
                         textAlign = TextAlign.End,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -593,6 +606,7 @@ fun OverviewScreenPreview() {
             .padding(20.dp),
         transactionViewModel = viewModel(),
         budgetViewModel = viewModel(),
+        dateViewModel = viewModel(),
         navController = rememberNavController()
     )
 }

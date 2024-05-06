@@ -1,6 +1,5 @@
 package com.example.spendsavvy.navigation
 
-import com.example.spendsavvy.screen.TaxCalculator
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -63,13 +62,15 @@ import com.example.spendsavvy.screen.OverviewScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
 import com.example.spendsavvy.screen.StockScreen
+import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
-import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
+import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
 
 @Composable
@@ -136,9 +137,11 @@ fun TabsNavGraph(
 
     val showOption = remember { mutableStateOf(false) }
 
+    val dateViewModel = DateSelectionViewModel()
+
     val mainViewModel = MainViewModel(context, isConnected, userId)
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
-    val transactionsViewModel = OverviewViewModel(context, isConnected, userId)
+    val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
 
 
@@ -264,6 +267,7 @@ fun TabsNavGraph(
                         .padding(20.dp),
                     transactionViewModel = transactionsViewModel,
                     budgetViewModel = targetViewModel,
+                    dateViewModel = dateViewModel,
                     navController = navController
                 )
             }

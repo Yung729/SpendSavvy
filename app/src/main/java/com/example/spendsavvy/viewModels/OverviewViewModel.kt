@@ -3,6 +3,7 @@ package com.example.spendsavvy.viewModels
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +18,8 @@ import java.util.Date
 class OverviewViewModel(
     context: Context,
     isOnline: Boolean,
-    userId: String
+    userId: String,
+    dateViewModel: DateSelectionViewModel
 ) : ViewModel() {
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
@@ -26,7 +28,7 @@ class OverviewViewModel(
 
     private val currentUserId = userId
     val isLoading = MutableLiveData<Boolean>()
-    val selectedDateFromUser = MutableLiveData<Date>(Date())
+    val selectedDateFromUser: LiveData<Date?> = dateViewModel.selectedDateFromUser
 
     val transactionsList = MutableLiveData<List<Transactions>>() //All transaction List
     val todayTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
