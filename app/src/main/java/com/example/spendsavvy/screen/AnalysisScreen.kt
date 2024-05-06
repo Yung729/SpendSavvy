@@ -4,6 +4,7 @@ package com.example.spendsavvy.screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -17,17 +18,19 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.RemainingChart
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.TargetViewModel
 import java.time.YearMonth
 import kotlin.math.roundToInt
 
@@ -70,14 +73,20 @@ fun AnalysisScreen(
             )
         ) {
             Text(
-                text = "Set Budget & Goal", textAlign = TextAlign.Center, color = Color.White
+                text = "Set Budget & Goal",
+                textAlign = TextAlign.Center,
+                color = Color.White
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Transaction Analysis", textAlign = TextAlign.Center
+            text = "Transaction Analysis",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -89,15 +98,24 @@ fun AnalysisScreen(
             )
         )
 
+        LineDivider()
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Budget Analysis", textAlign = TextAlign.Center
+            text = "Budget Analysis",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            modifier = Modifier.fillMaxWidth()
         )
 
 
         Text(
-            text = "Monthly Budget : $monthlyBudgetAmount", textAlign = TextAlign.Center
+            text = "Monthly Budget : $monthlyBudgetAmount",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            modifier = Modifier.fillMaxWidth()
         )
 
 
@@ -106,16 +124,24 @@ fun AnalysisScreen(
             maxIndicatorValue = monthlyBudgetAmount,
         )
 
-
+        LineDivider()
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Goal Analysis", textAlign = TextAlign.Center
+            text = "Goal Analysis",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            modifier = Modifier.fillMaxWidth()
         )
 
 
         Text(
-            text = "Monthly Goal : $monthlyGoalAmount", textAlign = TextAlign.Center
+            text = "Monthly Goal : $monthlyGoalAmount",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            modifier = Modifier.fillMaxWidth()
         )
 
 

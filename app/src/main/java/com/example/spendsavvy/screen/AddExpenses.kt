@@ -286,7 +286,6 @@ fun AddExpensesScreen(
 
             Column(
                 modifier = Modifier.padding(10.dp)
-
             ) {
                 Text(
                     text = "Description", fontFamily = poppinsFontFamily, fontSize = 15.sp
@@ -304,6 +303,8 @@ fun AddExpensesScreen(
                 })
             }
         }
+
+        Spacer(modifier = Modifier.height(30.dp))
 
         Button(
             onClick = {

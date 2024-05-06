@@ -312,6 +312,8 @@ fun AddIncomeScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(30.dp))
+
         Button(
             onClick = {
                 // If all fields have data, add the category

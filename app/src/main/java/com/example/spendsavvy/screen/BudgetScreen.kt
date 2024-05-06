@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.spendsavvy.components.bounceClick
@@ -64,77 +68,100 @@ fun BudgetScreen(budgetViewModel: TargetViewModel) {
                 verticalArrangement = Arrangement.Center
             ) {
 
+                Card(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
+                    ), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(text = "Budget", fontWeight = FontWeight.Bold)
-
-                OutlinedTextField(
-                    value = budgetAmountText,
-                    onValueChange = { budgetAmountText = it },
-                    label = { Text(text = "Daily Budget") },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp, top = 10.dp),
-                    shape = RoundedCornerShape(15.dp),
-                    singleLine = true,
-                )
-
-                Text(text = "Daily Budget Amount = ${budgetAmountFromDB.value}")
-                Text(text = "Monthly Budget Amount = $monthlyBudgetAmount")
-
-                Button(
-                    onClick = {
-                        budgetViewModel.addBudget(amount = budgetAmount)
-                    },
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .bounceClick(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    )
                 ) {
-                    Text(
-                        text = "Set",
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
+                    Column(
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Text(text = "Budget", fontWeight = FontWeight.Bold)
+
+                        OutlinedTextField(
+                            value = budgetAmountText,
+                            onValueChange = { budgetAmountText = it },
+                            label = { Text(text = "Daily Budget") },
+                            maxLines = 1,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 10.dp, top = 10.dp),
+                            shape = RoundedCornerShape(15.dp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+
+                        Text(text = "Daily Budget Amount = ${budgetAmountFromDB.value}")
+                        Text(text = "Monthly Budget Amount = $monthlyBudgetAmount")
+
+                        Button(
+                            onClick = {
+                                budgetViewModel.addBudget(amount = budgetAmount)
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .bounceClick(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Black
+                            )
+                        ) {
+                            Text(
+                                text = "Set",
+                                textAlign = TextAlign.Center,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
 
-                Text(text = "Goal", fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(30.dp))
 
-                OutlinedTextField(
-                    value = goalAmountText,
-                    onValueChange = { goalAmountText = it },
-                    label = { Text(text = "Daily Goal") },
-                    maxLines = 1,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp, top = 10.dp),
-                    shape = RoundedCornerShape(15.dp),
-                    singleLine = true,
-                )
+                Card(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
+                    ), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()
 
-                Text(text = "Daily Budget Amount = ${goalAmountFromDB.value}")
-                Text(text = "Monthly Budget Amount = $monthlyGoalAmount")
-
-                Button(
-                    onClick = {
-                        budgetViewModel.addGoal(amount = goalAmount)
-                    },
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .bounceClick(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    )
                 ) {
-                    Text(
-                        text = "Set",
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
+                    Column(
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Text(text = "Goal", fontWeight = FontWeight.Bold)
+
+                        OutlinedTextField(
+                            value = goalAmountText,
+                            onValueChange = { goalAmountText = it },
+                            label = { Text(text = "Daily Goal") },
+                            maxLines = 1,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 10.dp, top = 10.dp),
+                            shape = RoundedCornerShape(15.dp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+
+                        Text(text = "Daily Budget Amount = ${goalAmountFromDB.value}")
+                        Text(text = "Monthly Budget Amount = $monthlyGoalAmount")
+
+                        Button(
+                            onClick = {
+                                budgetViewModel.addGoal(amount = goalAmount)
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .bounceClick(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Black
+                            )
+                        ) {
+                            Text(
+                                text = "Set",
+                                textAlign = TextAlign.Center,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
 
 
@@ -142,3 +169,4 @@ fun BudgetScreen(budgetViewModel: TargetViewModel) {
         }
     }
 }
+
