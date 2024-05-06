@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.TaxViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -62,7 +63,6 @@ fun TaxCalculator(
     navController: NavController,
     taxViewModel: TaxViewModel
 ) {
-
     val context = LocalContext.current
     var initialAmount by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -141,161 +141,24 @@ fun TaxCalculator(
                 )
 
                 // Income Period
-                val selectedIncomePeriod = radioButtonsIncomePeriod()
-                isMonthly = selectedIncomePeriod == "Monthly"
-                isAnnually = selectedIncomePeriod == "Annually"
-
+                RadioButtonsIncomePeriod { selectedOption ->
+                    isMonthly = selectedOption == "Monthly"
+                    isAnnually = selectedOption == "Annually"
+                }
 
                 LineDivider()
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 4.dp, start = 10.dp, end = 10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Text(
-                        text = "Monthly",
-                        textAlign = TextAlign.Center,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "Annually",
-                        textAlign = TextAlign.Center,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(top = 4.dp, start = 10.dp, end = 10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Income",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 2.dp)
-                        )
-                        Text(
-                            text = if (isAnnually) "RM${income / 12}" else "RM$income",
-                            fontSize = 16.sp,
-                        )
-
-                        LineDivider()
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Income",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 2.dp)
-                        )
-                        Text(
-                            text = if (isMonthly) "RM${income * 12}" else "RM$income",
-                            fontSize = 16.sp,
-                        )
-                        LineDivider()
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(top = 4.dp, start = 10.dp, end = 10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Tax",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 2.dp)
-                        )
-                        Text(
-                            text = if (isAnnually) "RM${tax / 12}" else "RM$tax",
-                            fontSize = 16.sp,
-                        )
-                        LineDivider()
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Tax",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 2.dp)
-                        )
-                        Text(
-                            text = if (isMonthly) "RM${tax * 12}" else "RM$tax",
-                            fontSize = 16.sp
-                        )
-                        LineDivider()
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(top = 4.dp, start = 10.dp, end = 10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Income after Tax",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 2.dp)
-                        )
-                        Text(
-                            text = if (isAnnually) "RM${incomeAfterTax / 12}" else "RM$incomeAfterTax",
-                            fontSize = 16.sp
-                        )
-                        LineDivider()
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Income after Tax",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 2.dp)
-                        )
-                        Text(
-                            text = if (isMonthly) "RM${incomeAfterTax * 12}" else "RM$incomeAfterTax",
-                            fontSize = 16.sp
-                        )
-                        LineDivider()
-                    }
-                }
+                // Display Income, Tax, and Income after Tax
+                DisplayIncomeTax(
+                    income = income,
+                    tax = tax,
+                    incomeAfterTax = incomeAfterTax,
+                    isMonthly = isMonthly,
+                    isAnnually = isAnnually
+                )
             }
         }
+
         // Button Row
         item {
             Row(
@@ -328,7 +191,7 @@ fun TaxCalculator(
                 }
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.AddExpenses.route) },
                     modifier = Modifier
                         .weight(1f)
                         .padding(10.dp),
@@ -341,20 +204,7 @@ fun TaxCalculator(
 }
 
 @Composable
-fun radioButtonsIncomePeriod(): String {
-    return radioButtonGroup(
-        label = "Income Period",
-        icon = R.drawable.period_icon,
-        options = listOf("Monthly", "Annually")
-    )
-}
-
-@Composable
-fun radioButtonGroup(
-    label: String,
-    icon: Int,
-    options: List<String>
-): String {
+fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
     var selectedOption by remember { mutableStateOf("") }
 
     Column(
@@ -367,12 +217,12 @@ fun radioButtonGroup(
             // Icon and label text
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = label,
+                    text = "Income Period",
                     fontSize = 20.sp,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Icon(
-                    painter = painterResource(id = icon),
+                    painter = painterResource(id = R.drawable.period_icon),
                     contentDescription = "Icon",
                     modifier = Modifier
                         .size(60.dp)
@@ -385,12 +235,13 @@ fun radioButtonGroup(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                options.forEach { option ->
+                listOf("Monthly", "Annually").forEach { option ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .clickable {
                                 selectedOption = option
+                                onOptionSelected(selectedOption) // Invoke callback with selected option
                             }
                     ) {
                         RadioButton(
@@ -398,6 +249,7 @@ fun radioButtonGroup(
                             selected = option == selectedOption,
                             onClick = {
                                 selectedOption = option
+                                onOptionSelected(selectedOption) // Invoke callback with selected option
                             }
                         )
                         Text(
@@ -409,9 +261,170 @@ fun radioButtonGroup(
             }
         }
     }
-
-    return selectedOption
 }
+
+@Composable
+fun DisplayIncomeTax(
+    income: Int,
+    tax: Int,
+    incomeAfterTax: Int,
+    isMonthly: Boolean,
+    isAnnually: Boolean
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(top = 4.dp, start = 10.dp, end = 10.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            Text(
+                text = "Monthly",
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = "Annually",
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .padding(top = 4.dp, start = 10.dp, end = 10.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Text(
+                    text = "Income",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 2.dp)
+                )
+                Text(
+                    text = if (isAnnually) "RM${income / 12}" else "RM$income",
+                    fontSize = 16.sp,
+                )
+
+                LineDivider()
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Text(
+                    text = "Income",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 2.dp)
+                )
+                Text(
+                    text = if (isMonthly) "RM${income * 12}" else "RM$income",
+                    fontSize = 16.sp,
+                )
+                LineDivider()
+            }
+        }
+
+        // Display Tax
+        Row(
+            modifier = Modifier
+                .padding(top = 4.dp, start = 10.dp, end = 10.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Text(
+                    text = "Tax",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 2.dp)
+                )
+                Text(
+                    text = if (isAnnually) "RM${tax / 12}" else "RM$tax",
+                    fontSize = 16.sp,
+                )
+                LineDivider()
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Text(
+                    text = "Tax",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 2.dp)
+                )
+                Text(
+                    text = if (isMonthly) "RM${tax * 12}" else "RM$tax",
+                    fontSize = 16.sp
+                )
+                LineDivider()
+            }
+        }
+
+        // Display Income after Tax
+        Row(
+            modifier = Modifier
+                .padding(top = 4.dp, start = 10.dp, end = 10.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Text(
+                    text = "Income after Tax",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 2.dp)
+                )
+                Text(
+                    text = if (isAnnually) "RM${incomeAfterTax / 12}" else "RM$incomeAfterTax",
+                    fontSize = 16.sp
+                )
+                LineDivider()
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Text(
+                    text = "Income after Tax",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 2.dp)
+                )
+                Text(
+                    text = if (isMonthly) "RM${incomeAfterTax * 12}" else "RM$incomeAfterTax",
+                    fontSize = 16.sp
+                )
+                LineDivider()
+            }
+        }
+    }
+}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

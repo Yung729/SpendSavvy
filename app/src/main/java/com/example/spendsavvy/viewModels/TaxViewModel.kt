@@ -161,7 +161,7 @@ class TaxViewModel : ViewModel() {
         println("Is Annually: $isAnnually")
         println("Income: $income")
         println("Tax: $tax")
-        println("Income after Tax: $_incomeAfterTax")
+        println("Income after Tax: ${_incomeAfterTax.value}")
 
         return tax
     }
