@@ -433,46 +433,78 @@ class DatabaseHelper(context: Context) :
 
 
     //------------------------------ CASH ----------------------------------------
-    fun readCashDetails(): ArrayList<Cash> {
+    fun readCashDetails(userId: String): ArrayList<Cash> {
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM cash", null)
-        val cashAccountList: ArrayList<Cash> = ArrayList()
+        val cursor = db.rawQuery("SELECT * FROM cash WHERE userId=?", arrayOf(userId))
+        val cashDetailsList: ArrayList<Cash> = ArrayList()
+
+        val typeIndex = cursor.getColumnIndex("type")
+        val typeNameIndex = cursor.getColumnIndex("typeName")
+        val balanceIndex = cursor.getColumnIndex("balance")
+
         if (cursor.moveToFirst()) {
             do {
-                val balance = cursor.getDouble(1)
+                val type = cursor.getString(typeIndex)
+                val typeName = cursor.getString(typeNameIndex)
+                val balance = cursor.getDouble(balanceIndex)
 
-                // Create a Cash object and add it to the list
-                val cashAccount = Cash(balance)
-                cashAccountList.add(cashAccount)
+                val cashDetails = Cash(type, typeName, balance)
+                cashDetailsList.add(cashDetails)
             } while (cursor.moveToNext())
         }
         cursor.close()
-        return cashAccountList
+        return cashDetailsList
     }
-
-    fun addNewCashDetails() {
-    }
-
 
     fun addNewCashDetails(
-        balance: Double
-    ) {
-
+        type: String,
+        typeName: String,
+        balance: Double,
+        userId: String
+    ){
         val db = this.writableDatabase
-        val values = ContentValues().apply {
+        val values = ContentValues().apply{
+            put("type", type)
+            put("typeName", typeName)
             put("balance", balance)
+            put("userId", userId)
         }
+
         db.insert("cash", null, values)
         db.close()
     }
 
+    fun addNewCashDetailsList(
+        cash: List<Cash>,
+        userId: String
+    ) {
+        val db = this.writableDatabase
+
+        for(cashDetails in cash) {
+            val values = ContentValues().apply {
+                put("type", cashDetails.type)
+                put("typeName", cashDetails.typeName)
+                put("balance", cashDetails.balance)
+                put("userId", userId)
+            }
+
+            db.insert("cash", null, values)
+        }
+        db.close()
+    }
+
     fun updateCashDetails(
+        type: String,
+        typeName: String,
         balance: Double,
         userId: String
     ) {
         val db = this.writableDatabase
         val values = ContentValues().apply {
+            put("type", type)
+            put("typeName", typeName)
             put("balance", balance)
+            put("userId", userId)
         }
         db.update("cash", values, "userId=?", arrayOf(userId))
         db.close()

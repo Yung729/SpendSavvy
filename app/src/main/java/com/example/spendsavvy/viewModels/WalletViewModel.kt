@@ -1,12 +1,14 @@
 package com.example.spendsavvy.viewModels
 
+import android.content.ContentValues
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.db.DatabaseHelper
-import com.example.spendsavvy.models.BankAccount
 import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.models.Transactions
@@ -27,54 +29,97 @@ class WalletViewModel(
     private val internet = isOnline*/
 
     val cashDetailsList = MutableLiveData<List<Cash>>()
-    val bankAccountList = MutableLiveData<List<BankAccount>>()
     val FDAccountList = MutableLiveData<List<FDAccount>>()
     val stockList = MutableLiveData<List<Stock>>()              //hold on
 
+    val balanceTotal = MutableLiveData<Double>()
     val userId = userId
 
-    private fun getCashDetails() {
+    private fun getCashDetails(
+    ) {
         viewModelScope.launch {
-            val cashDetailsFromFirestore = firestoreRepository.readItemsFromDatabase(
-                userId,
-                "Cash",
-                Cash::class.java
-            )
+            try{
 
-            updateCashDetails(cashDetailsFromFirestore)
+                val cashDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
+                    userId,
+                    "Cash",
+                    Cash::class.java
+                )
 
+                updateCashBalance(cashDetailsFromFirestore)
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error getting cash details", e)
+            }
         }
     }
 
-    private fun updateCashDetails(cash: List<Cash>){
+    private fun updateCashBalance(cash: List<Cash>){
         var totalBalance = 0.0
 
-        for (details in cash) {
-            totalBalance += details.balance
+        for (cashAccount in cash){
+            totalBalance += cashAccount.balance
         }
 
+        balanceTotal.postValue(totalBalance)
+        cashDetailsList.postValue(cash)
     }
 
-    private fun getBankAccountDetails() {
+    private suspend fun getTypeName(cash: Cash): String {
+        return firestoreRepository.getDocumentId("Cash", userId, cash)
+    }
+    fun editCashDetails(cash: Cash, updatedCashDetails: Cash){
+        viewModelScope.launch{
+            try{
+                val typeName = getTypeName(cash)
+
+                firestoreRepository.updateWalletItemsInFirestoreByName(
+                    userId,
+                    "Cash",
+                    typeName,
+                    updatedCashDetails,
+                    onSuccess = {
+                        dbHelper.updateCashDetails(
+                            updatedCashDetails.type,
+                            typeName,
+                            updatedCashDetails.balance,
+                            userId
+                        )
+
+                        getCashDetails()
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error editing cash details", e)
+            }
+        }
+    }
+
+    fun addCashDetailsToDatabase(cash: Cash){
         viewModelScope.launch {
-            val bankDetailsFromFirestore = firestoreRepository.readItemsFromDatabase(
-                userId,
-                "BankAccount",
-                BankAccount::class.java
-            )
-
-            updateBankAccountDetails(bankDetailsFromFirestore)
-
+            try {
+                firestoreRepository.addWalletItems(
+                    userId,
+                    "Cash",
+                    cash,
+                    "%s",
+                    onSuccess = {
+                        dbHelper.addNewCashDetails(
+                            type = cash.type,
+                            typeName = cash.typeName,
+                            balance = cash.balance,
+                            userId = userId
+                        )
+                        getCashDetails()
+                    },
+                    onFailure = { exception ->
+                        Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error adding cash details", e)
+            }
         }
-    }
-
-    private fun updateBankAccountDetails(bankAccount: List<BankAccount>){
-        var totalBalance = 0.0
-
-        for (details in bankAccount) {
-            totalBalance += details.balance
-        }
-
     }
 
     private fun getFDAccountDetails() {
@@ -85,19 +130,18 @@ class WalletViewModel(
                 FDAccount::class.java
             )
 
-            updateFDAccountDetails(FdDetailsFromFirestore)
 
         }
     }
 
-    private fun updateFDAccountDetails(bankAccount: List<FDAccount>){
+    /*private fun updateFDAccountDetails(bankAccount: List<FDAccount>){
         var totalDeposit = 0.0
 
         for (details in bankAccount) {
             totalDeposit += details.deposit
         }
 
-    }
+    }*/
 
 
 

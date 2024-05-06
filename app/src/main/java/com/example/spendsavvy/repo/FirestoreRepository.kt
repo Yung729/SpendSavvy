@@ -4,6 +4,7 @@ package com.example.spendsavvy.repo
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
+import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -481,6 +482,46 @@ class FirestoreRepository {
         return itemList
     }
 
+    suspend fun <T : Any> readWalletItemsFromDatabase(
+        userId: String,
+        collectionName: String,
+        itemClass: Class<T>,
+        ): List<T> {
+        val firestore = FirebaseFirestore.getInstance()
+        val itemList = mutableListOf<T>()
+
+        try {
+            val querySnapshot = firestore.collection("Users").document(userId)
+                .collection("Wallet").document("1").collection(collectionName).get().await()
+            for (document in querySnapshot.documents) {
+                val itemData = document.data
+
+                val item = itemClass.newInstance()
+                // Set the values of item fields
+                if (itemData != null) {
+
+                    for ((fieldName, value) in itemData) {
+                        try {
+
+                            val field = itemClass.getDeclaredField(fieldName)
+                            field.isAccessible = true
+
+                            field.set(item, value)
+
+                        } catch (e: NoSuchFieldException) {
+                            Log.e(TAG, "Field '$fieldName' not found in $itemClass", e)
+                        }
+                    }
+                }
+                item.let { itemList.add(it) }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting items from $collectionName", e)
+        }
+
+        return itemList
+    }
+
     suspend fun getDocumentId(collectionName: String, userId: String, data: Any): String {
         try {
             val querySnapshot = firestore.collection("Users").document(userId)
@@ -555,6 +596,26 @@ class FirestoreRepository {
     ) {
         val documentRef = firestore.collection("Users").document(userId).collection(collectionName)
             .document(documentId)
+
+        documentRef.set(item)
+            .addOnSuccessListener {
+                Log.d(TAG, "Document successfully updated in Firestore")
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "Error updating document in Firestore: $e")
+            }
+    }
+
+    fun updateWalletItemsInFirestoreByName(
+        userId: String,
+        collectionName: String,
+        typeName: String,
+        item: Any,
+        onSuccess: () -> Unit
+    ) {
+        val documentRef = firestore.collection("Users").document(userId).collection("Wallet").document("1")
+            .collection(collectionName).document(typeName)
 
         documentRef.set(item)
             .addOnSuccessListener {

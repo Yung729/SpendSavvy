@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,15 +43,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.data.bankName
+import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.WalletViewModel
+import java.text.NumberFormat
 
 @Composable
-fun MoneyScreen(modifier: Modifier) {
+fun CashScreen(
+    modifier: Modifier = Modifier,
+    cash: Cash,
+    walletViewModel: WalletViewModel
+) {
 
     var isDialogPopUp = remember { mutableStateOf(false) }
 
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
     Column(modifier = Modifier.padding(10.dp)) {
         Spacer(modifier = Modifier.height(25.dp))
@@ -68,7 +79,8 @@ fun MoneyScreen(modifier: Modifier) {
 
         Spacer(modifier = Modifier.height(30.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -86,10 +98,6 @@ fun MoneyScreen(modifier: Modifier) {
 
             }
 
-            Text(
-                text = "RM 5000",
-                fontFamily = poppinsFontFamily
-            )
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -156,7 +164,12 @@ fun MoneyScreen(modifier: Modifier) {
         }
 
         if (isDialogPopUp.value)
-            MoneyPopUpScreen(onCancelClick = { isDialogPopUp.value = false }, {})
+            CashPopUpScreen(
+                onCancelClick = { isDialogPopUp.value = false },
+                {},
+                cash,
+                walletViewModel
+            )
     }
 
 
@@ -165,10 +178,13 @@ fun MoneyScreen(modifier: Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun MoneyPopUpScreen(
+fun CashPopUpScreen(
     onCancelClick: () -> Unit,
-    onConfirmClick: () -> Unit
+    onConfirmClick: () -> Unit,
+    cash: Cash,
+    walletViewModel: WalletViewModel
 ) {
+
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -185,10 +201,15 @@ fun MoneyPopUpScreen(
         mutableStateOf("")
     }
 
-    val options = mutableStateListOf<String>("Cash", "Bank")
     var selectedIndex by remember {
         mutableStateOf(0)
     }
+
+    val options = mutableStateListOf<String>("Cash", "Bank")
+
+    val addition = incAmt.toDoubleOrNull()?:0.0
+    val substraction = decAmt.toDoubleOrNull()?:0.0
+    val totalBalance = calculateCashBalance(balance = cash.balance , incAmt = addition, decAmt = substraction)
 
     Dialog(
         onDismissRequest = { onCancelClick() },
@@ -357,7 +378,14 @@ fun MoneyPopUpScreen(
 
                 Button(
                     onClick = {
-                        onConfirmClick()
+                        walletViewModel.editCashDetails(
+                            cash = cash,
+                            updatedCashDetails = Cash(
+                                type = cash.type,
+                                typeName = cash.typeName,
+                                balance = totalBalance.toDoubleOrNull()?:0.0
+                            )
+                        )
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black
@@ -377,13 +405,19 @@ fun MoneyPopUpScreen(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun MoneyScreenPreview() {
-    MoneyScreen(
+fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): String{
+        return NumberFormat.getInstance().format(balance + incAmt - decAmt)
+}
+
+/*@Preview(showBackground = true)
+@Composable
+fun CashScreenPreview() {
+    CashScreen(
         Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(20.dp),
+        walletViewModel = viewModel()
     )
 
-}
+}*/

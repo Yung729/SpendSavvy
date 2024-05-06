@@ -50,8 +50,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.data.bankName
-import com.example.spendsavvy.models.BankAccount
+import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import java.text.NumberFormat
 
 @Composable
 fun FixedDepositScreen(modifier: Modifier, navController: NavController){
@@ -133,7 +134,7 @@ fun FixedDepositScreen(modifier: Modifier, navController: NavController){
 }
 
 @Composable
-fun BankCard(bankAccount: BankAccount,modifier: Modifier){
+fun BankCard(fdAccount: FDAccount,modifier: Modifier){
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -163,13 +164,13 @@ fun BankCard(bankAccount: BankAccount,modifier: Modifier){
                 modifier = Modifier
             ) {
                 Text(
-                    text = bankAccount.bankName,
+                    text = fdAccount.bankName,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold
                 )
 
                 Text(
-                    text = "RM ${bankAccount.balance}",
+                    text = "RM ${fdAccount.deposit}",
                     fontFamily = poppinsFontFamily,
                     color = Color.Gray
                     )
@@ -182,14 +183,14 @@ fun BankCard(bankAccount: BankAccount,modifier: Modifier){
 }
 
 @Composable
-fun BankList(bankList: List<BankAccount>, modifier: Modifier = Modifier) {
+fun BankList(fdAccountList: List<FDAccount>, modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
-        items(bankList) { bankAccount ->
+        items(fdAccountList) { bankAccount ->
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 BankCard(
-                    bankAccount = bankAccount,
+                    fdAccount = bankAccount,
                     modifier = Modifier
                         .padding(5.dp)
                         .fillMaxWidth()
@@ -421,10 +422,6 @@ fun FixedDepositPopUpScreen(
     }
 }
 
-@Composable
-fun FdDetails(){
-
-}
 
 @Composable
 @Preview(showBackground = true)
