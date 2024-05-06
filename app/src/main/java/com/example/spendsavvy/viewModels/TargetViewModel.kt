@@ -75,7 +75,7 @@ class TargetViewModel(
             onSuccess = {
                 // Handle success
                 Log.d(TAG, "Expense added successfully ")
-                dbHelper.addOrUpdateBudget(currentUserId, amount)
+                dbHelper.addOrUpdateGoal(currentUserId, amount)
                 getBudget()
             },
             onFailure = {

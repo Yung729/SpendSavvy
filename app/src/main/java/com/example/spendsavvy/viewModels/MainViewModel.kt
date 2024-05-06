@@ -47,6 +47,8 @@ class MainViewModel(
             )
             val budget =
                 firestoreRepo.readSingleFieldValueFromDatabase(userId, "Budget", "amount")
+            val goal =
+                firestoreRepo.readSingleFieldValueFromDatabase(userId, "Goal", "amount")
 
 
             databaseHelper.addNewCategoryList(categories, userId)
@@ -54,6 +56,9 @@ class MainViewModel(
 
             if (budget != null) {
                 databaseHelper.addOrUpdateBudget(userId, budget as Double)
+            }
+            if (goal != null) {
+                databaseHelper.addOrUpdateGoal(userId, goal as Double)
             }
 
 

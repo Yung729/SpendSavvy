@@ -40,8 +40,8 @@ fun AnalysisScreen(
     budgetViewModel: TargetViewModel
 ) {
     val scrollState = rememberScrollState()
-    val expensesData by transactionViewModel.expensesTotal.observeAsState(initial = 0.0)
-    val incomesData by transactionViewModel.incomesTotal.observeAsState(initial = 0.0)
+    val expensesData by transactionViewModel.currentMonthExpenses.observeAsState(initial = 0.0)
+    val incomesData by transactionViewModel.currentMonthIncomes.observeAsState(initial = 0.0)
 
     val budgetAmountFromDB = budgetViewModel.budget.observeAsState(initial = 0.0)
     val goalAmountFromDB = budgetViewModel.goal.observeAsState(initial = 0.0)
@@ -120,7 +120,7 @@ fun AnalysisScreen(
 
 
         RemainingChart(
-            indicatorValue = incomesData,
+            indicatorValue = incomesData - expensesData,
             maxIndicatorValue = monthlyGoalAmount,
         )
 

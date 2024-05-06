@@ -102,8 +102,9 @@ fun OverviewScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
+
         if (isLoading) {
+            transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
             LoadingScreen() // Display loading animation
         }
 
@@ -175,7 +176,7 @@ fun OverviewScreen(
                 ) {
 
                     BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
-                    GoalCard(goalAmount = goalAmount, totalIncomes = totalIncomes)
+                    GoalCard(goalAmount = goalAmount, totalIncomes = totalIncomes , totalExpenses = totalExpenses)
                 }
             }
 
@@ -346,7 +347,8 @@ fun BudgetCard(
 @Composable
 fun GoalCard(
     goalAmount: Double,
-    totalIncomes: Double
+    totalIncomes: Double,
+    totalExpenses: Double
 ) {
 
 
@@ -379,7 +381,7 @@ fun GoalCard(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Balance Needed: RM ${goalAmount - totalIncomes}",
+                text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
                 fontSize = 16.sp,
                 color = Color.Black
             )

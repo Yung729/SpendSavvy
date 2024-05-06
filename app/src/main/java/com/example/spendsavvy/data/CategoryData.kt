@@ -51,7 +51,7 @@ class CategoryData {
                 categoryType = "Expenses"
             ),
             Category(
-                imageUri = Uri.parse(" https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
                 categoryName = "Income Tax",
                 categoryType = "Expenses"
             )

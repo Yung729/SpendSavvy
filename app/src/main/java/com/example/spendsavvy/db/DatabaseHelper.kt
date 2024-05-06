@@ -517,6 +517,15 @@ class DatabaseHelper(context: Context) :
             }
         }
 
+        // Check if the goal table has any records
+        val goalCursor = db.rawQuery("SELECT COUNT(*) FROM goal", null)
+        goalCursor.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                isEmpty = isEmpty && (count == 0)
+            }
+        }
+
         // Optionally, you can check other tables as well if needed
 
         db.close()
@@ -527,6 +536,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 14
+        private const val DATABASE_VERSION = 15
     }
 }
