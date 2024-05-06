@@ -49,12 +49,21 @@ class DatabaseHelper(context: Context) :
         """
         db.execSQL(CREATE_BUDGET_TABLE)
 
+        val CREATE_GOAL_TABLE = """
+            CREATE TABLE goal (
+                userId TEXT PRIMARY KEY,
+                amount REAL 
+            )
+        """
+        db.execSQL(CREATE_GOAL_TABLE)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS categories")
         db.execSQL("DROP TABLE IF EXISTS transactions")
         db.execSQL("DROP TABLE IF EXISTS budget")
+        db.execSQL("DROP TABLE IF EXISTS goal")
         onCreate(db)
     }
 
@@ -356,6 +365,49 @@ class DatabaseHelper(context: Context) :
     fun resetBudget(userId: String) {
         updateBudget(userId, 0.0)
     }
+//------------------------------------------    Goal   ----------------------------------------------------------------------
+
+
+    fun addOrUpdateGoal(userId: String, amount: Double) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("userId", userId)
+            put("amount", amount)
+        }
+        val result =
+            db.insertWithOnConflict("goal", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+        if (result == -1L) {
+            updateGoal(userId, amount)
+        }
+        db.close()
+    }
+
+    private fun updateGoal(userId: String, amount: Double) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("amount", amount)
+        }
+        db.update("goal", values, "userId=?", arrayOf(userId))
+        db.close()
+    }
+
+    fun getGoal(userId: String): Double {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT amount FROM goal WHERE userId=?", arrayOf(userId))
+        var goal = 0.0
+
+        val amountIndex = cursor.getColumnIndex("amount")
+
+        if (cursor.moveToFirst()) {
+            goal = cursor.getDouble(amountIndex)
+        }
+        cursor.close()
+        return goal
+    }
+
+    fun resetGoal(userId: String) {
+        updateGoal(userId, 0.0)
+    }
 
     private fun getCategoryById(categoryId: Long): Category {
         val db = this.readableDatabase
@@ -475,6 +527,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 13
+        private const val DATABASE_VERSION = 14
     }
 }

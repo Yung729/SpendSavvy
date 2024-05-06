@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.spendsavvy.components.bounceClick
@@ -35,8 +36,11 @@ fun BudgetScreen(budgetViewModel: BudgetViewModel) {
 
     var budgetAmountText by remember { mutableStateOf("0") }
     val budgetAmount: Double = budgetAmountText.toDoubleOrNull() ?: 0.0
+    var goalAmountText by remember { mutableStateOf("0") }
+    val goalAmount: Double = goalAmountText.toDoubleOrNull() ?: 0.0
 
     val budgetAmountFromDB = budgetViewModel.budget.observeAsState(initial = 0.0)
+    val goalAmountFromDB = budgetViewModel.goal.observeAsState(initial = 0.0)
 
     // Get the current year and month
     val currentYearMonth = YearMonth.now()
@@ -44,8 +48,8 @@ fun BudgetScreen(budgetViewModel: BudgetViewModel) {
     // Get the total days in the current month
     val totalDaysInMonth = currentYearMonth.lengthOfMonth()
 
-    // Calculate the monthly budget amount multiplied by the total days in the current month
     val monthlyBudgetAmount = budgetAmountFromDB.value * totalDaysInMonth
+    val monthlyGoalAmount = goalAmountFromDB.value * totalDaysInMonth
 
     Column() {
         Surface(
@@ -62,6 +66,8 @@ fun BudgetScreen(budgetViewModel: BudgetViewModel) {
 
 
                 Spacer(modifier = Modifier.height(8.dp))
+
+                Text(text = "Budget", fontWeight = FontWeight.Bold)
 
                 OutlinedTextField(
                     value = budgetAmountText,
@@ -81,6 +87,41 @@ fun BudgetScreen(budgetViewModel: BudgetViewModel) {
                 Button(
                     onClick = {
                         budgetViewModel.addBudget(amount = budgetAmount)
+                    },
+                    modifier = Modifier
+                        .padding(bottom = 10.dp)
+                        .bounceClick(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    )
+                ) {
+                    Text(
+                        text = "Set",
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
+
+                Text(text = "Goal", fontWeight = FontWeight.Bold)
+
+                OutlinedTextField(
+                    value = goalAmountText,
+                    onValueChange = { goalAmountText = it },
+                    label = { Text(text = "Daily Goal") },
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp, top = 10.dp),
+                    shape = RoundedCornerShape(15.dp),
+                    singleLine = true,
+                )
+
+                Text(text = "Daily Budget Amount = ${goalAmountFromDB.value}")
+                Text(text = "Monthly Budget Amount = $monthlyGoalAmount")
+
+                Button(
+                    onClick = {
+                        budgetViewModel.addGoal(amount = goalAmount)
                     },
                     modifier = Modifier
                         .padding(bottom = 10.dp)

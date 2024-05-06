@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.DismissDirection
@@ -81,6 +84,7 @@ fun OverviewScreen(
     val totalExpenses by transactionViewModel.selectedDateExpensesTotal.observeAsState(initial = 0.0)
     val totalIncomes by transactionViewModel.selectedDateIncomesTotal.observeAsState(initial = 0.0)
     val budgetAmount by budgetViewModel.budget.observeAsState(initial = 0.0)
+    val goalAmount by budgetViewModel.goal.observeAsState(initial = 0.0)
 
 
     val calendarState = rememberSheetState()
@@ -164,8 +168,16 @@ fun OverviewScreen(
                 OverViewCard(incomes = totalIncomes, expenses = totalExpenses)
             }
 
+
             item {
-                BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+
+                    BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
+                    GoalCard(goalAmount = goalAmount, totalIncomes = totalIncomes)
+                }
             }
 
 
@@ -290,7 +302,7 @@ fun BudgetCard(
             containerColor = CardColor, contentColor = Color.White
         ), elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
-        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
+        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth().size(200.dp)
 
     ) {
         Column(
@@ -323,6 +335,63 @@ fun BudgetCard(
 
             Text(
                 text = (budgetAmount - totalExpenses).toString(),
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+
+                )
+
+
+        }
+    }
+
+
+}
+
+@Composable
+fun GoalCard(
+    goalAmount: Double,
+    totalIncomes: Double
+) {
+
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = CardColor, contentColor = Color.White
+        ), elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        ), shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth().size(200.dp)
+
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Text(
+                text = "Goal",
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp
+            )
+
+            Text(
+                text = goalAmount.toString(),
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+
+                )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Balance Need",
+                modifier = Modifier,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp
+            )
+
+            Text(
+                text = (goalAmount - totalIncomes).toString(),
                 modifier = Modifier,
                 textAlign = TextAlign.Center,
 

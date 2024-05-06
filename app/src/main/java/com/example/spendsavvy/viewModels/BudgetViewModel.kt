@@ -23,6 +23,7 @@ class BudgetViewModel(
 
     val currentUserId = userId
     val budget = MutableLiveData<Double>()
+    val goal = MutableLiveData<Double>()
 
     init {
         getBudget()
@@ -36,12 +37,19 @@ class BudgetViewModel(
                         userId, "Budget", "amount"
                     ) as Double?
 
+                    val goalFromFirestore = firestoreRepository.readSingleFieldValueFromDatabase(
+                        userId, "Goal", "amount"
+                    ) as Double?
+
                     budget.postValue(budgetFromFirestore ?: 0.0)
+                    goal.postValue(goalFromFirestore ?: 0.0)
 
                 } else {
                     val budgetFromLocal = dbHelper.getBudget(userId)
+                    val goalFromLocal = dbHelper.getGoal(userId)
 
                     budget.postValue(budgetFromLocal ?: 0.0)
+                    goal.postValue(goalFromLocal ?: 0.0)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting budget", e)
@@ -51,6 +59,20 @@ class BudgetViewModel(
 
     fun addBudget(amount: Double) {
         firestoreRepository.addOrUpdateOneFieldItem(currentUserId, "Budget", "amount", amount,
+            onSuccess = {
+                // Handle success
+                Log.d(TAG, "Expense added successfully ")
+                dbHelper.addOrUpdateBudget(currentUserId, amount)
+                getBudget()
+            },
+            onFailure = {
+                // Handle failure
+                Log.e(TAG, "Failed to add expense")
+            }
+        )
+    }
+    fun addGoal(amount: Double) {
+        firestoreRepository.addOrUpdateOneFieldItem(currentUserId, "Goal", "amount", amount,
             onSuccess = {
                 // Handle success
                 Log.d(TAG, "Expense added successfully ")
