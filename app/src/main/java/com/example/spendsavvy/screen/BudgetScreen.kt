@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.viewModels.BudgetViewModel
+import java.time.YearMonth
 
 
 @Composable
@@ -36,6 +37,15 @@ fun BudgetScreen(budgetViewModel: BudgetViewModel) {
     val budgetAmount: Double = budgetAmountText.toDoubleOrNull() ?: 0.0
 
     val budgetAmountFromDB = budgetViewModel.budget.observeAsState(initial = 0.0)
+
+    // Get the current year and month
+    val currentYearMonth = YearMonth.now()
+
+    // Get the total days in the current month
+    val totalDaysInMonth = currentYearMonth.lengthOfMonth()
+
+    // Calculate the monthly budget amount multiplied by the total days in the current month
+    val monthlyBudgetAmount = budgetAmountFromDB.value * totalDaysInMonth
 
     Column() {
         Surface(
@@ -56,7 +66,7 @@ fun BudgetScreen(budgetViewModel: BudgetViewModel) {
                 OutlinedTextField(
                     value = budgetAmountText,
                     onValueChange = { budgetAmountText = it },
-                    label = { Text(text = "Monthly Budget") },
+                    label = { Text(text = "Daily Budget") },
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -65,7 +75,8 @@ fun BudgetScreen(budgetViewModel: BudgetViewModel) {
                     singleLine = true,
                 )
 
-                Text(text = "Budget Amount = ${budgetAmountFromDB.value}")
+                Text(text = "Daily Budget Amount = ${budgetAmountFromDB.value}")
+                Text(text = "Monthly Budget Amount = $monthlyBudgetAmount")
 
                 Button(
                     onClick = {

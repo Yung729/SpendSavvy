@@ -78,7 +78,6 @@ fun OverviewScreen(
     val isLoading by transactionViewModel.isLoading.observeAsState(initial = false)
 
     val transactionList by transactionViewModel.selectedDateTransaction.observeAsState(initial = emptyList())
-    val allExpenses by transactionViewModel.currentMonthExpenses.observeAsState(initial = 0.0)
     val totalExpenses by transactionViewModel.selectedDateExpensesTotal.observeAsState(initial = 0.0)
     val totalIncomes by transactionViewModel.selectedDateIncomesTotal.observeAsState(initial = 0.0)
     val budgetAmount by budgetViewModel.budget.observeAsState(initial = 0.0)
@@ -166,7 +165,7 @@ fun OverviewScreen(
             }
 
             item {
-                BudgetCard(budgetAmount = budgetAmount, totalExpenses = allExpenses)
+                BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
             }
 
 
@@ -312,7 +311,7 @@ fun BudgetCard(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "Monthly Budget",
+                text = "Budget",
                 modifier = Modifier,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,

@@ -23,9 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.components.RemainingChart
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.viewModels.BudgetViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import java.time.YearMonth
 import kotlin.math.roundToInt
 
 
@@ -33,11 +36,23 @@ import kotlin.math.roundToInt
 fun AnalysisScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    transactionViewModel: OverviewViewModel
+    transactionViewModel: OverviewViewModel,
+    budgetViewModel: BudgetViewModel
 ) {
     val scrollState = rememberScrollState()
     val expensesData by transactionViewModel.expensesTotal.observeAsState(initial = 0.0)
     val incomesData by transactionViewModel.incomesTotal.observeAsState(initial = 0.0)
+
+    val budgetAmountFromDB = budgetViewModel.budget.observeAsState(initial = 0.0)
+
+    // Get the current year and month
+    val currentYearMonth = YearMonth.now()
+
+    // Get the total days in the current month
+    val totalDaysInMonth = currentYearMonth.lengthOfMonth()
+
+    // Calculate the monthly budget amount multiplied by the total days in the current month
+    val monthlyBudgetAmount = budgetAmountFromDB.value * totalDaysInMonth
 
     Column(
         modifier = modifier.verticalScroll(state = scrollState)
@@ -59,11 +74,34 @@ fun AnalysisScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        Text(
+            text = "Transaction Analysis", textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
         PieChart(
             data = mapOf(
                 Pair("Expenses", expensesData.roundToInt()),
                 Pair("Incomes", incomesData.roundToInt())
             )
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            text = "Budget Analysis", textAlign = TextAlign.Center
+        )
+
+
+        Text(
+            text = "Monthly Budget : $monthlyBudgetAmount", textAlign = TextAlign.Center
+        )
+
+
+        RemainingChart(
+            indicatorValue = expensesData,
+            maxIndicatorValue = monthlyBudgetAmount,
         )
 
 
@@ -77,6 +115,6 @@ fun AnalysisScreenPreview() {
     AnalysisScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp), rememberNavController(), viewModel()
+            .padding(20.dp), rememberNavController(), viewModel(), viewModel()
     )
 }
