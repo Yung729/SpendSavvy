@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SpendSavvy</string>
+    <string name="q1">1. How to add expense and income</string>
+    <string name="q2">2. How to calculate income tax</string>
+    <string name="q3">3. How to view overall expenses \n     in circle statistics form </string>
+    <string name="a1">Go to your overview screen and click on the add button at the bottom</string>
+    <string name="a2">Go to your settings screen and click on the tax calculator row.</string>
+    <string name="a3">Click on the Analysis icon at the bottom navigation bar to view the overall expense and income.</string>
 </resources>

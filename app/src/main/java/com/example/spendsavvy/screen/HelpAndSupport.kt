@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -85,11 +86,11 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
         )
         Dropdown(
-            text = "1. How to add expense and income",
+            text = stringResource(id = R.string.q1),
             modifier = Modifier.padding(15.dp)
         ){
             Text(
-                text = "Go to your overview screen and click on the add button at the bottom",
+                text = stringResource(id = R.string.a1),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
@@ -97,11 +98,11 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             )
         }
         Dropdown(
-            text = "2. How to calculate income tax",
+            text = stringResource(id = R.string.q2),
             modifier = Modifier.padding(15.dp)
         ){
             Text(
-                text = "Go to your settings screen and click on the tax calculator row.",
+                text = stringResource(id = R.string.a2),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
@@ -109,11 +110,11 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             )
         }
         Dropdown(
-            text = "3. How to view overall expenses \n    in circle statistics form ",
+            text = stringResource(id = R.string.q3),
             modifier = Modifier.padding(15.dp)
         ){
             Text(
-                text = "Click on the Analysis icon at the bottom navigation bar to view the overall expense and income.",
+                text = stringResource(id = R.string.a3),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
