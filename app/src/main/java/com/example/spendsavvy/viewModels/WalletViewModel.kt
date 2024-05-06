@@ -79,12 +79,12 @@ class WalletViewModel(
                     typeName,
                     updatedCashDetails,
                     onSuccess = {
-                        dbHelper.updateCashDetails(
+                        /*dbHelper.updateCashDetails(
                             updatedCashDetails.type,
                             typeName,
                             updatedCashDetails.balance,
                             userId
-                        )
+                        )*/
 
                         getCashDetails()
                     }
@@ -104,12 +104,12 @@ class WalletViewModel(
                     cash,
                     "%s",
                     onSuccess = {
-                        dbHelper.addNewCashDetails(
+                        /*dbHelper.addNewCashDetails(
                             type = cash.type,
                             typeName = cash.typeName,
                             balance = cash.balance,
                             userId = userId
-                        )
+                        )*/
                         getCashDetails()
                     },
                     onFailure = { exception ->
