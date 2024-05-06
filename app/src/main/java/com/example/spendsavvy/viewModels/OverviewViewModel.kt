@@ -12,6 +12,7 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Date
 
 class OverviewViewModel(
     context: Context,
@@ -23,61 +24,97 @@ class OverviewViewModel(
 
     private val internet = isOnline
 
-    private val userId = userId
+    private val currentUserId = userId
+    val isLoading = MutableLiveData<Boolean>()
+    val selectedDateFromUser = MutableLiveData<Date>(Date())
 
-    val transactionsList = MutableLiveData<List<Transactions>>()
-    val todayTransactionsList = MutableLiveData<List<Transactions>>()
+    val transactionsList = MutableLiveData<List<Transactions>>() //All transaction List
+    val todayTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
+    val monthTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
+    val yearTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
 
+    //Selected Transaction List
+    val selectedDateTransaction = MutableLiveData<List<Transactions>>()
+    val selectedDateExpensesTotal = MutableLiveData<Double>()
+    val selectedDateIncomesTotal = MutableLiveData<Double>()
+
+    val currentMonthExpenses = MutableLiveData<Double>()
+    val currentMonthIncomes = MutableLiveData<Double>()
     val expensesTotal = MutableLiveData<Double>()
     val incomesTotal = MutableLiveData<Double>()
 
+    init {
+        getTransactionRecord()
+    }
 
-    private fun getTransactionRecord() {
+    fun getTransactionRecord() {
         viewModelScope.launch {
 
+            isLoading.value = true
             try {
                 if (internet) {
                     val transactionsFromFirestore = firestoreRepository.readItemsFromDatabase(
-                        userId,
+                        currentUserId,
                         "Transactions",
                         Transactions::class.java
                     )
 
-                    updateTransactions(transactionsFromFirestore)
+                    updateTransactions(
+                        transactionsFromFirestore,
+                        selectedDate = selectedDateFromUser.value ?: Date()
+                    )
 
                 } else {
-                    val transactionsFromSQLite = dbHelper.readTransactions(userId = userId)
+                    val transactionsFromSQLite = dbHelper.readTransactions(userId = currentUserId)
 
-                    updateTransactions(transactionsFromSQLite)
+                    updateTransactions(
+                        transactionsFromSQLite,
+                        selectedDate = selectedDateFromUser.value ?: Date()
+                    )
                 }
 
 
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error getting transactions", e)
+            } finally {
+                isLoading.postValue(false) // Set loading state to false when loading is completed
             }
         }
     }
 
-    private fun updateTransactions(transactions: List<Transactions>) {
+
+    private fun updateTransactions(transactions: List<Transactions>, selectedDate: Date) {
+
         var totalExpenses = 0.0
         var totalIncomes = 0.0
+        var selectedDateExpenses = 0.0
+        var selectedDateIncomes = 0.0
+        var monthExpenses = 0.0
+        var monthIncome = 0.0
+
+        val selectedDateTransactionList = mutableListOf<Transactions>()
         val todayTransaction = mutableListOf<Transactions>()
+        val monthTransaction = mutableListOf<Transactions>()
+        val yearTransaction = mutableListOf<Transactions>()
+
+        val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         val todayDate = Calendar.getInstance().apply {
-            // Set the time part to 00:00:00
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.time
 
+
         for (transaction in transactions) {
+            val transactionMonth = Calendar.getInstance().apply {
+                time = transaction.date
+            }.get(Calendar.MONTH)
 
-            if (transaction.transactionType == "Expenses") {
-                totalExpenses += transaction.amount
-
-            } else if (transaction.transactionType == "Incomes") {
-                totalIncomes += transaction.amount
-            }
+            val transactionYear = Calendar.getInstance().apply {
+                time = transaction.date
+            }.get(Calendar.YEAR)
 
             val transactionDate = Calendar.getInstance().apply {
                 time = transaction.date
@@ -88,30 +125,70 @@ class OverviewViewModel(
                 set(Calendar.MILLISECOND, 0)
             }.time
 
+            if (transaction.transactionType == "Expenses") {
+                totalExpenses += transaction.amount
+
+            } else if (transaction.transactionType == "Incomes") {
+                totalIncomes += transaction.amount
+            }
+
+
+            if (transactionDate == selectedDate) {
+                selectedDateTransactionList.add(transaction)
+                if (transaction.transactionType == "Expenses") {
+                    selectedDateExpenses += transaction.amount
+
+                } else if (transaction.transactionType == "Incomes") {
+                    selectedDateIncomes += transaction.amount
+                }
+            }
+
             if (transactionDate == todayDate) {
                 todayTransaction.add(transaction)
             }
 
+
+            if (transactionMonth == currentMonth) {
+                monthTransaction.add(transaction)
+                if (transaction.transactionType == "Expenses") {
+                    monthExpenses += transaction.amount
+                } else if (transaction.transactionType == "Incomes") {
+                    monthIncome += transaction.amount
+                }
+            }
+
+            if (transactionYear == currentYear) {
+                yearTransaction.add(transaction)
+            }
+
+
         }
 
+        //double
         expensesTotal.postValue(totalExpenses)
         incomesTotal.postValue(totalIncomes)
 
+        //list
         transactionsList.postValue(transactions)
         todayTransactionsList.postValue(todayTransaction)
+        monthTransactionsList.postValue(monthTransaction)
+        yearTransactionsList.postValue(yearTransaction)
+        currentMonthExpenses.postValue(monthExpenses)
+        currentMonthIncomes.postValue(monthIncome)
 
-    }
+        //selected Date
+        selectedDateTransaction.postValue(selectedDateTransactionList)
+        selectedDateExpensesTotal.postValue(selectedDateExpenses)
+        selectedDateIncomesTotal.postValue(selectedDateIncomes)
 
-    init {
-        getTransactionRecord()
     }
 
     private suspend fun getTransactionId(transactions: Transactions): String {
-        return firestoreRepository.getDocumentId("Transactions", userId, transactions)
+        return firestoreRepository.getDocumentId("Transactions", currentUserId, transactions)
     }
 
     private suspend fun getCategoryId(category: Category): String {
-        return firestoreRepository.getDocumentId("Categories", userId, category)
+        return firestoreRepository.getDocumentId("Categories", currentUserId, category)
     }
 
     fun editTransaction(transactions: Transactions, updatedTransactions: Transactions) {
@@ -121,7 +198,7 @@ class OverviewViewModel(
                 val categoryId: String = getCategoryId(transactions.category)
 
                 firestoreRepository.updateItemInFirestoreById(
-                    userId,
+                    currentUserId,
                     "Transactions",
                     transactionId,
                     updatedTransactions,
@@ -134,7 +211,7 @@ class OverviewViewModel(
                             description = updatedTransactions.description,
                             date = updatedTransactions.date,
                             transactionType = updatedTransactions.transactionType,
-                            userId = userId
+                            userId = currentUserId
 
                         )
                         getTransactionRecord()
@@ -151,14 +228,14 @@ class OverviewViewModel(
         viewModelScope.launch {
             try {
                 val transactionId: String =
-                    firestoreRepository.getDocumentId("Transactions", userId, transaction)
+                    firestoreRepository.getDocumentId("Transactions", currentUserId, transaction)
 
                 firestoreRepository.deleteItemFromFirestoreById(
-                    userId,
+                    currentUserId,
                     "Transactions",
                     transactionId,
                     onSuccess = {
-                        dbHelper.deleteTransaction(transactionId, userId)
+                        dbHelper.deleteTransaction(transactionId, currentUserId)
                         getTransactionRecord()
                     }
                 )
@@ -176,7 +253,7 @@ class OverviewViewModel(
                 val categoryId: String = getCategoryId(transaction.category)
 
                 firestoreRepository.addItem(
-                    userId,
+                    currentUserId,
                     "Transactions",
                     transaction,
                     "T%04d",
@@ -188,7 +265,7 @@ class OverviewViewModel(
                             description = transaction.description,
                             date = transaction.date,
                             transactionType = transaction.transactionType,
-                            userId = userId
+                            userId = currentUserId
                         )
                         getTransactionRecord()
                     },

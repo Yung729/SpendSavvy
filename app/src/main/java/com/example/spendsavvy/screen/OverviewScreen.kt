@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,10 +24,14 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.components.LoadingScreen
 import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.navigation.Screen
@@ -49,11 +55,18 @@ import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.BudgetViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.maxkeppeker.sheets.core.models.base.rememberSheetState
+import com.maxkeppeler.sheets.calendar.CalendarDialog
+import com.maxkeppeler.sheets.calendar.models.CalendarConfig
+import com.maxkeppeler.sheets.calendar.models.CalendarSelection
+import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun OverviewScreen(
     modifier: Modifier = Modifier,
@@ -62,77 +75,150 @@ fun OverviewScreen(
     navController: NavController
 ) {
 
-    val transactionList by transactionViewModel.todayTransactionsList.observeAsState(initial = emptyList())
-    val totalExpenses by transactionViewModel.expensesTotal.observeAsState(initial = 0.0)
+    val isLoading by transactionViewModel.isLoading.observeAsState(initial = false)
+
+    val transactionList by transactionViewModel.selectedDateTransaction.observeAsState(initial = emptyList())
+    val allExpenses by transactionViewModel.currentMonthExpenses.observeAsState(initial = 0.0)
+    val totalExpenses by transactionViewModel.selectedDateExpensesTotal.observeAsState(initial = 0.0)
+    val totalIncomes by transactionViewModel.selectedDateIncomesTotal.observeAsState(initial = 0.0)
     val budgetAmount by budgetViewModel.budget.observeAsState(initial = 0.0)
 
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
 
-        item {
-            Text(
-                text = "Hi, User", //current User
-                fontFamily = poppinsFontFamily,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = HeaderTitle
+    val calendarState = rememberSheetState()
+    val selectedDate = remember {
+        mutableStateOf(Calendar.getInstance().apply {
+            time = Date()
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time)
+    }
+
+
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
+        if (isLoading) {
+            LoadingScreen() // Display loading animation
+        }
+
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = Color.Transparent
+        ) {
+            CalendarDialog(
+                state = calendarState,
+                config = CalendarConfig(
+                    monthSelection = true,
+                    yearSelection = true, // Disable year selection
+                    style = CalendarStyle.MONTH
+                ),
+                selection = CalendarSelection.Date { localDate ->
+                    val calendar = Calendar.getInstance()
+                    calendar.time =
+                        Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                    calendar.set(Calendar.HOUR_OF_DAY, 0)
+                    calendar.set(Calendar.MINUTE, 0)
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
+                    selectedDate.value = calendar.time
+                    transactionViewModel.getTransactionRecord()
+                }
             )
         }
 
-        item {
-            OverViewCard()
-        }
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
 
-        item {
-            BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
-        }
-
-
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            item {
                 Text(
-                    text = "Record",
+                    text = selectedDate.value.let {
+                        if (dateFormat.format(it) == dateFormat.format(Date())) {
+                            "Today"
+                        } else {
+                            dateFormat.format(it)
+                        }
+                    } ?: "Select Month",
+                    modifier = Modifier.clickable(onClick = { calendarState.show() })
+                )
+
+                transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
+            }
+
+
+            item {
+                Text(
+                    text = "Hi, User", //current User
                     fontFamily = poppinsFontFamily,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = HeaderTitle
                 )
-
-                ClickableText(text = AnnotatedString("See All"), onHover = {
-
-                }, onClick = {
-                    navController.navigate(Screen.AllTransaction.route)
-                }, modifier = Modifier.align(Alignment.CenterVertically), style = TextStyle(
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Green,
-                )
-                )
-
             }
-            
-            Spacer(modifier = Modifier.height(10.dp))
-            
-            TransactionList(
-                transactionList,
-                navController = navController,
-                transactionViewModel = transactionViewModel
-            )
+
+            item {
+                OverViewCard(incomes = totalIncomes, expenses = totalExpenses)
+            }
+
+            item {
+                BudgetCard(budgetAmount = budgetAmount, totalExpenses = allExpenses)
+            }
+
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Record",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = HeaderTitle
+                    )
+
+                    ClickableText(text = AnnotatedString("See All"), onHover = {
+
+                    }, onClick = {
+                        navController.navigate(Screen.AllTransaction.route)
+                    }, modifier = Modifier.align(Alignment.CenterVertically), style = TextStyle(
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Green,
+                    )
+                    )
+
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                TransactionList(
+                    modifier = Modifier.height(400.dp),
+                    transactionsList = transactionList,
+                    navController = navController,
+                    transactionViewModel = transactionViewModel
+                )
+            }
+
+
         }
-
-
     }
 
 }
 
 
 @Composable
-fun OverViewCard() {
+fun OverViewCard(
+    incomes: Double,
+    expenses: Double
+) {
 
 
     Card(
@@ -177,7 +263,7 @@ fun OverViewCard() {
                     )
 
                     Text(
-                        text = "RM 6000.00",
+                        text = "RM $incomes",
                         modifier = Modifier,
                         textAlign = TextAlign.Center,
                     )
@@ -193,7 +279,7 @@ fun OverViewCard() {
                     )
 
                     Text(
-                        text = "RM 1000.00",
+                        text = "RM $expenses",
                         modifier = Modifier,
                         textAlign = TextAlign.Center,
                     )
@@ -226,7 +312,7 @@ fun BudgetCard(
             modifier = Modifier.padding(10.dp)
         ) {
             Text(
-                text = "Budget",
+                text = "Monthly Budget",
                 modifier = Modifier,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
@@ -351,7 +437,7 @@ fun TransactionList(
     var lastDate = ""
     val todayDate = Calendar.getInstance().time
 
-    LazyColumn(modifier = modifier.height(400.dp)) {
+    LazyColumn(modifier = modifier) {
         items(transactionsList) { item: Transactions ->
 
             if (dateFormat.format(item.date) != lastDate) {
