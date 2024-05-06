@@ -66,7 +66,7 @@ import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
-import com.example.spendsavvy.viewModels.BudgetViewModel
+import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
@@ -139,7 +139,7 @@ fun TabsNavGraph(
     val mainViewModel = MainViewModel(context, isConnected, userId)
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId)
-    val budgetViewModel = BudgetViewModel(context, isConnected, userId)
+    val targetViewModel = TargetViewModel(context, isConnected, userId)
 
 
     mainViewModel.syncDatabase()
@@ -263,7 +263,7 @@ fun TabsNavGraph(
                         .fillMaxSize()
                         .padding(20.dp),
                     transactionViewModel = transactionsViewModel,
-                    budgetViewModel = budgetViewModel,
+                    budgetViewModel = targetViewModel,
                     navController = navController
                 )
             }
@@ -283,7 +283,7 @@ fun TabsNavGraph(
                         .padding(20.dp),
                     navController = navController,
                     transactionViewModel = transactionsViewModel,
-                    budgetViewModel = budgetViewModel
+                    budgetViewModel = targetViewModel
                 )
             }
 
@@ -499,7 +499,7 @@ fun TabsNavGraph(
             ) {
 
                 BudgetScreen(
-                    budgetViewModel = budgetViewModel
+                    budgetViewModel = targetViewModel
                 )
 
 

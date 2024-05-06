@@ -30,18 +30,24 @@ class OverviewViewModel(
 
     val transactionsList = MutableLiveData<List<Transactions>>() //All transaction List
     val todayTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
-    val monthTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
-    val yearTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
+    val monthTransactionsList = MutableLiveData<List<Transactions>>() //Month transaction List
+    val yearTransactionsList = MutableLiveData<List<Transactions>>() //Year transaction List
+
+    val expensesTotal = MutableLiveData<Double>()
+    val incomesTotal = MutableLiveData<Double>()
+    val todayExpensesTotal = MutableLiveData<Double>()
+    val todayIncomesTotal = MutableLiveData<Double>()
+    val currentYearExpensesTotal = MutableLiveData<Double>()
+    val currentYearIncomesTotal = MutableLiveData<Double>()
+    val currentMonthExpenses = MutableLiveData<Double>()
+    val currentMonthIncomes = MutableLiveData<Double>()
+
 
     //Selected Transaction List
     val selectedDateTransaction = MutableLiveData<List<Transactions>>()
     val selectedDateExpensesTotal = MutableLiveData<Double>()
     val selectedDateIncomesTotal = MutableLiveData<Double>()
 
-    val currentMonthExpenses = MutableLiveData<Double>()
-    val currentMonthIncomes = MutableLiveData<Double>()
-    val expensesTotal = MutableLiveData<Double>()
-    val incomesTotal = MutableLiveData<Double>()
 
     init {
         getTransactionRecord()
@@ -91,6 +97,10 @@ class OverviewViewModel(
         var selectedDateIncomes = 0.0
         var monthExpenses = 0.0
         var monthIncome = 0.0
+        var todayExpenses = 0.0
+        var todayIncome = 0.0
+        var yearExpenses = 0.0
+        var yearIncome = 0.0
 
         val selectedDateTransactionList = mutableListOf<Transactions>()
         val todayTransaction = mutableListOf<Transactions>()
@@ -106,8 +116,8 @@ class OverviewViewModel(
             set(Calendar.MILLISECOND, 0)
         }.time
 
-
         for (transaction in transactions) {
+
             val transactionMonth = Calendar.getInstance().apply {
                 time = transaction.date
             }.get(Calendar.MONTH)
@@ -145,6 +155,12 @@ class OverviewViewModel(
 
             if (transactionDate == todayDate) {
                 todayTransaction.add(transaction)
+                if (transaction.transactionType == "Expenses") {
+                    todayExpenses += transaction.amount
+
+                } else if (transaction.transactionType == "Incomes") {
+                    todayIncome += transaction.amount
+                }
             }
 
 
@@ -159,6 +175,12 @@ class OverviewViewModel(
 
             if (transactionYear == currentYear) {
                 yearTransaction.add(transaction)
+                if (transaction.transactionType == "Expenses") {
+                    yearExpenses += transaction.amount
+
+                } else if (transaction.transactionType == "Incomes") {
+                    yearIncome += transaction.amount
+                }
             }
 
 
@@ -167,14 +189,19 @@ class OverviewViewModel(
         //double
         expensesTotal.postValue(totalExpenses)
         incomesTotal.postValue(totalIncomes)
+        todayExpensesTotal.postValue(todayExpenses)
+        todayIncomesTotal.postValue(todayIncome)
+        currentMonthExpenses.postValue(monthExpenses)
+        currentMonthIncomes.postValue(monthIncome)
+        currentYearExpensesTotal.postValue(yearExpenses)
+        currentYearIncomesTotal.postValue(yearIncome)
 
         //list
         transactionsList.postValue(transactions)
         todayTransactionsList.postValue(todayTransaction)
         monthTransactionsList.postValue(monthTransaction)
         yearTransactionsList.postValue(yearTransaction)
-        currentMonthExpenses.postValue(monthExpenses)
-        currentMonthIncomes.postValue(monthIncome)
+
 
         //selected Date
         selectedDateTransaction.postValue(selectedDateTransactionList)

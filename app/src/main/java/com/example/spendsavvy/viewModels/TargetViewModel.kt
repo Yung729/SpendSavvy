@@ -1,6 +1,5 @@
 package com.example.spendsavvy.viewModels
 
-import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
@@ -11,7 +10,7 @@ import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
 
-class BudgetViewModel(
+class TargetViewModel(
     context: Context,
     isOnline: Boolean,
     userId: String

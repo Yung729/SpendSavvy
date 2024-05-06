@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -56,7 +55,7 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
-import com.example.spendsavvy.viewModels.BudgetViewModel
+import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -74,7 +73,7 @@ import java.util.Locale
 fun OverviewScreen(
     modifier: Modifier = Modifier,
     transactionViewModel: OverviewViewModel,
-    budgetViewModel: BudgetViewModel,
+    budgetViewModel: TargetViewModel,
     navController: NavController
 ) {
 

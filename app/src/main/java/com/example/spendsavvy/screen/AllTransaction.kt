@@ -42,6 +42,17 @@ fun AllTransactionScreen(
     val monthSortedTransactions = monthTransactionList.sortedByDescending { it.date }
     val yearSortedTransactions = yearTransactionList.sortedByDescending { it.date }
 
+    val todayExpenses by transactionViewModel.todayExpensesTotal.observeAsState(initial = 0.0)
+    val todayIncomes by transactionViewModel.todayIncomesTotal.observeAsState(initial = 0.0)
+
+    val allExpenses by transactionViewModel.expensesTotal.observeAsState(initial = 0.0)
+    val allIncomes by transactionViewModel.incomesTotal.observeAsState(initial = 0.0)
+
+    val monthExpenses by transactionViewModel.currentMonthExpenses.observeAsState(initial = 0.0)
+    val monthIncomes by transactionViewModel.currentMonthIncomes.observeAsState(initial = 0.0)
+
+    val yearExpenses by transactionViewModel.currentYearExpensesTotal.observeAsState(initial = 0.0)
+    val yearIncomes by transactionViewModel.currentYearIncomesTotal.observeAsState(initial = 0.0)
 
     val options = mutableStateListOf("Year", "Month", "Day", "ALL")
     var selectedIndex by remember {
@@ -72,8 +83,11 @@ fun AllTransactionScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+
         when (selectedIndex) {
             0 -> {
+                OverViewCard(incomes = yearIncomes, expenses = yearExpenses)
+                Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     yearSortedTransactions,
                     navController = navController,
@@ -82,7 +96,8 @@ fun AllTransactionScreen(
             }
 
             1 -> {
-
+                OverViewCard(incomes = monthIncomes, expenses = monthExpenses)
+                Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     monthSortedTransactions,
                     navController = navController,
@@ -91,7 +106,8 @@ fun AllTransactionScreen(
             }
 
             2 -> {
-
+                OverViewCard(incomes = todayIncomes, expenses = todayExpenses)
+                Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     dayTransactionList,
                     navController = navController,
@@ -100,6 +116,8 @@ fun AllTransactionScreen(
             }
 
             3 -> {
+                OverViewCard(incomes = allIncomes, expenses = allExpenses)
+                Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     allSortedTransactions,
                     navController = navController,

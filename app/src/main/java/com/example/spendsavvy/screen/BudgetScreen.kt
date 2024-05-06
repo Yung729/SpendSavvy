@@ -26,12 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.spendsavvy.components.bounceClick
-import com.example.spendsavvy.viewModels.BudgetViewModel
+import com.example.spendsavvy.viewModels.TargetViewModel
 import java.time.YearMonth
 
 
 @Composable
-fun BudgetScreen(budgetViewModel: BudgetViewModel) {
+fun BudgetScreen(budgetViewModel: TargetViewModel) {
 
 
     var budgetAmountText by remember { mutableStateOf("0") }

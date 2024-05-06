@@ -26,7 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.RemainingChart
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.viewModels.BudgetViewModel
+import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import java.time.YearMonth
 import kotlin.math.roundToInt
@@ -37,7 +37,7 @@ fun AnalysisScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     transactionViewModel: OverviewViewModel,
-    budgetViewModel: BudgetViewModel
+    budgetViewModel: TargetViewModel
 ) {
     val scrollState = rememberScrollState()
     val expensesData by transactionViewModel.expensesTotal.observeAsState(initial = 0.0)
