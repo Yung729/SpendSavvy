@@ -326,10 +326,10 @@ fun AddIncomeScreen(
                         transactionType = "Incomes"
                     ),
                     onSuccess = {
-                        println("Expenses added successfully")
+                        println("Incomes added successfully")
                     },
                     onFailure = {
-                        println("Failed to add Expenses")
+                        println("Failed to add Incomes")
                     }
                 )
 
