@@ -5,18 +5,45 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import java.time.LocalDate
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 class TaxViewModel : ViewModel() {
+    private val _incomeMonthly = MutableLiveData<Int>()
+    var incomeMonthly: LiveData<Int> = _incomeMonthly
+
+    private val _taxMonthly = MutableLiveData<Int>()
+    var taxMonthly: LiveData<Int> = _taxMonthly
+
+    private val _incomeAfterTaxMonthly = MutableLiveData<Int>()
+    var incomeAfterTaxMonthly: LiveData<Int> = _incomeAfterTaxMonthly
+
+    private val _incomeAnnually = MutableLiveData<Int>()
+    var incomeAnnually: LiveData<Int> = _incomeAnnually
+
+    private val _taxAnnually = MutableLiveData<Int>()
+    var taxAnnually: LiveData<Int> = _taxAnnually
+
+    private val _incomeAfterTaxAnnually = MutableLiveData<Int>()
+    var incomeAfterTaxAnnually: LiveData<Int> = _incomeAfterTaxAnnually
+/////////////////////////////////////////////////////////////////////////
     private val _income = MutableLiveData<Int>()
-    var income: LiveData<Int> = _income
+    val income: LiveData<Int> = _income
 
     private val _tax = MutableLiveData<Int>()
-    var tax: LiveData<Int> = _tax
+    val tax: LiveData<Int> = _tax
 
     private val _incomeAfterTax = MutableLiveData<Int>()
-    var incomeAfterTax: LiveData<Int> = _incomeAfterTax
+    val incomeAfterTax: LiveData<Int> = _incomeAfterTax
+
+    private val _isMonthly = MutableLiveData<Boolean>()
+    val isM: LiveData<Boolean> = _isMonthly
+
+    private val _isAnnually = MutableLiveData<Boolean>()
+    val isA: LiveData<Boolean> = _isAnnually
 
     fun calculateTax(initialAmount: String, selectedDate: LocalDate, isMonthly: Boolean, isAnnually: Boolean): Int? {
 
@@ -33,7 +60,12 @@ class TaxViewModel : ViewModel() {
             return null
         }
 
+        _isMonthly.value = isMonthly
+        _isAnnually.value = isAnnually
+
         _income.value = income
+        _incomeMonthly.value = income /12
+        _incomeAnnually.value = income
 
         val tax: Int = when {
             selectedYear == 2023 -> {
@@ -152,8 +184,12 @@ class TaxViewModel : ViewModel() {
             else -> 0
         }
         _tax.value = tax
+        _taxMonthly.value = tax /12
+        _taxAnnually.value = tax
 
         _incomeAfterTax.value = income - tax
+        _incomeAfterTaxMonthly.value = (income - tax)/12
+        _incomeAfterTaxAnnually.value = income - tax
 
         println("Initial Amount: $initialAmount")
         println("Selected Year: $selectedYear")
