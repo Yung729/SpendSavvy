@@ -1,8 +1,8 @@
 package com.example.spendsavvy.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -15,13 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.DismissDirection
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
@@ -36,7 +36,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -48,15 +50,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.LoadingScreen
 import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.ui.theme.CardColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
-import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.TargetViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -150,16 +152,31 @@ fun OverviewScreen(
             }
 
             item {
-                Text(
-                    text = selectedDate.value.let {
-                        if (dateFormat.format(it) == dateFormat.format(Date())) {
-                            "Today"
-                        } else {
-                            dateFormat.format(it)
-                        }
-                    } ?: "Select Month",
-                    modifier = Modifier.clickable(onClick = { calendarState.show() })
-                )
+                val selectedDateString = selectedDate.value.let {
+                    if (dateFormat.format(it) == dateFormat.format(Date())) {
+                        "Today"
+                    } else {
+                        dateFormat.format(it)
+                    }
+                } ?: "Select Month"
+
+                Row(
+                    modifier = Modifier
+                        .clickable(onClick = { calendarState.show() })
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.calendar),
+                        contentDescription = "Calendar",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = selectedDateString,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
 
                 transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
             }
@@ -176,7 +193,11 @@ fun OverviewScreen(
                 ) {
 
                     BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
-                    GoalCard(goalAmount = goalAmount, totalIncomes = totalIncomes , totalExpenses = totalExpenses)
+                    GoalCard(
+                        goalAmount = goalAmount,
+                        totalIncomes = totalIncomes,
+                        totalExpenses = totalExpenses
+                    )
                 }
             }
 
@@ -194,16 +215,26 @@ fun OverviewScreen(
                         color = HeaderTitle
                     )
 
-                    ClickableText(text = AnnotatedString("See All"), onHover = {
-
-                    }, onClick = {
-                        navController.navigate(Screen.AllTransaction.route)
-                    }, modifier = Modifier.align(Alignment.CenterVertically), style = TextStyle(
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Green,
-                    )
+                    ClickableText(
+                        text = AnnotatedString("See All"),
+                        onHover = {
+                            TextStyle(
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF0B2E41),
+                            )
+                        },
+                        onClick = {
+                            navController.navigate(Screen.AllTransaction.route)
+                        },
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        style = TextStyle(
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF489FCD),
+                        )
                     )
 
                 }
@@ -233,61 +264,91 @@ fun OverViewCard(
 
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = CardColor, contentColor = Color.White
-        ), elevation = CardDefaults.cardElevation(
+        elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         ), shape = RoundedCornerShape(16.dp), modifier = Modifier
             .fillMaxWidth()
 
     ) {
-        Column(
-            modifier = Modifier.padding(10.dp)
-        ) {
-            Text(
-                text = "Overview",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.Black
+        Box(
+            modifier = Modifier.background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF696161), // Start color
+                        Color(0xFF1B1B1B)  // End color
+                    )
+                )
             )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Text(
+                    text = "Overview",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
 
-                Column {
-                    Text(
-                        text = "Income",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = Color.Black
-                    )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = "RM $incomes",
-                        fontSize = 14.sp,
-                        color = Color.Black
-                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.incomes),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(30.dp, 30.dp)
+                                    .padding(end = 10.dp)
+                            )
+                            Text(
+                                text = "Income",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = Color.White
+                            )
+                        }
+
+                        Text(
+                            text = "RM $incomes",
+                            fontSize = 14.sp,
+                            color = Color.White
+                        )
+                    }
+
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.expenses),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(30.dp, 30.dp)
+                                    .padding(end = 10.dp)
+                            )
+                            Text(
+                                text = "Expenses",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = Color.White
+                            )
+                        }
+
+                        Text(
+                            text = "RM $expenses",
+                            fontSize = 14.sp,
+                            color = Color.White
+                        )
+                    }
+
+
                 }
-
-                Column {
-                    Text(
-                        text = "Expenses",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = Color.Black
-                    )
-
-                    Text(
-                        text = "RM $expenses",
-                        fontSize = 14.sp,
-                        color = Color.Black
-                    )
-                }
-
-
             }
         }
     }
@@ -303,9 +364,6 @@ fun BudgetCard(
 
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = CardColor, contentColor = Color.White
-        ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         ),
@@ -314,30 +372,41 @@ fun BudgetCard(
             .fillMaxWidth()
 
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Budget",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.Black
+        Box(
+            modifier = Modifier.background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF696161), // Start color
+                        Color(0xFF1B1B1B)  // End color
+                    )
+                )
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "RM $budgetAmount",
-                modifier = Modifier,
-                color = Color.Black
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Budget",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "RM $budgetAmount",
+                    modifier = Modifier,
+                    color = Color.White
 
                 )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Available Balance : RM ${budgetAmount - totalExpenses}",
-                fontSize = 16.sp,
-                color = Color.Black
-            )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Available Balance : RM ${budgetAmount - totalExpenses}",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
 
 
+            }
         }
     }
 
@@ -353,9 +422,6 @@ fun GoalCard(
 
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = CardColor, contentColor = Color.White
-        ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         ),
@@ -364,27 +430,38 @@ fun GoalCard(
             .fillMaxWidth()
 
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Box(
+            modifier = Modifier.background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF696161), // Start color
+                        Color(0xFF1B1B1B)  // End color
+                    )
+                )
+            )
         ) {
-            Text(
-                text = "Goal",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "RM $goalAmount",
-                fontSize = 16.sp,
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
-                fontSize = 16.sp,
-                color = Color.Black
-            )
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Goal",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "RM $goalAmount",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
         }
 
 
@@ -422,12 +499,12 @@ fun TransactionsCard(
                     navController.navigate(Screen.TransactionDetails.route)
                 }, colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
-                ), border = BorderStroke(width = 1.dp, Color.Black)
+                )
             ) {
 
                 Row(
                     modifier = Modifier
-                        .padding(10.dp)
+                        .padding(15.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
 
@@ -486,12 +563,11 @@ fun TransactionList(
             if (dateFormat.format(item.date) != lastDate) {
 
                 if (dateFormat.format(todayDate) == dateFormat.format(item.date)) {
-                    Text(text = "Today")
+                    Text(text = "Today", fontWeight = FontWeight.SemiBold)
                 } else {
-                    Text(text = dateFormat.format(item.date))
+                    Text(text = dateFormat.format(item.date), fontWeight = FontWeight.SemiBold)
                 }
 
-                Divider()
             }
 
             TransactionsCard(
