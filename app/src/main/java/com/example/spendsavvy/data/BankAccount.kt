@@ -1,6 +1,6 @@
 package com.example.spendsavvy.data
 
-import com.example.spendsavvy.models.BankAccount
+import com.example.spendsavvy.models.Cash
 
 val bankName =  listOf(
     "Affin Bank Berhad",
