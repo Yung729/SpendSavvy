@@ -134,6 +134,17 @@ fun OverviewScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
+
+            item {
+                Text(
+                    text = "Hi, User", //current User
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = HeaderTitle
+                )
+            }
+
             item {
                 Text(
                     text = selectedDate.value.let {
@@ -147,17 +158,6 @@ fun OverviewScreen(
                 )
 
                 transactionViewModel.selectedDateFromUser.postValue(selectedDate.value)
-            }
-
-
-            item {
-                Text(
-                    text = "Hi, User", //current User
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = HeaderTitle
-                )
             }
 
             item {
@@ -231,20 +231,6 @@ fun OverViewCard(
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Text(
-                text = "Total Balance",
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
-            )
-
-            Text(
-                text = "RM 5000.00",
-                modifier = Modifier,
-                textAlign = TextAlign.Center,
-
-                )
 
             Spacer(modifier = Modifier.height(20.dp))
 
