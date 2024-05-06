@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,10 +47,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -56,12 +61,16 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import java.time.LocalDate
+import java.time.Month
+import java.time.ZoneId
+import java.util.Date
 
 @Composable
 fun TaxCalculator(
     modifier: Modifier = Modifier,
     navController: NavController,
-    taxViewModel: TaxViewModel
+    taxViewModel: TaxViewModel,
+    transactionViewModel: OverviewViewModel
 ) {
     val context = LocalContext.current
     var initialAmount by remember { mutableStateOf("") }
@@ -69,12 +78,17 @@ fun TaxCalculator(
     var isMonthly by remember { mutableStateOf(false) }
     var isAnnually by remember { mutableStateOf(false) }
 
-    val incomeMonthly by taxViewModel.incomeMonthly.observeAsState(initial = 0)
-    val taxMonthly by taxViewModel.taxMonthly.observeAsState(initial = 0)
-    val incomeAfterTaxMonthly by taxViewModel.incomeAfterTaxMonthly.observeAsState(initial = 0)
-    val incomeAnnually by taxViewModel.incomeAnnually.observeAsState(initial = 0)
-    val taxAnnually by taxViewModel.taxAnnually.observeAsState(initial = 0)
-    val incomeAfterTaxAnnually by taxViewModel.incomeAfterTaxAnnually.observeAsState(initial = 0)
+    val incomeMonthly by taxViewModel.incomeMonthly.observeAsState(initial = 0.0)
+    val taxMonthly by taxViewModel.taxMonthly.observeAsState(initial = 0.0)
+    val incomeAfterTaxMonthly by taxViewModel.incomeAfterTaxMonthly.observeAsState(initial = 0.0)
+    val incomeAnnually by taxViewModel.incomeAnnually.observeAsState(initial = 0.0)
+    val taxAnnually by taxViewModel.taxAnnually.observeAsState(initial = 0.0)
+    val incomeAfterTaxAnnually by taxViewModel.incomeAfterTaxAnnually.observeAsState(initial = 0.0)
+
+    val tax :Double = taxAnnually
+    val date: Date = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+    var showDialog by remember { mutableStateOf(false) }
+    var success by remember { mutableStateOf(true) }
 
     fun validateAmount(amount: String): Boolean {
         return try {
@@ -178,7 +192,15 @@ fun TaxCalculator(
                                 "Please select one of the income period",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        } else {
+                        } else if (initialAmount == "")
+                        {
+                            Toast.makeText(
+                                context,
+                                "Please enter initial amount",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else {
                             taxViewModel.calculateTax(
                                 initialAmount,
                                 selectedDate,
@@ -195,18 +217,87 @@ fun TaxCalculator(
                 }
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-                    onClick = { navController.navigate(Screen.AddExpenses.route) },
+                    onClick = {
+                        transactionViewModel.addTransactionToFirestore(
+                            Transactions(
+                                amount = tax,
+                                description = "Income Tax",
+                                date = date,
+                                category = Category(
+                                    imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
+                                    categoryName = "Income Tax",
+                                    categoryType = "Expenses"
+                                ),
+                                transactionType = "Expenses"
+                            ),
+                            onSuccess = {
+                                showDialog = true
+                                success = true
+                                println("Income Tax added successfully")
+                            },
+                            onFailure = {
+                                showDialog = true
+                                success = false
+                                println("Failed to add income Tax")
+                            }
+                        )
+                        println("$tax")
+                        println("$date")
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .padding(10.dp),
                 ) {
                     Text(text = "Add in Expense", fontSize = 11.sp)
                 }
+                if (showDialog) {
+                    TransactionResultDialog(
+                        success = success,
+                        onDismiss = { showDialog = false }
+                    )
+                }
             }
         }
     }
 }
-
+@Composable
+fun TransactionResultDialog(
+    success: Boolean,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = if (success) "Your income tax has been added successfully" else "Failed to add income tax",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+                color = if (success) Color.Black else Color.Red,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = CenterHorizontally
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .padding(start = 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.DarkGray,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(text = if (success) "OK" else "Try Again")
+                }
+            }
+        }
+    )
+}
 @Composable
 fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
     var selectedOption by remember { mutableStateOf("") }
@@ -245,7 +336,7 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
                         modifier = Modifier
                             .clickable {
                                 selectedOption = option
-                                onOptionSelected(selectedOption) // Invoke callback with selected option
+                                onOptionSelected(selectedOption)
                             }
                     ) {
                         RadioButton(
@@ -253,7 +344,7 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
                             selected = option == selectedOption,
                             onClick = {
                                 selectedOption = option
-                                onOptionSelected(selectedOption) // Invoke callback with selected option
+                                onOptionSelected(selectedOption)
                             }
                         )
                         Text(
@@ -269,12 +360,12 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
 
 @Composable
 fun DisplayIncomeTax(
-    incomeMonthly: Int,
-    taxMonthly: Int,
-    incomeAfterTaxMonthly: Int,
-    incomeAnnually: Int,
-    taxAnnually: Int,
-    incomeAfterTaxAnnually: Int,
+    incomeMonthly: Double,
+    taxMonthly: Double,
+    incomeAfterTaxMonthly: Double,
+    incomeAnnually: Double,
+    taxAnnually: Double,
+    incomeAfterTaxAnnually: Double,
 ) {
     Column {
         Row(
@@ -316,7 +407,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = "RM$incomeMonthly",
+                    text = "RM %.2f".format(incomeMonthly),
                     fontSize = 16.sp,
                 )
 
@@ -334,7 +425,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = "RM$incomeAnnually",
+                    text = "RM %.2f".format(incomeAnnually),
                     fontSize = 16.sp,
                 )
                 LineDivider()
@@ -360,7 +451,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = "RM$taxMonthly",
+                    text = "RM %.2f".format(taxMonthly),
                     fontSize = 16.sp,
                 )
                 LineDivider()
@@ -377,7 +468,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = "RM$taxAnnually",
+                    text = "RM %.2f".format(taxAnnually),
                     fontSize = 16.sp
                 )
                 LineDivider()
@@ -403,7 +494,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = "RM$incomeAfterTaxMonthly",
+                    text = "RM %.2f".format(incomeAfterTaxMonthly),
                     fontSize = 16.sp
                 )
                 LineDivider()
@@ -420,7 +511,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = "RM$incomeAfterTaxAnnually",
+                    text = "RM %.2f".format(incomeAfterTaxAnnually),
                     fontSize = 16.sp
                 )
                 LineDivider()
@@ -428,7 +519,6 @@ fun DisplayIncomeTax(
         }
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -439,6 +529,15 @@ fun DatePickerItem(
     onDateSelected: (LocalDate) -> Unit
 ) {
     val calendarState = rememberSheetState()
+    val currentYear = LocalDate.now().year
+    val disabledDates = (currentYear..currentYear).flatMap { year ->
+        listOf(
+            LocalDate.of(year, Month.JANUARY, 1),
+            LocalDate.of(year, Month.DECEMBER, 31)
+        )
+    }
+    val validYear = currentYear - 1
+    var showDialog by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -455,6 +554,11 @@ fun DatePickerItem(
                 text = label,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                text = "( 2013 - $validYear )",
+                fontSize = 10.sp,
+                modifier = Modifier.padding(start = 6.dp)
             )
             Icon(
                 painter = painterResource(id = R.drawable.date_icon),
@@ -493,14 +597,55 @@ fun DatePickerItem(
             monthSelection = true,
             yearSelection = true,
             style = CalendarStyle.MONTH,
-            disabledDates = listOf(LocalDate.now().plusDays(7))
+            disabledDates = disabledDates
         ),
         selection = CalendarSelection.Date { date ->
-            onDateSelected(date)
+            if (date.year == currentYear) {
+                showDialog = true
+            } else {
+                onDateSelected(date)
+            }
         }
     )
-}
 
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(
+                    text = "You selected a date from the current year",
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp,
+                    color = Color.Red,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = CenterHorizontally
+                ) {
+                    Button(
+                        onClick = {
+                            showDialog = false
+                        },
+                        modifier = Modifier
+                            .padding(start = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = "Try Again" )
+                    }
+                }
+            }
+        )
+    }
+
+}
 @Preview(showBackground = true)
 @Composable
 fun TaxCalculatorPreview() {
@@ -509,6 +654,7 @@ fun TaxCalculatorPreview() {
             .fillMaxSize()
             .padding(20.dp),
         navController = rememberNavController(),
-        taxViewModel = TaxViewModel()
+        taxViewModel = TaxViewModel(),
+        transactionViewModel = viewModel()
     )
 }

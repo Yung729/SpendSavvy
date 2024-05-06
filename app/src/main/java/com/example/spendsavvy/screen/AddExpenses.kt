@@ -316,7 +316,13 @@ fun AddExpensesScreen(
                         date = selectedDate.value,
                         category = selectedCategory,
                         transactionType = "Expenses"
-                    )
+                    ),
+                    onSuccess = {
+                        println("Expenses added successfully")
+                    },
+                    onFailure = {
+                        println("Failed to add Expenses")
+                    }
                 )
 
             },

@@ -276,7 +276,11 @@ class OverviewViewModel(
         }
     }
 
-    fun addTransactionToFirestore(transaction: Transactions) {
+    fun addTransactionToFirestore(
+        transaction: Transactions,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         viewModelScope.launch {
             try {
                 val categoryId: String = getCategoryId(transaction.category)
@@ -297,18 +301,20 @@ class OverviewViewModel(
                             userId = currentUserId
                         )
                         getTransactionRecord()
+                        onSuccess() // Invoke the onSuccess callback
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding transaction", exception)
-                        // Handle failure
+                        onFailure(exception) // Invoke the onFailure callback
                     }
                 )
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding transaction", e)
+                onFailure(e) // Invoke the onFailure callback
             }
-
         }
     }
+
 
 
 }

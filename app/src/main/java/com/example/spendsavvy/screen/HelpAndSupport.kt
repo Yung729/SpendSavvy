@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -67,6 +68,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
+    var success by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -80,7 +82,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             textAlign = TextAlign.Center,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
         )
         Dropdown(
             text = "1. How to add expense and income",
@@ -181,7 +183,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             onDismissRequest = { showDialog = false },
             title = {
                 Text(
-                    text = "Leave your question here",
+                    text = "Ask us about your questions",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 22.sp,
@@ -221,7 +223,17 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
 
                     Button(
                         onClick = {
-                            //add comment to user firestore
+                            //update questions to user firestore
+                            try {
+                                if (success) {
+                                    Toast.makeText(context, "Questions sent successfully", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context, "Fail to send questions", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: NumberFormatException) {
+                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                            }
+                            showDialog = false
                         },
                         modifier = Modifier
                             .weight(1f)
