@@ -69,9 +69,12 @@ fun TaxCalculator(
     var isMonthly by remember { mutableStateOf(false) }
     var isAnnually by remember { mutableStateOf(false) }
 
-    val income by taxViewModel.income.observeAsState(initial = 0)
-    val tax by taxViewModel.tax.observeAsState(initial = 0)
-    val incomeAfterTax by taxViewModel.incomeAfterTax.observeAsState(initial = 0)
+    val incomeMonthly by taxViewModel.incomeMonthly.observeAsState(initial = 0)
+    val taxMonthly by taxViewModel.taxMonthly.observeAsState(initial = 0)
+    val incomeAfterTaxMonthly by taxViewModel.incomeAfterTaxMonthly.observeAsState(initial = 0)
+    val incomeAnnually by taxViewModel.incomeAnnually.observeAsState(initial = 0)
+    val taxAnnually by taxViewModel.taxAnnually.observeAsState(initial = 0)
+    val incomeAfterTaxAnnually by taxViewModel.incomeAfterTaxAnnually.observeAsState(initial = 0)
 
     fun validateAmount(amount: String): Boolean {
         return try {
@@ -150,11 +153,12 @@ fun TaxCalculator(
 
                 // Display Income, Tax, and Income after Tax
                 DisplayIncomeTax(
-                    income = income,
-                    tax = tax,
-                    incomeAfterTax = incomeAfterTax,
-                    isMonthly = isMonthly,
-                    isAnnually = isAnnually
+                    incomeMonthly = incomeMonthly,
+                    taxMonthly = taxMonthly,
+                    incomeAfterTaxMonthly = incomeAfterTaxMonthly,
+                    incomeAnnually = incomeAnnually,
+                    taxAnnually = taxAnnually,
+                    incomeAfterTaxAnnually = incomeAfterTaxAnnually,
                 )
             }
         }
@@ -265,11 +269,12 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
 
 @Composable
 fun DisplayIncomeTax(
-    income: Int,
-    tax: Int,
-    incomeAfterTax: Int,
-    isMonthly: Boolean,
-    isAnnually: Boolean
+    incomeMonthly: Int,
+    taxMonthly: Int,
+    incomeAfterTaxMonthly: Int,
+    incomeAnnually: Int,
+    taxAnnually: Int,
+    incomeAfterTaxAnnually: Int,
 ) {
     Column {
         Row(
@@ -311,7 +316,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = if (isAnnually) "RM${income / 12}" else "RM$income",
+                    text = "RM$incomeMonthly",
                     fontSize = 16.sp,
                 )
 
@@ -329,7 +334,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = if (isMonthly) "RM${income * 12}" else "RM$income",
+                    text = "RM$incomeAnnually",
                     fontSize = 16.sp,
                 )
                 LineDivider()
@@ -355,7 +360,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = if (isAnnually) "RM${tax / 12}" else "RM$tax",
+                    text = "RM$taxMonthly",
                     fontSize = 16.sp,
                 )
                 LineDivider()
@@ -372,7 +377,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = if (isMonthly) "RM${tax * 12}" else "RM$tax",
+                    text = "RM$taxAnnually",
                     fontSize = 16.sp
                 )
                 LineDivider()
@@ -398,7 +403,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = if (isAnnually) "RM${incomeAfterTax / 12}" else "RM$incomeAfterTax",
+                    text = "RM$incomeAfterTaxMonthly",
                     fontSize = 16.sp
                 )
                 LineDivider()
@@ -415,7 +420,7 @@ fun DisplayIncomeTax(
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
                 Text(
-                    text = if (isMonthly) "RM${incomeAfterTax * 12}" else "RM$incomeAfterTax",
+                    text = "RM$incomeAfterTaxAnnually",
                     fontSize = 16.sp
                 )
                 LineDivider()
