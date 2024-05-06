@@ -84,6 +84,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         navController = navController,
         CategoryViewModel(context, isConnected, "")
     )
+    val dateViewModel = DateSelectionViewModel()
 
     NavHost(
         navController = navController, startDestination = Screen.Login.route
@@ -114,7 +115,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         }
 
         composable(route = Screen.MainScreen.route) {
-            TabsNavGraph(userId = fireAuthRepository.getCurrentUser(), context = context)
+            TabsNavGraph(userId = fireAuthRepository.getCurrentUser(), context = context, dateViewModel = dateViewModel)
         }
 
 
@@ -125,7 +126,8 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
 fun TabsNavGraph(
     navController: NavHostController = rememberNavController(),
     userId: String,
-    context: Context
+    context: Context,
+    dateViewModel : DateSelectionViewModel
 ) {
 
 
@@ -137,7 +139,7 @@ fun TabsNavGraph(
 
     val showOption = remember { mutableStateOf(false) }
 
-    val dateViewModel = DateSelectionViewModel()
+
 
     val mainViewModel = MainViewModel(context, isConnected, userId)
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
