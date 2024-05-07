@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -35,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -71,40 +73,43 @@ fun AddExpensesScreen(
     catViewModel: CategoryViewModel
 ) {
 
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedCategory by remember {
+        mutableStateOf(Category())
+    }
+
+    var isExpanded1 by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedMethod by remember {
+        mutableStateOf("")
+    }
+
+    var amount by remember {
+        mutableStateOf("")
+    }
+
+    var description by remember {
+        mutableStateOf("")
+    }
+
+    val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
+
+    val todayDate = Date()
+    val calendarState = rememberSheetState()
+    val selectedDate = remember { mutableStateOf<Date>(todayDate) }
+    val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+
+    val context = LocalContext.current
+
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {
 
-        var isExpanded by remember {
-            mutableStateOf(false)
-        }
-
-        var selectedCategory by remember {
-            mutableStateOf(Category())
-        }
-
-        var isExpanded1 by remember {
-            mutableStateOf(false)
-        }
-
-        var selectedMethod by remember {
-            mutableStateOf("")
-        }
-
-        var amount by remember {
-            mutableStateOf("")
-        }
-
-        var description by remember {
-            mutableStateOf("")
-        }
-
-        val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
-
-        val todayDate = Date()
-        val calendarState = rememberSheetState()
-        val selectedDate = remember { mutableStateOf<Date>(todayDate) }
-        val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
         CalendarDialog(state = calendarState, config = CalendarConfig(
             monthSelection = true, yearSelection = true, style = CalendarStyle.MONTH
@@ -318,10 +323,18 @@ fun AddExpensesScreen(
                         transactionType = "Expenses"
                     ),
                     onSuccess = {
-                        println("Expenses added successfully")
+                        Toast.makeText(
+                            context,
+                            "Expenses added successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                     onFailure = {
-                        println("Failed to add Expenses")
+                        Toast.makeText(
+                            context,
+                            "Failed to add Expenses",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 )
 
