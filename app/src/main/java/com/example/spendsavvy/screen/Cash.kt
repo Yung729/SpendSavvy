@@ -79,7 +79,10 @@ fun CashScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        CashList()
+        for(cashDetails in cashDetailsList){
+               if(cashDetails.type == "Bank")
+                   CashList(cash = cashDetails)
+        }
 
         Spacer(modifier = Modifier.height(15.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
