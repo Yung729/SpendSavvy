@@ -79,9 +79,9 @@ fun CashScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        for(cashDetails in cashDetailsList){
-               if(cashDetails.type == "Bank")
-                   CashList(cash = cashDetails)
+        for (cashDetails in cashDetailsList) {
+            if (cashDetails.type == "Cash")
+                CashList(cash = cashDetails)
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -112,7 +112,7 @@ fun CashScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
 
             }
 
@@ -191,9 +191,10 @@ fun CashPopUpScreen(
 
     val options = mutableStateListOf<String>("Cash", "Bank")
 
-    val addition = incAmt.toDoubleOrNull()?:0.0
-    val substraction = decAmt.toDoubleOrNull()?:0.0
-    val totalBalance = calculateCashBalance(balance = cash.balance , incAmt = addition, decAmt = substraction)
+    val addition = incAmt.toDoubleOrNull() ?: 0.0
+    val substraction = decAmt.toDoubleOrNull() ?: 0.0
+    val totalBalance =
+        calculateCashBalance(balance = cash.balance, incAmt = addition, decAmt = substraction)
 
     Dialog(
         onDismissRequest = { onCancelClick() },
@@ -214,22 +215,21 @@ fun CashPopUpScreen(
                 fontSize = 15.sp,
                 modifier = Modifier
                     .padding(start = 15.dp, top = 15.dp)
-                )
+            )
 
             Spacer(modifier = Modifier.height(30.dp))
 
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 SingleChoiceSegmentedButtonRow {
-                    options.forEachIndexed{
-                        index, option ->
+                    options.forEachIndexed { index, option ->
                         SegmentedButton(
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = options.size
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index, count = options.size
                             )
                         ) {
                             Text(text = option)
@@ -240,7 +240,7 @@ fun CashPopUpScreen(
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            if(selectedIndex == 1){
+            if (selectedIndex == 1) {
 
                 Column(
                     modifier = Modifier
@@ -273,7 +273,7 @@ fun CashPopUpScreen(
                             expanded = isExpanded,
                             onDismissRequest = { isExpanded = false }
                         ) {
-                            for(i in bankName) {
+                            for (i in bankName) {
                                 DropdownMenuItem(
                                     text = {
                                         Text(text = i)
@@ -289,7 +289,8 @@ fun CashPopUpScreen(
                 }
                 Spacer(modifier = Modifier.height(15.dp))
 
-                Text(text = "Increase Amount",
+                Text(
+                    text = "Increase Amount",
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp
                 )
@@ -305,7 +306,7 @@ fun CashPopUpScreen(
                             fontFamily = poppinsFontFamily,
                             fontSize = 15.sp,
                             color = Color.Gray
-                            )
+                        )
                     }
                 )
 
@@ -341,7 +342,7 @@ fun CashPopUpScreen(
                     .padding(15.dp),
                 horizontalArrangement = Arrangement.spacedBy(30.dp),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Button(
                     onClick = {
                         onCancelClick()
@@ -367,7 +368,7 @@ fun CashPopUpScreen(
                             updatedCashDetails = Cash(
                                 type = cash.type,
                                 typeName = cash.typeName,
-                                balance = totalBalance.toDoubleOrNull()?:0.0
+                                balance = totalBalance.toDoubleOrNull() ?: 0.0
                             )
                         )
                     },
@@ -392,7 +393,7 @@ fun CashPopUpScreen(
 @Composable
 fun CashList(
     cash: Cash
-){
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -414,26 +415,27 @@ fun CashList(
         }
 
         Text(
-            text = "RM ${cash.balance}")
+            text = "RM ${cash.balance}"
+        )
 
     }
 }
 
 @Composable
-fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): String{
-        return NumberFormat.getInstance().format(balance + incAmt - decAmt)
+fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): String {
+    return NumberFormat.getInstance().format(balance + incAmt - decAmt)
 }
 
 
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun CashScreenPreview() {
     CashScreen(
         Modifier
             .fillMaxSize()
             .padding(20.dp),
-        cash = ,
+        cash = Cash("Cash", "Cash", 200.0),
         walletViewModel = viewModel()
     )
 
-}*/
+}
