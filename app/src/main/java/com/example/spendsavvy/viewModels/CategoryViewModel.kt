@@ -203,6 +203,9 @@ class CategoryViewModel(
                         val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories + category
                         updateCategories(categories = updatedCategories)
+                        Toast.makeText(
+                            currentContext, "Category added", Toast.LENGTH_SHORT
+                        ).show()
 
                     }, onFailure = { exception ->
                         Log.e(TAG, "Error adding category", exception)
@@ -225,6 +228,9 @@ class CategoryViewModel(
                     val currentCategories = categoryList.value ?: emptyList()
                     val updatedCategories = currentCategories + category
                     updateCategories(categories = updatedCategories)
+                    Toast.makeText(
+                        currentContext, "Category added", Toast.LENGTH_SHORT
+                    ).show()
 
                 }, onFailure = {
 
