@@ -5,7 +5,6 @@ import com.example.spendsavvy.models.Category
 
 class CategoryData {
 
-
     fun loadCategory(mode: Int = 2): List<Category> {
         val filterCatData = mutableListOf<Category>()
 
@@ -16,7 +15,7 @@ class CategoryData {
                 categoryType = "Expenses"
             ),
             Category(
-                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb") ,
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
                 categoryName = "Stock Sales",
                 categoryType = "Incomes"
             ),
@@ -54,9 +53,24 @@ class CategoryData {
                 imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
                 categoryName = "Income Tax",
                 categoryType = "Expenses"
+            ),
+            Category(
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Finstallment.png?alt=media&token=7300217d-6385-4519-aa31-be3a093e0fa5"),
+                categoryName = "Installment",
+                categoryType = "Expenses"
+            ),
+            Category(
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fbill.png?alt=media&token=46eddfac-b820-490f-8a4b-5fe2b6f3404f"),
+                categoryName = "Bill",
+                categoryType = "Expenses"
+            ),
+            Category(
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FUtilities.png?alt=media&token=2a06fa9b-1643-4499-8efc-0d3984cf84f4"),
+                categoryName = "Utilities",
+                categoryType = "Expenses"
             )
 
-            )
+        )
 
         when (mode) {
             0 -> {
