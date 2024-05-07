@@ -78,27 +78,8 @@ fun CashScreen(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "Cash Money",
-                    fontFamily = poppinsFontFamily
-                )
 
-                Text(
-                    text = "Available balance",
-                    color = Color.Gray,
-                    fontFamily = poppinsFontFamily
-                )
-
-            }
-
-        }
+        CashList()
 
         Spacer(modifier = Modifier.height(15.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
@@ -406,9 +387,40 @@ fun CashPopUpScreen(
 }
 
 @Composable
+fun CashList(
+    cash: Cash
+){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = "Cash Money",
+                fontFamily = poppinsFontFamily
+            )
+
+            Text(
+                text = "Available balance",
+                color = Color.Gray,
+                fontFamily = poppinsFontFamily
+            )
+
+        }
+
+        Text(
+            text = "RM ${cash.balance}")
+
+    }
+}
+
+@Composable
 fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): String{
         return NumberFormat.getInstance().format(balance + incAmt - decAmt)
 }
+
 
 /*@Preview(showBackground = true)
 @Composable
@@ -417,6 +429,7 @@ fun CashScreenPreview() {
         Modifier
             .fillMaxSize()
             .padding(20.dp),
+        cash = ,
         walletViewModel = viewModel()
     )
 

@@ -29,8 +29,8 @@ class WalletViewModel(
     private val internet = isOnline*/
 
     val cashDetailsList = MutableLiveData<List<Cash>>()
-    val FDAccountList = MutableLiveData<List<FDAccount>>()
-    val stockList = MutableLiveData<List<Stock>>()              //hold on
+    val FDAccountList = MutableLiveData<List<FDAccount>>()      //hold on
+    val stockListLive = MutableLiveData<List<Stock>>()
 
     //cash
     val balanceTotal = MutableLiveData<Double>()
@@ -51,7 +51,7 @@ class WalletViewModel(
                     Cash::class.java
                 )
 
-                updateCashBalance(cashDetailsFromFirestore)
+                updateCashInfo(cashDetailsFromFirestore)
 
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error getting cash details", e)
@@ -59,14 +59,7 @@ class WalletViewModel(
         }
     }
 
-    private fun updateCashBalance(cash: List<Cash>){
-        var totalBalance = 0.0
-
-        for (cashAccount in cash){
-            totalBalance += cashAccount.balance
-        }
-
-        balanceTotal.postValue(totalBalance)
+    private fun updateCashInfo(cash: List<Cash>){
         cashDetailsList.postValue(cash)
     }
 
@@ -164,6 +157,7 @@ class WalletViewModel(
             totalPrice += stock.originalPrice * stock.quantity
         }
 
+        stockListLive.postValue(stockList)
         totalPriceStock.postValue(totalPrice)
     }
 
