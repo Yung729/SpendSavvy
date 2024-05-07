@@ -27,7 +27,13 @@ private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF423E3E),
     secondary = Color(0xFF423E3E),
     tertiary = Color(0xFF423E3E),
-    background = Color.White // Set background color for light theme
+    background = Color.White ,
+    surface = Color.White,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onTertiary = Color.White,
+    onBackground = Color(0xFF1C1B1F),
+    onSurface = Color(0xFF1C1B1F),
 )
 
 @Composable
