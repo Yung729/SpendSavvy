@@ -120,59 +120,6 @@ class FirestoreRepository {
         return null
     }
 
-    fun addItemTwoCollection(
-        userId: String,
-        collectionName: String,
-        item: Any,
-        itemIdFormat: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-
-        val documentRef =
-            firestore.collection("Users").document(userId).collection("Wallet").document("1")
-                .collection(collectionName)
-
-        documentRef
-            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                var latestId = 0
-
-                // If there are documents, parse the latest ID
-                if (!querySnapshot.isEmpty) {
-                    val latestDocument = querySnapshot.documents[0]
-                    val latestDocumentId = latestDocument.id
-                    // Extract the numeric part of the document ID
-                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
-                }
-
-                // Generate the new document ID
-                val newId = itemIdFormat.format(latestId + 1)
-
-                // Create a new document reference with the generated ID
-                val newDocumentRef = documentRef.document(newId)
-
-                // Set the category data for the new document
-                newDocumentRef.set(item)
-                    .addOnSuccessListener {
-                        Log.d(
-                            TAG,
-                            "DocumentSnapshot successfully written with ID: $newId"
-                        )
-                        onSuccess()
-                    }
-                    .addOnFailureListener { e ->
-                        onFailure(e)
-                    }
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error getting documents", e)
-            }
-
-
-    }
 
     fun addOrUpdateSecondFieldItem(
         userId: String,

@@ -164,9 +164,11 @@ fun TabsNavGraph(
         NavigationBar(modifier = Modifier.height(70.dp)) {
 
             items.forEach { screen ->
-                NavigationBarItem(selected = backStackEntry?.destination?.hierarchy?.any {
+                NavigationBarItem(
+                    selected = backStackEntry?.destination?.hierarchy?.any {
                     it.route == screen.route
-                } == true, icon = {
+                } == true,
+                    icon = {
                     Icon(
                         painter = painterResource(id = screen.iconResourceId),
                         contentDescription = null,
