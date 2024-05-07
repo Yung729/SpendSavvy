@@ -17,6 +17,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -115,7 +117,11 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         }
 
         composable(route = Screen.MainScreen.route) {
-            TabsNavGraph(userId = fireAuthRepository.getCurrentUser(), context = context, dateViewModel = dateViewModel)
+            TabsNavGraph(
+                userId = fireAuthRepository.getCurrentUser(),
+                context = context,
+                dateViewModel = dateViewModel
+            )
         }
 
 
@@ -127,7 +133,7 @@ fun TabsNavGraph(
     navController: NavHostController = rememberNavController(),
     userId: String,
     context: Context,
-    dateViewModel : DateSelectionViewModel
+    dateViewModel: DateSelectionViewModel
 ) {
 
 
@@ -138,7 +144,6 @@ fun TabsNavGraph(
     val isConnected = isInternetAvailable(context)
 
     val showOption = remember { mutableStateOf(false) }
-
 
 
     val mainViewModel = MainViewModel(context, isConnected, userId)
@@ -161,31 +166,51 @@ fun TabsNavGraph(
 
     }, bottomBar = {
 
-        NavigationBar(modifier = Modifier.height(70.dp)) {
+        NavigationBar(
+            modifier = Modifier.height(70.dp),
+            containerColor = Color(0xFFfdfdfd),
+            tonalElevation = 5.dp
+        ) {
 
             items.forEach { screen ->
                 NavigationBarItem(
                     selected = backStackEntry?.destination?.hierarchy?.any {
-                    it.route == screen.route
-                } == true,
+                        it.route == screen.route
+                    } == true,
                     icon = {
-                    Icon(
-                        painter = painterResource(id = screen.iconResourceId),
-                        contentDescription = null,
-                        Modifier.size(20.dp, 20.dp)
-                    )
-                }, onClick = {
-                    navController.navigate(screen.route) {
+                        Icon(
+                            painter = painterResource(id = screen.iconResourceId),
+                            contentDescription = null,
+                            Modifier.size(16.dp, 16.dp)
+                        )
 
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                            inclusive = true
+                    }, label = {
+                        Text(
+                            text = screen.route,
+                            fontSize = 11.sp
+                        )
+                    },
+                    colors = NavigationBarItemColors(
+                        selectedIconColor = Color(0xFF6347EB),
+                        selectedTextColor = Color(0xFF6347EB),
+                        selectedIndicatorColor = Color.Transparent,
+                        unselectedIconColor = Color.Gray,
+                        unselectedTextColor = Color.Gray,
+                        disabledIconColor = Color.Gray,
+                        disabledTextColor = Color.Gray
+                    ),
+                    onClick = {
+                        navController.navigate(screen.route) {
+
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                                inclusive = true
+                            }
+                            restoreState = true
+                            launchSingleTop = false
+
                         }
-                        restoreState = true
-                        launchSingleTop = false
-
-                    }
-                })
+                    })
             }
         }
 

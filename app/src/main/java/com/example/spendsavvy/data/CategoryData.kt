@@ -5,7 +5,6 @@ import com.example.spendsavvy.models.Category
 
 class CategoryData {
 
-
     fun loadCategory(mode: Int = 2): List<Category> {
         val filterCatData = mutableListOf<Category>()
 
@@ -16,7 +15,7 @@ class CategoryData {
                 categoryType = "Expenses"
             ),
             Category(
-                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb") ,
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
                 categoryName = "Stock Sales",
                 categoryType = "Incomes"
             ),
@@ -71,7 +70,7 @@ class CategoryData {
                 categoryType = "Expenses"
             )
 
-            )
+        )
 
         when (mode) {
             0 -> {
