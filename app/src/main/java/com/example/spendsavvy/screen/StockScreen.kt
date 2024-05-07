@@ -1,9 +1,9 @@
 package com.example.spendsavvy.screen
 
+/*import com.example.spendsavvy.data.StockData*/
+/*import com.example.spendsavvy.data.toyNames*/
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,10 +21,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -37,8 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,9 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.spendsavvy.components.bounceClick
-/*import com.example.spendsavvy.data.StockData*/
-import com.example.spendsavvy.data.bankName
-/*import com.example.spendsavvy.data.toyNames*/
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
@@ -65,23 +59,28 @@ fun StockScreen(modifier: Modifier = Modifier) {
     }
 
     // Calculate total stock balance
-/*    val totalStockBalance = remember {
-        StockData().loadStock().sumOf { it.originalPrice * it.quantity }
-    }*/
+    /*    val totalStockBalance = remember {
+            StockData().loadStock().sumOf { it.originalPrice * it.quantity }
+        }*/
 
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            /*Column {
-HeaderTitle(text = "Stock Account")*/
+            Column {
+                Text(
+                    text = "Stock Account",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Justify,
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp,
+                )
 
                 Text(
                     text = "Add and Sell Stocks",
                     color = Color.Gray,
                     fontSize = 10.sp,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier.fillMaxWidth()
+                    textAlign = TextAlign.Justify
                 )
             }
 
@@ -102,10 +101,12 @@ HeaderTitle(text = "Stock Account")*/
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(
                     text = "Stock Balance",
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp,
                 )
 
-                //Text(text = "RM $totalStockBalance")
+                Text(text = "RM 12") //change to walletViewModel.totalPriceStock
             }
         }
 
@@ -114,8 +115,7 @@ HeaderTitle(text = "Stock Account")*/
         Text(
             text = "Stock",
             fontFamily = poppinsFontFamily,
-            fontSize = 15.sp,
-            color = com.example.spendsavvy.ui.theme.HeaderTitle
+            fontSize = 15.sp
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -148,7 +148,7 @@ HeaderTitle(text = "Stock Account")*/
                         )
                     }
 
-                    Button(
+                    OutlinedButton(
                         onClick = { isDialogPopUp = true },
                         modifier = Modifier
                             .padding(bottom = 10.dp)
@@ -167,13 +167,13 @@ HeaderTitle(text = "Stock Account")*/
                 }
             }
         }
-        if (isSelectionPopUp)
-            AddStockSelectionScreen(onCancelClick = { isSelectionPopUp = false }, {})
-        else if(isDialogPopUp)
-            EditExistingStockScreen(onCancelClick = { isDialogPopUp = false }, {}, 2)
+    }
+
+    if (isSelectionPopUp)
+        AddStockSelectionScreen(onCancelClick = { isSelectionPopUp = false }, {})
+    else if (isDialogPopUp)
+        EditExistingStockScreen(onCancelClick = { isDialogPopUp = false }, {}, 2)
 }
-
-
 
 
 @Composable
@@ -238,7 +238,7 @@ fun StockCard(stock: Stock, modifier: Modifier = Modifier) {
 fun AddStockSelectionScreen(
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit
-){
+) {
     var isAddNewStock by remember {
         mutableStateOf(false)
     }
@@ -264,13 +264,13 @@ fun AddStockSelectionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 15.dp, top = 15.dp)
-            ){
+            ) {
                 Row(
                     modifier = Modifier
                         .padding(15.dp),
                     horizontalArrangement = Arrangement.spacedBy(30.dp),
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     Button(
                         onClick = {
                             isAddNewStock = true
@@ -312,7 +312,7 @@ fun AddStockSelectionScreen(
     }
 
 
-    if(isAddNewStock)
+    if (isAddNewStock)
         AddNewStockScreen(onCancelClick = { isAddNewStock = false }, onConfirmClick = {})
     else if (isAddExistingStock) {
         EditExistingStockScreen(
@@ -329,7 +329,7 @@ fun AddStockSelectionScreen(
 fun AddNewStockScreen(
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit
-){
+) {
 
     var stockName by remember {
         mutableStateOf("")
@@ -489,7 +489,7 @@ fun EditExistingStockScreen(
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
     scene: Int      //scene 1 = add existing stock, scene 2 = sell existing stock
-){
+) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -523,15 +523,14 @@ fun EditExistingStockScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 15.dp, top = 15.dp)
-            ){
-                if (scene == 1){
+            ) {
+                if (scene == 1) {
                     Text(
                         text = "Add Existing Stock",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
-                }
-                else{
+                } else {
                     Text(
                         text = "Sell Stock",
                         fontFamily = poppinsFontFamily,
@@ -624,55 +623,54 @@ fun EditExistingStockScreen(
                     }
                 )
 
-            Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
-            Row(
-                modifier = Modifier
-                    .padding(15.dp),
-                horizontalArrangement = Arrangement.spacedBy(30.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Button(
-                    onClick = {
-                        onCancelClick()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
+                Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
+                        .padding(15.dp),
+                    horizontalArrangement = Arrangement.spacedBy(30.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Cancel",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
-                }
+                    Button(
+                        onClick = {
+                            onCancelClick()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily
+                        )
+                    }
 
-                Button(
-                    onClick = {
-                        onConfirmClick()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Sell",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
+                    Button(
+                        onClick = {
+                            onConfirmClick()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "Sell",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily
+                        )
+                    }
                 }
-            }
             }
         }
     }
 }
-
 
 
 @Composable

@@ -32,7 +32,12 @@ class WalletViewModel(
     val FDAccountList = MutableLiveData<List<FDAccount>>()
     val stockList = MutableLiveData<List<Stock>>()              //hold on
 
+    //cash
     val balanceTotal = MutableLiveData<Double>()
+
+    //stock
+    val totalPriceStock = MutableLiveData<Double>()
+
     val userId = userId
 
     private fun getCashDetails(
@@ -130,8 +135,36 @@ class WalletViewModel(
                 FDAccount::class.java
             )
 
-
         }
+    }
+
+    private fun getStockDetails(
+    ) {
+        viewModelScope.launch {
+            try{
+
+                val stockDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
+                    userId,
+                    "Stock",
+                    Stock::class.java
+                )
+
+                updateStockDetails(stockDetailsFromFirestore)
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error getting stock details", e)
+            }
+        }
+    }
+
+    private  fun updateStockDetails(stockList: List<Stock>){
+        var totalPrice = 0.0
+
+        for (stock in stockList){
+            totalPrice += stock.originalPrice * stock.quantity
+        }
+
+        totalPriceStock.postValue(totalPrice)
     }
 
     /*private fun updateFDAccountDetails(bankAccount: List<FDAccount>){
