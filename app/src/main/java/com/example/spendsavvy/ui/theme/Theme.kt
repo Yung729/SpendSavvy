@@ -17,29 +17,37 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Color(0xFF423E3E),
+    secondary = Color(0xFF423E3E),
+    tertiary = Color(0xFF423E3E),
+    background = Color.Black ,
+    surface = Color.White,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onTertiary = Color.White,
+    onBackground = Color(0xFF1C1B1F),
+    onSurface = Color(0xFF1C1B1F),
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF423E3E),
     secondary = Color(0xFF423E3E),
     tertiary = Color(0xFF423E3E),
-    background = Color.White,
+    background = Color.White ,
     surface = Color.White,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
-    onBackground = Color(0xFF423E3E),
-    onSurface = Color(0xFF423E3E),
+    onBackground = Color(0xFF1C1B1F),
+    surfaceTint = Color(0xFFFFFFFF), // Card
+    onSurface = Color(0xFF1C1B1F),
 )
 
 @Composable
 fun SpendSavvyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

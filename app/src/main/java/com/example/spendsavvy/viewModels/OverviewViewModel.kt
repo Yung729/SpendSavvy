@@ -57,29 +57,25 @@ class OverviewViewModel(
 
     fun getTransactionRecord() {
         viewModelScope.launch {
+            val transactionsFromDB: List<Transactions>
 
             isLoading.value = true
             try {
-                if (internet) {
-                    val transactionsFromFirestore = firestoreRepository.readItemsFromDatabase(
+                transactionsFromDB = if (internet) {
+                    firestoreRepository.readItemsFromDatabase(
                         currentUserId,
                         "Transactions",
                         Transactions::class.java
                     )
-
-                    updateTransactions(
-                        transactionsFromFirestore,
-                        selectedDate = selectedDateFromUser.value ?: Date()
-                    )
-
                 } else {
-                    val transactionsFromSQLite = dbHelper.readTransactions(userId = currentUserId)
+                    dbHelper.readTransactions(userId = currentUserId)
 
-                    updateTransactions(
-                        transactionsFromSQLite,
-                        selectedDate = selectedDateFromUser.value ?: Date()
-                    )
                 }
+
+                updateTransactions(
+                    transactionsFromDB,
+                    selectedDate = selectedDateFromUser.value ?: Date()
+                )
 
 
             } catch (e: Exception) {
@@ -243,7 +239,14 @@ class OverviewViewModel(
                             userId = currentUserId
 
                         )
-                        getTransactionRecord()
+                        val currentTransactions = transactionsList.value ?: emptyList()
+                        val updatedTransactionsList = currentTransactions.map {
+                            if (it == transactions) updatedTransactions else it
+                        }
+                        updateTransactions(
+                            transactions = updatedTransactionsList,
+                            selectedDate = selectedDateFromUser.value ?: Date()
+                        )
                     }
                 )
 
@@ -265,7 +268,12 @@ class OverviewViewModel(
                     transactionId,
                     onSuccess = {
                         dbHelper.deleteTransaction(transactionId, currentUserId)
-                        getTransactionRecord()
+                        val currentTransactions = transactionsList.value ?: emptyList()
+                        val updatedTransactions = currentTransactions.filter { it != transaction }
+                        updateTransactions(
+                            transactions = updatedTransactions,
+                            selectedDate = selectedDateFromUser.value ?: Date()
+                        )
                     }
                 )
 
@@ -300,7 +308,14 @@ class OverviewViewModel(
                             transactionType = transaction.transactionType,
                             userId = currentUserId
                         )
-                        getTransactionRecord()
+
+                        val currentTransactions = transactionsList.value ?: emptyList()
+                        val updatedTransactions = currentTransactions + transaction
+                        updateTransactions(
+                            transactions = updatedTransactions,
+                            selectedDate = selectedDateFromUser.value ?: Date()
+                        )
+
                         onSuccess() // Invoke the onSuccess callback
                     },
                     onFailure = { exception ->
@@ -314,7 +329,6 @@ class OverviewViewModel(
             }
         }
     }
-
 
 
 }

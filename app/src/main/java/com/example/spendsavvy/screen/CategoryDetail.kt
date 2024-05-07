@@ -60,9 +60,6 @@ fun CategoryDetail(
         mutableIntStateOf(if (category.categoryType == "Expenses") 0 else 1)
     }
 
-    var updatedSelectedIndex by remember {
-        mutableIntStateOf(0)
-    }
 
     var updatedCategoryName by remember {
         mutableStateOf(category.categoryName)
@@ -74,6 +71,22 @@ fun CategoryDetail(
 
     var updatedCategoryType by remember {
         mutableStateOf(category.categoryType)
+    }
+
+    var updatedSelectedIndex by remember {
+        mutableIntStateOf(
+            when (updatedCategoryType) {
+                "Expenses" -> {
+                    0
+                }
+                "Incomes" -> {
+                    1
+                }
+                else -> {
+                    2
+                }
+            }
+        )
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(

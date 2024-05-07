@@ -1,7 +1,6 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -96,9 +95,17 @@ fun CategoryScreen(
 
 
             if (selectedIndex == 0) {
-                CategoryList(categoryList = expenseList, catViewModel = catViewModel, navController = navController)
+                CategoryList(
+                    categoryList = expenseList,
+                    catViewModel = catViewModel,
+                    navController = navController
+                )
             } else if (selectedIndex == 1) {
-                CategoryList(categoryList = incomeList, catViewModel = catViewModel,navController = navController)
+                CategoryList(
+                    categoryList = incomeList,
+                    catViewModel = catViewModel,
+                    navController = navController
+                )
             }
 
 
@@ -141,7 +148,10 @@ fun CategoryScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryCard(
-    category: Category, modifier: Modifier = Modifier, catViewModel: CategoryViewModel,navController: NavController
+    category: Category,
+    modifier: Modifier = Modifier,
+    catViewModel: CategoryViewModel,
+    navController: NavController
 ) {
 
 
@@ -164,8 +174,7 @@ fun CategoryCard(
                     )
 
                     navController.navigate(Screen.CategoryDetail.route)
-                }
-                , colors = CardDefaults.cardColors(
+                }, colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
                 ), border = BorderStroke(width = 1.dp, Color.Black)
             ) {

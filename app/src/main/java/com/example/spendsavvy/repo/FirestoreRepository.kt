@@ -4,7 +4,6 @@ package com.example.spendsavvy.repo
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
-import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -120,110 +119,6 @@ class FirestoreRepository {
         return null
     }
 
-
-    fun addOrUpdateSecondFieldItem(
-        userId: String,
-        collectionName: String,
-        fieldName: String,
-        fieldData: Any,
-        onSuccess: (String) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-
-        val documentRef = firestore.collection("Users").document(userId).collection("Wallet").document("1")
-            .collection(collectionName).document(fieldName)
-
-        val walletData = hashMapOf(
-            fieldName to fieldData
-        )
-
-        documentRef.set(walletData)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully written")
-                onSuccess("")
-            }
-            .addOnFailureListener { e ->
-                Log.d(TAG, "DocumentSnapshot unsuccessfully written")
-                onFailure(e)
-            }
-
-
-    }
-
-    suspend fun readItemsWalletCollection(
-        userId: String,
-        collectionName: String,
-        fieldName: String
-    ): Any?{
-        try {
-            val querySnapshot = firestore.collection("Users").document(userId).collection("Wallet").document("1")
-                .collection(collectionName).get().await()
-
-            for (document in querySnapshot.documents) {
-                val fieldValue = document[fieldName]
-                if (fieldValue != null) {
-                    return fieldValue
-                }
-            }
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting items from $collectionName", e)
-        }
-        return null
-    }
-
-    fun addWalletItems(
-        userId: String,
-        collectionName: String,
-        item: Any,
-        itemIdFormat: String,
-        onSuccess: (String) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-
-        val documentRef = firestore.collection("Users").document(userId).collection("Wallet").document("1")
-            .collection(collectionName)
-
-        documentRef
-            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                var latestId = 0
-
-                // If there are documents, parse the latest ID
-                if (!querySnapshot.isEmpty) {
-                    val latestDocument = querySnapshot.documents[0]
-                    val latestDocumentId = latestDocument.id
-                    // Extract the numeric part of the document ID
-                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
-                }
-
-                // Generate the new document ID
-                val newId = itemIdFormat.format(latestId + 1)
-
-                // Create a new document reference with the generated ID
-                val newDocumentRef = documentRef.document(newId)
-
-                // Set the category data for the new document
-                newDocumentRef.set(item)
-                    .addOnSuccessListener {
-                        Log.d(
-                            TAG,
-                            "DocumentSnapshot successfully written with ID: $newId"
-                        )
-                        onSuccess(newId)
-                    }
-                    .addOnFailureListener { e ->
-                        onFailure(e)
-                    }
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error getting documents", e)
-            }
-
-
-    }
 
     fun addItemList(
         userId: String,
@@ -429,45 +324,6 @@ class FirestoreRepository {
         return itemList
     }
 
-    suspend fun <T : Any> readWalletItemsFromDatabase(
-        userId: String,
-        collectionName: String,
-        itemClass: Class<T>,
-        ): List<T> {
-        val firestore = FirebaseFirestore.getInstance()
-        val itemList = mutableListOf<T>()
-
-        try {
-            val querySnapshot = firestore.collection("Users").document(userId)
-                .collection("Wallet").document("1").collection(collectionName).get().await()
-            for (document in querySnapshot.documents) {
-                val itemData = document.data
-
-                val item = itemClass.newInstance()
-                // Set the values of item fields
-                if (itemData != null) {
-
-                    for ((fieldName, value) in itemData) {
-                        try {
-
-                            val field = itemClass.getDeclaredField(fieldName)
-                            field.isAccessible = true
-
-                            field.set(item, value)
-
-                        } catch (e: NoSuchFieldException) {
-                            Log.e(TAG, "Field '$fieldName' not found in $itemClass", e)
-                        }
-                    }
-                }
-                item.let { itemList.add(it) }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting items from $collectionName", e)
-        }
-
-        return itemList
-    }
 
     suspend fun getDocumentId(collectionName: String, userId: String, data: Any): String {
         try {
@@ -554,6 +410,154 @@ class FirestoreRepository {
             }
     }
 
+    //----------------------  Two Collection -----------------------------------------------------------
+    fun addOrUpdateSecondFieldItem(
+        userId: String,
+        collectionName: String,
+        fieldName: String,
+        fieldData: Any,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+
+        val documentRef =
+            firestore.collection("Users").document(userId).collection("Wallet").document("1")
+                .collection(collectionName).document(fieldName)
+
+        val walletData = hashMapOf(
+            fieldName to fieldData
+        )
+
+        documentRef.set(walletData)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully written")
+                onSuccess("")
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "DocumentSnapshot unsuccessfully written")
+                onFailure(e)
+            }
+
+
+    }
+
+    suspend fun readItemsWalletCollection(
+        userId: String,
+        collectionName: String,
+        fieldName: String
+    ): Any? {
+        try {
+            val querySnapshot =
+                firestore.collection("Users").document(userId).collection("Wallet").document("1")
+                    .collection(collectionName).get().await()
+
+            for (document in querySnapshot.documents) {
+                val fieldValue = document[fieldName]
+                if (fieldValue != null) {
+                    return fieldValue
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting items from $collectionName", e)
+        }
+        return null
+    }
+
+    fun addWalletItems(
+        userId: String,
+        collectionName: String,
+        item: Any,
+        itemIdFormat: String,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+
+        val documentRef =
+            firestore.collection("Users").document(userId).collection("Wallet").document("1")
+                .collection(collectionName)
+
+        documentRef
+            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                var latestId = 0
+
+                // If there are documents, parse the latest ID
+                if (!querySnapshot.isEmpty) {
+                    val latestDocument = querySnapshot.documents[0]
+                    val latestDocumentId = latestDocument.id
+                    // Extract the numeric part of the document ID
+                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
+                }
+
+                // Generate the new document ID
+                val newId = itemIdFormat.format(latestId + 1)
+
+                // Create a new document reference with the generated ID
+                val newDocumentRef = documentRef.document(newId)
+
+                // Set the category data for the new document
+                newDocumentRef.set(item)
+                    .addOnSuccessListener {
+                        Log.d(
+                            TAG,
+                            "DocumentSnapshot successfully written with ID: $newId"
+                        )
+                        onSuccess(newId)
+                    }
+                    .addOnFailureListener { e ->
+                        onFailure(e)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error getting documents", e)
+            }
+
+
+    }
+
+    suspend fun <T : Any> readWalletItemsFromDatabase(
+        userId: String,
+        collectionName: String,
+        itemClass: Class<T>,
+    ): List<T> {
+        val firestore = FirebaseFirestore.getInstance()
+        val itemList = mutableListOf<T>()
+
+        try {
+            val querySnapshot = firestore.collection("Users").document(userId)
+                .collection("Wallet").document("1").collection(collectionName).get().await()
+            for (document in querySnapshot.documents) {
+                val itemData = document.data
+
+                val item = itemClass.newInstance()
+                // Set the values of item fields
+                if (itemData != null) {
+
+                    for ((fieldName, value) in itemData) {
+                        try {
+
+                            val field = itemClass.getDeclaredField(fieldName)
+                            field.isAccessible = true
+
+                            field.set(item, value)
+
+                        } catch (e: NoSuchFieldException) {
+                            Log.e(TAG, "Field '$fieldName' not found in $itemClass", e)
+                        }
+                    }
+                }
+                item.let { itemList.add(it) }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting items from $collectionName", e)
+        }
+
+        return itemList
+    }
+
     fun updateWalletItemsInFirestoreByName(
         userId: String,
         collectionName: String,
@@ -561,8 +565,9 @@ class FirestoreRepository {
         item: Any,
         onSuccess: () -> Unit
     ) {
-        val documentRef = firestore.collection("Users").document(userId).collection("Wallet").document("1")
-            .collection(collectionName).document(typeName)
+        val documentRef =
+            firestore.collection("Users").document(userId).collection("Wallet").document("1")
+                .collection(collectionName).document(typeName)
 
         documentRef.set(item)
             .addOnSuccessListener {

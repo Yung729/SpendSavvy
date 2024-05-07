@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -61,6 +63,11 @@ fun CashScreen(
 
     var isDialogPopUp = remember { mutableStateOf(false) }
 
+    var totalAccount = remember {
+        mutableStateOf(0)
+    }
+
+
     val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
     Column(modifier = Modifier.padding(10.dp)) {
@@ -78,6 +85,7 @@ fun CashScreen(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -98,6 +106,12 @@ fun CashScreen(
 
             }
 
+            for (cashDetails in cashDetailsList) {
+                if (cashDetails.type == "Cash")
+                    CashList(cash = cashDetails)
+                else
+                    totalAccount.value ++
+            }
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -116,19 +130,24 @@ fun CashScreen(
             )
 
             Text(
-                text = "3 Accounts", /*calculate acc*/
+                text = "${totalAccount.value} Accounts", /*calculate acc*/
                 fontFamily = poppinsFontFamily
             )
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
-        Divider(color = Color.Gray, thickness = 0.7.dp)
-        Spacer(modifier = Modifier.height(15.dp))
+        for (cashDetails in cashDetailsList) {
+            if (cashDetails.type == "Bank")
+                BankAccList(cashDetailsList, modifier)
+
+            Spacer(modifier = Modifier.height(15.dp))
+            Divider(color = Color.Gray, thickness = 0.7.dp)
+            Spacer(modifier = Modifier.height(15.dp))
+        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
 
             }
 
@@ -207,9 +226,10 @@ fun CashPopUpScreen(
 
     val options = mutableStateListOf<String>("Cash", "Bank")
 
-    val addition = incAmt.toDoubleOrNull()?:0.0
-    val substraction = decAmt.toDoubleOrNull()?:0.0
-    val totalBalance = calculateCashBalance(balance = cash.balance , incAmt = addition, decAmt = substraction)
+    val addition = incAmt.toDoubleOrNull() ?: 0.0
+    val substraction = decAmt.toDoubleOrNull() ?: 0.0
+    val totalBalance =
+        calculateCashBalance(balance = cash.balance, incAmt = addition, decAmt = substraction)
 
     Dialog(
         onDismissRequest = { onCancelClick() },
@@ -230,22 +250,21 @@ fun CashPopUpScreen(
                 fontSize = 15.sp,
                 modifier = Modifier
                     .padding(start = 15.dp, top = 15.dp)
-                )
+            )
 
             Spacer(modifier = Modifier.height(30.dp))
 
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 SingleChoiceSegmentedButtonRow {
-                    options.forEachIndexed{
-                        index, option ->
+                    options.forEachIndexed { index, option ->
                         SegmentedButton(
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = options.size
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index, count = options.size
                             )
                         ) {
                             Text(text = option)
@@ -256,7 +275,7 @@ fun CashPopUpScreen(
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            if(selectedIndex == 1){
+            if (selectedIndex == 1) {
 
                 Column(
                     modifier = Modifier
@@ -289,7 +308,7 @@ fun CashPopUpScreen(
                             expanded = isExpanded,
                             onDismissRequest = { isExpanded = false }
                         ) {
-                            for(i in bankName) {
+                            for (i in bankName) {
                                 DropdownMenuItem(
                                     text = {
                                         Text(text = i)
@@ -305,7 +324,8 @@ fun CashPopUpScreen(
                 }
                 Spacer(modifier = Modifier.height(15.dp))
 
-                Text(text = "Increase Amount",
+                Text(
+                    text = "Increase Amount",
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp
                 )
@@ -321,7 +341,7 @@ fun CashPopUpScreen(
                             fontFamily = poppinsFontFamily,
                             fontSize = 15.sp,
                             color = Color.Gray
-                            )
+                        )
                     }
                 )
 
@@ -357,7 +377,7 @@ fun CashPopUpScreen(
                     .padding(15.dp),
                 horizontalArrangement = Arrangement.spacedBy(30.dp),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Button(
                     onClick = {
                         onCancelClick()
@@ -383,7 +403,7 @@ fun CashPopUpScreen(
                             updatedCashDetails = Cash(
                                 type = cash.type,
                                 typeName = cash.typeName,
-                                balance = totalBalance.toDoubleOrNull()?:0.0
+                                balance = totalBalance.toDoubleOrNull() ?: 0.0
                             )
                         )
                     },
@@ -406,18 +426,49 @@ fun CashPopUpScreen(
 }
 
 @Composable
-fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): String{
-        return NumberFormat.getInstance().format(balance + incAmt - decAmt)
+fun CashList(           //used to return cash balance only
+    cash: Cash
+) {
+    Text(
+        text = "RM ${cash.balance}",
+        fontFamily = poppinsFontFamily
+    )
 }
 
-/*@Preview(showBackground = true)
+@Composable
+fun BankAccList(
+    bankList: List<Cash>,
+    modifier: Modifier
+){
+    LazyColumn {
+        items(bankList){ item: Cash ->
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = item.typeName)
+
+                Text(text = "RM ${item.balance}")
+            }
+        }
+    }
+}
+
+@Composable
+fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): String {
+    return NumberFormat.getInstance().format(balance + incAmt - decAmt)
+}
+
+
+@Preview(showBackground = true)
 @Composable
 fun CashScreenPreview() {
     CashScreen(
         Modifier
             .fillMaxSize()
             .padding(20.dp),
+        cash = Cash("Cash", "Cash", 200.0),
         walletViewModel = viewModel()
     )
 
-}*/
+}

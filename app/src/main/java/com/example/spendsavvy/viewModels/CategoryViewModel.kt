@@ -30,26 +30,29 @@ class CategoryViewModel(
 
     val expensesList = MutableLiveData<List<Category>>()
     val incomeList = MutableLiveData<List<Category>>()
-    val categoryList = MutableLiveData<List<Category>>()
+    private val categoryList = MutableLiveData<List<Category>>()
 
-    val currentUserId = userId
+    private val currentUserId = userId
+
+    init {
+        getCategoriesList()
+    }
+
 
     private fun getCategoriesList(userId: String = currentUserId) {
         viewModelScope.launch {
             try {
-                if (internet) {
-                    val categoriesFromFirestore = firestoreRepository.readItemsFromDatabase(
+                val categoriesFromDB: List<Category> = if (internet) {
+                    firestoreRepository.readItemsFromDatabase(
                         userId, "Categories", Category::class.java
                     )
-
-                    updateCategories(categoriesFromFirestore)
-
                 } else {
                     // Fetch data from SQLite
-                    val categoriesFromSQLite = dbHelper.readCategory(userId)
-                    updateCategories(categoriesFromSQLite)
+                    dbHelper.readCategory(userId)
 
                 }
+
+                updateCategories(categoriesFromDB)
             } catch (e: Exception) {
                 Log.e(TAG, "Error getting categories", e)
             }
@@ -71,10 +74,6 @@ class CategoryViewModel(
         categoryList.postValue(categories)
         expensesList.postValue(expenseCategories)
         incomeList.postValue(incomeCategories)
-    }
-
-    init {
-        getCategoriesList()
     }
 
 
@@ -100,7 +99,11 @@ class CategoryViewModel(
                             updatedCategory.categoryType,
                             currentUserId
                         )
-                        getCategoriesList()
+                        val currentCategories = categoryList.value ?: emptyList()
+                        val updatedCategories = currentCategories.map {
+                            if (it == category) updatedCategory else it
+                        }
+                        updateCategories(categories = updatedCategories)
                     })
 
             } catch (e: Exception) {
@@ -124,7 +127,9 @@ class CategoryViewModel(
                             categoryId,
                             currentUserId
                         )
-                        getCategoriesList()
+                        val currentCategories = categoryList.value ?: emptyList()
+                        val updatedCategories = currentCategories.filter { it != category }
+                        updateCategories(categories = updatedCategories)
                     })
 
 
@@ -137,7 +142,8 @@ class CategoryViewModel(
     fun initializeCategoryToFirestore(userId: String) {
 
         val categoryData = CategoryData().loadCategory()
-
+        val currentCategories = categoryList.value ?: emptyList()
+        var updatedCategories = currentCategories
 
         firestoreRepository.addItemList(userId, "Categories", categoryData, "CT%04d",
 
@@ -154,7 +160,10 @@ class CategoryViewModel(
                             category.categoryType,
                             userId
                         )
+                        updatedCategories = currentCategories + category
                     }
+
+                    updateCategories(categories = updatedCategories)
                     getCategoriesList(userId)
                 } else {
                     Log.e(TAG, "Document ID list is empty")
@@ -176,8 +185,6 @@ class CategoryViewModel(
             return
         }
 
-
-
         if (imageUri != null) {
             val storageRef = FirebaseStorage.getInstance().reference
 
@@ -186,7 +193,6 @@ class CategoryViewModel(
                 firestoreRepository.addItem(currentUserId, "Categories", category, "CT%04d",
 
                     onSuccess = { documentId ->
-                        getCategoriesList()
                         dbHelper.addNewCategory(
                             documentId,
                             category.imageUri,
@@ -194,6 +200,13 @@ class CategoryViewModel(
                             category.categoryType,
                             currentUserId
                         )
+                        val currentCategories = categoryList.value ?: emptyList()
+                        val updatedCategories = currentCategories + category
+                        updateCategories(categories = updatedCategories)
+                        Toast.makeText(
+                            currentContext, "Category added", Toast.LENGTH_SHORT
+                        ).show()
+
                     }, onFailure = { exception ->
                         Log.e(TAG, "Error adding category", exception)
                         // Handle failure
@@ -212,7 +225,13 @@ class CategoryViewModel(
                         category.categoryType,
                         currentUserId
                     )
-                    getCategoriesList()
+                    val currentCategories = categoryList.value ?: emptyList()
+                    val updatedCategories = currentCategories + category
+                    updateCategories(categories = updatedCategories)
+                    Toast.makeText(
+                        currentContext, "Category added", Toast.LENGTH_SHORT
+                    ).show()
+
                 }, onFailure = {
 
 
