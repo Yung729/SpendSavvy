@@ -29,6 +29,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Language : Screen(route = "Language", R.drawable.language_icon)
     object HelpAndSupport : Screen(route = "Help And Support", R.drawable.help_icon)
     object ManageBillsAndInstalment : Screen(route = "Bills & Instalment", R.drawable.bills_icon)
+    object AddBills : Screen(route = "Add Bills", R.drawable.add_icon)
     object TaxCalculator : Screen(route = "Tax Calculator", R.drawable.calculator_icon)
     object AddExpenses : Screen(route = "Expenses", R.drawable.calculator_icon)
     object AddIncomes : Screen(route = "Incomes", R.drawable.calculator_icon)

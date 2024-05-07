@@ -40,6 +40,7 @@ import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
+import com.example.spendsavvy.screen.AddBills
 import com.example.spendsavvy.screen.AddCategoryScreen
 import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AddIncomeScreen
@@ -66,6 +67,7 @@ import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
+import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
@@ -380,6 +382,17 @@ fun TabsNavGraph(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp), navController = navController
+                )
+            }
+            composable(
+                route = Screen.AddBills.route
+            ) {
+                AddBills(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp), navController = navController,
+                    billsViewModel = BillsViewModel(),
+                    catViewModel = categoryViewModel
                 )
             }
             composable(

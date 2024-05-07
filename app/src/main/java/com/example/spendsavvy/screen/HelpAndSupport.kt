@@ -187,7 +187,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
                     text = "Ask us about your questions",
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp,
+                    fontSize = 20.sp,
                     color = Color.Black,
                     modifier = Modifier.fillMaxWidth()
                 )

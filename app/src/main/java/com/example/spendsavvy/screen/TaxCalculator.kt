@@ -186,27 +186,36 @@ fun TaxCalculator(
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                     onClick = {
-                        if (!isMonthly && !isAnnually) {
-                            Toast.makeText(
-                                context,
-                                "Please select one of the income period",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else if (initialAmount == "")
-                        {
-                            Toast.makeText(
-                                context,
-                                "Please enter initial amount",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        else {
-                            taxViewModel.calculateTax(
-                                initialAmount,
-                                selectedDate,
-                                isMonthly,
-                                isAnnually
-                            )
+                        when {
+                            !isMonthly && !isAnnually -> {
+                                Toast.makeText(
+                                    context,
+                                    "Please select one of the income periods",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            initialAmount.isBlank() -> {
+                                Toast.makeText(
+                                    context,
+                                    "Please enter the initial amount",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            selectedDate.year == LocalDate.now().year -> {
+                                Toast.makeText(
+                                    context,
+                                    "Please select a valid tax year",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            else -> {
+                                taxViewModel.calculateTax(
+                                    initialAmount,
+                                    selectedDate,
+                                    isMonthly,
+                                    isAnnually
+                                )
+                            }
                         }
                     },
                     modifier = Modifier
@@ -218,29 +227,35 @@ fun TaxCalculator(
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                     onClick = {
-                        transactionViewModel.addTransactionToFirestore(
-                            Transactions(
-                                amount = tax,
-                                description = "Income Tax",
-                                date = date,
-                                category = Category(
-                                    imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
-                                    categoryName = "Income Tax",
-                                    categoryType = "Expenses"
+                        if(tax != 0.0) {
+                            transactionViewModel.addTransactionToFirestore(
+                                Transactions(
+                                    amount = tax,
+                                    description = "Income Tax",
+                                    date = date,
+                                    category = Category(
+                                        imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
+                                        categoryName = "Income Tax",
+                                        categoryType = "Expenses"
+                                    ),
+                                    transactionType = "Expenses"
                                 ),
-                                transactionType = "Expenses"
-                            ),
-                            onSuccess = {
-                                showDialog = true
-                                success = true
-                                println("Income Tax added successfully")
-                            },
-                            onFailure = {
-                                showDialog = true
-                                success = false
-                                println("Failed to add income Tax")
-                            }
-                        )
+                                onSuccess = {
+                                    showDialog = true
+                                    success = true
+                                    println("Income Tax added successfully")
+                                },
+                                onFailure = {
+                                    showDialog = true
+                                    success = false
+                                    println("Failed to add income Tax")
+                                }
+                            )
+                        }
+                        else{
+                            showDialog = true
+                            success = false
+                        }
                         println("$tax")
                         println("$date")
                     },
@@ -520,7 +535,6 @@ fun DisplayIncomeTax(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerItem(
@@ -537,7 +551,7 @@ fun DatePickerItem(
         )
     }
     val validYear = currentYear - 1
-    var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -553,11 +567,10 @@ fun DatePickerItem(
             Text(
                 text = label,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
                 text = "( 2013 - $validYear )",
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 modifier = Modifier.padding(start = 6.dp)
             )
             Icon(
@@ -601,50 +614,16 @@ fun DatePickerItem(
         ),
         selection = CalendarSelection.Date { date ->
             if (date.year == currentYear) {
-                showDialog = true
+                Toast.makeText(
+                    context,
+                    "Please select a valid tax year",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 onDateSelected(date)
             }
         }
     )
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = {
-                Text(
-                    text = "You selected a date from the current year",
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp,
-                    color = Color.Red,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            confirmButton = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = CenterHorizontally
-                ) {
-                    Button(
-                        onClick = {
-                            showDialog = false
-                        },
-                        modifier = Modifier
-                            .padding(start = 8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.DarkGray,
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(text = "Try Again" )
-                    }
-                }
-            }
-        )
-    }
-
 }
 @Preview(showBackground = true)
 @Composable
