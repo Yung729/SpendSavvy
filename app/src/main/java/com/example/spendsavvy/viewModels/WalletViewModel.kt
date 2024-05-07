@@ -32,9 +32,6 @@ class WalletViewModel(
     val FDAccountList = MutableLiveData<List<FDAccount>>()      //hold on
     val stockListLive = MutableLiveData<List<Stock>>()
 
-    //cash
-    val balanceTotal = MutableLiveData<Double>()
-
     //stock
     val totalPriceStock = MutableLiveData<Double>()
 
@@ -63,6 +60,8 @@ class WalletViewModel(
         cashDetailsList.postValue(cash)
     }
 
+
+
     private suspend fun getTypeName(cash: Cash): String {
         return firestoreRepository.getDocumentId("Cash", userId, cash)
     }
@@ -84,7 +83,14 @@ class WalletViewModel(
                             userId
                         )*/
 
-                        getCashDetails()
+                        val cashInfo = cashDetailsList.value?: emptyList()
+                        val updatedCashDetailsList = cashInfo.map{
+                            if(it == cash) updatedCashDetails else it
+                        }
+
+                        updateCashInfo(
+                            cash = updatedCashDetailsList
+                        )
                     }
                 )
             } catch (e: Exception) {
@@ -161,15 +167,70 @@ class WalletViewModel(
         totalPriceStock.postValue(totalPrice)
     }
 
-    /*private fun updateFDAccountDetails(bankAccount: List<FDAccount>){
-        var totalDeposit = 0.0
-
-        for (details in bankAccount) {
-            totalDeposit += details.deposit
+    fun addStockDetailsToDatabase(stock: Stock){
+        viewModelScope.launch {
+            try {
+                firestoreRepository.addWalletItems(
+                    userId,
+                    "Stock",
+                    stock,
+                    "S%04d",
+                    onSuccess = {
+                        /*dbHelper.addNewCashDetails(
+                            type = cash.type,
+                            typeName = cash.typeName,
+                            balance = cash.balance,
+                            userId = userId
+                        )*/
+                        getCashDetails()
+                    },
+                    onFailure = { exception ->
+                        Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error adding cash details", e)
+            }
         }
+    }
 
-    }*/
+    private suspend fun getProductName(stock: Stock): String {
+        return firestoreRepository.getDocumentId("Stock", userId, stock)
+    }
 
+    fun editStockDetails(stock: Stock, updatedStockDetails: Stock){
+        viewModelScope.launch{
+            try{
+                val productName = getProductName(stock)
 
+                firestoreRepository.updateWalletItemsInFirestoreByName(
+                    userId,
+                    "Stock",
+                    productName,
+                    updatedStockDetails,
+                    onSuccess = {
+                        /*dbHelper.updateCashDetails(
+                            updatedCashDetails.type,
+                            typeName,
+                            updatedCashDetails.balance,
+                            userId
+                        )*/
+
+                        val stockInfo = stockListLive.value?: emptyList()
+                        val updatedStockDetailsList = stockInfo.map{
+                            if(it == stock) updatedStockDetails else it
+                        }
+
+                        updateStockDetails(
+                            stockList = updatedStockDetailsList
+                        )
+
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error editing stock details", e)
+            }
+        }
+    }
 
 }
