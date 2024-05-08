@@ -46,6 +46,7 @@ import com.example.spendsavvy.screen.AddBills
 import com.example.spendsavvy.screen.AddCategoryScreen
 import com.example.spendsavvy.screen.AddExpensesScreen
 import com.example.spendsavvy.screen.AddIncomeScreen
+import com.example.spendsavvy.screen.AddNewStockScreen
 import com.example.spendsavvy.screen.AllTransactionScreen
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.BudgetScreen
@@ -56,6 +57,7 @@ import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
+import com.example.spendsavvy.screen.EditStockScreen
 import com.example.spendsavvy.screen.ForgotPassword
 import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
@@ -341,12 +343,8 @@ fun TabsNavGraph(
                 route = Screen.Cash.route
             ) {
                 CashScreen(
-<<<<<<< Updated upstream
-                    cashViewModel = walletViewModel
-=======
                     cashViewModel = walletViewModel,
                     navController = navController
->>>>>>> Stashed changes
                 )
             }
 
@@ -367,7 +365,36 @@ fun TabsNavGraph(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp),
-                    stockViewModel = walletViewModel
+                    walletViewModel = walletViewModel,
+                    navController = navController
+                )
+            }
+
+            composable(
+                route = Screen.AddStock.route
+            ){
+                AddNewStockScreen(
+
+                )
+            }
+
+            composable(
+                route = Screen.AddExistingStock.route
+            ){
+                EditStockScreen(
+                    walletViewModel = walletViewModel,
+                    navController = navController,
+                    mode = 1
+                )
+            }
+
+            composable(
+                route = Screen.EditStock.route
+            ){
+                EditStockScreen(
+                    walletViewModel = walletViewModel,
+                    navController = navController,
+                    mode = 2
                 )
             }
 

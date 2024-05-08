@@ -146,7 +146,7 @@ class WalletViewModel(
                     Stock::class.java
                 )
 
-                updateStockDetails(stockDetailsFromFirestore)
+                updateStockTotalPrice(stockDetailsFromFirestore)
 
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error getting stock details", e)
@@ -154,14 +154,13 @@ class WalletViewModel(
         }
     }
 
-    private  fun updateStockDetails(stockList: List<Stock>){
+    private  fun updateStockTotalPrice(stockList: List<Stock>){
         var totalPrice = 0.0
 
         for (stock in stockList){
             totalPrice += stock.originalPrice * stock.quantity
         }
 
-        stockListLive.postValue(stockList)
         totalPriceStock.postValue(totalPrice)
     }
 
@@ -228,6 +227,10 @@ class WalletViewModel(
                 Log.e(ContentValues.TAG, "Error editing stock details", e)
             }
         }
+    }
+
+    fun updateStockDetails(stockList: List<Stock>){
+        stockListLive.postValue(stockList)
     }
 
 }

@@ -46,16 +46,19 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Stock
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
 
 @Composable
 fun StockScreen(
     modifier: Modifier = Modifier,
-    stockViewModel: WalletViewModel
-    ) {
+    stockViewModel: WalletViewModel,
+    navController: NavController
+) {
 
     var isSelectionPopUp by remember {
         mutableStateOf(false)
@@ -159,7 +162,9 @@ fun StockScreen(
                     }
 
                     OutlinedButton(
-                        onClick = { isDialogPopUp = true },
+                        onClick = {
+                            navController.navigate(route = Screen.EditStock.route)
+                        },
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .bounceClick()
@@ -180,9 +185,7 @@ fun StockScreen(
     }
 
     if (isSelectionPopUp)
-        AddStockSelectionScreen(onCancelClick = { isSelectionPopUp = false }, {})
-    else if (isDialogPopUp)
-        EditExistingStockScreen(onCancelClick = { isDialogPopUp = false }, {}, 2)
+        AddStockSelectionScreen(onCancelClick = { isSelectionPopUp = false }, {}, navController)
 }
 
 
@@ -247,7 +250,8 @@ fun StockCard(stock: Stock, modifier: Modifier = Modifier) {
 @Composable
 fun AddStockSelectionScreen(
     onCancelClick: () -> Unit,
-    onConfirmClick: () -> Unit
+    onConfirmClick: () -> Unit,
+    navController: NavController
 ) {
     var isAddNewStock by remember {
         mutableStateOf(false)
@@ -323,362 +327,9 @@ fun AddStockSelectionScreen(
 
 
     if (isAddNewStock)
-        AddNewStockScreen(onCancelClick = { isAddNewStock = false }, onConfirmClick = {})
+        navController.navigate(route = Screen.AddStock.route)
     else if (isAddExistingStock) {
-        EditExistingStockScreen(
-            onCancelClick = { isAddExistingStock = false },
-            onConfirmClick = { },
-            scene = 1
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnrememberedMutableState", "RememberReturnType")
-@Composable
-fun AddNewStockScreen(
-    onCancelClick: () -> Unit,
-    onConfirmClick: () -> Unit
-) {
-
-    var stockName by remember {
-        mutableStateOf("")
-    }
-
-    var price by remember {
-        mutableStateOf("")
-    }
-
-    var qty by remember {
-        mutableStateOf("")
-    }
-
-    Dialog(
-        onDismissRequest = { onCancelClick() },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        Card(
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
-                .shadow(elevation = 15.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 15.dp, top = 15.dp)
-            ) {
-                Text(
-                    text = "Add New Product",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Text(
-                    text = "Product Name",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = stockName,
-                    onValueChange = {
-                        stockName = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "0",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-
-                Text(
-                    text = "Product Price",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = price,
-                    onValueChange = {
-                        price = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "0",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-
-                Text(
-                    text = "Quantity",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = qty,
-                    onValueChange = {
-                        qty = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "0",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Row(
-                    modifier = Modifier
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.spacedBy(30.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            onCancelClick()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Cancel",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            onConfirmClick()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Add",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnrememberedMutableState", "RememberReturnType")
-@Composable
-fun EditExistingStockScreen(
-    onCancelClick: () -> Unit,
-    onConfirmClick: () -> Unit,
-    scene: Int      //scene 1 = add existing stock, scene 2 = sell existing stock
-) {
-    var isExpanded by remember {
-        mutableStateOf(false)
-    }
-
-    var searchProduct by remember {
-        mutableStateOf("Blaze")
-    }
-
-    var price by remember {
-        mutableStateOf("")
-    }
-
-    var qty by remember {
-        mutableStateOf("")
-    }
-
-    Dialog(
-        onDismissRequest = { onCancelClick() },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        Card(
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
-                .shadow(elevation = 15.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 15.dp, top = 15.dp)
-            ) {
-                if (scene == 1) {
-                    Text(
-                        text = "Add Existing Stock",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
-                    )
-                } else {
-                    Text(
-                        text = "Sell Stock",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Text(
-                    text = "Product",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                ExposedDropdownMenuBox(
-                    expanded = isExpanded,
-                    onExpandedChange = { isExpanded = it }
-                ) {
-                    TextField(
-                        value = searchProduct,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                        },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                        modifier = Modifier.menuAnchor()
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = isExpanded,
-                        onDismissRequest = { isExpanded = false }
-                    ) {
-                        /*for(i in toyNames) {          //read from existing stock items
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = i)
-                                },
-                                onClick = {
-                                    searchProduct = i
-                                    isExpanded = false
-                                }
-                            )
-                        }*/
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Text(
-                    text = "Product Price",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = price,
-                    onValueChange = {
-                        price = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "0",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-
-                Text(
-                    text = "Quantity",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = qty,
-                    onValueChange = {
-                        qty = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "0",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Row(
-                    modifier = Modifier
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.spacedBy(30.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            onCancelClick()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Cancel",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            onConfirmClick()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Sell",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
-                    }
-                }
-            }
-        }
+        navController.navigate(route = Screen.AddExistingStock.route)
     }
 }
 
@@ -697,7 +348,7 @@ fun StockList(stockList: List<Stock>, modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun StockScreenPreview() {
     StockScreen(
@@ -707,4 +358,4 @@ fun StockScreenPreview() {
         stockViewModel = viewModel()
     )
 
-}
+}*/
