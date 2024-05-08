@@ -158,6 +158,8 @@ fun TabsNavGraph(
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
     val profileViewModel = ProfileViewModel(userId)
+    val billsViewModel = BillsViewModel(context, isConnected, userId)
+
 
     //Wallet
     val walletViewModel = WalletViewModel(context, userId)
@@ -464,7 +466,8 @@ fun TabsNavGraph(
                 ManageBillsAndInstalment(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp), navController = navController,
+                    transactionViewModel = transactionsViewModel
                 )
             }
             composable(
@@ -474,7 +477,7 @@ fun TabsNavGraph(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp), navController = navController,
-                    billsViewModel = BillsViewModel(),
+                    billsViewModel = billsViewModel,
                     catViewModel = categoryViewModel
                 )
             }

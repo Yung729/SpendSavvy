@@ -40,7 +40,7 @@ class CategoryViewModel(
     }
 
 
-    private fun getCategoriesList(userId: String = currentUserId) {
+     fun getCategoriesList(userId: String = currentUserId) {
         viewModelScope.launch {
             try {
                 val categoriesFromDB: List<Category> = if (internet) {
