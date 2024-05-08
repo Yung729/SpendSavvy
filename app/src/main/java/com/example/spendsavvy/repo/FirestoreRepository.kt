@@ -1,10 +1,12 @@
 package com.example.spendsavvy.repo
 
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.UserData
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -181,32 +183,6 @@ class FirestoreRepository {
 
     }
 
-    fun deleteItemFromFirestoreBySearhing(
-        userId: String,
-        collectionName: String,
-        fieldName: String,
-        value: String
-    ) {
-        val documentRef = firestore.collection("Users").document(userId).collection(collectionName)
-
-        documentRef.whereEqualTo(fieldName, value)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    // Delete the document using its ID
-                    document.reference.delete()
-                        .addOnSuccessListener {
-                            Log.d(TAG, "Document successfully deleted from Firestore")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.d(TAG, "Error deleting document from Firestore: $e")
-                        }
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.d(TAG, "Error querying document in Firestore: $e")
-            }
-    }
 
     fun deleteItemFromFirestoreById(
         userId: String,
@@ -579,6 +555,30 @@ class FirestoreRepository {
             .addOnFailureListener { e ->
                 Log.d(TAG, "Error updating document in Firestore: $e")
             }
+    }
+
+    // ---------------- User -----------------------------------------
+
+    fun readUser(userId: String,onSuccess: (UserData) -> Unit, onFailure: (Exception) -> Unit) : UserData{
+        val docRef = firestore.collection("Users").document(userId)
+        var userData = UserData()
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                     userData = document.toObject(UserData::class.java)!!
+                    if (userData != null) {
+                        onSuccess(userData)
+                    } else {
+                        onFailure(Exception("User data is null"))
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                // Handle failure
+                Log.w(TAG, "Error getting user data", e)
+            }
+
+        return userData
     }
 
 

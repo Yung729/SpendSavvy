@@ -6,37 +6,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.UserData
+import com.example.spendsavvy.repo.FirestoreRepository
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileViewModel(userId: String) : ViewModel() {
 
 
-    val db = FirebaseFirestore.getInstance()
+    val firestoreRepository = FirestoreRepository()
     val currentUser = userId
     var userData = MutableLiveData<UserData>()
 
     init {
-        getUserData {  user ->
-            userData.value = user
-        }
+         getUserData()
     }
-    fun getUserData(userId: String = currentUser, onDataReceived: (UserData) -> Unit) {
+    fun getUserData(userId: String = currentUser)  {
 
-        val docRef = db.collection("Users").document(userId)
+        firestoreRepository.readUser(userId,
+            onSuccess = { user ->
+                userData.value = user
+            },
+            onFailure = { e ->
+                Log.e("ProfileViewModel", "Error getting user data", e)
+            }
+        )
 
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val userData = document.toObject(UserData::class.java)
-                    if (userData != null) {
-                        onDataReceived(userData)
-                    }
-                }
-            }
-            .addOnFailureListener { e ->
-                // Handle failure
-                Log.w(ContentValues.TAG, "Error getting user data", e)
-            }
     }
 
 }
