@@ -41,8 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
 import java.text.NumberFormat
@@ -50,15 +52,13 @@ import java.text.NumberFormat
 @Composable
 fun CashScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
     cashViewModel: WalletViewModel
 ) {
-
-    var isDialogPopUp = remember { mutableStateOf(false) }
 
     var totalAccount = remember {
         mutableStateOf(0)
     }
-
 
     val cashDetailsList by cashViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
@@ -117,15 +117,18 @@ fun CashScreen(
         ) {
 
             Text(
-                text = "Fixed Deposit Accounts",
+                text = "Bank Accounts",
                 fontFamily = poppinsFontFamily
             )
 
             Text(
-                text = "${totalAccount.value} Accounts", /*calculate acc*/
+                text = "${totalAccount.value} Accounts",    //display total bank accounts
                 fontFamily = poppinsFontFamily
             )
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider(color = Color.Gray, thickness = 0.7.dp)
 
         for (cashDetails in cashDetailsList) {
             if (cashDetails.type == "Bank")
@@ -137,12 +140,6 @@ fun CashScreen(
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-            }
-
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -154,7 +151,9 @@ fun CashScreen(
                     horizontalAlignment = Alignment.End
                 ) {
                     Button(
-                        onClick = { isDialogPopUp.value = true },
+                        onClick = {
+                            navController.navigate(route = Screen.CashDetails.route)
+                        },
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .bounceClick()
@@ -174,293 +173,9 @@ fun CashScreen(
             }
         }
 
-        if (isDialogPopUp.value)
-            CashPopUpScreen(
-                onCancelClick = { isDialogPopUp.value = false },
-                {},
-                cashViewModel
-            )
     }
 
 
-}
-
-//change to new UI screen
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnrememberedMutableState", "RememberReturnType")
-@Composable
-fun CashPopUpScreen(
-    onCancelClick: () -> Unit,
-    onConfirmClick: () -> Unit,
-    walletViewModel: WalletViewModel
-) {
-
-
-    var bankName by remember {
-        mutableStateOf("Public Bank")
-    }
-
-    var incAmt by remember {
-        mutableStateOf("")
-    }
-
-    var decAmt by remember {
-        mutableStateOf("")
-    }
-
-    var selectedIndex by remember {
-        mutableStateOf(0)
-    }
-
-    val options = mutableStateListOf<String>("Cash", "Bank")
-    val cashInfo by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
-    //var cash
-    val addition = incAmt.toDoubleOrNull() ?: 0.0
-    val substraction = decAmt.toDoubleOrNull() ?: 0.0
-
-    //initial amount column will not show if the type already existed
-
-    /*   val totalBalance =
-           calculateCashBalance(balance = cashInfo[0].balance, incAmt = addition, decAmt = substraction)
-   */ //calculation
-
-
-    /*for (account in cashInfo){
-        if (account.type =="Cash"){
-            cash = account
-        }
-    }*/
-
-    Dialog(
-        onDismissRequest = { onCancelClick() },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        Card(
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
-                .shadow(elevation = 15.dp)
-        ) {
-            Text(
-                text = "Account",
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp,
-                modifier = Modifier
-                    .padding(start = 15.dp, top = 15.dp)
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                SingleChoiceSegmentedButtonRow {
-                    options.forEachIndexed { index, option ->
-                        SegmentedButton(
-                            selected = selectedIndex == index,
-                            onClick = { selectedIndex = index },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index, count = options.size
-                            )
-                        ) {
-                            Text(text = option)
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            if (selectedIndex == 1) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 15.dp, top = 15.dp)
-                ) {
-
-                    Text(
-                        text = "Enter your bank",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
-                    )
-
-                    TextField(
-                        value = bankName,
-                        onValueChange = {
-                            bankName = it
-                        },
-                        placeholder = {
-                            Text(
-                                text = "Public Bank",
-                                fontFamily = poppinsFontFamily,
-                                fontSize = 15.sp,
-                                color = Color.Gray
-                            )
-                        }
-                    )
-
-                    //val type = "bank"
-
-                    /*ExposedDropdownMenuBox(
-                        expanded = isExpanded,
-                        onExpandedChange = { isExpanded = it }
-                    ) {
-                        TextField(
-                            value = searchBank,
-                            onValueChange = {},
-                            readOnly = true,
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                            },
-                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                            modifier = Modifier.menuAnchor()
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = isExpanded,
-                            onDismissRequest = { isExpanded = false }
-                        ) {
-                            for (i in bankName) {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(text = i)
-                                    },
-                                    onClick = {
-                                        searchBank = i
-                                        isExpanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }*/
-                }
-                Spacer(modifier = Modifier.height(15.dp))
-
-                Text(
-                    text = "Increase Amount",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = incAmt,
-                    onValueChange = {
-                        incAmt = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "RM 0.00",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-                //if data exists, only show this feature
-
-                for (cash in cashInfo) {
-                    if (bankName == cash.typeName) {
-                        Text(
-                            text = "Decrease Amount",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp
-                        )
-
-                        TextField(
-                            value = decAmt,
-                            onValueChange = {
-                                decAmt = it
-                            },
-                            placeholder = {
-                                Text(
-                                    text = "RM 0.00",
-                                    fontFamily = poppinsFontFamily,
-                                    fontSize = 15.sp,
-                                    color = Color.Gray
-                                )
-                            }
-                        )
-                    } else {
-                        //addCashDetailsToDataBase
-                    }
-                }
-
-            }
-
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Row(
-                modifier = Modifier
-                    .padding(15.dp),
-                horizontalArrangement = Arrangement.spacedBy(30.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    onClick = {
-                        onCancelClick()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Cancel",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        for (cash in cashInfo) {
-                            if (bankName == cash.typeName) {
-
-                                walletViewModel.editCashDetails(
-                                    cash = cash,
-                                    updatedCashDetails = Cash(
-                                        type = cash.type,
-                                        typeName = cash.typeName,
-                                        balance = cash.balance + incAmt.toDoubleOrNull() as Double - decAmt.toDoubleOrNull() as Double
-                                    )
-                                )
-                            }
-                            else
-                                walletViewModel.addCashDetailsToDatabase(
-                                    Cash(
-                                        cash.type,
-                                        cash.typeName,
-                                        cash.balance
-                                    )
-                                )
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Update",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -473,6 +188,7 @@ fun CashList(           //used to return cash balance only
     )
 }
 
+//do all are clickable later
 @Composable
 fun BankAccList(
     bankList: List<Cash>,
@@ -484,17 +200,18 @@ fun BankAccList(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = item.typeName)
+                Text(
+                    text = item.typeName,
+                    fontSize = 10.sp
+                )
 
-                Text(text = "RM ${item.balance}")
+                Text(
+                    text = "RM ${item.balance}",
+                    fontSize = 10.sp
+                )
             }
         }
     }
-}
-
-@Composable
-fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): Double {
-    return balance + incAmt - decAmt
 }
 
 

@@ -66,6 +66,7 @@ fun StockScreen(
     }
 
     val stockListLive by stockViewModel.stockListLive.observeAsState(initial = emptyList())
+    val totalPriceStock by stockViewModel.totalPriceStock.observeAsState(initial = 0.00)
 
     // Calculate total stock balance
     /*    val totalStockBalance = remember {
@@ -115,7 +116,7 @@ fun StockScreen(
                     fontSize = 15.sp,
                 )
 
-                Text(text = "RM 12") //change to walletViewModel.totalPriceStock
+                Text(text = "RM $totalPriceStock")
             }
         }
 

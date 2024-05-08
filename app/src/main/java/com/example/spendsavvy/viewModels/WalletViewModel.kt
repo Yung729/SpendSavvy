@@ -180,7 +180,6 @@ class WalletViewModel(
                             balance = cash.balance,
                             userId = userId
                         )*/
-                        getCashDetails()
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding cash details", exception)

@@ -31,8 +31,10 @@ import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 
 @Composable
-fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
-
+fun WalletScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     Column(
         modifier = modifier
     ) {
@@ -101,7 +103,7 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
             Column {
                 Text(
-                    text = "Money",
+                    text = "Cash",
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp,
                     color = HeaderTitle
@@ -116,14 +118,16 @@ fun WalletScreen(modifier: Modifier = Modifier, navController: NavController) {
 
 
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    navController.navigate(route = Screen.Cash.route)
+                          },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
                 border = BorderStroke(1.dp, Color.Black)
 
             ) {
                 Text(
-                    text = "Add Transactions",
+                    text = "Add Cash Details",
                     color = Color.Black,
                     fontSize = 10.sp
                 )

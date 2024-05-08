@@ -49,6 +49,7 @@ import com.example.spendsavvy.screen.AddIncomeScreen
 import com.example.spendsavvy.screen.AllTransactionScreen
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.BudgetScreen
+import com.example.spendsavvy.screen.CashDetailsScreen
 import com.example.spendsavvy.screen.CashScreen
 import com.example.spendsavvy.screen.CategoryDetail
 import com.example.spendsavvy.screen.CategoryScreen
@@ -340,9 +341,24 @@ fun TabsNavGraph(
                 route = Screen.Cash.route
             ) {
                 CashScreen(
+<<<<<<< Updated upstream
                     cashViewModel = walletViewModel
+=======
+                    cashViewModel = walletViewModel,
+                    navController = navController
+>>>>>>> Stashed changes
                 )
             }
+
+            composable(
+                route = Screen.CashDetails.route
+            ){
+                CashDetailsScreen(
+                    walletViewModel = walletViewModel,
+                    navController = navController
+                )
+            }
+
 
             composable(
                 route = Screen.Stock.route
