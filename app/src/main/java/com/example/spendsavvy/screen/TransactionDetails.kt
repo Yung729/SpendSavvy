@@ -144,7 +144,7 @@ fun TransactionDetail(
                         ),
                         description = updatedTransactionDescription,
                         transactionType = transactions.transactionType,
-                        date = transactions.date
+                        date = updatedDate.value
 
                     )
                 )
