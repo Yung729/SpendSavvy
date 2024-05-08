@@ -60,11 +60,10 @@ class WalletViewModel(
         cashDetailsList.postValue(cash)
     }
 
-
-
     private suspend fun getTypeName(cash: Cash): String {
         return firestoreRepository.getDocumentId("Cash", userId, cash)
     }
+
     fun editCashDetails(cash: Cash, updatedCashDetails: Cash){
         viewModelScope.launch{
             try{
@@ -114,7 +113,6 @@ class WalletViewModel(
                             balance = cash.balance,
                             userId = userId
                         )*/
-                        getCashDetails()
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding cash details", exception)

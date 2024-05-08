@@ -18,10 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -40,15 +37,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.spendsavvy.components.bounceClick
-import com.example.spendsavvy.data.bankName
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
@@ -57,8 +50,7 @@ import java.text.NumberFormat
 @Composable
 fun CashScreen(
     modifier: Modifier = Modifier,
-    cash: Cash,
-    walletViewModel: WalletViewModel
+    cashViewModel: WalletViewModel
 ) {
 
     var isDialogPopUp = remember { mutableStateOf(false) }
@@ -68,7 +60,7 @@ fun CashScreen(
     }
 
 
-    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+    val cashDetailsList by cashViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
     Column(modifier = Modifier.padding(10.dp)) {
         Spacer(modifier = Modifier.height(25.dp))
@@ -110,7 +102,7 @@ fun CashScreen(
                 if (cashDetails.type == "Cash")
                     CashList(cash = cashDetails)
                 else
-                    totalAccount.value ++
+                    totalAccount.value++
             }
         }
 
@@ -186,30 +178,26 @@ fun CashScreen(
             CashPopUpScreen(
                 onCancelClick = { isDialogPopUp.value = false },
                 {},
-                cash,
-                walletViewModel
+                cashViewModel
             )
     }
 
 
 }
 
+//change to new UI screen
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun CashPopUpScreen(
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
-    cash: Cash,
     walletViewModel: WalletViewModel
 ) {
 
-    var isExpanded by remember {
-        mutableStateOf(false)
-    }
 
-    var searchBank by remember {
-        mutableStateOf("Affin Bank Berhad")
+    var bankName by remember {
+        mutableStateOf("Public Bank")
     }
 
     var incAmt by remember {
@@ -225,11 +213,23 @@ fun CashPopUpScreen(
     }
 
     val options = mutableStateListOf<String>("Cash", "Bank")
-
+    val cashInfo by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+    //var cash
     val addition = incAmt.toDoubleOrNull() ?: 0.0
     val substraction = decAmt.toDoubleOrNull() ?: 0.0
-    val totalBalance =
-        calculateCashBalance(balance = cash.balance, incAmt = addition, decAmt = substraction)
+
+    //initial amount column will not show if the type already existed
+
+    /*   val totalBalance =
+           calculateCashBalance(balance = cashInfo[0].balance, incAmt = addition, decAmt = substraction)
+   */ //calculation
+
+
+    /*for (account in cashInfo){
+        if (account.type =="Cash"){
+            cash = account
+        }
+    }*/
 
     Dialog(
         onDismissRequest = { onCancelClick() },
@@ -284,12 +284,29 @@ fun CashPopUpScreen(
                 ) {
 
                     Text(
-                        text = "Select your bank",
+                        text = "Enter your bank",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
 
-                    ExposedDropdownMenuBox(
+                    TextField(
+                        value = bankName,
+                        onValueChange = {
+                            bankName = it
+                        },
+                        placeholder = {
+                            Text(
+                                text = "Public Bank",
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 15.sp,
+                                color = Color.Gray
+                            )
+                        }
+                    )
+
+                    //val type = "bank"
+
+                    /*ExposedDropdownMenuBox(
                         expanded = isExpanded,
                         onExpandedChange = { isExpanded = it }
                     ) {
@@ -320,7 +337,7 @@ fun CashPopUpScreen(
                                 )
                             }
                         }
-                    }
+                    }*/
                 }
                 Spacer(modifier = Modifier.height(15.dp))
 
@@ -346,27 +363,35 @@ fun CashPopUpScreen(
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
+                //if data exists, only show this feature
 
-                Text(
-                    text = "Decrease Amount",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = decAmt,
-                    onValueChange = {
-                        decAmt = it
-                    },
-                    placeholder = {
+                for (cash in cashInfo) {
+                    if (bankName == cash.typeName) {
                         Text(
-                            text = "RM 0.00",
+                            text = "Decrease Amount",
                             fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
+                            fontSize = 15.sp
                         )
+
+                        TextField(
+                            value = decAmt,
+                            onValueChange = {
+                                decAmt = it
+                            },
+                            placeholder = {
+                                Text(
+                                    text = "RM 0.00",
+                                    fontFamily = poppinsFontFamily,
+                                    fontSize = 15.sp,
+                                    color = Color.Gray
+                                )
+                            }
+                        )
+                    } else {
+                        //addCashDetailsToDataBase
                     }
-                )
+                }
+
             }
 
 
@@ -398,14 +423,27 @@ fun CashPopUpScreen(
 
                 Button(
                     onClick = {
-                        walletViewModel.editCashDetails(
-                            cash = cash,
-                            updatedCashDetails = Cash(
-                                type = cash.type,
-                                typeName = cash.typeName,
-                                balance = totalBalance.toDoubleOrNull() ?: 0.0
-                            )
-                        )
+                        for (cash in cashInfo) {
+                            if (bankName == cash.typeName) {
+
+                                walletViewModel.editCashDetails(
+                                    cash = cash,
+                                    updatedCashDetails = Cash(
+                                        type = cash.type,
+                                        typeName = cash.typeName,
+                                        balance = cash.balance + incAmt.toDoubleOrNull() as Double - decAmt.toDoubleOrNull() as Double
+                                    )
+                                )
+                            }
+                            else
+                                walletViewModel.addCashDetailsToDatabase(
+                                    Cash(
+                                        cash.type,
+                                        cash.typeName,
+                                        cash.balance
+                                    )
+                                )
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black
@@ -439,9 +477,9 @@ fun CashList(           //used to return cash balance only
 fun BankAccList(
     bankList: List<Cash>,
     modifier: Modifier
-){
+) {
     LazyColumn {
-        items(bankList){ item: Cash ->
+        items(bankList) { item: Cash ->
             Row(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -455,12 +493,12 @@ fun BankAccList(
 }
 
 @Composable
-fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): String {
-    return NumberFormat.getInstance().format(balance + incAmt - decAmt)
+fun calculateCashBalance(balance: Double, incAmt: Double, decAmt: Double): Double {
+    return balance + incAmt - decAmt
 }
 
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun CashScreenPreview() {
     CashScreen(
@@ -468,7 +506,7 @@ fun CashScreenPreview() {
             .fillMaxSize()
             .padding(20.dp),
         cash = Cash("Cash", "Cash", 200.0),
-        walletViewModel = viewModel()
+        cashViewModel = viewModel()
     )
 
-}
+}*/

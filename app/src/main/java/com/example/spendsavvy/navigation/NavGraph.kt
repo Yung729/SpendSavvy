@@ -49,6 +49,7 @@ import com.example.spendsavvy.screen.AddIncomeScreen
 import com.example.spendsavvy.screen.AllTransactionScreen
 import com.example.spendsavvy.screen.AnalysisScreen
 import com.example.spendsavvy.screen.BudgetScreen
+import com.example.spendsavvy.screen.CashScreen
 import com.example.spendsavvy.screen.CategoryDetail
 import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
@@ -76,6 +77,7 @@ import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
+import com.example.spendsavvy.viewModels.WalletViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
@@ -153,6 +155,8 @@ fun TabsNavGraph(
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
 
+    //Wallet
+    val walletViewModel = WalletViewModel(context, userId)
 
     mainViewModel.syncDatabase()
 
@@ -331,12 +335,20 @@ fun TabsNavGraph(
             }
 
             composable(
+                route = Screen.Cash.route
+            ){
+                CashScreen(
+                    cashViewModel = walletViewModel)
+            }
+
+            composable(
                 route = Screen.Stock.route
             ) {
                 StockScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp)
+                        .padding(20.dp),
+                    stockViewModel = walletViewModel
                 )
             }
 

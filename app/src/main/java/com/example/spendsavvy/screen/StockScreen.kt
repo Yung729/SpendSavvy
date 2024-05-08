@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,12 +44,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.WalletViewModel
 
 @Composable
-fun StockScreen(modifier: Modifier = Modifier) {
+fun StockScreen(
+    modifier: Modifier = Modifier,
+    stockViewModel: WalletViewModel
+    ) {
 
     var isSelectionPopUp by remember {
         mutableStateOf(false)
@@ -57,6 +64,8 @@ fun StockScreen(modifier: Modifier = Modifier) {
     var isDialogPopUp by remember {
         mutableStateOf(false)
     }
+
+    val stockListLive by stockViewModel.stockListLive.observeAsState(initial = emptyList())
 
     // Calculate total stock balance
     /*    val totalStockBalance = remember {
@@ -119,7 +128,7 @@ fun StockScreen(modifier: Modifier = Modifier) {
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
-            /*StockList(stockList = StockData().loadStock())*/
+            StockList(stockList = stockListLive)
 
             Box(
                 modifier = Modifier
@@ -693,7 +702,8 @@ fun StockScreenPreview() {
     StockScreen(
         Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(20.dp),
+        stockViewModel = viewModel()
     )
 
 }
