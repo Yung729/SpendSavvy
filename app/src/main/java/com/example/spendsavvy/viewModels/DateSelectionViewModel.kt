@@ -7,9 +7,18 @@ import java.util.Date
 
 class DateSelectionViewModel : ViewModel() {
     var selectedDateFromUser = MutableLiveData<Date>()
+    var selectedStartDate = MutableLiveData<Date>()
+    var selectedEndDate = MutableLiveData<Date>()
 
     fun setSelectedDate(selectedDate: Date) {
         selectedDateFromUser.value = selectedDate
+    }
+
+    fun setStartDate(selectedDate: Date) {
+        selectedStartDate.value = selectedDate
+    }
+    fun setEndDate(selectedDate: Date) {
+        selectedEndDate.value = selectedDate
     }
 
 

@@ -21,6 +21,7 @@ class OverviewViewModel(
     userId: String,
     dateViewModel: DateSelectionViewModel
 ) : ViewModel() {
+
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
 
@@ -28,7 +29,10 @@ class OverviewViewModel(
 
     private val currentUserId = userId
     val isLoading = MutableLiveData<Boolean>()
-    val selectedDateFromUser: LiveData<Date?> = dateViewModel.selectedDateFromUser
+    private val selectedDateFromUser: LiveData<Date?> = dateViewModel.selectedDateFromUser
+
+    private val selectedStartDate: LiveData<Date?> = dateViewModel.selectedStartDate
+    private val selectedEndDate: LiveData<Date?> = dateViewModel.selectedEndDate
 
     val transactionsList = MutableLiveData<List<Transactions>>() //All transaction List
     val todayTransactionsList = MutableLiveData<List<Transactions>>() //Today transaction List
@@ -43,12 +47,16 @@ class OverviewViewModel(
     val currentYearIncomesTotal = MutableLiveData<Double>()
     val currentMonthExpenses = MutableLiveData<Double>()
     val currentMonthIncomes = MutableLiveData<Double>()
+    val dateRangeExpensesTotal = MutableLiveData<Double>()
+    val dateRangeIncomesTotal = MutableLiveData<Double>()
 
 
     //Selected Transaction List
     val selectedDateTransaction = MutableLiveData<List<Transactions>>()
     val selectedDateExpensesTotal = MutableLiveData<Double>()
     val selectedDateIncomesTotal = MutableLiveData<Double>()
+
+    val selectedDateRangeTransaction = MutableLiveData<List<Transactions>>()
 
     //Date
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
@@ -64,7 +72,7 @@ class OverviewViewModel(
         getTransactionRecord()
     }
 
-    fun getTransactionRecord() {
+    private fun getTransactionRecord() {
         viewModelScope.launch {
             val transactionsFromDB: List<Transactions>
 
@@ -82,8 +90,7 @@ class OverviewViewModel(
                 }
 
                 updateTransactions(
-                    transactionsFromDB,
-                    selectedDate = selectedDateFromUser.value ?: Date()
+                    transactionsFromDB
                 )
 
 
@@ -96,7 +103,13 @@ class OverviewViewModel(
     }
 
 
-    private fun updateTransactions(transactions: List<Transactions>, selectedDate: Date) {
+    //update with the list no changed
+    fun updateTransactions(
+        transactions: List<Transactions> = transactionsList.value as List<Transactions>,
+        selectedDate: Date = selectedDateFromUser.value ?: Date(),
+        startDate: Date = selectedStartDate.value ?: Date(),
+        endDate: Date = selectedEndDate.value ?: Date()
+    ) {
 
         var totalExpenses = 0.0
         var totalIncomes = 0.0
@@ -108,6 +121,9 @@ class OverviewViewModel(
         var todayIncome = 0.0
         var yearExpenses = 0.0
         var yearIncome = 0.0
+        var dateRangeExpenses = 0.0
+        var dateRangeIncomes = 0.0
+
 
         val selectedDateTransactionList = mutableListOf<Transactions>()
         val todayTransaction = mutableListOf<Transactions>()
@@ -162,7 +178,7 @@ class OverviewViewModel(
             }
 
 
-            if (transactionMonth == currentMonth) {
+            if (transactionMonth == currentMonth && transactionYear == currentYear) {
                 monthTransaction.add(transaction)
                 if (transaction.transactionType == "Expenses") {
                     monthExpenses += transaction.amount
@@ -181,8 +197,20 @@ class OverviewViewModel(
                 }
             }
 
+            if (transaction.date in startDate..endDate) {
+                if (transaction.transactionType == "Expenses") {
+                    dateRangeExpenses += transaction.amount
+                } else if (transaction.transactionType == "Incomes") {
+                    dateRangeIncomes += transaction.amount
+                }
+            }
 
         }
+
+        val dateRangeTransactions = transactionsList.value?.filter { transaction ->
+            transaction.date in startDate..endDate
+        } ?: emptyList()
+
 
         //double
         expensesTotal.postValue(totalExpenses)
@@ -193,13 +221,15 @@ class OverviewViewModel(
         currentMonthIncomes.postValue(monthIncome)
         currentYearExpensesTotal.postValue(yearExpenses)
         currentYearIncomesTotal.postValue(yearIncome)
+        dateRangeExpensesTotal.postValue(dateRangeExpenses)
+        dateRangeIncomesTotal.postValue(dateRangeIncomes)
 
         //list
         transactionsList.postValue(transactions)
         todayTransactionsList.postValue(todayTransaction)
         monthTransactionsList.postValue(monthTransaction)
         yearTransactionsList.postValue(yearTransaction)
-
+        selectedDateRangeTransaction.postValue(dateRangeTransactions)
 
         //selected Date
         selectedDateTransaction.postValue(selectedDateTransactionList)
@@ -209,6 +239,7 @@ class OverviewViewModel(
     }
 
 
+    //update with the list changed
     private fun updateTransaction(
         transaction: Transactions,
         updatedTransactions: Transactions = Transactions(),
@@ -282,7 +313,7 @@ class OverviewViewModel(
 
         }
 
-        if (transactionMonth == currentMonth) {
+        if (transactionMonth == currentMonth && transactionYear == currentYear) {
             currentMonthExpenses.value =
                 if (transaction.transactionType == "Expenses") currentMonthExpenses.value?.plus(
                     amount
@@ -321,7 +352,7 @@ class OverviewViewModel(
             }
 
 
-            if (transactionMonth == currentMonth) {
+            if (transactionMonth == currentMonth && transactionYear == currentYear) {
                 monthTransactionsList.value = currentMonthTransactionsList + transaction
             }
 
@@ -352,6 +383,12 @@ class OverviewViewModel(
             transactionsList.value =
                 transactionsList.value?.map { if (it == transaction) updatedTransactions else it }
 
+            selectedDateRangeTransaction.value =
+                selectedDateRangeTransaction.value?.map { if (it == transaction) updatedTransactions else it }
+
+            transactionsList.value =
+                transactionsList.value?.map { if (it == transaction) updatedTransactions else it }
+
         } else if (mode == 3) {
             selectedDateTransaction.value =
                 selectedDateTransaction.value?.filter { it != transaction }
@@ -367,6 +404,10 @@ class OverviewViewModel(
 
             yearTransactionsList.value =
                 yearTransactionsList.value?.filter { it != transaction }
+
+
+            selectedDateRangeTransaction.value =
+                selectedDateRangeTransaction.value?.filter { it != transaction }
 
 
             transactionsList.value = transactionsList.value?.filter { it != transaction }
@@ -405,7 +446,12 @@ class OverviewViewModel(
 
                         )
 
-                        updateTransaction(transaction = transactions,updatedTransactions = updatedTransactions, selectedDate = selectedDateFromUser.value ?: Date(),mode = 2)
+                        updateTransaction(
+                            transaction = transactions,
+                            updatedTransactions = updatedTransactions,
+                            selectedDate = selectedDateFromUser.value ?: Date(),
+                            mode = 2
+                        )
                         /*val currentTransactions = transactionsList.value ?: emptyList()
                         val updatedTransactionsList = currentTransactions.map {
                             if (it == transactions) updatedTransactions else it
@@ -435,14 +481,18 @@ class OverviewViewModel(
                     transactionId,
                     onSuccess = {
                         dbHelper.deleteTransaction(transactionId, currentUserId)
-                        updateTransaction(transaction = transaction,selectedDate = selectedDateFromUser.value ?: Date(),mode = 3)
+                        updateTransaction(
+                            transaction = transaction,
+                            selectedDate = selectedDateFromUser.value ?: Date(),
+                            mode = 3
+                        )
 
-                       /* val currentTransactions = transactionsList.value ?: emptyList()
-                        val updatedTransactions = currentTransactions.filter { it != transaction }
-                        updateTransactions(
-                            transactions = updatedTransactions,
-                            selectedDate = selectedDateFromUser.value ?: Date()
-                        )*/
+                        /* val currentTransactions = transactionsList.value ?: emptyList()
+                         val updatedTransactions = currentTransactions.filter { it != transaction }
+                         updateTransactions(
+                             transactions = updatedTransactions,
+                             selectedDate = selectedDateFromUser.value ?: Date()
+                         )*/
                     }
                 )
 
@@ -477,7 +527,11 @@ class OverviewViewModel(
                             transactionType = transaction.transactionType,
                             userId = currentUserId
                         )
-                        updateTransaction(transaction = transaction,selectedDate = selectedDateFromUser.value ?: Date(),mode = 1)
+                        updateTransaction(
+                            transaction = transaction,
+                            selectedDate = selectedDateFromUser.value ?: Date(),
+                            mode = 1
+                        )
                         /*val currentTransactions = transactionsList.value ?: emptyList()
                         val updatedTransactions = currentTransactions + transaction
                         updateTransactions(

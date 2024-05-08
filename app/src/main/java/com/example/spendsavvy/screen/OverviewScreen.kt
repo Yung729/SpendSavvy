@@ -141,7 +141,7 @@ fun OverviewScreen(
                     calendar.set(Calendar.MILLISECOND, 0)
                     selectedDate.value = calendar.time
                     updateSelectedDate(calendar.time)
-                    transactionViewModel.getTransactionRecord()
+                    transactionViewModel.updateTransactions()
                 }
             )
         }
