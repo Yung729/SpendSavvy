@@ -15,6 +15,7 @@ import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.repo.FirestoreRepository
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 
 class CategoryViewModel(
@@ -60,61 +61,16 @@ class CategoryViewModel(
     }
 
     private fun updateCategories(categories: List<Category>) {
-        val expenseCategories = mutableListOf<Category>()
-        val incomeCategories = mutableListOf<Category>()
+        val groupedCategories = categories.groupBy { it.categoryType }
 
-        categories.forEach { category ->
-            if (category.categoryType == "Expenses") {
-                expenseCategories.add(category)
-            } else if (category.categoryType == "Incomes") {
-                incomeCategories.add(category)
-            }
-        }
+        val expenseCategories = groupedCategories["Expenses"] ?: emptyList()
+        val incomeCategories = groupedCategories["Incomes"] ?: emptyList()
 
         categoryList.postValue(categories)
         expensesList.postValue(expenseCategories)
         incomeList.postValue(incomeCategories)
     }
 
-    private fun updateCategories(
-        category: Category,
-        updatedCategory: Category = Category(),
-        mode: Int
-    ) {
-
-        //add
-        when (mode) {
-            1 -> {
-                val currentCategories = categoryList.value ?: emptyList()
-                val updatedCategories = currentCategories + category
-
-                if (category.categoryType == "Expenses") {
-                    expensesList.value = expensesList.value?.plus(category)
-                } else if (category.categoryType == "Incomes") {
-                    incomeList.value = incomeList.value?.plus(category)
-                }
-
-                categoryList.value = updatedCategories
-            }
-
-            2 -> { //edit
-                categoryList.value =
-                    categoryList.value?.map { if (it == category) updatedCategory else it }
-                expensesList.value =
-                    expensesList.value?.map { if (it == category) updatedCategory else it }
-                incomeList.value =
-                    incomeList.value?.map { if (it == category) updatedCategory else it }
-            }
-
-            3 -> {
-                categoryList.value = categoryList.value?.filter { it != category }
-                expensesList.value = expensesList.value?.filter { it != category }
-                incomeList.value = incomeList.value?.filter { it != category }
-            }
-        }
-
-
-    }
 
 
     private suspend fun getCategoryId(category: Category): String {
@@ -134,17 +90,17 @@ class CategoryViewModel(
                     onSuccess = {
                         dbHelper.updateCategory(
                             categoryId,
+                            updatedCategory.id,
                             updatedCategory.imageUri,
                             updatedCategory.categoryName,
                             updatedCategory.categoryType,
                             currentUserId
                         )
-                        updateCategories(category = category,mode = 2)
-                        /*val currentCategories = categoryList.value ?: emptyList()
+                        val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories.map {
                             if (it == category) updatedCategory else it
                         }
-                        updateCategories(categories = updatedCategories)*/
+                        updateCategories(categories = updatedCategories)
                     })
 
             } catch (e: Exception) {
@@ -168,10 +124,9 @@ class CategoryViewModel(
                             categoryId,
                             currentUserId
                         )
-                        updateCategories(category = category,mode = 3)
-                        /*val currentCategories = categoryList.value ?: emptyList()
+                        val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories.filter { it != category }
-                        updateCategories(categories = updatedCategories)*/
+                        updateCategories(categories = updatedCategories)
                     })
 
 
@@ -197,6 +152,7 @@ class CategoryViewModel(
                             documentIdList[index % documentIdList.size] // Use modulo operator to cycle through the documentIdList
                         dbHelper.addNewCategory(
                             documentId,
+                            category.id,
                             category.imageUri,
                             category.categoryName,
                             category.categoryType,
@@ -206,7 +162,6 @@ class CategoryViewModel(
                     }
 
                     updateCategories(categories = updatedCategories)
-                    getCategoriesList(userId)
                 } else {
                     Log.e(TAG, "Document ID list is empty")
                 }
@@ -237,15 +192,15 @@ class CategoryViewModel(
                     onSuccess = { documentId ->
                         dbHelper.addNewCategory(
                             documentId,
+                            category.id,
                             category.imageUri,
                             category.categoryName,
                             category.categoryType,
                             currentUserId
                         )
-                        updateCategories(category = category,mode = 1)
-               /*         val currentCategories = categoryList.value ?: emptyList()
+                        val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories + category
-                        updateCategories(categories = updatedCategories)*/
+                        updateCategories(categories = updatedCategories)
                         Toast.makeText(
                             currentContext, "Category added", Toast.LENGTH_SHORT
                         ).show()
@@ -263,15 +218,15 @@ class CategoryViewModel(
                 onSuccess = { documentId ->
                     dbHelper.addNewCategory(
                         documentId,
+                        category.id,
                         category.imageUri,
                         category.categoryName,
                         category.categoryType,
                         currentUserId
                     )
-                    updateCategories(category = category,mode = 1)
-                    /*val currentCategories = categoryList.value ?: emptyList()
+                    val currentCategories = categoryList.value ?: emptyList()
                     val updatedCategories = currentCategories + category
-                    updateCategories(categories = updatedCategories)*/
+                    updateCategories(categories = updatedCategories)
                     Toast.makeText(
                         currentContext, "Category added", Toast.LENGTH_SHORT
                     ).show()
@@ -281,6 +236,11 @@ class CategoryViewModel(
 
                 })
         }
+    }
+
+    fun generateCategoryId(): String {
+        val random = UUID.randomUUID().toString().substring(0, 5)
+        return "CT$random"
     }
 
 }

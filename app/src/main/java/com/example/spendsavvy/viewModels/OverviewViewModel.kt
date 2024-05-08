@@ -14,6 +14,7 @@ import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
+import java.util.UUID
 
 class OverviewViewModel(
     context: Context,
@@ -110,109 +111,58 @@ class OverviewViewModel(
         startDate: Date = selectedStartDate.value ?: Date(),
         endDate: Date = selectedEndDate.value ?: Date()
     ) {
-
-        var totalExpenses = 0.0
-        var totalIncomes = 0.0
-        var selectedDateExpenses = 0.0
-        var selectedDateIncomes = 0.0
-        var monthExpenses = 0.0
-        var monthIncome = 0.0
-        var todayExpenses = 0.0
-        var todayIncome = 0.0
-        var yearExpenses = 0.0
-        var yearIncome = 0.0
-        var dateRangeExpenses = 0.0
-        var dateRangeIncomes = 0.0
-
-
-        val selectedDateTransactionList = mutableListOf<Transactions>()
-        val todayTransaction = mutableListOf<Transactions>()
-        val monthTransaction = mutableListOf<Transactions>()
-        val yearTransaction = mutableListOf<Transactions>()
-
-        for (transaction in transactions) {
-
-            val transactionMonth = Calendar.getInstance().apply {
-                time = transaction.date
-            }.get(Calendar.MONTH)
-
-            val transactionYear = Calendar.getInstance().apply {
-                time = transaction.date
-            }.get(Calendar.YEAR)
-
-            val transactionDate = Calendar.getInstance().apply {
-                time = transaction.date
+        val selectedDateTransactionList = transactions.filter {
+            Calendar.getInstance().apply {
+                time = it.date
                 // Set the time part to 00:00:00
                 set(Calendar.HOUR_OF_DAY, 0)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
-            }.time
-
-            if (transaction.transactionType == "Expenses") {
-                totalExpenses += transaction.amount
-
-            } else if (transaction.transactionType == "Incomes") {
-                totalIncomes += transaction.amount
-            }
-
-
-            if (transactionDate == selectedDate) {
-                selectedDateTransactionList.add(transaction)
-                if (transaction.transactionType == "Expenses") {
-                    selectedDateExpenses += transaction.amount
-
-                } else if (transaction.transactionType == "Incomes") {
-                    selectedDateIncomes += transaction.amount
-                }
-            }
-
-            if (transactionDate == todayDate) {
-                todayTransaction.add(transaction)
-                if (transaction.transactionType == "Expenses") {
-                    todayExpenses += transaction.amount
-
-                } else if (transaction.transactionType == "Incomes") {
-                    todayIncome += transaction.amount
-                }
-            }
-
-
-            if (transactionMonth == currentMonth && transactionYear == currentYear) {
-                monthTransaction.add(transaction)
-                if (transaction.transactionType == "Expenses") {
-                    monthExpenses += transaction.amount
-                } else if (transaction.transactionType == "Incomes") {
-                    monthIncome += transaction.amount
-                }
-            }
-
-            if (transactionYear == currentYear) {
-                yearTransaction.add(transaction)
-                if (transaction.transactionType == "Expenses") {
-                    yearExpenses += transaction.amount
-
-                } else if (transaction.transactionType == "Incomes") {
-                    yearIncome += transaction.amount
-                }
-            }
-
-            if (transaction.date in startDate..endDate) {
-                if (transaction.transactionType == "Expenses") {
-                    dateRangeExpenses += transaction.amount
-                } else if (transaction.transactionType == "Incomes") {
-                    dateRangeIncomes += transaction.amount
-                }
-            }
-
+            }.time == selectedDate
         }
 
-        val dateRangeTransactions = transactionsList.value?.filter { transaction ->
-            transaction.date in startDate..endDate
-        } ?: emptyList()
+        val todayTransaction = transactions.filter {
+            Calendar.getInstance().apply {
+                time = it.date
+                // Set the time part to 00:00:00
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time == todayDate
+        }
+        val monthTransaction = transactions.filter {
+            Calendar.getInstance().apply { time = it.date }.get(Calendar.MONTH) == currentMonth &&
+                    Calendar.getInstance().apply { time = it.date }
+                        .get(Calendar.YEAR) == currentYear
+        }
+        val yearTransaction = transactions.filter {
+            Calendar.getInstance().apply { time = it.date }.get(Calendar.YEAR) == currentYear
+        }
+        val dateRangeTransactions = transactions.filter { it.date in startDate..endDate }
 
+        val totalExpenses =
+            transactions.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+        val totalIncomes =
+            transactions.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+        val todayExpenses =
+            todayTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+        val todayIncome =
+            todayTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+        val monthExpenses =
+            monthTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+        val monthIncome =
+            monthTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+        val yearExpenses =
+            yearTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+        val yearIncome =
+            yearTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+        val dateRangeExpenses =
+            dateRangeTransactions.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+        val dateRangeIncomes =
+            dateRangeTransactions.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
 
-        //double
         expensesTotal.postValue(totalExpenses)
         incomesTotal.postValue(totalIncomes)
         todayExpensesTotal.postValue(todayExpenses)
@@ -224,195 +174,20 @@ class OverviewViewModel(
         dateRangeExpensesTotal.postValue(dateRangeExpenses)
         dateRangeIncomesTotal.postValue(dateRangeIncomes)
 
-        //list
         transactionsList.postValue(transactions)
         todayTransactionsList.postValue(todayTransaction)
         monthTransactionsList.postValue(monthTransaction)
         yearTransactionsList.postValue(yearTransaction)
         selectedDateRangeTransaction.postValue(dateRangeTransactions)
 
-        //selected Date
         selectedDateTransaction.postValue(selectedDateTransactionList)
-        selectedDateExpensesTotal.postValue(selectedDateExpenses)
-        selectedDateIncomesTotal.postValue(selectedDateIncomes)
+        selectedDateExpensesTotal.postValue(selectedDateTransactionList.filter { it.transactionType == "Expenses" }
+            .sumOf { it.amount })
+        selectedDateIncomesTotal.postValue(selectedDateTransactionList.filter { it.transactionType == "Incomes" }
+            .sumOf { it.amount })
 
     }
 
-
-    //update with the list changed
-    private fun updateTransaction(
-        transaction: Transactions,
-        updatedTransactions: Transactions = Transactions(),
-        selectedDate: Date,
-        mode: Int
-    ) {
-        val transactionMonth = Calendar.getInstance().apply {
-            time = transaction.date
-        }.get(Calendar.MONTH)
-
-        val transactionYear = Calendar.getInstance().apply {
-            time = transaction.date
-        }.get(Calendar.YEAR)
-
-        val transactionDate = Calendar.getInstance().apply {
-            time = transaction.date
-            // Set the time part to 00:00:00
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.time
-
-        val amount =
-            when (mode) {
-                1 -> {
-                    transaction.amount
-                }
-
-                2 -> {
-                    updatedTransactions.amount - transaction.amount
-                }
-
-                3 -> {
-                    -transaction.amount
-                }
-
-                else -> {
-                    0.0
-                }
-            }
-
-        if (transaction.transactionType == "Expenses") {
-            expensesTotal.value = expensesTotal.value?.plus(amount)
-
-        } else if (transaction.transactionType == "Incomes") {
-            incomesTotal.value = incomesTotal.value?.plus(amount)
-        }
-
-        if (transactionDate == selectedDate) {
-            selectedDateExpensesTotal.value =
-                if (transaction.transactionType == "Expenses") selectedDateExpensesTotal.value?.plus(
-                    amount
-                ) else 0.0
-
-            selectedDateIncomesTotal.value =
-                if (transaction.transactionType == "Incomes") selectedDateIncomesTotal.value?.plus(
-                    amount
-                ) else 0.0
-        }
-
-        if (transactionDate == todayDate) {
-            todayExpensesTotal.value =
-                if (transaction.transactionType == "Expenses") todayExpensesTotal.value?.plus(
-                    amount
-                ) else 0.0
-            todayIncomesTotal.value =
-                if (transaction.transactionType == "Incomes") todayIncomesTotal.value?.plus(
-                    amount
-                ) else 0.0
-
-        }
-
-        if (transactionMonth == currentMonth && transactionYear == currentYear) {
-            currentMonthExpenses.value =
-                if (transaction.transactionType == "Expenses") currentMonthExpenses.value?.plus(
-                    amount
-                ) else 0.0
-            currentMonthIncomes.value =
-                if (transaction.transactionType == "Incomes") currentMonthIncomes.value?.plus(
-                    amount
-                ) else 0.0
-        }
-
-        if (transactionYear == currentYear) {
-            currentYearExpensesTotal.value =
-                if (transaction.transactionType == "Expenses") currentYearExpensesTotal.value?.plus(
-                    amount
-                ) else 0.0
-            currentYearIncomesTotal.value =
-                if (transaction.transactionType == "Incomes") currentYearIncomesTotal.value?.plus(
-                    amount
-                ) else 0.0
-        }
-
-
-        if (mode == 1) {
-            val currentTransactionsList = transactionsList.value ?: emptyList()
-            val currentTodayTransactionsList = todayTransactionsList.value ?: emptyList()
-            val currentMonthTransactionsList = monthTransactionsList.value ?: emptyList()
-            val currentYearTransactionsList = yearTransactionsList.value ?: emptyList()
-            val currentDateTransactionsList = selectedDateTransaction.value ?: emptyList()
-
-            if (transactionDate == selectedDate) {
-                selectedDateTransaction.value = currentDateTransactionsList + transaction
-            }
-
-            if (transactionDate == todayDate) {
-                todayTransactionsList.value = currentTodayTransactionsList + transaction
-            }
-
-
-            if (transactionMonth == currentMonth && transactionYear == currentYear) {
-                monthTransactionsList.value = currentMonthTransactionsList + transaction
-            }
-
-            if (transactionYear == currentYear) {
-                yearTransactionsList.value = currentYearTransactionsList + transaction
-            }
-
-            transactionsList.value = currentTransactionsList + transaction
-        } else if (mode == 2) {
-
-            selectedDateTransaction.value =
-                selectedDateTransaction.value?.map { if (it == transaction) updatedTransactions else it }
-
-
-            todayTransactionsList.value =
-                todayTransactionsList.value?.map { if (it == transaction) updatedTransactions else it }
-
-
-
-            monthTransactionsList.value =
-                monthTransactionsList.value?.map { if (it == transaction) updatedTransactions else it }
-
-
-            yearTransactionsList.value =
-                yearTransactionsList.value?.map { if (it == transaction) updatedTransactions else it }
-
-
-            transactionsList.value =
-                transactionsList.value?.map { if (it == transaction) updatedTransactions else it }
-
-            selectedDateRangeTransaction.value =
-                selectedDateRangeTransaction.value?.map { if (it == transaction) updatedTransactions else it }
-
-            transactionsList.value =
-                transactionsList.value?.map { if (it == transaction) updatedTransactions else it }
-
-        } else if (mode == 3) {
-            selectedDateTransaction.value =
-                selectedDateTransaction.value?.filter { it != transaction }
-
-
-            todayTransactionsList.value =
-                todayTransactionsList.value?.filter { it != transaction }
-
-
-
-            monthTransactionsList.value =
-                monthTransactionsList.value?.filter { it != transaction }
-
-            yearTransactionsList.value =
-                yearTransactionsList.value?.filter { it != transaction }
-
-
-            selectedDateRangeTransaction.value =
-                selectedDateRangeTransaction.value?.filter { it != transaction }
-
-
-            transactionsList.value = transactionsList.value?.filter { it != transaction }
-        }
-    }
 
     private suspend fun getTransactionId(transactions: Transactions): String {
         return firestoreRepository.getDocumentId("Transactions", currentUserId, transactions)
@@ -437,6 +212,7 @@ class OverviewViewModel(
 
                         dbHelper.updateTransaction(
                             transactionId = transactionId,
+                            internalId = updatedTransactions.id,
                             amount = updatedTransactions.amount,
                             categoryId = categoryId,
                             description = updatedTransactions.description,
@@ -446,20 +222,13 @@ class OverviewViewModel(
 
                         )
 
-                        updateTransaction(
-                            transaction = transactions,
-                            updatedTransactions = updatedTransactions,
-                            selectedDate = selectedDateFromUser.value ?: Date(),
-                            mode = 2
-                        )
-                        /*val currentTransactions = transactionsList.value ?: emptyList()
+                        val currentTransactions = transactionsList.value ?: emptyList()
                         val updatedTransactionsList = currentTransactions.map {
                             if (it == transactions) updatedTransactions else it
                         }
                         updateTransactions(
-                            transactions = updatedTransactionsList,
-                            selectedDate = selectedDateFromUser.value ?: Date()
-                        )*/
+                            transactions = updatedTransactionsList
+                        )
                     }
                 )
 
@@ -481,18 +250,13 @@ class OverviewViewModel(
                     transactionId,
                     onSuccess = {
                         dbHelper.deleteTransaction(transactionId, currentUserId)
-                        updateTransaction(
-                            transaction = transaction,
-                            selectedDate = selectedDateFromUser.value ?: Date(),
-                            mode = 3
-                        )
 
-                        /* val currentTransactions = transactionsList.value ?: emptyList()
-                         val updatedTransactions = currentTransactions.filter { it != transaction }
-                         updateTransactions(
-                             transactions = updatedTransactions,
-                             selectedDate = selectedDateFromUser.value ?: Date()
-                         )*/
+                        val currentTransactions = transactionsList.value ?: emptyList()
+                        val updatedTransactions = currentTransactions.filter { it != transaction }
+                        updateTransactions(
+                            transactions = updatedTransactions,
+                            selectedDate = selectedDateFromUser.value ?: Date()
+                        )
                     }
                 )
 
@@ -520,6 +284,7 @@ class OverviewViewModel(
                     onSuccess = { documentId ->
                         dbHelper.addNewTransaction(
                             transactionId = documentId,
+                            internalId = transaction.id,
                             amount = transaction.amount,
                             categoryId = categoryId,
                             description = transaction.description,
@@ -527,17 +292,11 @@ class OverviewViewModel(
                             transactionType = transaction.transactionType,
                             userId = currentUserId
                         )
-                        updateTransaction(
-                            transaction = transaction,
-                            selectedDate = selectedDateFromUser.value ?: Date(),
-                            mode = 1
-                        )
-                        /*val currentTransactions = transactionsList.value ?: emptyList()
+                        val currentTransactions = transactionsList.value ?: emptyList()
                         val updatedTransactions = currentTransactions + transaction
                         updateTransactions(
-                            transactions = updatedTransactions,
-                            selectedDate = selectedDateFromUser.value ?: Date()
-                        )*/
+                            transactions = updatedTransactions
+                        )
 
                         onSuccess() // Invoke the onSuccess callback
                     },
@@ -551,6 +310,11 @@ class OverviewViewModel(
                 onFailure(e) // Invoke the onFailure callback
             }
         }
+    }
+
+    fun generateTransactionId(): String {
+        val random = UUID.randomUUID().toString().substring(0, 5)
+        return "T$random"
     }
 
 

@@ -136,8 +136,10 @@ fun TransactionDetail(
                 transactionViewModel.editTransaction(
                     transactions = transactions,
                     updatedTransactions = Transactions(
+                        id = transactions.id,
                         amount = updatedTransactionAmount.toDoubleOrNull() ?: 0.0,
                         category = Category(
+                            id = transactions.category.id,
                             imageUri = transactions.category.imageUri,
                             categoryName = transactions.category.categoryName,
                             categoryType = transactions.category.categoryType

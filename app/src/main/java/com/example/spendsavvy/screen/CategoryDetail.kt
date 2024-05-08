@@ -197,6 +197,7 @@ fun CategoryDetail(
                 catViewModel.editCategory(
                     category = category,
                     updatedCategory = Category(
+                        id = category.id,
                         imageUri = updatedImageUri,
                         categoryName = updatedCategoryName,
                         categoryType = updatedCategoryType

@@ -192,6 +192,7 @@ fun AddCategoryScreen(
                         // If all fields have data, add the category
                         catViewModel.addCategoryToDatabase(
                             Category(
+                                id = catViewModel.generateCategoryId(),
                                 imageUri = selectedImageUri,
                                 categoryName = categoryName,
                                 categoryType = categoryType

@@ -73,6 +73,28 @@ fun CategoryScreen(
     Column(modifier = modifier) {
 
 
+        Column(
+            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
+        ) {
+            Button(
+                onClick = { navController.navigate(Screen.AddCategory.route) },
+                modifier = Modifier
+                    .padding(bottom = 10.dp)
+                    .bounceClick()
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black
+                )
+            ) {
+                Text(
+                    text = "Add Category", textAlign = TextAlign.Center, color = Color.White
+                )
+            }
+
+
+        }
+
+
         Row(
             horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
         ) {
@@ -109,35 +131,6 @@ fun CategoryScreen(
             }
 
 
-
-
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
-                ) {
-                    Button(
-                        onClick = { navController.navigate(Screen.AddCategory.route) },
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .bounceClick()
-                            .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        )
-                    ) {
-                        Text(
-                            text = "Add Category", textAlign = TextAlign.Center, color = Color.White
-                        )
-                    }
-
-
-                }
-            }
         }
     }
 

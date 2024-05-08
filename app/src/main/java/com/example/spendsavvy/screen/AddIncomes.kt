@@ -324,6 +324,7 @@ fun AddIncomeScreen(
                 // If all fields have data, add the category
                 transactionViewModel.addTransactionToFirestore(
                     Transactions(
+                        id = transactionViewModel.generateTransactionId(),
                         amount = amount.toDoubleOrNull() ?: 0.0,
                         description = description,
                         date = selectedDate.value,

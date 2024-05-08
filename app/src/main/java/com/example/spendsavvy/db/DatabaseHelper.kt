@@ -19,6 +19,7 @@ class DatabaseHelper(context: Context) :
         val CREATE_CATEGORY_TABLE = """
             CREATE TABLE categories (
                 id TEXT PRIMARY KEY,
+                internalId TEXT,
                 imageUri TEXT,
                 categoryName TEXT NOT NULL,
                 categoryType TEXT NOT NULL,
@@ -30,6 +31,7 @@ class DatabaseHelper(context: Context) :
         val CREATE_TRANSACTION_TABLE = """
             CREATE TABLE transactions (
                 id TEXT PRIMARY KEY,
+                internalId TEXT,
                 amount REAL NOT NULL,
                 categoryId TEXT,
                 description TEXT,
@@ -69,6 +71,7 @@ class DatabaseHelper(context: Context) :
 
     fun addNewCategory(
         categoryId: String,
+        internalId: String,
         imageUri: Uri?,
         categoryName: String,
         categoryType: String,
@@ -78,6 +81,7 @@ class DatabaseHelper(context: Context) :
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put("id", categoryId)
+            put("internalId", internalId)
             put("imageUri", imageUri.toString())
             put("categoryName", categoryName)
             put("categoryType", categoryType)
@@ -89,6 +93,7 @@ class DatabaseHelper(context: Context) :
 
     fun updateCategory(
         categoryId: String,
+        internalId: String,
         imageUri: Uri?,
         categoryName: String,
         categoryType: String,
@@ -97,6 +102,7 @@ class DatabaseHelper(context: Context) :
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put("id", categoryId)
+            put("internalId", internalId)
             put("imageUri", imageUri.toString())
             put("categoryName", categoryName)
             put("categoryType", categoryType)
@@ -122,12 +128,19 @@ class DatabaseHelper(context: Context) :
     private fun getCategoryById(categoryId: String): Category {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId))
+
+        val internalIdIndex = cursor.getColumnIndex("internalId")
+        val imageUriIndex = cursor.getColumnIndex("imageUri")
+        val categoryNameIndex = cursor.getColumnIndex("categoryName")
+        val categoryTypeIndex = cursor.getColumnIndex("categoryType")
+
         cursor.moveToFirst()
-        val imageUri = Uri.parse(cursor.getString(1))
-        val categoryName = cursor.getString(2)
-        val categoryType = cursor.getString(3)
+        val internalId = cursor.getString(internalIdIndex)
+        val imageUri = Uri.parse(cursor.getString(imageUriIndex))
+        val categoryName = cursor.getString(categoryNameIndex)
+        val categoryType = cursor.getString(categoryTypeIndex)
         cursor.close()
-        return Category(imageUri, categoryName, categoryType)
+        return Category(internalId,imageUri, categoryName, categoryType)
     }
 
     fun readCategory(userId: String): ArrayList<Category> {
@@ -136,6 +149,7 @@ class DatabaseHelper(context: Context) :
             db.rawQuery("SELECT * FROM categories WHERE userId=?", arrayOf(userId))
         val categoryList: ArrayList<Category> = ArrayList()
 
+        val internalIdIndex = cursorCategory.getColumnIndex("internalId")
         val imageUriIndex = cursorCategory.getColumnIndex("imageUri")
         val categoryNameIndex = cursorCategory.getColumnIndex("categoryName")
         val categoryTypeIndex = cursorCategory.getColumnIndex("categoryType")
@@ -144,6 +158,7 @@ class DatabaseHelper(context: Context) :
             do {
                 categoryList.add(
                     Category(
+                        id = cursorCategory.getString(internalIdIndex),
                         imageUri = Uri.parse(cursorCategory.getString(imageUriIndex)),
                         categoryName = cursorCategory.getString(categoryNameIndex),
                         categoryType = cursorCategory.getString(categoryTypeIndex)
@@ -173,8 +188,8 @@ class DatabaseHelper(context: Context) :
 
             val values = ContentValues().apply {
 
-
                 put("id", categoryId)
+                put("internalId", category.id)
                 put("imageUri", category.imageUri.toString())
                 put("categoryName", category.categoryName)
                 put("categoryType", category.categoryType)
@@ -192,6 +207,7 @@ class DatabaseHelper(context: Context) :
 
     fun addNewTransaction(
         transactionId: String,
+        internalId: String,
         amount: Double,
         categoryId: String,  // Category ID to link the transaction with a category
         description: String,
@@ -203,6 +219,7 @@ class DatabaseHelper(context: Context) :
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put("id", transactionId)
+            put("internalId", internalId)
             put("amount", amount)
             put("categoryId", categoryId)
             put("description", description)
@@ -216,6 +233,7 @@ class DatabaseHelper(context: Context) :
 
     fun updateTransaction(
         transactionId: String,
+        internalId: String,
         amount: Double,
         categoryId: String,
         description: String,
@@ -227,6 +245,7 @@ class DatabaseHelper(context: Context) :
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put("id", transactionId)
+            put("internalId", internalId)
             put("amount", amount)
             put("categoryId", categoryId)
             put("description", description)
@@ -255,6 +274,7 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT * FROM transactions WHERE userId=?", arrayOf(userId))
         val transactionList: ArrayList<Transactions> = ArrayList()
 
+        val internalIdIndex = cursor.getColumnIndex("internalId")
         val amountIndex = cursor.getColumnIndex("amount")
         val categoryIdIndex = cursor.getColumnIndex("categoryId")
         val descriptionIndex = cursor.getColumnIndex("description")
@@ -265,6 +285,7 @@ class DatabaseHelper(context: Context) :
 
 
             do {
+                val internalId = cursor.getString(internalIdIndex)
                 val amount = cursor.getDouble(amountIndex)
                 val categoryId = cursor.getString(categoryIdIndex)
                 val description = cursor.getString(descriptionIndex)
@@ -277,7 +298,7 @@ class DatabaseHelper(context: Context) :
                 val category = getCategoryById(categoryId)
 
                 // Create a Transaction object and add it to the list
-                val transaction = Transactions(amount, category, description, date, transactionType)
+                val transaction = Transactions(internalId,amount, category, description, date, transactionType)
                 transactionList.add(transaction)
             } while (cursor.moveToNext())
         }
@@ -307,6 +328,7 @@ class DatabaseHelper(context: Context) :
 
 
                 put("id", transactionId)
+                put("internalId", transaction.id)
                 put("amount", transaction.amount)
                 put("categoryId", categoryId)
                 put("description", transaction.description)
@@ -407,28 +429,6 @@ class DatabaseHelper(context: Context) :
 
     fun resetGoal(userId: String) {
         updateGoal(userId, 0.0)
-    }
-
-    private fun getCategoryById(categoryId: Long): Category {
-        val db = this.readableDatabase
-        val cursor =
-            db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId.toString()))
-        cursor.moveToFirst()
-        val imageUri = Uri.parse(cursor.getString(1))
-        val categoryName = cursor.getString(2)
-        val categoryType = cursor.getString(3)
-        cursor.close()
-        return Category(imageUri, categoryName, categoryType)
-    }
-
-    fun getCategoryId(categoryName: String): Long {
-        val db = this.readableDatabase
-        val cursor =
-            db.rawQuery("SELECT * FROM categories WHERE categoryName=?", arrayOf(categoryName))
-        cursor.moveToFirst()
-        val categoryId = cursor.getLong(0) // Return the category row id
-        cursor.close()
-        return categoryId
     }
 
 
@@ -568,6 +568,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 15
+        private const val DATABASE_VERSION = 16
     }
 }
