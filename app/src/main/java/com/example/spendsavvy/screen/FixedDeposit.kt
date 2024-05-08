@@ -1,7 +1,6 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
-import android.widget.HorizontalScrollView
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,13 +48,11 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.bounceClick
-import com.example.spendsavvy.data.bankName
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
-import java.text.NumberFormat
 
 @Composable
-fun FixedDepositScreen(modifier: Modifier, navController: NavController){
+fun FixedDepositScreen(modifier: Modifier, navController: NavController) {
 
     var isDialogPopUp = remember { mutableStateOf(false) }
 
@@ -83,10 +80,13 @@ fun FixedDepositScreen(modifier: Modifier, navController: NavController){
 
             Text(
                 text = "Fixed Deposit Accounts",
-                fontFamily = poppinsFontFamily)
+                fontFamily = poppinsFontFamily
+            )
 
-            Text(text = "3 Accounts", /*calculate acc*/
-                fontFamily = poppinsFontFamily)
+            Text(
+                text = "3 Accounts", /*calculate acc*/
+                fontFamily = poppinsFontFamily
+            )
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -134,7 +134,7 @@ fun FixedDepositScreen(modifier: Modifier, navController: NavController){
 }
 
 @Composable
-fun BankCard(fdAccount: FDAccount,modifier: Modifier){
+fun BankCard(fdAccount: FDAccount, modifier: Modifier) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -173,7 +173,7 @@ fun BankCard(fdAccount: FDAccount,modifier: Modifier){
                     text = "RM ${fdAccount.deposit}",
                     fontFamily = poppinsFontFamily,
                     color = Color.Gray
-                    )
+                )
                 Spacer(modifier = Modifier.height(15.dp))
                 Divider(color = Color.Gray, thickness = 0.7.dp)
             }
@@ -257,10 +257,9 @@ fun FixedDepositPopUpScreen(
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 SingleChoiceSegmentedButtonRow {
-                    options.forEachIndexed{
-                            index, option ->
+                    options.forEachIndexed { index, option ->
                         SegmentedButton(
                             selected = selectedIndex == index,
                             onClick = { selectedIndex = index },
@@ -307,7 +306,7 @@ fun FixedDepositPopUpScreen(
                         expanded = isExpanded,
                         onDismissRequest = { isExpanded = false }
                     ) {
-                        for(i in bankName) {
+                        /*for (i in bankName) {
                             DropdownMenuItem(
                                 text = {
                                     Text(text = i)
@@ -317,7 +316,7 @@ fun FixedDepositPopUpScreen(
                                     isExpanded = false
                                 }
                             )
-                        }
+                        }*/
                     }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
@@ -329,7 +328,8 @@ fun FixedDepositPopUpScreen(
                     .padding(start = 15.dp, top = 15.dp)
             ) {
 
-                Text(text = "Deposit Amount",
+                Text(
+                    text = "Deposit Amount",
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp
                 )
@@ -381,7 +381,7 @@ fun FixedDepositPopUpScreen(
                     .padding(15.dp),
                 horizontalArrangement = Arrangement.spacedBy(30.dp),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Button(
                     onClick = {
                         onCancelClick()
@@ -425,10 +425,11 @@ fun FixedDepositPopUpScreen(
 
 @Composable
 @Preview(showBackground = true)
-fun FixedDepositScreenPreview(){
+fun FixedDepositScreenPreview() {
     FixedDepositScreen(
         Modifier
             .fillMaxSize()
             .padding(20.dp),
-        navController = rememberNavController())
+        navController = rememberNavController()
+    )
 }
