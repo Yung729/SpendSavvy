@@ -56,7 +56,7 @@ import com.example.spendsavvy.viewModels.WalletViewModel
 @Composable
 fun StockScreen(
     modifier: Modifier = Modifier,
-    stockViewModel: WalletViewModel,
+    walletViewModel: WalletViewModel,
     navController: NavController
 ) {
 
@@ -68,8 +68,8 @@ fun StockScreen(
         mutableStateOf(false)
     }
 
-    val stockListLive by stockViewModel.stockListLive.observeAsState(initial = emptyList())
-    val totalPriceStock by stockViewModel.totalPriceStock.observeAsState(initial = 0.00)
+    val stockListLive by walletViewModel.stockListLive.observeAsState(initial = emptyList())
+    val totalPriceStock by walletViewModel.totalPriceStock.observeAsState(initial = 0.00)
 
     // Calculate total stock balance
     /*    val totalStockBalance = remember {

@@ -57,7 +57,7 @@ import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
-import com.example.spendsavvy.screen.EditStockScreen
+import com.example.spendsavvy.screen.EditExistingStockScreen
 import com.example.spendsavvy.screen.ForgotPassword
 import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
@@ -374,14 +374,18 @@ fun TabsNavGraph(
                 route = Screen.AddStock.route
             ){
                 AddNewStockScreen(
-
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    walletViewModel = walletViewModel,
+                    navController = navController
                 )
             }
 
             composable(
                 route = Screen.AddExistingStock.route
             ){
-                EditStockScreen(
+                EditExistingStockScreen(
                     walletViewModel = walletViewModel,
                     navController = navController,
                     mode = 1
@@ -391,7 +395,7 @@ fun TabsNavGraph(
             composable(
                 route = Screen.EditStock.route
             ){
-                EditStockScreen(
+                EditExistingStockScreen(
                     walletViewModel = walletViewModel,
                     navController = navController,
                     mode = 2
