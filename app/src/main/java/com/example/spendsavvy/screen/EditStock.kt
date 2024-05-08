@@ -59,8 +59,6 @@ fun EditStockScreen(
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun EditExistingStockScreen(
-    onCancelClick: () -> Unit,
-    onConfirmClick: () -> Unit,
     walletViewModel: WalletViewModel,
     navController: NavController,
     mode: Int

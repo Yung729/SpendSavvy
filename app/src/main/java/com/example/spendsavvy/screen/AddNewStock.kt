@@ -40,8 +40,7 @@ import com.example.spendsavvy.viewModels.WalletViewModel
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun AddNewStockScreen(
-    onCancelClick: () -> Unit,
-    onConfirmClick: () -> Unit,
+    modifier: Modifier,
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
