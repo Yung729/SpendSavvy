@@ -3,6 +3,7 @@ package com.example.spendsavvy.viewModels
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +26,7 @@ class OverviewViewModel(
 
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
-
+    private val currentContext = context
     private val internet = isOnline
 
     private val currentUserId = userId
@@ -229,6 +230,9 @@ class OverviewViewModel(
                         updateTransactions(
                             transactions = updatedTransactionsList
                         )
+                        Toast.makeText(
+                            currentContext, "Transaction edited", Toast.LENGTH_SHORT
+                        ).show()
                     }
                 )
 
@@ -257,6 +261,9 @@ class OverviewViewModel(
                             transactions = updatedTransactions,
                             selectedDate = selectedDateFromUser.value ?: Date()
                         )
+                        Toast.makeText(
+                            currentContext, "Transaction deleted", Toast.LENGTH_SHORT
+                        ).show()
                     }
                 )
 

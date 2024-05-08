@@ -101,6 +101,9 @@ class CategoryViewModel(
                             if (it == category) updatedCategory else it
                         }
                         updateCategories(categories = updatedCategories)
+                        Toast.makeText(
+                            currentContext, "Category edited", Toast.LENGTH_SHORT
+                        ).show()
                     })
 
             } catch (e: Exception) {
@@ -127,6 +130,9 @@ class CategoryViewModel(
                         val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories.filter { it != category }
                         updateCategories(categories = updatedCategories)
+                        Toast.makeText(
+                            currentContext, "Category deleted", Toast.LENGTH_SHORT
+                        ).show()
                     })
 
 
