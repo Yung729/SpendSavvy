@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.provider.ContactsContract.Profile
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -75,6 +76,7 @@ import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
@@ -154,6 +156,7 @@ fun TabsNavGraph(
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
+    val profileViewModel = ProfileViewModel(userId)
 
     //Wallet
     val walletViewModel = WalletViewModel(context, userId)
@@ -303,6 +306,7 @@ fun TabsNavGraph(
                     transactionViewModel = transactionsViewModel,
                     budgetViewModel = targetViewModel,
                     dateViewModel = dateViewModel,
+                    profileViewModel = profileViewModel,
                     navController = navController
                 )
             }

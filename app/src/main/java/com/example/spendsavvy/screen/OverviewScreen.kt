@@ -55,11 +55,13 @@ import com.example.spendsavvy.R
 import com.example.spendsavvy.components.LoadingScreen
 import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -79,6 +81,7 @@ fun OverviewScreen(
     transactionViewModel: OverviewViewModel,
     budgetViewModel: TargetViewModel,
     dateViewModel: DateSelectionViewModel,
+    profileViewModel: ProfileViewModel,
     navController: NavController
 ) {
     val isLoading by transactionViewModel.isLoading.observeAsState(initial = false)
@@ -89,7 +92,9 @@ fun OverviewScreen(
     val budgetAmount by budgetViewModel.budget.observeAsState(initial = 0.0)
     val goalAmount by budgetViewModel.goal.observeAsState(initial = 0.0)
 
+    val userData by profileViewModel.userData.observeAsState(initial = UserData())
 
+    val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
     val calendarState = rememberSheetState()
     val selectedDate = rememberSaveable {
         mutableStateOf(Calendar.getInstance().apply {
@@ -106,12 +111,12 @@ fun OverviewScreen(
         dateViewModel.setSelectedDate(newDate)
     }
 
+
     LaunchedEffect(selectedDate.value) {
         dateViewModel.setSelectedDate(selectedDate.value)
     }
 
 
-    val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -154,7 +159,7 @@ fun OverviewScreen(
 
             item {
                 Text(
-                    text = "Hi, User", //current User
+                    text = "Hi, ${userData.userName}", //current User
                     fontFamily = poppinsFontFamily,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -595,18 +600,4 @@ fun TransactionList(
             lastDate = dateFormat.format(item.date)
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OverviewScreenPreview() {
-    OverviewScreen(
-        Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        transactionViewModel = viewModel(),
-        budgetViewModel = viewModel(),
-        dateViewModel = viewModel(),
-        navController = rememberNavController()
-    )
 }
