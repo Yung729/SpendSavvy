@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
 
@@ -135,7 +136,7 @@ fun EditExistingStockScreen(
                     expanded = isExpanded,
                     onDismissRequest = { isExpanded = false }
                 ) {
-                    for(stock in stockDetails) {          //read from existing stock items
+                    for (stock in stockDetails) {          //read from existing stock items
                         DropdownMenuItem(
                             text = {
                                 Text(text = stock.productName)
@@ -151,27 +152,41 @@ fun EditExistingStockScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            Text(
-                text = "Product Price",
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
+            if (mode == 1) {
+                Text(
+                    text = "Product Price",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
 
-            TextField(
-                value = price,
-                onValueChange = {
-                    price = it
-                },
-                placeholder = {
-                    Text(
-                        text = "0",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
+                for (stock in stockDetails) {
+                    if (searchProduct == stock.productName)
+                        Text(
+                            text = stock.originalPrice.toString()
+                        )
                 }
-            )
+            } else {
+                Text(
+                    text = "Set Product Price Sold",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
 
+                TextField(
+                    value = price,
+                    onValueChange = {
+                        price = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "0",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    }
+                )
+            }
             Text(
                 text = "Quantity",
                 fontFamily = poppinsFontFamily,
@@ -203,7 +218,7 @@ fun EditExistingStockScreen(
             ) {
                 Button(
                     onClick = {
-                        onCancelClick()
+                        navController.navigateUp()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black
@@ -221,7 +236,29 @@ fun EditExistingStockScreen(
 
                 Button(
                     onClick = {
-
+                        for (stock in stockDetails) {
+                            if (searchProduct == stock.productName) {
+                                if (mode == 2) {
+                                    walletViewModel.editStockDetails(
+                                        stock = stock,
+                                        updatedStockDetails = Stock(
+                                            searchProduct,
+                                            price.toDoubleOrNull() ?: 0.0,
+                                            qty.toInt()
+                                        )
+                                    )
+                                } else {
+                                    walletViewModel.editStockDetails(
+                                        stock = stock,
+                                        updatedStockDetails = Stock(
+                                            searchProduct,
+                                            stock.originalPrice,
+                                            qty.toInt()
+                                        )
+                                    )
+                                }
+                            }
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black
@@ -240,3 +277,7 @@ fun EditExistingStockScreen(
         }
     }
 }
+
+//for sell , use qty*setPrice
+//profit earned qty*setPrice - qty*originalPrice
+//new stock balance = total stock balance - {newqty*originalPrice}=>addNewStock
