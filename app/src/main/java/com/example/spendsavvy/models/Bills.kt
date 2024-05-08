@@ -7,10 +7,9 @@ data class Bills (
     val amount: Double ,
     val category: Category ,
     val description: String,
-    val date: LocalDate ,
-    val transactionType: String,
-    val selectedDueDate: LocalDate?,
-    val selectedDuration: String
+    val selectedDueDate: String,
+    val selectedDuration: String,
+    val billsStatus : String
 ): Serializable {
-    constructor() : this(0.0, Category(), "", LocalDate.now(),"", null, "")
+    constructor() : this(0.0, Category(), "","", "", "")
 }

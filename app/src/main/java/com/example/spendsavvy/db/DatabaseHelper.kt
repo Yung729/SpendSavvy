@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
+import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
@@ -321,6 +322,132 @@ class DatabaseHelper(context: Context) :
 
 
     }
+
+    //------------------------------------------ Bills ----------------------------------------------------------------------
+
+    fun addNewBill(
+        billId: String,
+        amount: Double,
+        categoryId: String,
+        description: String,
+        selectedDueDate: String,
+        selectedDuration: String,
+        billsStatus: String,
+        userId: String
+    ) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("id", billId)
+            put("amount", amount)
+            put("categoryId", categoryId)
+            put("description", description)
+            put("selectedDueDate", selectedDueDate)
+            put("selectedDuration", selectedDuration)
+            put("billsStatus", billsStatus)
+            put("userId", userId)
+        }
+        db.insert("bills", null, values)
+        db.close()
+    }
+
+    fun updateBill(
+        billId: String,
+        amount: Double,
+        categoryId: String,
+        description: String,
+        selectedDueDate: String,
+        selectedDuration: String,
+        billsStatus: String,
+        userId: String
+    ) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("id", billId)
+            put("amount", amount)
+            put("categoryId", categoryId)
+            put("description", description)
+            put("selectedDueDate", selectedDueDate)
+            put("selectedDuration", selectedDuration)
+            put("billsStatus", billsStatus)
+            put("userId", userId)
+        }
+        db.update("bills", values, "id=? AND userId=?", arrayOf(billId, userId))
+        db.close()
+    }
+
+    fun deleteAllBills() {
+        val db = this.writableDatabase
+        db.delete("bills", null, null)
+        db.close()
+    }
+
+    fun deleteBill(billId: String, userId: String) {
+        val db = this.writableDatabase
+        db.delete("bills", "id=? AND userId=?", arrayOf(billId, userId))
+        db.close()
+    }
+
+    fun readBills(userId: String): ArrayList<Bills> {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM bills WHERE userId=?", arrayOf(userId))
+        val billsList: ArrayList<Bills> = ArrayList()
+
+        val amountIndex = cursor.getColumnIndex("amount")
+        val categoryIdIndex = cursor.getColumnIndex("categoryId")
+        val descriptionIndex = cursor.getColumnIndex("description")
+        val selectedDueDateIndex = cursor.getColumnIndex("selectedDueDate")
+        val selectedDurationIndex = cursor.getColumnIndex("selectedDuration")
+        val billsStatusIndex = cursor.getColumnIndex("billsStatus")
+
+        if (cursor.moveToFirst()) {
+            do {
+                val amount = cursor.getDouble(amountIndex)
+                val categoryId = cursor.getString(categoryIdIndex)
+                val description = cursor.getString(descriptionIndex)
+                val selectedDueDate = cursor.getString(selectedDueDateIndex)
+                val selectedDuration = cursor.getString(selectedDurationIndex)
+                val billsStatus = cursor.getString(billsStatusIndex)
+
+
+                // Get the category linked with this bill
+                val category = getCategoryById(categoryId)
+
+                // Create a Bills object and add it to the list
+                val bill = Bills(amount, category, description,selectedDueDate, selectedDuration, billsStatus)
+                billsList.add(bill)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return billsList
+    }
+
+    private suspend fun getBillId(bills: Bills, userId: String): String {
+        return FirestoreRepository().getDocumentId("Bills", userId, bills)
+    }
+
+    suspend fun addNewBillsList(
+        bills: List<Bills>, userId: String
+    ) {
+        val db = this.writableDatabase
+
+        for (bill in bills) {
+            val billId = getBillId(bills = bill, userId = userId)
+            val categoryId = getCategoryId(category = bill.category, userId = userId)
+            val values = ContentValues().apply {
+                put("id", billId)
+                put("amount", bill.amount)
+                put("categoryId", categoryId)
+                put("description", bill.description)
+                put("selectedDueDate", bill.selectedDueDate)
+                put("selectedDuration", bill.selectedDuration)
+                put("billsStatus", bill.billsStatus)
+                put("userId", userId)
+            }
+            db.insert("bills", null, values)
+        }
+        db.close()
+    }
+
 
 //------------------------------------------    Budget   ----------------------------------------------------------------------
 

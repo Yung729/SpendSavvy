@@ -129,7 +129,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             modifier = Modifier
                 .size(95.dp, 50.dp)
                 .offset(
-                    x = (125).dp, y = (165).dp
+                    x = (125).dp, y = (150).dp
 
                 )
                 .clip(CircleShape)
@@ -157,7 +157,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             modifier = Modifier
                 .size(95.dp, 50.dp)
                 .offset(
-                    x = (125).dp, y = (180).dp
+                    x = (125).dp, y = (165).dp
                 )
                 .clip(CircleShape)
                 .border(
@@ -171,7 +171,34 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
         ) {
             Image(
                 painter = painterResource(id = R.drawable.comment_icon),
-                contentDescription = "Support",
+                contentDescription = "Upload question",
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+            )
+        }
+        FloatingActionButton(
+            onClick = {
+                //show history questions
+            },
+            modifier = Modifier
+                .size(95.dp, 50.dp)
+                .offset(
+                    x = (125).dp, y = (180).dp
+                )
+                .clip(CircleShape)
+                .border(
+                    width = 1.dp,
+                    color = Color.Black,
+                    shape = CircleShape
+                ),
+            elevation = FloatingActionButtonDefaults.elevation(8.dp),
+            containerColor = Color.Gray,
+            contentColor = Color.White,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.history_icon),
+                contentDescription = "History",
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)

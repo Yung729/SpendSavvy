@@ -68,10 +68,10 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
     var amount by remember { mutableStateOf("") }
     var selectedDueDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedDuration by remember { mutableStateOf("") }
+    val billsStatus by remember { mutableStateOf("Upcoming") }  //default == upcoming
 
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
     var isExpanded by remember { mutableStateOf(false) }
-    val currentDate = LocalDate.now()
 
     Column(
         modifier = Modifier
@@ -174,30 +174,29 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
 
         Button(
             onClick = {
-                billsViewModel.addBillsToFirestore(
-                    Bills(
-                        amount = amount.toDoubleOrNull() ?: 0.0,
-                        description = description,
-                        date = currentDate,
-                        category = selectedCategory,
-                        transactionType = "Expenses",
-                        selectedDueDate = selectedDueDate,
-                        selectedDuration = selectedDuration
-                    ),
-                    onSuccess = {
-                        Toast.makeText(
-                            context,
-                            "Bills added successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                ) {
-                    Toast.makeText(
-                        context,
-                        "Failed to add Bills",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+//                billsViewModel.addBillsToFirestore(
+//                    Bills(
+//                        amount = amount.toDoubleOrNull() ?: 0.0,
+//                        description = description,
+//                        category = selectedCategory,
+//                        selectedDueDate = selectedDueDate.toString(),
+//                        selectedDuration = selectedDuration,
+//                        billsStatus = billsStatus
+//                    ),
+//                    onSuccess = {
+//                        Toast.makeText(
+//                            context,
+//                            "Bills added successfully",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                ) {
+//                    Toast.makeText(
+//                        context,
+//                        "Failed to add Bills",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -326,7 +325,7 @@ fun AddBillsPreview() {
             .fillMaxSize()
             .padding(20.dp),
         navController = rememberNavController(),
-        billsViewModel = BillsViewModel(),
+        billsViewModel = viewModel(),
         catViewModel = viewModel()
     )
 }

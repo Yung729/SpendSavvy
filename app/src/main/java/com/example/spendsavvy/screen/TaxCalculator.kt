@@ -86,7 +86,7 @@ fun TaxCalculator(
     val incomeAfterTaxAnnually by taxViewModel.incomeAfterTaxAnnually.observeAsState(initial = 0.0)
 
     val tax :Double = taxAnnually
-    val date: Date = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+    val currentDate: Date = Date()
     var showDialog by remember { mutableStateOf(false) }
     var success by remember { mutableStateOf(true) }
 
@@ -231,8 +231,8 @@ fun TaxCalculator(
                             transactionViewModel.addTransactionToFirestore(
                                 Transactions(
                                     amount = tax,
-                                    description = "Income Tax",
-                                    date = date,
+                                    description = "Income Tax of ${selectedDate.year}",
+                                    date = currentDate,
                                     category = Category(
                                         imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
                                         categoryName = "Income Tax",
@@ -257,7 +257,8 @@ fun TaxCalculator(
                             success = false
                         }
                         println("$tax")
-                        println("$date")
+                        println("$selectedDate")
+                        println("$currentDate")
                     },
                     modifier = Modifier
                         .weight(1f)
