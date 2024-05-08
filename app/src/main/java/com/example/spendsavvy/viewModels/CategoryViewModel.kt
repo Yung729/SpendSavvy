@@ -76,6 +76,46 @@ class CategoryViewModel(
         incomeList.postValue(incomeCategories)
     }
 
+    private fun updateCategories(
+        category: Category,
+        updatedCategory: Category = Category(),
+        mode: Int
+    ) {
+
+        //add
+        when (mode) {
+            1 -> {
+                val currentCategories = categoryList.value ?: emptyList()
+                val updatedCategories = currentCategories + category
+
+                if (category.categoryType == "Expenses") {
+                    expensesList.value = expensesList.value?.plus(category)
+                } else if (category.categoryType == "Incomes") {
+                    incomeList.value = incomeList.value?.plus(category)
+                }
+
+                categoryList.value = updatedCategories
+            }
+
+            2 -> { //edit
+                categoryList.value =
+                    categoryList.value?.map { if (it == category) updatedCategory else it }
+                expensesList.value =
+                    expensesList.value?.map { if (it == category) updatedCategory else it }
+                incomeList.value =
+                    incomeList.value?.map { if (it == category) updatedCategory else it }
+            }
+
+            3 -> {
+                categoryList.value = categoryList.value?.filter { it != category }
+                expensesList.value = expensesList.value?.filter { it != category }
+                incomeList.value = incomeList.value?.filter { it != category }
+            }
+        }
+
+
+    }
+
 
     private suspend fun getCategoryId(category: Category): String {
         return firestoreRepository.getDocumentId("Categories", currentUserId, category)
@@ -99,11 +139,12 @@ class CategoryViewModel(
                             updatedCategory.categoryType,
                             currentUserId
                         )
-                        val currentCategories = categoryList.value ?: emptyList()
+                        updateCategories(category = category,mode = 2)
+                        /*val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories.map {
                             if (it == category) updatedCategory else it
                         }
-                        updateCategories(categories = updatedCategories)
+                        updateCategories(categories = updatedCategories)*/
                     })
 
             } catch (e: Exception) {
@@ -127,9 +168,10 @@ class CategoryViewModel(
                             categoryId,
                             currentUserId
                         )
-                        val currentCategories = categoryList.value ?: emptyList()
+                        updateCategories(category = category,mode = 3)
+                        /*val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories.filter { it != category }
-                        updateCategories(categories = updatedCategories)
+                        updateCategories(categories = updatedCategories)*/
                     })
 
 
@@ -200,9 +242,10 @@ class CategoryViewModel(
                             category.categoryType,
                             currentUserId
                         )
-                        val currentCategories = categoryList.value ?: emptyList()
+                        updateCategories(category = category,mode = 1)
+               /*         val currentCategories = categoryList.value ?: emptyList()
                         val updatedCategories = currentCategories + category
-                        updateCategories(categories = updatedCategories)
+                        updateCategories(categories = updatedCategories)*/
                         Toast.makeText(
                             currentContext, "Category added", Toast.LENGTH_SHORT
                         ).show()
@@ -225,9 +268,10 @@ class CategoryViewModel(
                         category.categoryType,
                         currentUserId
                     )
-                    val currentCategories = categoryList.value ?: emptyList()
+                    updateCategories(category = category,mode = 1)
+                    /*val currentCategories = categoryList.value ?: emptyList()
                     val updatedCategories = currentCategories + category
-                    updateCategories(categories = updatedCategories)
+                    updateCategories(categories = updatedCategories)*/
                     Toast.makeText(
                         currentContext, "Category added", Toast.LENGTH_SHORT
                     ).show()
