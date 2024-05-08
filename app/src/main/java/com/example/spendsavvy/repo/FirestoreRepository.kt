@@ -1,7 +1,6 @@
 package com.example.spendsavvy.repo
 
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
@@ -559,13 +558,17 @@ class FirestoreRepository {
 
     // ---------------- User -----------------------------------------
 
-    fun readUser(userId: String,onSuccess: (UserData) -> Unit, onFailure: (Exception) -> Unit) : UserData{
+    fun readUser(
+        userId: String,
+        onSuccess: (UserData) -> Unit,
+        onFailure: (Exception) -> Unit
+    ): UserData {
         val docRef = firestore.collection("Users").document(userId)
         var userData = UserData()
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                     userData = document.toObject(UserData::class.java)!!
+                    userData = document.toObject(UserData::class.java)!!
                     if (userData != null) {
                         onSuccess(userData)
                     } else {

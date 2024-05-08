@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.provider.ContactsContract.Profile
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -84,13 +83,12 @@ import com.example.spendsavvy.viewModels.WalletViewModel
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
 
-
-    val context = context
-    val isConnected = isInternetAvailable(context)
+    val currentContext = context
+    val isConnected = isInternetAvailable(currentContext)
     val fireAuthRepository = FireAuthRepository(
-        context = context,
+        context = currentContext,
         navController = navController,
-        CategoryViewModel(context, isConnected, "")
+        CategoryViewModel(currentContext, isConnected, "")
     )
     val dateViewModel = DateSelectionViewModel()
 
@@ -125,7 +123,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         composable(route = Screen.MainScreen.route) {
             TabsNavGraph(
                 userId = fireAuthRepository.getCurrentUser(),
-                context = context,
+                context = currentContext,
                 dateViewModel = dateViewModel
             )
         }
@@ -340,9 +338,10 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.Cash.route
-            ){
+            ) {
                 CashScreen(
-                    cashViewModel = walletViewModel)
+                    cashViewModel = walletViewModel
+                )
             }
 
             composable(

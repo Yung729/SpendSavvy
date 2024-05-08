@@ -17,10 +17,10 @@ class FireAuthRepository(
     categoryViewModel: CategoryViewModel
 ) {
 
-    private var auth: FirebaseAuth = Firebase.auth
+    private var auth = Firebase.auth
     val context = context
     val navController = navController
-    val categoryViewModel = categoryViewModel
+    private val categoryViewModel = categoryViewModel
 
     fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
