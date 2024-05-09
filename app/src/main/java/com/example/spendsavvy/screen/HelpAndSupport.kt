@@ -129,7 +129,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             modifier = Modifier
                 .size(95.dp, 50.dp)
                 .offset(
-                    x = (125).dp, y = (150).dp
+                    x = (125).dp, y = (140).dp
 
                 )
                 .clip(CircleShape)
@@ -157,7 +157,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             modifier = Modifier
                 .size(95.dp, 50.dp)
                 .offset(
-                    x = (125).dp, y = (165).dp
+                    x = (125).dp, y = (155).dp
                 )
                 .clip(CircleShape)
                 .border(
@@ -184,7 +184,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             modifier = Modifier
                 .size(95.dp, 50.dp)
                 .offset(
-                    x = (125).dp, y = (180).dp
+                    x = (125).dp, y = (170).dp
                 )
                 .clip(CircleShape)
                 .border(

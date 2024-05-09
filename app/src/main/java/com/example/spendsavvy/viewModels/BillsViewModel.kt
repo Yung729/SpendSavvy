@@ -14,6 +14,7 @@ import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Date
+import java.util.UUID
 
 class BillsViewModel(
     context: Context,
@@ -21,62 +22,62 @@ class BillsViewModel(
     userId: String,
 ) {
 
-//    private val firestoreRepository = FirestoreRepository()
-//    private val dbHelper = DatabaseHelper(context)
-//
-//    private val internet = isOnline
-//
-//    private val currentUserId = userId
-//    val isLoading = MutableLiveData<Boolean>()
-//
-//    val billsList = MutableLiveData<List<Bills>>() // All bills List
-//    val todayBillsList = MutableLiveData<List<Bills>>() // Today bills List
-//    val monthBillsList = MutableLiveData<List<Bills>>() // Month bills List
-//    val yearBillsList = MutableLiveData<List<Bills>>() // Year bills List
-//
-//    init {
-//        getBillsRecord()
-//    }
-//
-//    fun getBillsRecord() {
-//        viewModelScope.launch {
-//            val billsFromDB: List<Bills>
-//
-//            isLoading.value = true
-//            try {
-//                billsFromDB = if (internet) {
-//                    firestoreRepository.readItemsFromDatabase(
-//                        currentUserId,
-//                        "Bills",
-//                        Bills::class.java
-//                    )
-//                } else {
-//                    dbHelper.readBills(userId = currentUserId)
-//                }
-//
-//                updateBills(
-//                    billsFromDB,
-//                )
-//
-//            } catch (e: Exception) {
-//                Log.e(ContentValues.TAG, "Error getting bills", e)
-//            } finally {
-//                isLoading.postValue(false) // Set loading state to false when loading is completed
-//            }
-//        }
-//    }
-//
-//    private fun updateBills(bills: List<Bills>) {
-//        change the bill data
-//    }
-//
-//    private suspend fun getBillId(bills: Bills): String {
-//        return firestoreRepository.getDocumentId("Bills", currentUserId, bills)
-//    }
-//
-//    private suspend fun getCategoryId(category: Category): String {
-//        return firestoreRepository.getDocumentId("Categories", currentUserId, category)
-//    }
+    private val firestoreRepository = FirestoreRepository()
+    private val dbHelper = DatabaseHelper(context)
+
+    private val internet = isOnline
+
+    private val currentUserId = userId
+    val isLoading = MutableLiveData<Boolean>()
+
+    val billsList = MutableLiveData<List<Bills>>() // All bills List
+    val upcomingBillsList = MutableLiveData<List<Bills>>() // upcoming bills List
+    val overdueBillsList = MutableLiveData<List<Bills>>() // overdue bills List
+    val paidBillsList = MutableLiveData<List<Bills>>() // paid bills List
+
+    init {
+        getBillsRecord()
+    }
+
+    fun getBillsRecord() {
+        viewModelScope.launch {
+            val billsFromDB: List<Bills>
+
+            isLoading.value = true
+            try {
+                billsFromDB = if (internet) {
+                    firestoreRepository.readItemsFromDatabase(
+                        currentUserId,
+                        "Bills",
+                        Bills::class.java
+                    )
+                } else {
+                    dbHelper.readBills(userId = currentUserId)
+                }
+
+                updateBills(
+                    billsFromDB,
+                )
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error getting bills", e)
+            } finally {
+                isLoading.postValue(false) // Set loading state to false when loading is completed
+            }
+        }
+    }
+
+    private fun updateBills(bills: List<Bills>) {
+        //change the bill data
+    }
+
+    private suspend fun getBillId(bills: Bills): String {
+        return firestoreRepository.getDocumentId("Bills", currentUserId, bills)
+    }
+
+    private suspend fun getCategoryId(category: Category): String {
+        return firestoreRepository.getDocumentId("Categories", currentUserId, category)
+    }
 //
 //    fun editBill(bills: Bills, updatedBills: Bills) {
 //        viewModelScope.launch {
@@ -145,42 +146,47 @@ class BillsViewModel(
 //        }
 //    }
 //
-//    fun addBillsToFirestore(
-//        bills: Bills,
-//        onSuccess: () -> Unit,
-//        onFailure: (Exception) -> Unit
-//    ) {
-//        viewModelScope.launch {
-//            try {
-//                val categoryId: String = getCategoryId(bills.category)
-//
-//                firestoreRepository.addItem(
-//                    currentUserId,
-//                    "Bills",
-//                    bills,
-//                    "B%04d",
-//                    onSuccess = { documentId ->
-//                        dbHelper.addNewBill(
-//                            billId = documentId,
-//                            amount = bills.amount,
-//                            categoryId = categoryId,
-//                            description = bills.description,
-//                            selectedDueDate = bills.selectedDueDate,
-//                            selectedDuration = bills.selectedDuration,
-//                            billsStatus = bills.billsStatus,
-//                            userId = currentUserId
-//                        )
-//                        onSuccess() // Invoke the onSuccess callback
-//                    },
-//                    onFailure = { exception ->
-//                        Log.e(ContentValues.TAG, "Error adding bills", exception)
-//                        onFailure(exception) // Invoke the onFailure callback
-//                    }
-//                )
-//            } catch (e: Exception) {
-//                Log.e(ContentValues.TAG, "Error adding bills", e)
-//                onFailure(e) // Invoke the onFailure callback
-//            }
-//        }
-//    }
+    fun addBillsToFirestore(
+        bills: Bills,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val categoryId: String = getCategoryId(bills.category)
+
+                firestoreRepository.addItem(
+                    currentUserId,
+                    "Bills",
+                    bills,
+                    "B%04d",
+                    onSuccess = { documentId ->
+                        dbHelper.addNewBill(
+                            billId = documentId,
+                            amount = bills.amount,
+                            categoryId = categoryId,
+                            description = bills.description,
+                            selectedDueDate = bills.selectedDueDate,
+                            selectedDuration = bills.selectedDuration,
+                            billsStatus = bills.billsStatus,
+                            userId = currentUserId
+                        )
+                        onSuccess() // Invoke the onSuccess callback
+                    },
+                    onFailure = { exception ->
+                        Log.e(ContentValues.TAG, "Error adding bills", exception)
+                        onFailure(exception)
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error adding bills", e)
+                onFailure(e)
+            }
+        }
+    }
+
+    fun generateBillId(): String {
+        val random = UUID.randomUUID().toString().substring(0, 5)
+        return "B$random"
+    }
 }

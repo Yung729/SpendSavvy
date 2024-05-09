@@ -53,11 +53,11 @@ class FireAuthRepository(
                     if (user != null) {
                         val uid = user.uid
                         val userData = UserData("", "", userName, phoneNo, email, password)
-
                         val db = Firebase.firestore
                         val usersCollection = db.collection("Users")
                         usersCollection.document(uid)
                             .set(userData)
+
 
                         categoryViewModel.initializeCategoryToFirestore(user.uid)
                     }
