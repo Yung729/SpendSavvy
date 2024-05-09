@@ -82,23 +82,44 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
         }
 
         item{
-            Button(
-                onClick = {
-                    navController.navigate(Screen.AddStaffScreen.route)
-                },
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-                    .bounceClick(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
-                )
-            ) {
-                Text(
-                    text = "Add Staff",
-                    textAlign = TextAlign.Center,
-                    color = Color.White
-                )
+            Row {
+                Button(
+                    onClick = {
+                        navController.navigate(Screen.AddStaffScreen.route)
+                    },
+                    modifier = Modifier
+                        .padding(bottom = 10.dp)
+                        .bounceClick(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    )
+                ) {
+                    Text(
+                        text = "Add Staff",
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        staffViewModel.addTotalStaffSalaryToExpenses()
+                    },
+                    modifier = Modifier
+                        .padding(bottom = 10.dp)
+                        .bounceClick(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    )
+                ) {
+                    Text(
+                        text = "Add Expenses",
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
             }
+
         }
 
 
@@ -123,14 +144,16 @@ fun StaffCard(
 
     ) {
         Box(
-            modifier = Modifier.background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF696161), // Start color
-                        Color(0xFF1B1B1B)  // End color
+            modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF696161), // Start color
+                            Color(0xFF1B1B1B)  // End color
+                        )
                     )
                 )
-            ).fillMaxWidth()
+                .fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)

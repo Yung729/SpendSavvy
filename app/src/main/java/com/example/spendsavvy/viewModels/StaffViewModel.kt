@@ -16,6 +16,7 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Date
 
 class StaffViewModel(
     context: Context, isOnline: Boolean, userId: String, transactionViewModel: OverviewViewModel
@@ -64,16 +65,18 @@ class StaffViewModel(
     }
 
     private fun updateStaff(staff: List<Staff>) {
-        var count = 0
-        var salaryTotal = 0.0
-        staff.forEach {
-            count++
-            salaryTotal += it.salary
-        }
+        viewModelScope.launch {
+            var count = 0
+            var salaryTotal = 0.0
+            staff.forEach {
+                count++
+                salaryTotal += it.salary
+            }
 
-        staffList.postValue(staff)
-        totalStaffCount.postValue(count)
-        totalStaffSalary.postValue(salaryTotal)
+            staffList.postValue(staff)
+            totalStaffCount.postValue(count)
+            totalStaffSalary.postValue(salaryTotal)
+        }
     }
 
 
@@ -179,50 +182,47 @@ class StaffViewModel(
     }
 
     fun addTotalStaffSalaryToExpenses() {
-        val totalSalary = totalStaffSalary.value ?: 0.0
-        val currentMonth = Calendar.getInstance()
-            .get(Calendar.MONTH) + 1
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        viewModelScope.launch {
+            val totalSalary = totalStaffSalary.value ?: 0.0
 
-        // Calculate the end of the month date
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.YEAR, currentYear)
-            set(Calendar.MONTH, currentMonth - 1)
-            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
-        }
-        val endOfMonthDate = calendar.time
-
-
-        // Add the expense to Firestore or wherever you store your expenses
-        transactionViewModel.addTransactionToFirestore(
-            Transactions(
-                id = transactionViewModel.generateTransactionId(),
-                amount = totalSalary,
-                description = "Salary",
-                date = endOfMonthDate,
-                category = Category(
-                    id = "T0013",
-                    imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fsalary.png?alt=media&token=102737bc-9da6-48ef-827c-b0b05d9fb052"),
-                    categoryName = "Staff Salary",
-                    categoryType = "Expenses"
+            // Add the expense to Firestore or wherever you store your expenses
+            transactionViewModel.addTransactionToFirestore(
+                Transactions(
+                    id = transactionViewModel.generateTransactionId(),
+                    amount = totalSalary,
+                    description = "Salary",
+                    date = Date(),
+                    category = Category(
+                        id = "T0013",
+                        imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fsalary.png?alt=media&token=102737bc-9da6-48ef-827c-b0b05d9fb052"),
+                        categoryName = "Staff Salary",
+                        categoryType = "Expenses"
+                    ),
+                    transactionType = "Expenses"
                 ),
-                transactionType = "Expenses"
-            ),
-            onSuccess = {
-                Toast.makeText(
-                    currentContext,
-                    "Total staff salary added to expenses successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-            },
-            onFailure = {
-                Toast.makeText(
-                    currentContext,
-                    "Failed to add total staff salary to expenses",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
+                onSuccess = {
+                    Toast.makeText(
+                        currentContext,
+                        "Total staff salary added to expenses successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
+                onFailure = {
+                    Toast.makeText(
+                        currentContext,
+                        "Failed to add total staff salary to expenses",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+        }
+    }
+
+    private fun isEndOfMonth(): Boolean {
+        val calendar = Calendar.getInstance()
+        val currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+        val lastDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        return currentDayOfMonth == lastDayOfMonth
     }
 
 

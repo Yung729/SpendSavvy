@@ -112,81 +112,84 @@ class OverviewViewModel(
         startDate: Date = selectedStartDate.value ?: Date(),
         endDate: Date = selectedEndDate.value ?: Date()
     ) {
-        val selectedDateTransactionList = transactions.filter {
-            Calendar.getInstance().apply {
-                time = it.date
-                // Set the time part to 00:00:00
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.time == selectedDate
+        viewModelScope.launch {
+            val selectedDateTransactionList = transactions.filter {
+                Calendar.getInstance().apply {
+                    time = it.date
+                    // Set the time part to 00:00:00
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.time == selectedDate
+            }
+
+            val todayTransaction = transactions.filter {
+                Calendar.getInstance().apply {
+                    time = it.date
+                    // Set the time part to 00:00:00
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.time == todayDate
+            }
+            val monthTransaction = transactions.filter {
+                Calendar.getInstance().apply { time = it.date }
+                    .get(Calendar.MONTH) == currentMonth &&
+                        Calendar.getInstance().apply { time = it.date }
+                            .get(Calendar.YEAR) == currentYear
+            }
+            val yearTransaction = transactions.filter {
+                Calendar.getInstance().apply { time = it.date }.get(Calendar.YEAR) == currentYear
+            }
+            val dateRangeTransactions = transactions.filter { it.date in startDate..endDate }
+
+            val totalExpenses =
+                transactions.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+            val totalIncomes =
+                transactions.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+            val todayExpenses =
+                todayTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+            val todayIncome =
+                todayTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+            val monthExpenses =
+                monthTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+            val monthIncome =
+                monthTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+            val yearExpenses =
+                yearTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
+            val yearIncome =
+                yearTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+            val dateRangeExpenses =
+                dateRangeTransactions.filter { it.transactionType == "Expenses" }
+                    .sumOf { it.amount }
+            val dateRangeIncomes =
+                dateRangeTransactions.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
+
+            expensesTotal.postValue(totalExpenses)
+            incomesTotal.postValue(totalIncomes)
+            todayExpensesTotal.postValue(todayExpenses)
+            todayIncomesTotal.postValue(todayIncome)
+            currentMonthExpenses.postValue(monthExpenses)
+            currentMonthIncomes.postValue(monthIncome)
+            currentYearExpensesTotal.postValue(yearExpenses)
+            currentYearIncomesTotal.postValue(yearIncome)
+            dateRangeExpensesTotal.postValue(dateRangeExpenses)
+            dateRangeIncomesTotal.postValue(dateRangeIncomes)
+
+            transactionsList.postValue(transactions)
+            todayTransactionsList.postValue(todayTransaction)
+            monthTransactionsList.postValue(monthTransaction)
+            yearTransactionsList.postValue(yearTransaction)
+            selectedDateRangeTransaction.postValue(dateRangeTransactions)
+
+            selectedDateTransaction.postValue(selectedDateTransactionList)
+            selectedDateExpensesTotal.postValue(selectedDateTransactionList.filter { it.transactionType == "Expenses" }
+                .sumOf { it.amount })
+            selectedDateIncomesTotal.postValue(selectedDateTransactionList.filter { it.transactionType == "Incomes" }
+                .sumOf { it.amount })
         }
-
-        val todayTransaction = transactions.filter {
-            Calendar.getInstance().apply {
-                time = it.date
-                // Set the time part to 00:00:00
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }.time == todayDate
-        }
-        val monthTransaction = transactions.filter {
-            Calendar.getInstance().apply { time = it.date }.get(Calendar.MONTH) == currentMonth &&
-                    Calendar.getInstance().apply { time = it.date }
-                        .get(Calendar.YEAR) == currentYear
-        }
-        val yearTransaction = transactions.filter {
-            Calendar.getInstance().apply { time = it.date }.get(Calendar.YEAR) == currentYear
-        }
-        val dateRangeTransactions = transactions.filter { it.date in startDate..endDate }
-
-        val totalExpenses =
-            transactions.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
-        val totalIncomes =
-            transactions.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
-        val todayExpenses =
-            todayTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
-        val todayIncome =
-            todayTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
-        val monthExpenses =
-            monthTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
-        val monthIncome =
-            monthTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
-        val yearExpenses =
-            yearTransaction.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
-        val yearIncome =
-            yearTransaction.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
-        val dateRangeExpenses =
-            dateRangeTransactions.filter { it.transactionType == "Expenses" }.sumOf { it.amount }
-        val dateRangeIncomes =
-            dateRangeTransactions.filter { it.transactionType == "Incomes" }.sumOf { it.amount }
-
-        expensesTotal.postValue(totalExpenses)
-        incomesTotal.postValue(totalIncomes)
-        todayExpensesTotal.postValue(todayExpenses)
-        todayIncomesTotal.postValue(todayIncome)
-        currentMonthExpenses.postValue(monthExpenses)
-        currentMonthIncomes.postValue(monthIncome)
-        currentYearExpensesTotal.postValue(yearExpenses)
-        currentYearIncomesTotal.postValue(yearIncome)
-        dateRangeExpensesTotal.postValue(dateRangeExpenses)
-        dateRangeIncomesTotal.postValue(dateRangeIncomes)
-
-        transactionsList.postValue(transactions)
-        todayTransactionsList.postValue(todayTransaction)
-        monthTransactionsList.postValue(monthTransaction)
-        yearTransactionsList.postValue(yearTransaction)
-        selectedDateRangeTransaction.postValue(dateRangeTransactions)
-
-        selectedDateTransaction.postValue(selectedDateTransactionList)
-        selectedDateExpensesTotal.postValue(selectedDateTransactionList.filter { it.transactionType == "Expenses" }
-            .sumOf { it.amount })
-        selectedDateIncomesTotal.postValue(selectedDateTransactionList.filter { it.transactionType == "Incomes" }
-            .sumOf { it.amount })
-
     }
 
 
