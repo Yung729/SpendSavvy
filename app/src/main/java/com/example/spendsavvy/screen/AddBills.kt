@@ -176,7 +176,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             onClick = {
                 billsViewModel.addBillsToFirestore(
                     Bills(
-                        id = BillsViewModel.generateBillId(),
+                        id = billsViewModel.generateBillId(),
                         amount = amount.toDoubleOrNull() ?: 0.0,
                         description = description,
                         category = selectedCategory,

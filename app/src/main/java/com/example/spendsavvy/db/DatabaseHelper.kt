@@ -448,7 +448,7 @@ class DatabaseHelper(context: Context) :
                 val category = getCategoryById(categoryId)
 
                 // Create a Bills object and add it to the list
-                val bill = Bills(amount, category, description,selectedDueDate, selectedDuration, billsStatus)
+                val bill = Bills("",amount, category, description,selectedDueDate, selectedDuration, billsStatus)
                 billsList.add(bill)
             } while (cursor.moveToNext())
         }
