@@ -9,6 +9,7 @@ import android.net.Uri
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import java.util.Date
@@ -44,6 +45,17 @@ class DatabaseHelper(context: Context) :
         """
         db.execSQL(CREATE_TRANSACTION_TABLE)
 
+        val CREATE_STAFF_TABLE = """
+            CREATE TABLE staff (
+                id TEXT PRIMARY KEY,
+                staffIC TEXT,
+                staffName TEXT,
+                salary REAL,
+                userId TEXT
+            )
+        """
+        db.execSQL(CREATE_STAFF_TABLE)
+
         val CREATE_BUDGET_TABLE = """
             CREATE TABLE budget (
                 userId TEXT PRIMARY KEY,
@@ -67,6 +79,7 @@ class DatabaseHelper(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS transactions")
         db.execSQL("DROP TABLE IF EXISTS budget")
         db.execSQL("DROP TABLE IF EXISTS goal")
+        db.execSQL("DROP TABLE IF EXISTS staff")
         onCreate(db)
     }
 
@@ -558,6 +571,133 @@ class DatabaseHelper(context: Context) :
         updateGoal(userId, 0.0)
     }
 
+    //----------------------------- Staff -------------------------------------------------------------------
+    fun addNewStaff(
+        staffId: String,
+        staffIC: String,
+        staffName: String,
+        staffSalary: Double,
+        userId: String
+    ) {
+
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("id", staffId)
+            put("staffIC", staffIC)
+            put("staffName", staffName)
+            put("salary", staffSalary.toString())
+            put("userId", userId)
+        }
+        db.insert("staff", null, values)
+        db.close()
+    }
+
+    fun updateStaff(
+        staffId: String,
+        staffIC: String,
+        staffName: String,
+        staffSalary: Double,
+        userId: String
+    ) {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("id", staffId)
+            put("staffIC", staffIC)
+            put("staffName", staffName)
+            put("salary", staffSalary.toString())
+            put("userId", userId)
+        }
+        db.update("staff", values, "id=? AND userId=?", arrayOf(staffId, userId))
+        db.close()
+    }
+
+    fun deleteStaff(staffId: String, userId: String) {
+        val db = this.writableDatabase
+        db.delete("staff", "id=? AND userId=?", arrayOf(staffId, userId))
+        db.close()
+    }
+
+
+    fun deleteAllStaff() {
+        val db = this.writableDatabase
+        db.delete("staff", null, null)
+        db.close()
+    }
+
+    private fun getStaffById(staffId: String): Staff {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM staff WHERE id=?", arrayOf(staffId))
+
+        val staffICIndex = cursor.getColumnIndex("staffIC")
+        val staffNameIndex = cursor.getColumnIndex("staffName")
+        val salaryIndex = cursor.getColumnIndex("salary")
+
+        cursor.moveToFirst()
+        val staffIc = cursor.getString(staffICIndex)
+        val staffName = cursor.getString(staffNameIndex)
+        val staffSalary = cursor.getDouble(salaryIndex)
+
+        cursor.close()
+        return Staff(staffIc,staffName, staffSalary)
+    }
+
+    fun readStaff(userId: String): ArrayList<Staff> {
+        val db = this.readableDatabase
+        val cursor: Cursor =
+            db.rawQuery("SELECT * FROM staff WHERE userId=?", arrayOf(userId))
+        val staffList: ArrayList<Staff> = ArrayList()
+
+        val staffICIndex = cursor.getColumnIndex("staffIC")
+        val staffNameIndex = cursor.getColumnIndex("staffName")
+        val salaryIndex = cursor.getColumnIndex("salary")
+
+        if (cursor.moveToFirst()) {
+            do {
+                staffList.add(
+                    Staff(
+                        id = cursor.getString(staffICIndex),
+                        name = cursor.getString(staffNameIndex),
+                        salary = cursor.getDouble(salaryIndex)
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return staffList
+    }
+
+
+    private suspend fun getStaffId(staff: Staff, userId: String): String {
+        return FirestoreRepository().getDocumentId("Staff", userId, staff)
+    }
+
+
+    suspend fun addNewStaffList(
+        staff: List<Staff>,
+        userId: String
+    ) {
+        val db = this.writableDatabase
+
+
+        for (item in staff) {
+            val staffId = getStaffId(staff = item, userId = userId)
+
+            val values = ContentValues().apply {
+
+                put("id", staffId)
+                put("staffIC", item.id)
+                put("staffName", item.name)
+                put("salary", item.salary.toString())
+                put("userId", userId)
+            }
+            db.insert("staff", null, values)
+        }
+
+        db.close()
+
+
+    }
+
 
     //------------------------------ CASH ----------------------------------------
     fun readCashDetails(userId: String): ArrayList<Cash> {
@@ -685,6 +825,15 @@ class DatabaseHelper(context: Context) :
             }
         }
 
+        // Check if the staff table has any records
+        val staffCursor = db.rawQuery("SELECT COUNT(*) FROM staff", null)
+        staffCursor.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                isEmpty = isEmpty && (count == 0)
+            }
+        }
+
         // Optionally, you can check other tables as well if needed
 
         db.close()
@@ -695,6 +844,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 16
+        private const val DATABASE_VERSION = 17
     }
 }

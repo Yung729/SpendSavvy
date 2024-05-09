@@ -15,7 +15,6 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-
         setContent {
             SpendSavvyTheme {
                 val context = LocalContext.current

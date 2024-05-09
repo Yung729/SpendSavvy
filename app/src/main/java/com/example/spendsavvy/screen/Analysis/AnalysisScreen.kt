@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen
+package com.example.spendsavvy.screen.Analysis
 
 
 import androidx.compose.foundation.layout.Column
@@ -30,6 +30,7 @@ import com.example.spendsavvy.components.PieChart
 import com.example.spendsavvy.components.RemainingChart
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.screen.LineDivider
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import java.time.YearMonth
