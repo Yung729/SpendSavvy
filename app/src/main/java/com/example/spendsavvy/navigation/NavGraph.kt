@@ -58,6 +58,8 @@ import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
 import com.example.spendsavvy.screen.EditExistingStockScreen
+import com.example.spendsavvy.screen.FixedDepositDetailsScreen
+import com.example.spendsavvy.screen.FixedDepositScreen
 import com.example.spendsavvy.screen.ForgotPassword
 import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
@@ -401,6 +403,18 @@ fun TabsNavGraph(
                     walletViewModel = walletViewModel,
                     navController = navController,
                     mode = 2
+                )
+            }
+
+            composable(
+                route = Screen.FixedDepositDetails.route
+            ){
+                FixedDepositDetailsScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    walletViewModel = walletViewModel,
+                    navController = navController
                 )
             }
 
