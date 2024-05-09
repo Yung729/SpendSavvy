@@ -352,7 +352,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.CashDetails.route
-            ){
+            ) {
                 CashDetailsScreen(
                     walletViewModel = walletViewModel,
                     navController = navController
@@ -374,7 +374,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.AddStock.route
-            ){
+            ) {
                 AddNewStockScreen(
                     modifier = Modifier
                         .fillMaxSize()
@@ -386,7 +386,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.AddExistingStock.route
-            ){
+            ) {
                 EditExistingStockScreen(
                     walletViewModel = walletViewModel,
                     navController = navController,
@@ -396,7 +396,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.EditStock.route
-            ){
+            ) {
                 EditExistingStockScreen(
                     walletViewModel = walletViewModel,
                     navController = navController,
@@ -636,6 +636,7 @@ fun TabsNavGraph(
         }
 
     }
+
 }
 
 val items = listOf(

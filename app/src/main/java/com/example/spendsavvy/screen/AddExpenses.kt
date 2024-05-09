@@ -3,7 +3,6 @@ package com.example.spendsavvy.screen
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -101,10 +100,14 @@ fun AddExpensesScreen(
 
     val todayDate = Date()
     val calendarState = rememberSheetState()
-    val selectedDate = remember { mutableStateOf<Date>(todayDate) }
+    val selectedDate = remember { mutableStateOf(todayDate) }
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
     val context = LocalContext.current
+
+    //validation
+    var isCategoryValid by remember { mutableStateOf(false) }
+    var isAmountValid by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
@@ -175,7 +178,8 @@ fun AddExpensesScreen(
 
                 ExposedDropdownMenuBox(expanded = isExpanded,
                     onExpandedChange = { isExpanded = it }) {
-                    TextField(value = selectedCategory.categoryName,
+                    TextField(
+                        value = selectedCategory.categoryName,
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = {
@@ -193,6 +197,7 @@ fun AddExpensesScreen(
                             }, onClick = {
                                 selectedCategory = data
                                 isExpanded = false
+                                isCategoryValid = true
                             })
                         }
                     }
@@ -212,13 +217,11 @@ fun AddExpensesScreen(
                 modifier = Modifier.padding(10.dp)
 
             ) {
-                Text(
-                    text = "Amount", fontFamily = poppinsFontFamily, fontSize = 15.sp
-                )
 
                 TextField(value = amount,
                     onValueChange = {
                         amount = it
+                        isAmountValid = it.toDoubleOrNull() != null
                     },
                     placeholder = {
                         Text(
@@ -229,7 +232,13 @@ fun AddExpensesScreen(
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    maxLines = 1
+                    maxLines = 1,
+                    isError = !isAmountValid,
+                    label = {
+                        Text(
+                            text = "Amount", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                        )
+                    }
                 )
             }
         }
@@ -252,9 +261,11 @@ fun AddExpensesScreen(
                     text = "Payment Method", fontFamily = poppinsFontFamily, fontSize = 15.sp
                 )
 
-                ExposedDropdownMenuBox(expanded = isExpanded1,
+                ExposedDropdownMenuBox(
+                    expanded = isExpanded1,
                     onExpandedChange = { isExpanded1 = it }) {
-                    TextField(value = selectedMethod,
+                    TextField(
+                        value = selectedMethod,
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = {
@@ -264,7 +275,8 @@ fun AddExpensesScreen(
                         modifier = Modifier.menuAnchor()
                     )
 
-                    ExposedDropdownMenu(expanded = isExpanded1,
+                    ExposedDropdownMenu(
+                        expanded = isExpanded1,
                         onDismissRequest = { isExpanded1 = false }) {
                         for (data in expenseList) {
                             DropdownMenuItem(text = {
@@ -292,20 +304,24 @@ fun AddExpensesScreen(
             Column(
                 modifier = Modifier.padding(10.dp)
             ) {
-                Text(
-                    text = "Description", fontFamily = poppinsFontFamily, fontSize = 15.sp
-                )
 
-                TextField(value = description, onValueChange = {
-                    description = it
-                }, placeholder = {
-                    Text(
-                        text = "Comment",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                })
+
+                TextField(
+                    value = description,
+                    onValueChange = {
+                        description = it
+                    }, placeholder = {
+                        Text(
+                            text = "Comment",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    }, label = {
+                        Text(
+                            text = "Description", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                        )
+                    })
             }
         }
 
@@ -313,31 +329,48 @@ fun AddExpensesScreen(
 
         Button(
             onClick = {
-                // If all fields have data, add the category
-                transactionViewModel.addTransactionToFirestore(
-                    Transactions(
-                        id = transactionViewModel.generateTransactionId(),
-                        amount = amount.toDoubleOrNull() ?: 0.0,
-                        description = description,
-                        date = selectedDate.value,
-                        category = selectedCategory,
-                        transactionType = "Expenses"
-                    ),
-                    onSuccess = {
+
+                if(isAmountValid && isCategoryValid){
+                    transactionViewModel.addTransactionToFirestore(
+                        Transactions(
+                            id = transactionViewModel.generateTransactionId(),
+                            amount = amount.toDoubleOrNull() ?: 0.0,
+                            description = description,
+                            date = selectedDate.value,
+                            category = selectedCategory,
+                            transactionType = "Expenses"
+                        ),
+                        onSuccess = {
+                            Toast.makeText(
+                                context,
+                                "Expenses added successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        onFailure = {
+                            Toast.makeText(
+                                context,
+                                "Failed to add Expenses",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    )
+                }else{
+                    if(!isAmountValid){
                         Toast.makeText(
                             context,
-                            "Expenses added successfully",
+                            "Amount is Empty",
                             Toast.LENGTH_SHORT
                         ).show()
-                    },
-                    onFailure = {
+                    }else if (!isCategoryValid){
                         Toast.makeText(
                             context,
-                            "Failed to add Expenses",
+                            "Category is Empty",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                )
+                }
+
 
             },
             modifier = Modifier
