@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,6 +38,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Category
@@ -44,15 +51,12 @@ import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.screen.AddBills
-import com.example.spendsavvy.screen.Category.AddCategoryScreen
-import com.example.spendsavvy.screen.Overview.AddExpensesScreen
-import com.example.spendsavvy.screen.Overview.AddIncomeScreen
 import com.example.spendsavvy.screen.AddNewStockScreen
-import com.example.spendsavvy.screen.Overview.AllTransactionScreen
 import com.example.spendsavvy.screen.Analysis.AnalysisScreen
 import com.example.spendsavvy.screen.Analysis.BudgetScreen
 import com.example.spendsavvy.screen.CashDetailsScreen
 import com.example.spendsavvy.screen.CashScreen
+import com.example.spendsavvy.screen.Category.AddCategoryScreen
 import com.example.spendsavvy.screen.Category.CategoryDetail
 import com.example.spendsavvy.screen.Category.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
@@ -66,15 +70,18 @@ import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.ManageBillsAndInstalment
 import com.example.spendsavvy.screen.MyProfileScreen
 import com.example.spendsavvy.screen.Notification
+import com.example.spendsavvy.screen.Overview.AddExpensesScreen
+import com.example.spendsavvy.screen.Overview.AddIncomeScreen
+import com.example.spendsavvy.screen.Overview.AllTransactionScreen
 import com.example.spendsavvy.screen.Overview.OverviewScreen
+import com.example.spendsavvy.screen.Overview.TransactionDetail
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
+import com.example.spendsavvy.screen.Staff.StaffAddScreen
+import com.example.spendsavvy.screen.Staff.StaffDetailScreen
 import com.example.spendsavvy.screen.Staff.StaffScreen
 import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
-import com.example.spendsavvy.screen.Overview.TransactionDetail
-import com.example.spendsavvy.screen.Staff.StaffAddScreen
-import com.example.spendsavvy.screen.Staff.StaffDetailScreen
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.BillsViewModel
@@ -87,6 +94,8 @@ import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
+import com.example.spendsavvy.worker.MonthlySalaryWorker
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
@@ -162,16 +171,22 @@ fun TabsNavGraph(
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
-    val staffViewModel = StaffViewModel(context, isConnected, userId,transactionsViewModel)
+    val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId)
     val billsViewModel = BillsViewModel(context, isConnected, userId)
-
 
 
     //Wallet
     val walletViewModel = WalletViewModel(context, userId)
 
+    val totalStaffSalary = staffViewModel.totalStaffSalary.observeAsState(0.0)
+
     mainViewModel.syncDatabase()
+
+
+    if (isConnected) {
+        scheduleMonthlySalaryWorker(context, isConnected, userId, totalStaffSalary.value)
+    }
 
     Scaffold(topBar = {
         HeaderTopBar(text = currentScreenName,
@@ -725,4 +740,36 @@ private fun isInternetAvailable(context: Context): Boolean {
         }
     }
     return result
+}
+
+fun scheduleMonthlySalaryWorker(
+    context: Context,
+    isOnline: Boolean,
+    userId: String,
+    totalStaffSalary: Double
+) {
+
+
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+
+    val request = PeriodicWorkRequestBuilder<MonthlySalaryWorker>(30, TimeUnit.DAYS)
+        .setConstraints(constraints)
+        .setInputData(
+            workDataOf(
+                "isOnline" to isOnline,
+                "userId" to userId,
+                "totalStaffSalary" to totalStaffSalary
+            )
+        )
+        .build()
+
+
+
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "MonthlySalaryWorker", // Unique name for this work request
+        ExistingPeriodicWorkPolicy.KEEP, // Keep existing work if it exists
+        request // The work request to be enqueued
+    )
 }
