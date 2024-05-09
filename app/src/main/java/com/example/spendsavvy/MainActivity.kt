@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import com.example.spendsavvy.navigation.SetupNavGraph
 import com.example.spendsavvy.ui.theme.SpendSavvyTheme
+import com.example.spendsavvy.worker.WorkManagerHelper
 
 
 class MainActivity : ComponentActivity() {
@@ -15,6 +16,8 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
+        /*val workManagerHelper = WorkManagerHelper(applicationContext)
+        workManagerHelper.setupWork()*/
 
         setContent {
             SpendSavvyTheme {

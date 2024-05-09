@@ -147,6 +147,12 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController) 
                 navController,
                 Screen.Category.route
             )
+            List(
+                R.drawable.staff_icon,
+                "Manage Staff",
+                navController,
+                Screen.StaffScreen.route
+            )
         }
 
         item {
