@@ -39,6 +39,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object AddStock : Screen (route = "AddStock", 0)
     object EditStock : Screen (route = "EditStock", 0)
     object AddExistingStock : Screen (route = "EditStock", 0)
+    object FixedDepositDetails : Screen (route = "FixedDepositDetails", 0)
 
     object BudgetScreen : Screen(route = "Budget & Goal", 0)
 

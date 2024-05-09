@@ -64,10 +64,6 @@ fun StockScreen(
         mutableStateOf(false)
     }
 
-    var isDialogPopUp by remember {
-        mutableStateOf(false)
-    }
-
     val stockListLive by walletViewModel.stockListLive.observeAsState(initial = emptyList())
     val totalPriceStock by walletViewModel.totalPriceStock.observeAsState(initial = 0.00)
 
@@ -187,6 +183,7 @@ fun StockScreen(
     if (isSelectionPopUp)
         AddStockSelectionScreen(onCancelClick = { isSelectionPopUp = false }, {}, navController)
 }
+
 
 
 @Composable

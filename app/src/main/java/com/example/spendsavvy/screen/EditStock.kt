@@ -236,16 +236,16 @@ fun EditExistingStockScreen(
                     onClick = {
                         for (stock in stockDetails) {
                             if (searchProduct == stock.productName) {
-                                if (mode == 2) {
+                                if (mode == 2) {                                        //sell existing stock
                                     walletViewModel.editStockDetails(
                                         stock = stock,
                                         updatedStockDetails = Stock(
                                             searchProduct,
                                             price.toDoubleOrNull() ?: 0.0,
-                                            qty.toInt()
+                                            stock.quantity - qty.toInt()
                                         )
                                     )
-                                } else {
+                                } else {                                            //add existing stock
                                     walletViewModel.editStockDetails(
                                         stock = stock,
                                         updatedStockDetails = Stock(
@@ -277,5 +277,5 @@ fun EditExistingStockScreen(
 }
 
 //for sell , use qty*setPrice
-//profit earned qty*setPrice - qty*originalPrice
+//profit earned = qty*setPrice - qty*originalPrice
 //new stock balance = total stock balance - {newqty*originalPrice}=>addNewStock

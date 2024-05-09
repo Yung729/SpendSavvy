@@ -29,7 +29,7 @@ class WalletViewModel(
     private val internet = isOnline*/
 
     val cashDetailsList = MutableLiveData<List<Cash>>()
-    val FDAccountList = MutableLiveData<List<FDAccount>>()      //hold on
+    val fdAccDetailsList = MutableLiveData<List<FDAccount>>()      //hold on
     val stockListLive = MutableLiveData<List<Stock>>()
 
     //stock
@@ -37,6 +37,11 @@ class WalletViewModel(
 
     val userId = userId
 
+
+    //CASH DETAILS
+    init{
+        getCashDetails()
+    }
     private fun getCashDetails(
     ) {
         viewModelScope.launch {
@@ -124,17 +129,61 @@ class WalletViewModel(
         }
     }
 
+    //FIXED DEPOSIT
+    init {
+        getFDAccountDetails()
+    }
+
     private fun getFDAccountDetails() {
         viewModelScope.launch {
-            val FdDetailsFromFirestore = firestoreRepository.readItemsFromDatabase(
-                userId,
-                "FDAccount",
-                FDAccount::class.java
-            )
+            try {
+                val fdDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
+                    userId,
+                    "FDAccount",
+                    FDAccount::class.java
+                )
+                updateFDDetails(fdDetailsFromFirestore)
+            }catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error adding FD details", e)
+            }
 
         }
     }
 
+    fun addFDDetailsToDatabase(fdAccount: FDAccount){
+        viewModelScope.launch {
+            try {
+                firestoreRepository.addWalletItems(
+                    userId,
+                    "Fixed Deposit",
+                    fdAccount,
+                    "%s",
+                    onSuccess = {
+                        /*dbHelper.addNewCashDetails(
+                            type = cash.type,
+                            typeName = cash.typeName,
+                            balance = cash.balance,
+                            userId = userId
+                        )*/
+                    },
+                    onFailure = { exception ->
+                        Log.e(ContentValues.TAG, "Error adding FD details", exception)
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error adding FD details", e)
+            }
+        }
+    }
+
+    private fun updateFDDetails(fdAccountList: List<FDAccount>){
+        fdAccDetailsList.postValue(fdAccountList)
+    }
+
+    //STOCK
+    init {
+        getStockDetails()
+    }
     private fun getStockDetails(
     ) {
         viewModelScope.launch {
