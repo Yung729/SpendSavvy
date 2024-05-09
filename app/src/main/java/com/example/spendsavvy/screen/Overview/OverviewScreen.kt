@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen
+package com.example.spendsavvy.screen.Overview
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -153,7 +153,6 @@ fun OverviewScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
-
             item {
                 Text(
                     text = "Hi, ${userData.userName}", //current User
@@ -198,7 +197,6 @@ fun OverviewScreen(
                 OverViewCard(incomes = totalIncomes, expenses = totalExpenses)
             }
 
-
             item {
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -213,7 +211,6 @@ fun OverviewScreen(
                     )
                 }
             }
-
 
             item {
                 Row(

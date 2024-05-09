@@ -61,14 +61,16 @@ class CategoryViewModel(
     }
 
     private fun updateCategories(categories: List<Category>) {
-        val groupedCategories = categories.groupBy { it.categoryType }
+        viewModelScope.launch {
+            val groupedCategories = categories.groupBy { it.categoryType }
 
-        val expenseCategories = groupedCategories["Expenses"] ?: emptyList()
-        val incomeCategories = groupedCategories["Incomes"] ?: emptyList()
+            val expenseCategories = groupedCategories["Expenses"] ?: emptyList()
+            val incomeCategories = groupedCategories["Incomes"] ?: emptyList()
 
-        categoryList.postValue(categories)
-        expensesList.postValue(expenseCategories)
-        incomeList.postValue(incomeCategories)
+            categoryList.postValue(categories)
+            expensesList.postValue(expenseCategories)
+            incomeList.postValue(incomeCategories)
+        }
     }
 
 

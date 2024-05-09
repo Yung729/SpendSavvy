@@ -174,29 +174,30 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
 
         Button(
             onClick = {
-//                billsViewModel.addBillsToFirestore(
-//                    Bills(
-//                        amount = amount.toDoubleOrNull() ?: 0.0,
-//                        description = description,
-//                        category = selectedCategory,
-//                        selectedDueDate = selectedDueDate.toString(),
-//                        selectedDuration = selectedDuration,
-//                        billsStatus = billsStatus
-//                    ),
-//                    onSuccess = {
-//                        Toast.makeText(
-//                            context,
-//                            "Bills added successfully",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                ) {
-//                    Toast.makeText(
-//                        context,
-//                        "Failed to add Bills",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
+                billsViewModel.addBillsToFirestore(
+                    Bills(
+                        id = billsViewModel.generateBillId(),
+                        amount = amount.toDoubleOrNull() ?: 0.0,
+                        description = description,
+                        category = selectedCategory,
+                        selectedDueDate = selectedDueDate.toString(),
+                        selectedDuration = selectedDuration,
+                        billsStatus = billsStatus
+                    ),
+                    onSuccess = {
+                        Toast.makeText(
+                            context,
+                            "Bills added successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                ) {
+                    Toast.makeText(
+                        context,
+                        "Failed to add Bills",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

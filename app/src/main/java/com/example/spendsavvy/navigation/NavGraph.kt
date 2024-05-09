@@ -40,20 +40,21 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.screen.AddBills
-import com.example.spendsavvy.screen.AddCategoryScreen
-import com.example.spendsavvy.screen.AddExpensesScreen
-import com.example.spendsavvy.screen.AddIncomeScreen
+import com.example.spendsavvy.screen.Category.AddCategoryScreen
+import com.example.spendsavvy.screen.Overview.AddExpensesScreen
+import com.example.spendsavvy.screen.Overview.AddIncomeScreen
 import com.example.spendsavvy.screen.AddNewStockScreen
-import com.example.spendsavvy.screen.AllTransactionScreen
-import com.example.spendsavvy.screen.AnalysisScreen
-import com.example.spendsavvy.screen.BudgetScreen
+import com.example.spendsavvy.screen.Overview.AllTransactionScreen
+import com.example.spendsavvy.screen.Analysis.AnalysisScreen
+import com.example.spendsavvy.screen.Analysis.BudgetScreen
 import com.example.spendsavvy.screen.CashDetailsScreen
 import com.example.spendsavvy.screen.CashScreen
-import com.example.spendsavvy.screen.CategoryDetail
-import com.example.spendsavvy.screen.CategoryScreen
+import com.example.spendsavvy.screen.Category.CategoryDetail
+import com.example.spendsavvy.screen.Category.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
@@ -67,12 +68,15 @@ import com.example.spendsavvy.screen.LoginScreen
 import com.example.spendsavvy.screen.ManageBillsAndInstalment
 import com.example.spendsavvy.screen.MyProfileScreen
 import com.example.spendsavvy.screen.Notification
-import com.example.spendsavvy.screen.OverviewScreen
+import com.example.spendsavvy.screen.Overview.OverviewScreen
 import com.example.spendsavvy.screen.SettingsScreen
 import com.example.spendsavvy.screen.SignUpScreen
+import com.example.spendsavvy.screen.Staff.StaffScreen
 import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
-import com.example.spendsavvy.screen.TransactionDetail
+import com.example.spendsavvy.screen.Overview.TransactionDetail
+import com.example.spendsavvy.screen.Staff.StaffAddScreen
+import com.example.spendsavvy.screen.Staff.StaffDetailScreen
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.BillsViewModel
@@ -81,6 +85,7 @@ import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.ProfileViewModel
+import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
@@ -159,8 +164,10 @@ fun TabsNavGraph(
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
+    val staffViewModel = StaffViewModel(context, isConnected, userId,transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId)
     val billsViewModel = BillsViewModel(context, isConnected, userId)
+
 
 
     //Wallet
@@ -354,7 +361,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.CashDetails.route
-            ){
+            ) {
                 CashDetailsScreen(
                     walletViewModel = walletViewModel,
                     navController = navController
@@ -376,7 +383,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.AddStock.route
-            ){
+            ) {
                 AddNewStockScreen(
                     modifier = Modifier
                         .fillMaxSize()
@@ -388,7 +395,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.AddExistingStock.route
-            ){
+            ) {
                 EditExistingStockScreen(
                     walletViewModel = walletViewModel,
                     navController = navController,
@@ -398,7 +405,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.EditStock.route
-            ){
+            ) {
                 EditExistingStockScreen(
                     walletViewModel = walletViewModel,
                     navController = navController,
@@ -647,9 +654,59 @@ fun TabsNavGraph(
 
             }
 
+            composable(
+                route = Screen.StaffScreen.route,
+            ) {
+
+                StaffScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    staffViewModel = staffViewModel,
+                    navController = navController
+                )
+
+
+            }
+
+            composable(
+                route = Screen.StaffDetailScreen.route,
+            ) {
+
+                val selectedStaff =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<Staff>("currentStaff")
+
+                if (selectedStaff != null) {
+                    StaffDetailScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        staffViewModel = staffViewModel,
+                        staff = selectedStaff
+                    )
+                }
+
+
+            }
+
+            composable(
+                route = Screen.AddStaffScreen.route,
+            ) {
+
+                StaffAddScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    staffViewModel = staffViewModel
+                )
+
+
+            }
+
         }
 
     }
+
 }
 
 val items = listOf(
