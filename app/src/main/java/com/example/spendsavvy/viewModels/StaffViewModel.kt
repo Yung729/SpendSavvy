@@ -218,12 +218,6 @@ class StaffViewModel(
         }
     }
 
-    private fun isEndOfMonth(): Boolean {
-        val calendar = Calendar.getInstance()
-        val currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-        val lastDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        return currentDayOfMonth == lastDayOfMonth
-    }
 
 
 }

@@ -181,13 +181,11 @@ fun TabsNavGraph(
     //Wallet
     val walletViewModel = WalletViewModel(context, userId)
 
-    val totalStaffSalary = staffViewModel.totalStaffSalary.observeAsState(0.0)
-
     mainViewModel.syncDatabase()
 
 
     if (isConnected) {
-        scheduleMonthlySalaryWorker(context, isConnected, userId, totalStaffSalary.value)
+        scheduleMonthlySalaryWorker(context, isConnected)
     }
 
     Scaffold(topBar = {
@@ -758,11 +756,8 @@ private fun isInternetAvailable(context: Context): Boolean {
 
 fun scheduleMonthlySalaryWorker(
     context: Context,
-    isOnline: Boolean,
-    userId: String,
-    totalStaffSalary: Double
+    isOnline: Boolean
 ) {
-
 
     val constraints = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -772,9 +767,7 @@ fun scheduleMonthlySalaryWorker(
         .setConstraints(constraints)
         .setInputData(
             workDataOf(
-                "isOnline" to isOnline,
-                "userId" to userId,
-                "totalStaffSalary" to totalStaffSalary
+                "isOnline" to isOnline
             )
         )
         .build()

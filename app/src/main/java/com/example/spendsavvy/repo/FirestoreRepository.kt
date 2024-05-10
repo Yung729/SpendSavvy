@@ -301,6 +301,34 @@ class FirestoreRepository {
     }
 
 
+    suspend fun totalStaffSalariesPerUser(): Map<String, Double> {
+        val totalSalariesPerUser = mutableMapOf<String, Double>()
+
+        try {
+            val userSnapshot = firestore.collection("Users").get().await()
+            for (userDocument in userSnapshot.documents) {
+                val userId = userDocument.id
+                var totalSalaries = 0.0
+
+                val staffQuerySnapshot = userDocument.reference.collection("Staff").get().await()
+                for (staffDocument in staffQuerySnapshot.documents) {
+                    val staffData = staffDocument.data
+                    if (staffData != null) {
+                        val salary = staffData["salary"] as? Double
+                        totalSalaries += salary ?: 0.0
+                    }
+                }
+
+                totalSalariesPerUser[userId] = totalSalaries
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting staff salaries per user", e)
+        }
+
+        return totalSalariesPerUser
+    }
+
+
     suspend fun getDocumentId(collectionName: String, userId: String, data: Any): String {
         try {
             val querySnapshot = firestore.collection("Users").document(userId)
