@@ -74,7 +74,7 @@ class OverviewViewModel(
         getTransactionRecord()
     }
 
-    private fun getTransactionRecord() {
+    fun getTransactionRecord() {
         viewModelScope.launch {
             val transactionsFromDB: List<Transactions>
 
@@ -322,8 +322,55 @@ class OverviewViewModel(
         }
     }
 
+
+    fun addTransactionToAllUser(
+        userId: String,
+        transaction: Transactions,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val categoryId: String = getCategoryId(transaction.category)
+
+                firestoreRepository.addItem(
+                    userId,
+                    "Transactions",
+                    transaction,
+                    "T%04d",
+                    onSuccess = { documentId ->
+                        dbHelper.addNewTransaction(
+                            transactionId = documentId,
+                            internalId = transaction.id,
+                            amount = transaction.amount,
+                            categoryId = categoryId,
+                            description = transaction.description,
+                            date = transaction.date,
+                            transactionType = transaction.transactionType,
+                            userId = userId
+                        )
+                        val currentTransactions = transactionsList.value ?: emptyList()
+                        val updatedTransactions = currentTransactions + transaction
+                        updateTransactions(
+                            transactions = updatedTransactions
+                        )
+
+                        onSuccess() // Invoke the onSuccess callback
+                    },
+                    onFailure = { exception ->
+                        Log.e(ContentValues.TAG, "Error adding transaction", exception)
+                        onFailure(exception) // Invoke the onFailure callback
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error adding transaction", e)
+                onFailure(e) // Invoke the onFailure callback
+            }
+        }
+    }
+
     fun generateTransactionId(): String {
-        val random = UUID.randomUUID().toString().substring(0, 5)
+        val random = UUID.randomUUID().toString().substring(0, 9)
         return "T$random"
     }
 

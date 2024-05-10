@@ -56,7 +56,7 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
     ) {
 
 
-        item{
+        item {
             StaffCard(staffCount = staffCount, staffSalary = staffSalary)
         }
 
@@ -81,7 +81,7 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
             )
         }
 
-        item{
+        item {
             Row {
                 Button(
                     onClick = {
@@ -223,14 +223,12 @@ fun StaffCard(
 
 
     val dismissState = rememberDismissState()
-    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        staffViewModel.deleteStaff(staff)
-    }
-
-    if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
 
 
-        SwipeToDeleteItem(state = dismissState) {
+
+
+    SwipeToDeleteItem(state = dismissState) {
+        if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
             Card(
                 modifier = modifier.clickable {
                     navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -275,5 +273,11 @@ fun StaffCard(
 
             }
         }
+    }
+
+
+
+    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+        staffViewModel.deleteStaff(staff)
     }
 }

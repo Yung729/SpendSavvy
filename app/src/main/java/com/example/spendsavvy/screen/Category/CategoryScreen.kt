@@ -149,16 +149,13 @@ fun CategoryCard(
 
 
     val dismissState = rememberDismissState()
-    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        catViewModel.deleteCategory(category)
-    }
-
-    if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
 
 
-        SwipeToDeleteItem(state = dismissState) {
 
 
+    SwipeToDeleteItem(state = dismissState) {
+
+        if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
             Card(
                 modifier = modifier.clickable {
                     navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -202,9 +199,14 @@ fun CategoryCard(
                 }
 
             }
-
-
         }
+
+
+    }
+
+
+    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+        catViewModel.deleteCategory(category)
     }
 
 }

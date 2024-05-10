@@ -492,14 +492,11 @@ fun TransactionsCard(
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
     val dismissState = rememberDismissState()
-    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        transactionViewModel.deleteTransaction(transactions)
-    }
-
-    if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
 
 
-        SwipeToDeleteItem(state = dismissState) {
+
+    SwipeToDeleteItem(state = dismissState) {
+        if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
             Card(
                 modifier = modifier.clickable {
                     navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -555,6 +552,10 @@ fun TransactionsCard(
 
             }
         }
+    }
+
+    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+        transactionViewModel.deleteTransaction(transactions)
     }
 }
 

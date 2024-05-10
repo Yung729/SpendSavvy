@@ -247,7 +247,7 @@ class CategoryViewModel(
     }
 
     fun generateCategoryId(): String {
-        val random = UUID.randomUUID().toString().substring(0, 5)
+        val random = UUID.randomUUID().toString().substring(0, 9)
         return "CT$random"
     }
 

@@ -183,11 +183,6 @@ fun TabsNavGraph(
 
     mainViewModel.syncDatabase()
 
-
-    if (isConnected) {
-        scheduleMonthlySalaryWorker(context, isConnected)
-    }
-
     Scaffold(topBar = {
         HeaderTopBar(text = currentScreenName,
             canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
@@ -754,29 +749,3 @@ private fun isInternetAvailable(context: Context): Boolean {
     return result
 }
 
-fun scheduleMonthlySalaryWorker(
-    context: Context,
-    isOnline: Boolean
-) {
-
-    val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
-        .build()
-
-    val request = PeriodicWorkRequestBuilder<MonthlySalaryWorker>(30, TimeUnit.DAYS)
-        .setConstraints(constraints)
-        .setInputData(
-            workDataOf(
-                "isOnline" to isOnline
-            )
-        )
-        .build()
-
-
-
-    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-        "MonthlySalaryWorker", // Unique name for this work request
-        ExistingPeriodicWorkPolicy.KEEP, // Keep existing work if it exists
-        request // The work request to be enqueued
-    )
-}
