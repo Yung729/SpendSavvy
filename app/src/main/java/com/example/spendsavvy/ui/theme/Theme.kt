@@ -33,7 +33,7 @@ private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF423E3E),
     secondary = Color(0xFF423E3E),
     tertiary = Color(0xFF423E3E),
-    background = Color.White ,
+    background = Color.White,
     surface = Color.White,
     onPrimary = Color.White,
     onSecondary = Color.White,
@@ -41,6 +41,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1C1B1F),
     surfaceTint = Color(0xFFFFFFFF), // Card
     onSurface = Color(0xFF1C1B1F),
+    surfaceVariant = Color.White // Adjust as needed
 )
 
 @Composable
