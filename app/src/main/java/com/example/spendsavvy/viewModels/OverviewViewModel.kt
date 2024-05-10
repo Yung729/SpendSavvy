@@ -197,7 +197,7 @@ class OverviewViewModel(
         return firestoreRepository.getDocumentId("Transactions", currentUserId, transactions)
     }
 
-    private suspend fun getCategoryId(category: Category): String {
+    suspend fun getCategoryId(category: Category): String {
         return firestoreRepository.getDocumentId("Categories", currentUserId, category)
     }
 
@@ -326,7 +326,7 @@ class OverviewViewModel(
     fun addTransactionToAllUser(
         userId: String,
         transaction: Transactions,
-        onSuccess: () -> Unit,
+        onSuccess: (String) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         viewModelScope.launch {
@@ -355,7 +355,7 @@ class OverviewViewModel(
                             transactions = updatedTransactions
                         )
 
-                        onSuccess() // Invoke the onSuccess callback
+                        onSuccess(documentId) // Invoke the onSuccess callback
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding transaction", exception)

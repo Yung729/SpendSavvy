@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
@@ -22,6 +23,7 @@ class MonthlySalaryWorker(
     override suspend fun doWork(): Result {
 
         return try {
+            val dbHelper = DatabaseHelper(applicationContext)
             val firestoreRepo = FirestoreRepository()
 
             // Retrieve total staff salaries per user
@@ -32,23 +34,38 @@ class MonthlySalaryWorker(
                 val transactionViewModel = OverviewViewModel(context = applicationContext, true, userId, DateSelectionViewModel())
 
                 if (totalSalary != 0.0) {
+
+                    val transaction = Transactions(
+                        id = transactionViewModel.generateTransactionId(),
+                        amount = totalSalary,
+                        description = "Total Salary",
+                        date = Date(),
+                        category = Category(
+                            id = "T0013",
+                            imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fsalary.png?alt=media&token=102737bc-9da6-48ef-827c-b0b05d9fb052"),
+                            categoryName = "Total Staff Salary",
+                            categoryType = "Expenses"
+                        ),
+                        transactionType = "Expenses"
+                    )
+                    val categoryId: String = transactionViewModel.getCategoryId(transaction.category)
+
                     // Add the expense to Firestore
                     transactionViewModel.addTransactionToAllUser(
                         userId = userId,
-                        Transactions(
-                            id = transactionViewModel.generateTransactionId(),
-                            amount = totalSalary,
-                            description = "Total Salary",
-                            date = Date(),
-                            category = Category(
-                                id = "T0013",
-                                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fsalary.png?alt=media&token=102737bc-9da6-48ef-827c-b0b05d9fb052"),
-                                categoryName = "Total Staff Salary",
-                                categoryType = "Expenses"
-                            ),
-                            transactionType = "Expenses"
-                        ),
-                        onSuccess = {
+                        transaction,
+                        onSuccess = {documentId ->
+
+                            dbHelper.addNewTransaction(
+                                transactionId = documentId,
+                                internalId = transaction.id,
+                                amount = transaction.amount,
+                                categoryId = categoryId,
+                                description = transaction.description,
+                                date = transaction.date,
+                                transactionType = transaction.transactionType,
+                                userId = userId
+                            )
                             transactionViewModel.getTransactionRecord()
                         },
                         onFailure = {}
