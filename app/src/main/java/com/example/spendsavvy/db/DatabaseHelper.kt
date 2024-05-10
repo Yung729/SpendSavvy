@@ -358,6 +358,46 @@ class DatabaseHelper(context: Context) :
 
     }
 
+    fun getTransactionByCategoryName(userId: String, categoryName: String): List<Transactions> {
+        val db = this.readableDatabase
+        val transactions = mutableListOf<Transactions>()
+
+        val query = "SELECT * FROM transactions WHERE userId=? AND categoryId IN " +
+                "(SELECT id FROM categories WHERE categoryName=?)"
+
+        val cursor = db.rawQuery(query, arrayOf(userId, categoryName))
+
+        val internalIdIndex = cursor.getColumnIndex("internalId")
+        val amountIndex = cursor.getColumnIndex("amount")
+        val categoryIdIndex = cursor.getColumnIndex("categoryId")
+        val descriptionIndex = cursor.getColumnIndex("description")
+        val dateIndex = cursor.getColumnIndex("date")
+        val transactionTypeIndex = cursor.getColumnIndex("transactionType")
+
+        while (cursor.moveToNext()) {
+            val internalId = cursor.getString(internalIdIndex)
+            val amount = cursor.getDouble(amountIndex)
+            val categoryId = cursor.getString(categoryIdIndex)
+            val description = cursor.getString(descriptionIndex)
+            val dateMillis = cursor.getLong(dateIndex)
+            val transactionType = cursor.getString(transactionTypeIndex)
+
+            val date = Date(dateMillis)
+
+            // Get the category linked with this transaction
+            val category = getCategoryById(categoryId)
+
+            // Create a Transaction object and add it to the list
+            val transaction = Transactions(internalId, amount, category, description, date, transactionType)
+            transactions.add(transaction)
+        }
+
+        cursor.close()
+        db.close()
+
+        return transactions
+    }
+
     //------------------------------------------ Bills ----------------------------------------------------------------------
 
     fun addNewBill(

@@ -17,6 +17,7 @@ class MainViewModel(
 
     private val databaseHelper = DatabaseHelper(context)
     private val currentUserId = userId
+    private val firestoreRepo = FirestoreRepository()
 
     fun syncDatabase() {
         if (databaseHelper.isDatabaseEmpty()) {
@@ -27,14 +28,56 @@ class MainViewModel(
                     Log.e("Migrate", "Error migrate", e)
                 }
 
+                checkTotalSalary(currentUserId)
+            }
+        }
+
+
+    }
+
+    private suspend fun checkTotalSalary(userId: String) {
+        val totalSalaryTransactionFirestore = firestoreRepo.readItemsFromDatabase(
+            userId,
+            "Transactions",
+            Transactions::class.java
+        ).filter {
+            it.category.categoryName == "Total Staff Salary"
+        }
+
+        val totalSalaryTransactionsLocal = databaseHelper.getTransactionByCategoryName(
+            userId,
+            "Total Staff Salary"
+        )
+
+        for (transactionFirestore in totalSalaryTransactionFirestore) {
+            // Check if the transaction already exists locally
+            val existsLocally = totalSalaryTransactionsLocal.any {
+                it.id == transactionFirestore.id
+            }
+
+            if (!existsLocally) {
+
+                val documentId =
+                    firestoreRepo.getDocumentId("Transactions", userId, transactionFirestore)
+                val categoryId =
+                    firestoreRepo.getDocumentId("Category", userId, transactionFirestore.category)
+
+                // If the transaction doesn't exist locally, add it to the database
+                databaseHelper.addNewTransaction(
+                    transactionId = documentId, // Assuming you have documentId defined somewhere
+                    internalId = transactionFirestore.id,
+                    amount = transactionFirestore.amount,
+                    categoryId = categoryId, // Assuming you have categoryId defined somewhere
+                    description = transactionFirestore.description,
+                    date = transactionFirestore.date,
+                    transactionType = transactionFirestore.transactionType,
+                    userId = userId
+                )
             }
         }
     }
 
-
     private suspend fun migrateFirestoreDataToSQLite(userId: String) {
-
-        val firestoreRepo = FirestoreRepository()
 
 
         try {

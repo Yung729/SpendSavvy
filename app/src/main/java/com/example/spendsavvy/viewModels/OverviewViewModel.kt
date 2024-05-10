@@ -326,7 +326,7 @@ class OverviewViewModel(
     fun addTransactionToAllUser(
         userId: String,
         transaction: Transactions,
-        onSuccess: (String) -> Unit,
+        onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         viewModelScope.launch {
@@ -355,7 +355,7 @@ class OverviewViewModel(
                             transactions = updatedTransactions
                         )
 
-                        onSuccess(documentId) // Invoke the onSuccess callback
+                        onSuccess() // Invoke the onSuccess callback
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding transaction", exception)

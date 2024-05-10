@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -38,12 +37,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Category
@@ -64,7 +57,6 @@ import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
 import com.example.spendsavvy.screen.EditExistingStockScreen
 import com.example.spendsavvy.screen.FixedDepositDetailsScreen
-import com.example.spendsavvy.screen.FixedDepositScreen
 import com.example.spendsavvy.screen.ForgotPassword
 import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
@@ -96,8 +88,6 @@ import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
-import com.example.spendsavvy.worker.MonthlySalaryWorker
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
@@ -140,12 +130,17 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         }
 
         composable(route = Screen.MainScreen.route) {
+
+            val mainViewModel = MainViewModel(context, isConnected, fireAuthRepository.getCurrentUser())
+            mainViewModel.syncDatabase()
+
             TabsNavGraph(
                 userId = fireAuthRepository.getCurrentUser(),
                 context = currentContext,
                 dateViewModel = dateViewModel
             )
         }
+
 
 
     }
@@ -169,7 +164,7 @@ fun TabsNavGraph(
     val showOption = remember { mutableStateOf(false) }
 
 
-    val mainViewModel = MainViewModel(context, isConnected, userId)
+
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
@@ -181,7 +176,6 @@ fun TabsNavGraph(
     //Wallet
     val walletViewModel = WalletViewModel(context, userId)
 
-    mainViewModel.syncDatabase()
 
     Scaffold(topBar = {
         HeaderTopBar(text = currentScreenName,
@@ -423,7 +417,7 @@ fun TabsNavGraph(
 
             composable(
                 route = Screen.FixedDepositDetails.route
-            ){
+            ) {
                 FixedDepositDetailsScreen(
                     modifier = Modifier
                         .fillMaxSize()
