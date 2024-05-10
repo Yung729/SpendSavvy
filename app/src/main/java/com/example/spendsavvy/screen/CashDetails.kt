@@ -167,61 +167,61 @@ fun CashDetailsScreen(
                     }
                 )
             }
-        }else{
+        } else {
             type = "Cash"
             typeName = "Cash"
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        for (cash in cashInfo) {
-            if (typeName == cash.typeName) {
-                existingAccount = true
-                Text(
-                    text = "Increase Amount",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
+        if (cashInfo.any { it.typeName == typeName }) {
+            
+            existingAccount = true
+            Text(
+                text = "Increase Amount",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
 
-                TextField(
-                    value = incAmt,
-                    onValueChange = {
-                        incAmt = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "RM 0.00",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
+            TextField(
+                value = incAmt,
+                onValueChange = {
+                    incAmt = it
+                },
+                placeholder = {
+                    Text(
+                        text = "RM 0.00",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp,
+                        color = Color.Gray
+                    )
+                }
+            )
 
-                Text(
-                    text = "Decrease Amount",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
+            Text(
+                text = "Decrease Amount",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
 
-                TextField(
-                    value = decAmt,
-                    onValueChange = {
-                        decAmt = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "RM 0.00",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-            }
+            TextField(
+                value = decAmt,
+                onValueChange = {
+                    decAmt = it
+                },
+                placeholder = {
+                    Text(
+                        text = "RM 0.00",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp,
+                        color = Color.Gray
+                    )
+                }
+            )
         }
 
-        if(!existingAccount){
+
+        if (!existingAccount) {
             Text(
                 text = "Initial Amount",
                 fontFamily = poppinsFontFamily,
@@ -272,26 +272,25 @@ fun CashDetailsScreen(
 
             Button(
                 onClick = {
-                    for (cash in cashInfo) {
-                        if (typeName == cash.typeName) {
+                    if (cashInfo.any { it.typeName == typeName }) {
 
-                            walletViewModel.editCashDetails(
-                                cash = cash,
-                                updatedCashDetails = Cash(
-                                    type = cash.type,
-                                    typeName = cash.typeName,
-                                    balance = cash.balance + incAmt.toDoubleOrNull() as Double - decAmt.toDoubleOrNull() as Double
-                                )
+                        walletViewModel.editCashDetails(
+                            cash = cashInfo.find { it.typeName == typeName }!!,
+                            updatedCashDetails = Cash(
+                                type = type,
+                                typeName = typeName,
+                                balance = initialAmt.toDoubleOrNull() as Double + incAmt.toDoubleOrNull() as Double - decAmt.toDoubleOrNull() as Double
                             )
-                        } else
-                            walletViewModel.addCashDetailsToDatabase(
-                                Cash(
-                                    type,
-                                    typeName,
-                                    initialAmt.toDoubleOrNull() ?: 0.0
-                                )
+                        )
+                    } else
+                        walletViewModel.addCashDetailsToDatabase(
+                            Cash(
+                                type = type,
+                                typeName = typeName,
+                                balance = initialAmt.toDoubleOrNull() ?: 0.0
                             )
-                    }
+                        )
+
 
                     navController.navigateUp()
                 },
