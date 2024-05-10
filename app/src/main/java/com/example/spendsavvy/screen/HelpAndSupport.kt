@@ -121,89 +121,90 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
                     .background(Color.LightGray)
             )
         }
+    }
 
-        FloatingActionButton(
-            onClick = {
-                sendCallIntent(context)
-            },
-            modifier = Modifier
-                .size(95.dp, 50.dp)
-                .offset(
-                    x = (125).dp, y = (140).dp
 
-                )
-                .clip(CircleShape)
-                .border(
-                    width = 1.dp,
-                    color = Color.Black,
-                    shape = CircleShape
-                ),
-            elevation = FloatingActionButtonDefaults.elevation(8.dp),
-            containerColor = Color.Gray,
-            contentColor = Color.White,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.support_icon),
-                contentDescription = "Support",
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+    FloatingActionButton(
+        onClick = {
+            sendCallIntent(context)
+        },
+        modifier = Modifier
+            .size(95.dp, 50.dp)
+            .offset(
+                x = (285).dp, y = (530).dp
+
             )
-        }
-        FloatingActionButton(
-            onClick = {
-                showDialog = true
-            },
+            .clip(CircleShape)
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = CircleShape
+            ),
+        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+        containerColor = Color.Gray,
+        contentColor = Color.White,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.support_icon),
+            contentDescription = "Support",
             modifier = Modifier
-                .size(95.dp, 50.dp)
-                .offset(
-                    x = (125).dp, y = (155).dp
-                )
+                .size(40.dp)
                 .clip(CircleShape)
-                .border(
-                    width = 1.dp,
-                    color = Color.Black,
-                    shape = CircleShape
-                ),
-            elevation = FloatingActionButtonDefaults.elevation(8.dp),
-            containerColor = Color.Gray,
-            contentColor = Color.White,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.comment_icon),
-                contentDescription = "Upload question",
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+        )
+    }
+    FloatingActionButton(
+        onClick = {
+            showDialog = true
+        },
+        modifier = Modifier
+            .size(95.dp, 50.dp)
+            .offset(
+                x = (285).dp, y = (590).dp
             )
-        }
-        FloatingActionButton(
-            onClick = {
-                //show history questions
-            },
+            .clip(CircleShape)
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = CircleShape
+            ),
+        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+        containerColor = Color.Gray,
+        contentColor = Color.White,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.comment_icon),
+            contentDescription = "Upload question",
             modifier = Modifier
-                .size(95.dp, 50.dp)
-                .offset(
-                    x = (125).dp, y = (170).dp
-                )
+                .size(40.dp)
                 .clip(CircleShape)
-                .border(
-                    width = 1.dp,
-                    color = Color.Black,
-                    shape = CircleShape
-                ),
-            elevation = FloatingActionButtonDefaults.elevation(8.dp),
-            containerColor = Color.Gray,
-            contentColor = Color.White,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.history_icon),
-                contentDescription = "History",
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+        )
+    }
+    FloatingActionButton(
+        onClick = {
+            //show history questions
+        },
+        modifier = Modifier
+            .size(95.dp, 50.dp)
+            .offset(
+                x = (285).dp, y = (650).dp
             )
-        }
+            .clip(CircleShape)
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = CircleShape
+            ),
+        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+        containerColor = Color.Gray,
+        contentColor = Color.White,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.history_icon),
+            contentDescription = "History",
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+        )
     }
 
     if(showDialog){

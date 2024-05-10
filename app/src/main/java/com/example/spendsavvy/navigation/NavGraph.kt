@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -39,6 +40,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.components.InternetAwareContent
+import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
@@ -55,6 +57,7 @@ import com.example.spendsavvy.screen.Category.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
+import com.example.spendsavvy.screen.EditBills
 import com.example.spendsavvy.screen.EditExistingStockScreen
 import com.example.spendsavvy.screen.FixedDepositDetailsScreen
 import com.example.spendsavvy.screen.ForgotPassword
@@ -494,7 +497,8 @@ fun TabsNavGraph(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp), navController = navController,
-                    transactionViewModel = transactionsViewModel
+                    billsViewModel = billsViewModel,
+                    transactionViewModel = transactionsViewModel,
                 )
             }
             composable(
@@ -508,6 +512,25 @@ fun TabsNavGraph(
                     catViewModel = categoryViewModel
                 )
             }
+
+            composable(
+                route = Screen.EditBills.route
+            ) {
+                val selectedBills =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<Bills>("currentBill")
+
+                if (selectedBills != null) {
+                    EditBills(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController,
+                        bill = selectedBills,
+                        billsViewModel = billsViewModel,
+                        catViewModel = categoryViewModel
+                    )
+                }
+            }
+
             composable(
                 route = Screen.TaxCalculator.route
             ) {

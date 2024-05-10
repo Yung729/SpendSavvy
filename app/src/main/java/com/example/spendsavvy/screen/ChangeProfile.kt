@@ -317,10 +317,11 @@ fun OutlinedTextFieldItem(
             .padding(bottom = 20.dp)
             .background(Color.White)
             .height(height),
-        textStyle = TextStyle(color = Color.Gray, fontSize = 20.sp),
+        textStyle = TextStyle(color = Color.Black, fontSize = 20.sp),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
         label = { Text(text = label, color = Color.Black) },
-        placeholder = { Text(text = placeholder, color = Color.Gray) }
+        placeholder = { Text(text = placeholder, color = Color.Gray) },
+        singleLine = true
     )
 }
 

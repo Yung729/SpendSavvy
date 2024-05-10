@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -21,6 +22,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -155,46 +158,29 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             onValueChange = { amount = it},
             height = 60.dp
         )
-        Spacer(modifier = Modifier.height(6.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            DueDatePicker(
-                label = "Due Date",
-                selectedDueDate = selectedDueDate,
-                onDateSelected = { selectedDueDate = it },
-            )
-            DropDown(
-                label = "How often?",
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        DueDatePicker(
+            label = "Due Date",
+            selectedDueDate = selectedDueDate,
+            onDateSelected = { selectedDueDate = it },
+        )
+        DropDown(
+            label = "Set Reminder before due date",
+            selectedDuration = selectedDuration,
+            onDurationSelected = { selectedDuration = it }
+        )
+
+        Spacer(modifier = Modifier.height(5.dp))
 
         Button(
             onClick = {
-                billsViewModel.addBillsToFirestore(
-                    Bills(
-                        id = billsViewModel.generateBillId(),
-                        amount = amount.toDoubleOrNull() ?: 0.0,
-                        description = description,
-                        category = selectedCategory,
-                        selectedDueDate = selectedDueDate.toString(),
-                        selectedDuration = selectedDuration,
-                        billsStatus = billsStatus
-                    ),
-                    onSuccess = {
-                        Toast.makeText(
-                            context,
-                            "Bills added successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                ) {
+                if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && selectedDueDate != null && selectedDuration.isNotBlank()) {
+                    showDialog = true
+                }
+                else{
                     Toast.makeText(
                         context,
-                        "Failed to add Bills",
+                        "Please make sure to fill in all the required fields",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -209,15 +195,90 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         ) {
             Text("Add Bill")
         }
+
+        if(showDialog){
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = {
+                    Text(
+                        text = "Confirm to add bill?",
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                confirmButton = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                showDialog = false
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color.Red,
+                            )
+                        ) {
+                            Text(text = "Cancel")
+                        }
+
+                        Button(
+                            onClick = {
+                                billsViewModel.addBillsToFirestore(
+                                    Bills(
+                                        id = billsViewModel.generateBillId(),
+                                        amount = amount.toDoubleOrNull() ?: 0.0,
+                                        description = description,
+                                        category = selectedCategory,
+                                        selectedDueDate = selectedDueDate.toString(),
+                                        selectedDuration = selectedDuration,
+                                        billsStatus = billsStatus
+                                    ),
+                                    onSuccess = {
+                                        Toast.makeText(
+                                            context,
+                                            "Bill added successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                ) {
+                                    Toast.makeText(
+                                        context,
+                                        "Failed to add Bills",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                showDialog = false
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.DarkGray,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(text = "OK")
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropDown(label: String) {
+fun DropDown(label: String, selectedDuration: String, onDurationSelected: (String) -> Unit) {
     val list = listOf("1 day before", "2 days before", "1 week before", "2 weeks before", "1 month before")
 
     var expandedState by remember { mutableStateOf(false) }
-    var selectedDuration by remember { mutableStateOf(list[0]) }
+    var currentSelectedDuration by remember { mutableStateOf(selectedDuration) }
 
     Column(
         modifier = Modifier
@@ -227,11 +288,11 @@ fun DropDown(label: String) {
         Text(text = label, fontSize = 20.sp)
         ExposedDropdownMenuBox(
             expanded = expandedState,
-            onExpandedChange = { expandedState = !expandedState }
+            onExpandedChange = { expandedState = it }
         ) {
             TextField(
                 modifier = Modifier.menuAnchor(),
-                value = selectedDuration,
+                value = currentSelectedDuration,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState) }
@@ -242,7 +303,8 @@ fun DropDown(label: String) {
                     DropdownMenuItem(
                         text = { Text(text = text) },
                         onClick = {
-                            selectedDuration = list[index]
+                            currentSelectedDuration = list[index]
+                            onDurationSelected(list[index])
                             expandedState = false
                         }
                     )
@@ -251,6 +313,7 @@ fun DropDown(label: String) {
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DueDatePicker(
@@ -289,7 +352,7 @@ fun DueDatePicker(
         ) {
             Text(
                 text = selectedDueDate.toString(),
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
