@@ -388,35 +388,7 @@ class FirestoreRepository {
     }
 
     //----------------------  Two Collection -----------------------------------------------------------
-    fun addOrUpdateSecondFieldItem(
-        userId: String,
-        collectionName: String,
-        fieldName: String,
-        fieldData: Any,
-        onSuccess: (String) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
 
-        val documentRef =
-            firestore.collection("Users").document(userId).collection("Wallet").document("1")
-                .collection(collectionName).document(fieldName)
-
-        val walletData = hashMapOf(
-            fieldName to fieldData
-        )
-
-        documentRef.set(walletData)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully written")
-                onSuccess("")
-            }
-            .addOnFailureListener { e ->
-                Log.d(TAG, "DocumentSnapshot unsuccessfully written")
-                onFailure(e)
-            }
-
-
-    }
 
     suspend fun readItemsWalletCollection(
         userId: String,
@@ -445,51 +417,25 @@ class FirestoreRepository {
         userId: String,
         collectionName: String,
         item: Any,
-        itemIdFormat: String,
+        walletName: String,
         onSuccess: (String) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
 
         val documentRef =
             firestore.collection("Users").document(userId).collection("Wallet").document("1")
-                .collection(collectionName)
+                .collection(collectionName).document(walletName)
 
-        documentRef
-            .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                var latestId = 0
-
-                // If there are documents, parse the latest ID
-                if (!querySnapshot.isEmpty) {
-                    val latestDocument = querySnapshot.documents[0]
-                    val latestDocumentId = latestDocument.id
-                    // Extract the numeric part of the document ID
-                    latestId = latestDocumentId.substring(2).toIntOrNull() ?: 0
-                }
-
-                // Generate the new document ID
-                val newId = itemIdFormat.format(latestId + 1)
-
-                // Create a new document reference with the generated ID
-                val newDocumentRef = documentRef.document(newId)
-
-                // Set the category data for the new document
-                newDocumentRef.set(item)
-                    .addOnSuccessListener {
-                        Log.d(
-                            TAG,
-                            "DocumentSnapshot successfully written with ID: $newId"
-                        )
-                        onSuccess(newId)
-                    }
-                    .addOnFailureListener { e ->
-                        onFailure(e)
-                    }
+        documentRef.set(item)
+            .addOnSuccessListener {
+                Log.d(
+                    TAG,
+                    "DocumentSnapshot successfully written with ID: $walletName"
+                )
+                onSuccess(walletName)
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error getting documents", e)
+                onFailure(e)
             }
 
 

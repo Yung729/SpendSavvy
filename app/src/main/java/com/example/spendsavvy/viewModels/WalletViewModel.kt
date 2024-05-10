@@ -3,18 +3,16 @@ package com.example.spendsavvy.viewModels
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Cash
-import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
-import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class WalletViewModel(
     context: Context,
@@ -36,16 +34,21 @@ class WalletViewModel(
     val totalPriceStock = MutableLiveData<Double>()
 
     val userId = userId
+    val currentContext = context
 
 
     //CASH DETAILS
-    init{
+    init {
         getCashDetails()
+        getFDAccountDetails()
+        getStockDetails()
+
     }
+
     private fun getCashDetails(
     ) {
         viewModelScope.launch {
-            try{
+            try {
 
                 val cashDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
                     userId,
@@ -61,7 +64,7 @@ class WalletViewModel(
         }
     }
 
-    private fun updateCashInfo(cash: List<Cash>){
+    private fun updateCashInfo(cash: List<Cash>) {
         cashDetailsList.postValue(cash)
     }
 
@@ -69,9 +72,9 @@ class WalletViewModel(
         return firestoreRepository.getDocumentId("Cash", userId, cash)
     }
 
-    fun editCashDetails(cash: Cash, updatedCashDetails: Cash){
-        viewModelScope.launch{
-            try{
+    fun editCashDetails(cash: Cash, updatedCashDetails: Cash) {
+        viewModelScope.launch {
+            try {
                 val typeName = getTypeName(cash)
 
                 firestoreRepository.updateWalletItemsInFirestoreByName(
@@ -87,9 +90,9 @@ class WalletViewModel(
                             userId
                         )*/
 
-                        val cashInfo = cashDetailsList.value?: emptyList()
-                        val updatedCashDetailsList = cashInfo.map{
-                            if(it == cash) updatedCashDetails else it
+                        val cashInfo = cashDetailsList.value ?: emptyList()
+                        val updatedCashDetailsList = cashInfo.map {
+                            if (it == cash) updatedCashDetails else it
                         }
 
                         updateCashInfo(
@@ -103,14 +106,22 @@ class WalletViewModel(
         }
     }
 
-    fun addCashDetailsToDatabase(cash: Cash){
+    fun addCashDetailsToDatabase(cash: Cash) {
+
+        if (cashDetailsList.value?.any { it.typeName == cash.typeName } == true) {
+            Toast.makeText(
+                currentContext, "Cash Account with the same name already exists", Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
         viewModelScope.launch {
             try {
                 firestoreRepository.addWalletItems(
                     userId,
                     "Cash",
                     cash,
-                    "%s",
+                    cash.typeName,
                     onSuccess = {
                         /*dbHelper.addNewCashDetails(
                             type = cash.type,
@@ -130,9 +141,7 @@ class WalletViewModel(
     }
 
     //FIXED DEPOSIT
-    init {
-        getFDAccountDetails()
-    }
+
 
     private fun getFDAccountDetails() {
         viewModelScope.launch {
@@ -143,14 +152,14 @@ class WalletViewModel(
                     FDAccount::class.java
                 )
                 updateFDDetails(fdDetailsFromFirestore)
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding FD details", e)
             }
 
         }
     }
 
-    fun addFDDetailsToDatabase(fdAccount: FDAccount){
+    fun addFDDetailsToDatabase(fdAccount: FDAccount) {
         viewModelScope.launch {
             try {
                 firestoreRepository.addWalletItems(
@@ -176,18 +185,16 @@ class WalletViewModel(
         }
     }
 
-    private fun updateFDDetails(fdAccountList: List<FDAccount>){
+    private fun updateFDDetails(fdAccountList: List<FDAccount>) {
         fdAccDetailsList.postValue(fdAccountList)
     }
 
     //STOCK
-    init {
-        getStockDetails()
-    }
+
     private fun getStockDetails(
     ) {
         viewModelScope.launch {
-            try{
+            try {
 
                 val stockDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
                     userId,
@@ -203,17 +210,17 @@ class WalletViewModel(
         }
     }
 
-    private  fun updateStockTotalPrice(stockList: List<Stock>){
+    private fun updateStockTotalPrice(stockList: List<Stock>) {
         var totalPrice = 0.0
 
-        for (stock in stockList){
+        for (stock in stockList) {
             totalPrice += stock.originalPrice * stock.quantity
         }
 
         totalPriceStock.postValue(totalPrice)
     }
 
-    fun addStockDetailsToDatabase(stock: Stock){
+    fun addStockDetailsToDatabase(stock: Stock) {
         viewModelScope.launch {
             try {
                 firestoreRepository.addWalletItems(
@@ -243,9 +250,9 @@ class WalletViewModel(
         return firestoreRepository.getDocumentId("Stock", userId, stock)
     }
 
-    fun editStockDetails(stock: Stock, updatedStockDetails: Stock){
-        viewModelScope.launch{
-            try{
+    fun editStockDetails(stock: Stock, updatedStockDetails: Stock) {
+        viewModelScope.launch {
+            try {
                 val productName = getProductName(stock)
 
                 firestoreRepository.updateWalletItemsInFirestoreByName(
@@ -261,9 +268,9 @@ class WalletViewModel(
                             userId
                         )*/
 
-                        val stockInfo = stockListLive.value?: emptyList()
-                        val updatedStockDetailsList = stockInfo.map{
-                            if(it == stock) updatedStockDetails else it
+                        val stockInfo = stockListLive.value ?: emptyList()
+                        val updatedStockDetailsList = stockInfo.map {
+                            if (it == stock) updatedStockDetails else it
                         }
 
                         updateStockDetails(
@@ -278,7 +285,7 @@ class WalletViewModel(
         }
     }
 
-    fun updateStockDetails(stockList: List<Stock>){
+    fun updateStockDetails(stockList: List<Stock>) {
         stockListLive.postValue(stockList)
     }
 
