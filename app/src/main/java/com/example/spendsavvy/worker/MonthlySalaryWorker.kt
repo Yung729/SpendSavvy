@@ -47,20 +47,8 @@ class MonthlySalaryWorker(
                         ),
                         transactionType = "Expenses"
                     ),
-                    onSuccess = {
-                        Toast.makeText(
-                            applicationContext,
-                            "Total staff salary added to expenses for user $userId successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    },
-                    onFailure = {
-                        Toast.makeText(
-                            applicationContext,
-                            "Failed to add total staff salary to expenses for user $userId",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    onSuccess = {},
+                    onFailure = {}
                 )
             }
 
