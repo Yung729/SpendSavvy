@@ -427,6 +427,7 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT * FROM bills WHERE userId=?", arrayOf(userId))
         val billsList: ArrayList<Bills> = ArrayList()
 
+        val internalIdIndex = cursor.getColumnIndex("internalId")
         val amountIndex = cursor.getColumnIndex("amount")
         val categoryIdIndex = cursor.getColumnIndex("categoryId")
         val descriptionIndex = cursor.getColumnIndex("description")
@@ -436,6 +437,7 @@ class DatabaseHelper(context: Context) :
 
         if (cursor.moveToFirst()) {
             do {
+                val internalId = cursor.getString(internalIdIndex)
                 val amount = cursor.getDouble(amountIndex)
                 val categoryId = cursor.getString(categoryIdIndex)
                 val description = cursor.getString(descriptionIndex)
@@ -448,7 +450,7 @@ class DatabaseHelper(context: Context) :
                 val category = getCategoryById(categoryId)
 
                 // Create a Bills object and add it to the list
-                val bill = Bills(amount, category, description,selectedDueDate, selectedDuration, billsStatus)
+                val bill = Bills(internalId,amount, category, description,selectedDueDate, selectedDuration, billsStatus)
                 billsList.add(bill)
             } while (cursor.moveToNext())
         }
