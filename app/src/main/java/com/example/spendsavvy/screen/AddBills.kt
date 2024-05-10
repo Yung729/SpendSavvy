@@ -76,6 +76,8 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
     var isExpanded by remember { mutableStateOf(false) }
 
+    var showDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
