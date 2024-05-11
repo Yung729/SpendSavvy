@@ -61,6 +61,7 @@ import com.example.spendsavvy.screen.EditBills
 import com.example.spendsavvy.screen.EditCashAccountScreen
 import com.example.spendsavvy.screen.EditExistingStockScreen
 import com.example.spendsavvy.screen.FixedDepositDetailsScreen
+import com.example.spendsavvy.screen.FixedDepositScreen
 import com.example.spendsavvy.screen.ForgotPassword
 import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
@@ -428,6 +429,18 @@ fun TabsNavGraph(
                     walletViewModel = walletViewModel,
                     navController = navController,
                     mode = 2
+                )
+            }
+
+            composable(
+                route = Screen.FixedDepositScreen.route
+            ) {
+                FixedDepositScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    walletViewModel = walletViewModel,
+                    navController = navController
                 )
             }
 

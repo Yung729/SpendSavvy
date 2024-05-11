@@ -59,22 +59,25 @@ fun FixedDepositScreen(
     navController: NavController,
     walletViewModel: WalletViewModel
 ) {
+
     val fdAccDetailsList by walletViewModel.fdAccDetailsList.observeAsState(initial = emptyList())
 
     var accountCount by remember {
         mutableStateOf(0)
     }
 
-    Column(modifier = Modifier.padding(10.dp)) {
+    Column(
+        modifier = Modifier.padding(30.dp)
+    ) {
         Spacer(modifier = Modifier.height(25.dp))
         Text(
             text = "Fixed Deposit",
             fontFamily = poppinsFontFamily,
-            fontSize = 15.sp
+            fontSize = 25.sp
         )
         Text(
             text = "Asset that earn interest",
-            fontSize = 10.sp,
+            fontSize = 15.sp,
             fontFamily = poppinsFontFamily,
             color = Color.Gray
         )
@@ -93,11 +96,13 @@ fun FixedDepositScreen(
 
             Text(
                 text = "Fixed Deposit Accounts",
+                fontSize = 20.sp,
                 fontFamily = poppinsFontFamily
             )
 
             Text(
                 text = "$accountCount Accounts",
+                fontSize = 20.sp,
                 fontFamily = poppinsFontFamily
             )
         }
@@ -121,7 +126,9 @@ fun FixedDepositScreen(
                     horizontalAlignment = Alignment.End
                 ) {
                     Button(
-                        onClick = { navController.navigate(route = Screen.FixedDepositDetails.route) },
+                        onClick = {
+                            navController.navigate(route = Screen.FixedDepositDetails.route)
+                                  },
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .bounceClick()

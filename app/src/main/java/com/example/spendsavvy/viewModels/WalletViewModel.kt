@@ -227,7 +227,7 @@ class WalletViewModel(
             Toast.makeText(
                 currentContext, "The product already existed", Toast.LENGTH_SHORT
             ).show()
-            return
+            return 
         }
 
         viewModelScope.launch {

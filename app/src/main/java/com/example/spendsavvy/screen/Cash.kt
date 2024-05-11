@@ -56,6 +56,9 @@ fun CashScreen(
     navController: NavController,
     cashViewModel: WalletViewModel
 ) {
+    var count by remember {
+        mutableStateOf(0)
+    }
 
     var totalAccount = remember {
         mutableStateOf(0)
@@ -68,7 +71,7 @@ fun CashScreen(
         Text(
             text = "Cash",
             fontFamily = poppinsFontFamily,
-            fontSize = 15.sp
+            fontSize = 25.sp
         )
         Text(
             text = "Includes cash money, bank accounts, and eWallet",
@@ -88,11 +91,13 @@ fun CashScreen(
             Column {
                 Text(
                     text = "Cash Money",
+                    fontSize = 20.sp,
                     fontFamily = poppinsFontFamily
                 )
 
                 Text(
                     text = "Available balance",
+                    fontSize = 10.sp,
                     color = Color.Gray,
                     fontFamily = poppinsFontFamily
                 )
@@ -100,11 +105,20 @@ fun CashScreen(
             }
 
             for (cashDetails in cashDetailsList) {
-                if (cashDetails.typeName == "Cash")
+                if (cashDetails.typeName == "Cash"){
+                    count = 1
                     CashList(cash = cashDetails)
+                }
                 else
                     totalAccount.value++
             }
+
+            if (count != 1)
+                Text(
+                    text = "RM 0.00",
+                    fontSize = 20.sp,
+                    fontFamily = poppinsFontFamily
+                )
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -119,6 +133,7 @@ fun CashScreen(
 
             Text(
                 text = "Bank Accounts",
+                fontSize = 20.sp,
                 fontFamily = poppinsFontFamily
             )
 
@@ -204,6 +219,7 @@ fun CashList(           //used to return cash balance only
 ) {
     Text(
         text = "RM ${cash.balance}",
+        fontSize = 15.sp,
         fontFamily = poppinsFontFamily
     )
 }
@@ -222,12 +238,12 @@ fun BankAccList(
             ) {
                 Text(
                     text = item.typeName,
-                    fontSize = 10.sp
+                    fontSize = 15.sp
                 )
 
                 Text(
                     text = "RM ${item.balance}",
-                    fontSize = 10.sp
+                    fontSize = 15.sp
                 )
             }
         }
