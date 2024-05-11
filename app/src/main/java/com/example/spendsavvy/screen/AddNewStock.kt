@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,6 +46,8 @@ fun AddNewStockScreen(
     navController: NavController
 ) {
 
+    val stockLiveDataList by walletViewModel.stockListLive.observeAsState(initial = emptyList())
+
     var stockName by remember {
         mutableStateOf("")
     }
@@ -57,26 +60,25 @@ fun AddNewStockScreen(
         mutableStateOf("")
     }
 
-    Card(
-        shape = RoundedCornerShape(15.dp),
+
+    Column(
         modifier = Modifier
-            .fillMaxWidth(0.85f)
-            .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
-            .shadow(elevation = 15.dp)
+            .fillMaxWidth()
+            .padding(start = 15.dp, top = 15.dp)
     ) {
+        Text(
+            text = "Add New Product",
+            fontFamily = poppinsFontFamily,
+            fontSize = 25.sp
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 15.dp, top = 15.dp)
+                .padding(start = 40.dp, top = 30.dp, bottom = 30.dp)
         ) {
-            Text(
-                text = "Add New Product",
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
             Text(
                 text = "Product Name",
                 fontFamily = poppinsFontFamily,
@@ -141,58 +143,56 @@ fun AddNewStockScreen(
             )
 
             Spacer(modifier = Modifier.height(30.dp))
-
-            Row(
+        }
+        Row(
+            modifier = Modifier
+                .padding(15.dp),
+            horizontalArrangement = Arrangement.spacedBy(30.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = {
+                    navController.navigateUp()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black
+                ),
                 modifier = Modifier
-                    .padding(15.dp),
-                horizontalArrangement = Arrangement.spacedBy(30.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
-                Button(
-                    onClick = {
-                        navController.navigateUp()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Cancel",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
-                }
+                Text(
+                    text = "Cancel",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily
+                )
+            }
 
-                Button(
-                    onClick = {
-                        walletViewModel.addStockDetailsToDatabase(
-                            Stock(
-                                stockName,
-                                price.toDoubleOrNull() ?: 0.0,
-                                qty.toInt()
-                            )
+            Button(
+                onClick = {
+                    walletViewModel.addStockDetailsToDatabase(
+                        Stock(
+                            stockName,
+                            price.toDoubleOrNull() ?: 0.0,
+                            qty.toInt()
                         )
-
-                        navController.navigateUp()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Add",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
                     )
-                }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Text(
+                    text = "Add",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily
+                )
             }
         }
     }
+
 
 }

@@ -8,7 +8,6 @@ import com.example.spendsavvy.repo.FirestoreRepository
 
 class ProfileViewModel(userId: String) : ViewModel() {
 
-
     val firestoreRepository = FirestoreRepository()
     val currentUser = userId
     var userData = MutableLiveData<UserData>()

@@ -328,10 +328,12 @@ fun TabsNavGraph(
             }
 
             composable(route = Screen.Wallet.route) {
+
                 WalletScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp), navController = navController,
+                    walletViewModel = walletViewModel
                 )
             }
 

@@ -17,6 +17,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,12 +31,17 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.GreenColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.WalletViewModel
 
 @Composable
 fun WalletScreen(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    walletViewModel: WalletViewModel
 ) {
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+
+
     Column(
         modifier = modifier
     ) {
@@ -85,7 +92,7 @@ fun WalletScreen(
             )
 
             Text(
-                text = "RM 9,000",
+                text = "RM $",
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp,
                 color = GreenColor,
@@ -135,7 +142,7 @@ fun WalletScreen(
 
         }
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -145,14 +152,19 @@ fun WalletScreen(
 
             Text(
                 text = "Cash Money"
-
             )
 
-            Text(text = "RM5000")
+            for(cash in cashDetailsList){
+                if(cash.type == "Cash")
+                    Text(text = "RM ${cash.balance}")
+                else
+                    Text(text = "RM 0")
+            }
         }
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
+        Spacer(modifier = Modifier.height(10.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -167,7 +179,7 @@ fun WalletScreen(
             Text(text = "2 accounts")
         }
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -195,7 +207,9 @@ fun WalletScreen(
 
 
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    navController.navigate(Screen.FixedDepositDetails.route)
+                          },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
                 border = BorderStroke(1.dp, Color.Black)
@@ -286,6 +300,7 @@ fun WalletScreen(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun WalletScreenPreview() {
@@ -295,4 +310,4 @@ fun WalletScreenPreview() {
             .padding(20.dp), navController = rememberNavController()
     )
 
-}
+}*/

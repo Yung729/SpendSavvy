@@ -99,52 +99,46 @@ fun CashDetailsScreen(
     val options = mutableStateListOf<String>("Cash", "Bank")
     val cashInfo by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
-    Card(
-        shape = RoundedCornerShape(15.dp),
+    Column(
         modifier = Modifier
             .fillMaxWidth(0.85f)
-            .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
-            .shadow(elevation = 15.dp)
     ) {
         Text(
             text = "Account",
             fontFamily = poppinsFontFamily,
-            fontSize = 15.sp,
+            fontSize = 30.sp,
             modifier = Modifier
                 .padding(start = 15.dp, top = 15.dp)
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier.padding(start = 30.dp, top = 15.dp, bottom = 30.dp)
         ) {
-            SingleChoiceSegmentedButtonRow {
-                options.forEachIndexed { index, option ->
-                    SegmentedButton(
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = options.size
-                        )
-                    ) {
-                        Text(text = option)
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                SingleChoiceSegmentedButtonRow {
+                    options.forEachIndexed { index, option ->
+                        SegmentedButton(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index, count = options.size
+                            )
+                        ) {
+                            Text(text = option)
+                        }
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
-        if (selectedIndex == 1) {
-            type = "Bank"
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 15.dp, top = 15.dp)
-            ) {
+            if (selectedIndex == 1) {
+                type = "Bank"
 
                 Text(
                     text = "Enter your bank",
@@ -166,82 +160,80 @@ fun CashDetailsScreen(
                         )
                     }
                 )
+
             }
-        } else {
-            type = "Cash"
-            typeName = "Cash"
-        }
 
-        Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
-        if (cashInfo.any { it.typeName == typeName }) {
-            
-            existingAccount = true
-            Text(
-                text = "Increase Amount",
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
+            if (cashInfo.any { it.typeName == typeName }) {
 
-            TextField(
-                value = incAmt,
-                onValueChange = {
-                    incAmt = it
-                },
-                placeholder = {
-                    Text(
-                        text = "RM 0.00",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                }
-            )
+                existingAccount = true
+                Text(
+                    text = "Increase Amount",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
 
-            Text(
-                text = "Decrease Amount",
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
+                TextField(
+                    value = incAmt,
+                    onValueChange = {
+                        incAmt = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0.00",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    }
+                )
 
-            TextField(
-                value = decAmt,
-                onValueChange = {
-                    decAmt = it
-                },
-                placeholder = {
-                    Text(
-                        text = "RM 0.00",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                }
-            )
-        }
+                Text(
+                    text = "Decrease Amount",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
+
+                TextField(
+                    value = decAmt,
+                    onValueChange = {
+                        decAmt = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0.00",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    }
+                )
+            }
 
 
-        if (!existingAccount) {
-            Text(
-                text = "Initial Amount",
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
+            if (!existingAccount) {
+                Text(
+                    text = "Initial Amount",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
 
-            TextField(
-                value = initialAmt,
-                onValueChange = {
-                    initialAmt = it
-                },
-                placeholder = {
-                    Text(
-                        text = "RM 0.00",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                }
-            )
+                TextField(
+                    value = initialAmt,
+                    onValueChange = {
+                        initialAmt = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0.00",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    }
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(30.dp))

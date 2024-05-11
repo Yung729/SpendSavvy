@@ -59,7 +59,6 @@ fun FixedDepositScreen(
     navController: NavController,
     walletViewModel: WalletViewModel
 ) {
-
     val fdAccDetailsList by walletViewModel.fdAccDetailsList.observeAsState(initial = emptyList())
 
     var accountCount by remember {

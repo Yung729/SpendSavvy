@@ -1,7 +1,5 @@
 package com.example.spendsavvy.screen
 
-/*import com.example.spendsavvy.data.StockData*/
-/*import com.example.spendsavvy.data.toyNames*/
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -67,10 +65,6 @@ fun StockScreen(
     val stockListLive by walletViewModel.stockListLive.observeAsState(initial = emptyList())
     val totalPriceStock by walletViewModel.totalPriceStock.observeAsState(initial = 0.00)
 
-    // Calculate total stock balance
-    /*    val totalStockBalance = remember {
-            StockData().loadStock().sumOf { it.originalPrice * it.quantity }
-        }*/
 
     Column(modifier = modifier) {
         Row(
@@ -345,14 +339,3 @@ fun StockList(stockList: List<Stock>, modifier: Modifier = Modifier) {
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun StockScreenPreview() {
-    StockScreen(
-        Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        stockViewModel = viewModel()
-    )
-
-}*/

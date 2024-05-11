@@ -13,6 +13,7 @@ import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class WalletViewModel(
     context: Context,
@@ -22,12 +23,8 @@ class WalletViewModel(
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
 
-    /*    @SuppressLint("StaticFieldLeak")
-    val currentContext = context
-    private val internet = isOnline*/
-
     val cashDetailsList = MutableLiveData<List<Cash>>()
-    val fdAccDetailsList = MutableLiveData<List<FDAccount>>()      //hold on
+    val fdAccDetailsList = MutableLiveData<List<FDAccount>>()
     val stockListLive = MutableLiveData<List<Stock>>()
 
     //stock
@@ -37,14 +34,13 @@ class WalletViewModel(
     val currentContext = context
 
 
-    //CASH DETAILS
     init {
         getCashDetails()
         getFDAccountDetails()
         getStockDetails()
-
     }
 
+    //CASH DETAILS
     private fun getCashDetails(
     ) {
         viewModelScope.launch {
@@ -141,8 +137,6 @@ class WalletViewModel(
     }
 
     //FIXED DEPOSIT
-
-
     private fun getFDAccountDetails() {
         viewModelScope.launch {
             try {
@@ -166,7 +160,7 @@ class WalletViewModel(
                     userId,
                     "Fixed Deposit",
                     fdAccount,
-                    "%s",
+                    fdAccount.bankName,
                     onSuccess = {
                         /*dbHelper.addNewCashDetails(
                             type = cash.type,
@@ -202,6 +196,7 @@ class WalletViewModel(
                     Stock::class.java
                 )
 
+                updateStockDetails(stockDetailsFromFirestore)
                 updateStockTotalPrice(stockDetailsFromFirestore)
 
             } catch (e: Exception) {
@@ -221,13 +216,20 @@ class WalletViewModel(
     }
 
     fun addStockDetailsToDatabase(stock: Stock) {
+        if (stockListLive.value?.any { it.productName == stock.productName } == true) {
+            Toast.makeText(
+                currentContext, "The product already existed", Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
         viewModelScope.launch {
             try {
                 firestoreRepository.addWalletItems(
                     userId,
                     "Stock",
                     stock,
-                    "S%04d",
+                    stock.productName,
                     onSuccess = {
                         /*dbHelper.addNewCashDetails(
                             type = cash.type,
@@ -288,5 +290,4 @@ class WalletViewModel(
     fun updateStockDetails(stockList: List<Stock>) {
         stockListLive.postValue(stockList)
     }
-
 }
