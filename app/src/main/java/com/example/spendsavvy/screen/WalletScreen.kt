@@ -155,7 +155,7 @@ fun WalletScreen(
             )
 
             for(cash in cashDetailsList){
-                if(cash.type == "Cash")
+                if(cash.typeName == "Cash")
                     Text(text = "RM ${cash.balance}")
                 else
                     Text(text = "RM 0")

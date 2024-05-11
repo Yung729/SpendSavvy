@@ -753,11 +753,10 @@ class DatabaseHelper(context: Context) :
 
         if (cursor.moveToFirst()) {
             do {
-                val type = cursor.getString(typeIndex)
                 val typeName = cursor.getString(typeNameIndex)
                 val balance = cursor.getDouble(balanceIndex)
 
-                val cashDetails = Cash(type, typeName, balance)
+                val cashDetails = Cash(typeName, balance)
                 cashDetailsList.add(cashDetails)
             } while (cursor.moveToNext())
         }
@@ -791,7 +790,6 @@ class DatabaseHelper(context: Context) :
 
         for(cashDetails in cash) {
             val values = ContentValues().apply {
-                put("type", cashDetails.type)
                 put("typeName", cashDetails.typeName)
                 put("balance", cashDetails.balance)
                 put("userId", userId)
