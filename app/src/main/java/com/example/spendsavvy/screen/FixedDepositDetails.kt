@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,11 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.spendsavvy.models.FDAccount
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
 import kotlin.time.toDuration
@@ -51,14 +54,14 @@ fun FixedDepositDetailsScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
-    val fdAccDetailsList by walletViewModel.fdAccDetailsList.observeAsState(initial = emptyList())
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
     var isExpanded by remember {
         mutableStateOf(false)
     }
 
     var searchBank by remember {
-        mutableStateOf("Affin Bank Berhad")
+        mutableStateOf("")
     }
 
     var depositAmt by remember {
@@ -67,10 +70,6 @@ fun FixedDepositDetailsScreen(
 
     var interestRate by remember {
         mutableStateOf("")
-    }
-
-    var duration by remember {
-        mutableStateOf(0)
     }
 
     Column(
@@ -106,6 +105,13 @@ fun FixedDepositDetailsScreen(
                 fontSize = 15.sp
             )
 
+            ClickableText(
+                text = AnnotatedString("Click me to add more bank"),
+                onClick = {
+                          navController.navigate(Screen.AddCashAccount.route)
+                }
+            )
+
             ExposedDropdownMenuBox(
                 expanded = isExpanded,
                 onExpandedChange = { isExpanded = it }
@@ -127,13 +133,13 @@ fun FixedDepositDetailsScreen(
                     expanded = isExpanded,
                     onDismissRequest = { isExpanded = false }
                 ) {
-                    for (fdDetails in fdAccDetailsList) {
+                    for (bankAccount in cashDetailsList) {
                         DropdownMenuItem(
                             text = {
-                                Text(text = fdDetails.bankName)
+                                Text(text = bankAccount.typeName)
                             },
                             onClick = {
-                                searchBank = fdDetails.bankName
+                                searchBank = bankAccount.typeName
                                 isExpanded = false
                             }
                         )
@@ -227,7 +233,6 @@ fun FixedDepositDetailsScreen(
                     walletViewModel.addFDDetailsToDatabase(
                         FDAccount(
                             searchBank,
-                            duration,
                             interestRate.toDoubleOrNull() ?: 0.0,
                             depositAmt.toDoubleOrNull() ?: 0.0
                         )

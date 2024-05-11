@@ -112,7 +112,7 @@ fun AddCashAccountScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             if (selectedIndex == 1) {
                 Text(

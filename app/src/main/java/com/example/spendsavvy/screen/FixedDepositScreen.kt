@@ -67,7 +67,7 @@ fun FixedDepositScreen(
     }
 
     Column(
-        modifier = Modifier.padding(30.dp)
+        modifier = Modifier.padding(start = 30.dp, top = 15.dp)
     ) {
         Spacer(modifier = Modifier.height(25.dp))
         Text(
@@ -96,13 +96,13 @@ fun FixedDepositScreen(
 
             Text(
                 text = "Fixed Deposit Accounts",
-                fontSize = 20.sp,
+                fontSize = 17.sp,
                 fontFamily = poppinsFontFamily
             )
 
             Text(
                 text = "$accountCount Accounts",
-                fontSize = 20.sp,
+                fontSize = 17.sp,
                 fontFamily = poppinsFontFamily
             )
         }

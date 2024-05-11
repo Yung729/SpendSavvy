@@ -110,7 +110,6 @@ class WalletViewModel(
     }
 
     fun addCashDetailsToDatabase(cash: Cash) {
-
         if (cashDetailsList.value?.any { it.typeName == cash.typeName } == true) {
             Toast.makeText(
                 currentContext, "Cash Account with the same name already exists", Toast.LENGTH_SHORT
@@ -161,6 +160,13 @@ class WalletViewModel(
     }
 
     fun addFDDetailsToDatabase(fdAccount: FDAccount) {
+        if (fdAccDetailsList.value?.any { it.bankName == fdAccount.bankName } == true) {
+            Toast.makeText(
+                currentContext, "The FD Account already existed", Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
         viewModelScope.launch {
             try {
                 firestoreRepository.addWalletItems(
@@ -227,7 +233,7 @@ class WalletViewModel(
             Toast.makeText(
                 currentContext, "The product already existed", Toast.LENGTH_SHORT
             ).show()
-            return 
+            return
         }
 
         viewModelScope.launch {
