@@ -67,6 +67,8 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -189,7 +191,7 @@ fun ManageBillsAndInstalment(modifier: Modifier = Modifier, navController: NavCo
         },
         modifier = Modifier
             .size(55.dp, 55.dp)
-            .offset(x = (325).dp,y = (640).dp),
+            .offset(x = (325).dp, y = (640).dp),
         shape = RoundedCornerShape(16.dp),
         elevation = FloatingActionButtonDefaults.elevation(8.dp),
         containerColor = Color.Gray,
@@ -218,7 +220,7 @@ fun BillList(
             BillItem(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable{
+                    .clickable {
                         navController.currentBackStackEntry?.savedStateHandle?.set(
                             key = "currentBill", value = bill
                         )
@@ -275,7 +277,7 @@ fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavContr
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Due Date: ${bill.selectedDueDate}",
+                    text = " Due Date: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(bill.selectedDueDate)}",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )

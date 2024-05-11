@@ -45,6 +45,7 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import java.time.LocalDate
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +64,7 @@ fun EditBills(
 
     var updatedDescription by remember { mutableStateOf(bill.description) }
     var updatedAmount by remember { mutableStateOf(bill.amount.toString()) }
-    var updatedDueDate by remember { mutableStateOf(LocalDate.parse(bill.selectedDueDate)) }
+    var updatedDueDate by remember { mutableStateOf(bill.selectedDueDate) }
     var updatedDuration by remember { mutableStateOf(bill.selectedDuration) }
     var updatedCategory by remember { mutableStateOf(bill.category) }
 
@@ -81,7 +82,6 @@ fun EditBills(
                 .fillMaxWidth()
                 .padding(start = 18.dp, end = 18.dp, bottom = 18.dp)
         )
-
         OutlinedTextField(
             value = updatedDescription,
             onValueChange = { updatedDescription = it },
@@ -145,7 +145,7 @@ fun EditBills(
 
         Button(
             onClick = {
-                if (updatedDescription.isNotBlank() && updatedAmount.isNotBlank() && updatedCategory != Category() && updatedDueDate != null && updatedDuration.isNotBlank()) {
+                if (updatedDescription.isNotBlank() && updatedAmount.isNotBlank() && updatedCategory != Category() && updatedDuration.isNotBlank()) {
                     showDialog = true
                 } else {
                     Toast.makeText(
@@ -204,7 +204,7 @@ fun EditBills(
                                         amount = updatedAmount.toDoubleOrNull() ?: 0.0,
                                         category = updatedCategory,
                                         description = updatedDescription,
-                                        selectedDueDate = updatedDueDate.toString(),
+                                        selectedDueDate = updatedDueDate,
                                         selectedDuration = updatedDuration,
                                         billsStatus = bill.billsStatus
                                     )

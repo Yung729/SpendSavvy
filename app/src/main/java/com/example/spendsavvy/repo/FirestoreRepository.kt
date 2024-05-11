@@ -280,6 +280,10 @@ class FirestoreRepository {
                                     val date = document.getDate("date") ?: Date()
                                     field.set(item, date)
                                 }
+                                "selectedDueDate" -> {
+                                    val date = document.getDate("date") ?: Date()
+                                    field.set(item, date)
+                                }
 
                                 else -> {
                                     field.set(item, value)
@@ -369,6 +373,10 @@ class FirestoreRepository {
                                 }
 
                                 "date" -> {
+                                    val date = document.getDate("date") ?: Date()
+                                    field.set(item, date)
+                                }
+                                "selectedDueDate" -> {
                                     val date = document.getDate("date") ?: Date()
                                     field.set(item, date)
                                 }

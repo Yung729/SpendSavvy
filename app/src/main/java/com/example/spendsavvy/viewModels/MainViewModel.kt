@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.db.DatabaseHelper
+import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
@@ -94,6 +95,11 @@ class MainViewModel(
                 "Staff",
                 Staff::class.java
             )
+            val bill = firestoreRepo.readItemsFromDatabase(
+                userId,
+                "Bills",
+                Bills::class.java
+            )
             val budget =
                 firestoreRepo.readSingleFieldValueFromDatabase(userId, "Budget", "amount")
             val goal =
@@ -103,6 +109,7 @@ class MainViewModel(
             databaseHelper.addNewCategoryList(categories, userId)
             databaseHelper.addNewTransactionsList(transactions, userId)
             databaseHelper.addNewStaffList(staff, userId)
+            databaseHelper.addNewBillsList(bill, userId)
 
             if (budget != null) {
                 databaseHelper.addOrUpdateBudget(userId, budget as Double)
