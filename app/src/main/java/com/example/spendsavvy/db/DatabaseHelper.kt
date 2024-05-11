@@ -72,6 +72,22 @@ class DatabaseHelper(context: Context) :
         """
         db.execSQL(CREATE_GOAL_TABLE)
 
+        val CREATE_BILL_TABLE = """
+            CREATE TABLE bills (
+                id TEXT PRIMARY KEY,
+                internalId TEXT,
+                amount REAL NOT NULL,
+                categoryId TEXT,
+                description TEXT,
+                selectedDueDate LONG,
+                selectedDuration TEXT,
+                billsStatus TEXT,
+                userId TEXT,
+                FOREIGN KEY(categoryId) REFERENCES categories(id)
+            )
+        """
+        db.execSQL(CREATE_BILL_TABLE)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -80,6 +96,7 @@ class DatabaseHelper(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS budget")
         db.execSQL("DROP TABLE IF EXISTS goal")
         db.execSQL("DROP TABLE IF EXISTS staff")
+        db.execSQL("DROP TABLE IF EXISTS bills")
         onCreate(db)
     }
 
@@ -405,18 +422,20 @@ class DatabaseHelper(context: Context) :
         amount: Double,
         categoryId: String,
         description: String,
-        selectedDueDate: String,
+        selectedDueDate: Date,
         selectedDuration: String,
         billsStatus: String,
         userId: String
     ) {
+        val selectedDueDateMillis = selectedDueDate.time
+
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put("id", billId)
+            put("internalId", billId)
             put("amount", amount)
             put("categoryId", categoryId)
             put("description", description)
-            put("selectedDueDate", selectedDueDate)
+            put("selectedDueDate", selectedDueDateMillis)
             put("selectedDuration", selectedDuration)
             put("billsStatus", billsStatus)
             put("userId", userId)
@@ -425,23 +444,25 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
+
     fun updateBill(
         billId: String,
         amount: Double,
         categoryId: String,
         description: String,
-        selectedDueDate: String,
+        selectedDueDate: Date,
         selectedDuration: String,
         billsStatus: String,
         userId: String
     ) {
+        val selectedDueDateMillis = selectedDueDate.time
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put("id", billId)
+            put("internalId", billId)
             put("amount", amount)
             put("categoryId", categoryId)
             put("description", description)
-            put("selectedDueDate", selectedDueDate)
+            put("selectedDueDate", selectedDueDateMillis)
             put("selectedDuration", selectedDuration)
             put("billsStatus", billsStatus)
             put("userId", userId)
@@ -481,13 +502,13 @@ class DatabaseHelper(context: Context) :
                 val amount = cursor.getDouble(amountIndex)
                 val categoryId = cursor.getString(categoryIdIndex)
                 val description = cursor.getString(descriptionIndex)
-                val selectedDueDate = cursor.getString(selectedDueDateIndex)
+                val selectedDueDateMillis = cursor.getLong(selectedDueDateIndex)
                 val selectedDuration = cursor.getString(selectedDurationIndex)
                 val billsStatus = cursor.getString(billsStatusIndex)
 
-
                 // Get the category linked with this bill
                 val category = getCategoryById(categoryId)
+                val selectedDueDate = Date(selectedDueDateMillis)
 
                 // Create a Bills object and add it to the list
                 val bill = Bills(internalId,amount, category, description,selectedDueDate, selectedDuration, billsStatus)
@@ -510,12 +531,16 @@ class DatabaseHelper(context: Context) :
         for (bill in bills) {
             val billId = getBillId(bills = bill, userId = userId)
             val categoryId = getCategoryId(category = bill.category, userId = userId)
+
+            // Convert Date to milliseconds
+            val currentDateMillis = bill.selectedDueDate.time
+
             val values = ContentValues().apply {
                 put("id", billId)
                 put("amount", bill.amount)
                 put("categoryId", categoryId)
                 put("description", bill.description)
-                put("selectedDueDate", bill.selectedDueDate)
+                put("selectedDueDate", currentDateMillis)
                 put("selectedDuration", bill.selectedDuration)
                 put("billsStatus", bill.billsStatus)
                 put("userId", userId)
@@ -875,6 +900,14 @@ class DatabaseHelper(context: Context) :
                 isEmpty = isEmpty && (count == 0)
             }
         }
+        // Check if the bill table has any records
+        val billCursor = db.rawQuery("SELECT COUNT(*) FROM bills", null)
+        billCursor.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                isEmpty = isEmpty && (count == 0)
+            }
+        }
 
         // Optionally, you can check other tables as well if needed
 
@@ -886,6 +919,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 17
+        private const val DATABASE_VERSION = 25
     }
 }

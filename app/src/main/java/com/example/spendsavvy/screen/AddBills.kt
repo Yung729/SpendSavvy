@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -55,9 +57,15 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,9 +77,8 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
     var description by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(Category()) }
     var amount by remember { mutableStateOf("") }
-    var selectedDueDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDueDate by remember { mutableStateOf(Date()) }
     var selectedDuration by remember { mutableStateOf("") }
-    val billsStatus by remember { mutableStateOf("Upcoming") }  //default == upcoming
 
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
     var isExpanded by remember { mutableStateOf(false) }
@@ -173,6 +180,12 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         )
 
         Spacer(modifier = Modifier.height(5.dp))
+        val currentDate = LocalDate.now()
+        val selectedLocalDate = selectedDueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+        val billsStatus by remember { mutableStateOf(
+            if (selectedLocalDate.isBefore(currentDate)) "OVERDUE" else "UPCOMING"
+        )}
 
         Button(
             onClick = {
@@ -238,7 +251,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                         amount = amount.toDoubleOrNull() ?: 0.0,
                                         description = description,
                                         category = selectedCategory,
-                                        selectedDueDate = selectedDueDate.toString(),
+                                        selectedDueDate = selectedDueDate,
                                         selectedDuration = selectedDuration,
                                         billsStatus = billsStatus
                                     ),
@@ -277,7 +290,8 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropDown(label: String, selectedDuration: String, onDurationSelected: (String) -> Unit) {
-    val list = listOf("1 day before", "2 days before", "1 week before", "2 weeks before", "1 month before")
+    val list =
+        listOf("1 day before", "2 days before", "1 week before", "2 weeks before", "1 month before")
 
     var expandedState by remember { mutableStateOf(false) }
     var currentSelectedDuration by remember { mutableStateOf(selectedDuration) }
@@ -300,7 +314,9 @@ fun DropDown(label: String, selectedDuration: String, onDurationSelected: (Strin
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState) }
             )
 
-            ExposedDropdownMenu(expanded = expandedState, onDismissRequest = { expandedState = false }) {
+            ExposedDropdownMenu(
+                expanded = expandedState,
+                onDismissRequest = { expandedState = false }) {
                 list.forEachIndexed { index, text ->
                     DropdownMenuItem(
                         text = { Text(text = text) },
@@ -315,27 +331,14 @@ fun DropDown(label: String, selectedDuration: String, onDurationSelected: (Strin
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DueDatePicker(
     label: String,
-    selectedDueDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit
+    selectedDueDate: Date,
+    onDateSelected: (Date) -> Unit
 ) {
     val calendarState = rememberSheetState()
-    val currentYear = LocalDate.now().year
-    val currentDate = LocalDate.now()
-    val disabledDates = (Month.JANUARY.value..currentDate.month.value).flatMap { month ->
-        val lastDayOfMonth = if (currentYear == currentDate.year && month == currentDate.month.value)
-            currentDate.dayOfMonth - 1
-        else
-            YearMonth.of(currentYear, month).lengthOfMonth()
-        (1..lastDayOfMonth).map { day ->
-            LocalDate.of(currentYear, month, day)
-        }
-    }
-
     val context = LocalContext.current
 
     Column(
@@ -353,7 +356,7 @@ fun DueDatePicker(
                 .padding(vertical = 8.dp)
         ) {
             Text(
-                text = selectedDueDate.toString(),
+                text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDueDate),
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -365,18 +368,10 @@ fun DueDatePicker(
                 monthSelection = true,
                 yearSelection = true,
                 style = CalendarStyle.MONTH,
-                disabledDates = disabledDates
             ),
             selection = CalendarSelection.Date { date ->
-                if (disabledDates.contains(date)) {
-                    Toast.makeText(
-                        context,
-                        "Please select a valid due date",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    onDateSelected(date)
-                }
+                val selectedDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                onDateSelected(selectedDate)
             }
         )
     }

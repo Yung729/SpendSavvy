@@ -1,6 +1,7 @@
 package com.example.spendsavvy.viewModels
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -65,7 +66,7 @@ class BillsViewModel(
                 updateBills(billsFromDB)
 
             } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "Error getting bills", e)
+                Log.e(TAG, "Error getting bills", e)
             } finally {
                 isLoading.postValue(false)
             }
@@ -74,7 +75,6 @@ class BillsViewModel(
     private suspend fun getBillId(bills: Bills): String {
         return firestoreRepository.getDocumentId("Bills", currentUserId, bills)
     }
-
     private suspend fun getCategoryId(category: Category): String {
         return firestoreRepository.getDocumentId("Categories", currentUserId, category)
     }
@@ -128,21 +128,24 @@ class BillsViewModel(
                         onSuccess()
                     },
                     onFailure = { exception ->
-                        Log.e(ContentValues.TAG, "Error adding bills", exception)
+                        Log.e(TAG, "Error adding bills", exception)
                         onFailure(exception)
                     }
                 )
             } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "Error adding bills", e)
+                Log.e(TAG, "Error adding bills", e)
                 onFailure(e)
             }
         }
     }
+
     fun editBill(bills: Bills, updatedBills: Bills) {
         viewModelScope.launch {
+            val billId: String = getBillId(bills)
+            val categoryId: String = getCategoryId(bills.category)
             try {
-                val billId: String = getBillId(bills)
-                val categoryId: String = getCategoryId(bills.category)
+//                val billId: String = getBillId(bills)
+//                val categoryId: String = getCategoryId(bills.category)
 
                 firestoreRepository.updateItemInFirestoreById(
                     currentUserId,
@@ -160,7 +163,6 @@ class BillsViewModel(
                             selectedDuration = updatedBills.selectedDuration,
                             billsStatus = updatedBills.billsStatus,
                             userId = currentUserId
-
                         )
                         val currentBills = billsList.value ?: emptyList()
                         val updatedBillsList = currentBills.map {
@@ -174,7 +176,10 @@ class BillsViewModel(
                 )
 
             } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "Error editing Bills", e)
+                Log.e(TAG, "bill id =$billId ")
+                Log.e(TAG, "category id =$categoryId ")
+                Log.e(TAG, "currentUserId =$currentUserId ")
+                Log.e(TAG, "Error editing Bills", e)
             }
         }
     }
@@ -201,7 +206,7 @@ class BillsViewModel(
 
 
             } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "Error deleting bill", e)
+                Log.e(TAG, "Error deleting bill", e)
             }
         }
     }
