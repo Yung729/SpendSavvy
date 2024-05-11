@@ -100,7 +100,7 @@ fun CashScreen(
             }
 
             for (cashDetails in cashDetailsList) {
-                if (cashDetails.type == "Cash")
+                if (cashDetails.typeName == "Cash")
                     CashList(cash = cashDetails)
                 else
                     totalAccount.value++
@@ -132,7 +132,7 @@ fun CashScreen(
         Divider(color = Color.Gray, thickness = 0.7.dp)
 
         for (cashDetails in cashDetailsList) {
-            if (cashDetails.type == "Bank")
+            if (cashDetails.typeName != "Cash")
                 BankAccList(cashDetailsList, modifier)
 
             Spacer(modifier = Modifier.height(15.dp))
