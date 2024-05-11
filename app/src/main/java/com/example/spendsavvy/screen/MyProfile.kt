@@ -22,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,25 +38,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController,profileViewModel: ProfileViewModel) {
 
-    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
-
-    // Retrieve user data from Firestore
-    val auth = FirebaseAuth.getInstance()
-    getUserData(auth.currentUser?.uid ?: "") { user ->
-        userData = user
-    }
+    val userData by profileViewModel.userData.observeAsState(UserData())
 
     Column(
         modifier = Modifier
@@ -151,6 +148,7 @@ fun MyProfileScreenPreview() {
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        profileViewModel = viewModel()
     )
 }

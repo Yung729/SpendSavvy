@@ -8,19 +8,15 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
 class FireAuthRepository(
-    context: Context,
-    navController: NavController,
-    categoryViewModel: CategoryViewModel
+    val context: Context,
+    val navController: NavController,
+    private val categoryViewModel: CategoryViewModel
 ) {
 
-    private var auth = Firebase.auth
-    val context = context
-    val navController = navController
-    private val categoryViewModel = categoryViewModel
+    private var auth = FirebaseAuth.getInstance()
 
     fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
@@ -28,7 +24,7 @@ class FireAuthRepository(
 
                 val currentUser = auth.currentUser
                 if (currentUser != null) {
-                    navController.navigate(route = "EnterMainScreen") {
+                    navController.navigate(route = "MainScreen") {
                         popUpTo(navController.graph.id) {
                             inclusive = true
                         }
@@ -73,6 +69,11 @@ class FireAuthRepository(
 
                 }
             }
+    }
+
+    fun signOut(){
+        auth.signOut()
+        navController.navigate("LoginScreen")
     }
 
     fun getCurrentUser(): String {

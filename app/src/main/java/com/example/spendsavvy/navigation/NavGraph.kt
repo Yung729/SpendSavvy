@@ -141,7 +141,8 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
             TabsNavGraph(
                 userId = fireAuthRepository.getCurrentUser(),
                 context = currentContext,
-                dateViewModel = dateViewModel
+                dateViewModel = dateViewModel,
+                fireAuthRepository = fireAuthRepository
             )
         }
 
@@ -155,7 +156,8 @@ fun TabsNavGraph(
     navController: NavHostController = rememberNavController(),
     userId: String,
     context: Context,
-    dateViewModel: DateSelectionViewModel
+    dateViewModel: DateSelectionViewModel,
+    fireAuthRepository: FireAuthRepository
 ) {
 
 
@@ -354,7 +356,7 @@ fun TabsNavGraph(
                 SettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp), navController = navController, profileViewModel = profileViewModel, fireAuthRepository = fireAuthRepository
                 )
             }
 
@@ -459,7 +461,7 @@ fun TabsNavGraph(
                 MyProfileScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp), navController = navController, profileViewModel = profileViewModel,
                 )
             }
 
