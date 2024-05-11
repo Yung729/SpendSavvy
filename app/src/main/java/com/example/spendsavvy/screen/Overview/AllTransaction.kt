@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.DismissState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -28,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
@@ -39,7 +42,7 @@ import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun AllTransactionScreen(
@@ -91,6 +94,8 @@ fun AllTransactionScreen(
             set(Calendar.MILLISECOND, 0)
         }.time)
     }
+
+    val dismissStateMap = remember { mutableMapOf<Transactions, DismissState>() }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -159,7 +164,8 @@ fun AllTransactionScreen(
                 TransactionList(
                     yearSortedTransactions,
                     navController = navController,
-                    transactionViewModel = transactionViewModel
+                    transactionViewModel = transactionViewModel,
+                    dismissStateMap = dismissStateMap
                 )
             }
 
@@ -169,7 +175,8 @@ fun AllTransactionScreen(
                 TransactionList(
                     monthSortedTransactions,
                     navController = navController,
-                    transactionViewModel = transactionViewModel
+                    transactionViewModel = transactionViewModel,
+                    dismissStateMap = dismissStateMap
                 )
             }
 
@@ -179,7 +186,8 @@ fun AllTransactionScreen(
                 TransactionList(
                     dayTransactionList,
                     navController = navController,
-                    transactionViewModel = transactionViewModel
+                    transactionViewModel = transactionViewModel,
+                    dismissStateMap = dismissStateMap
                 )
             }
 
@@ -189,7 +197,8 @@ fun AllTransactionScreen(
                 TransactionList(
                     allSortedTransactions,
                     navController = navController,
-                    transactionViewModel = transactionViewModel
+                    transactionViewModel = transactionViewModel,
+                    dismissStateMap = dismissStateMap
                 )
             }
 
@@ -199,7 +208,8 @@ fun AllTransactionScreen(
                 TransactionList(
                     customTransactionList,
                     navController = navController,
-                    transactionViewModel = transactionViewModel
+                    transactionViewModel = transactionViewModel,
+                    dismissStateMap = dismissStateMap
                 )
             }
         }

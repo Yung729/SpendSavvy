@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Button
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -41,6 +43,7 @@ import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.StaffViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navController: NavController) {
 
@@ -48,6 +51,7 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
     val staffCount by staffViewModel.totalStaffCount.observeAsState(initial = 0)
     val staffSalary by staffViewModel.totalStaffSalary.observeAsState(initial = 0.0)
 
+    val dismissStateMap = remember { mutableMapOf<Staff, DismissState>() }
 
 
     LazyColumn(
@@ -77,7 +81,8 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
                 modifier = Modifier.height(400.dp),
                 staffList = staffList,
                 navController = navController,
-                staffViewModel = staffViewModel
+                staffViewModel = staffViewModel,
+                dismissStateMap = dismissStateMap
             )
         }
 
@@ -187,12 +192,14 @@ fun StaffCard(
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StaffList(
     staffList: List<Staff>,
     modifier: Modifier = Modifier,
     navController: NavController,
-    staffViewModel: StaffViewModel
+    staffViewModel: StaffViewModel,
+    dismissStateMap: MutableMap<Staff, DismissState>
 ) {
 
     LazyColumn(modifier = modifier) {
@@ -205,7 +212,10 @@ fun StaffList(
                     .padding(5.dp)
                     .fillMaxWidth(),
                 navController = navController,
-                staffViewModel = staffViewModel
+                staffViewModel = staffViewModel,
+                dismissState = dismissStateMap[item]
+                    ?: rememberDismissState().also { dismissStateMap[item] = it }
+
             )
 
         }
@@ -218,13 +228,9 @@ fun StaffCard(
     staff: Staff,
     modifier: Modifier = Modifier,
     navController: NavController,
-    staffViewModel: StaffViewModel
+    staffViewModel: StaffViewModel,
+    dismissState: DismissState
 ) {
-
-
-    val dismissState = rememberDismissState()
-
-
 
 
     SwipeToDeleteItem(state = dismissState) {
@@ -273,11 +279,13 @@ fun StaffCard(
 
             }
         }
+
+
+        if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+            staffViewModel.deleteStaff(staff)
+        }
+
     }
 
 
-
-    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        staffViewModel.deleteStaff(staff)
-    }
 }

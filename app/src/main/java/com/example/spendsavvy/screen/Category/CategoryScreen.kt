@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Button
@@ -51,7 +52,7 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.CategoryViewModel
 
 @SuppressLint("UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun CategoryScreen(
     modifier: Modifier = Modifier, catViewModel: CategoryViewModel,
@@ -66,7 +67,7 @@ fun CategoryScreen(
 
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
     val incomeList by catViewModel.incomeList.observeAsState(initial = emptyList())
-
+    val dismissStateMap = remember { mutableMapOf<Category, DismissState>() }
 
 
 
@@ -120,13 +121,15 @@ fun CategoryScreen(
                 CategoryList(
                     categoryList = expenseList,
                     catViewModel = catViewModel,
-                    navController = navController
+                    navController = navController,
+                    dismissStateMap = dismissStateMap
                 )
             } else if (selectedIndex == 1) {
                 CategoryList(
                     categoryList = incomeList,
                     catViewModel = catViewModel,
-                    navController = navController
+                    navController = navController,
+                    dismissStateMap = dismissStateMap
                 )
             }
 
@@ -144,13 +147,9 @@ fun CategoryCard(
     category: Category,
     modifier: Modifier = Modifier,
     catViewModel: CategoryViewModel,
-    navController: NavController
+    navController: NavController,
+    dismissState: DismissState
 ) {
-
-
-    val dismissState = rememberDismissState()
-
-
 
 
     SwipeToDeleteItem(state = dismissState) {
@@ -201,23 +200,24 @@ fun CategoryCard(
             }
         }
 
+        if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+            catViewModel.deleteCategory(category)
+        }
 
     }
 
-
-    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        catViewModel.deleteCategory(category)
-    }
 
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryList(
     categoryList: List<Category>,
     modifier: Modifier = Modifier,
     catViewModel: CategoryViewModel,
-    navController: NavController
+    navController: NavController,
+    dismissStateMap: MutableMap<Category, DismissState>
 ) {
     LazyColumn(modifier = modifier) {
         items(categoryList) { item: Category ->
@@ -226,7 +226,10 @@ fun CategoryList(
                     .padding(5.dp)
                     .fillMaxWidth(),
                 catViewModel = catViewModel,
-                navController = navController
+                navController = navController,
+                dismissState = dismissStateMap[item]
+                    ?: rememberDismissState().also { dismissStateMap[item] = it }
+
             )
         }
     }

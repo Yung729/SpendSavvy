@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
@@ -34,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,7 +73,9 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
 fun OverviewScreen(
     modifier: Modifier = Modifier,
@@ -107,6 +111,8 @@ fun OverviewScreen(
         selectedDate.value = newDate
         dateViewModel.setSelectedDate(newDate)
     }
+
+    val dismissStateMap = remember { mutableMapOf<Transactions, DismissState>() }
 
 
     LaunchedEffect(selectedDate.value) {
@@ -255,7 +261,8 @@ fun OverviewScreen(
                     modifier = Modifier.height(400.dp),
                     transactionsList = transactionList,
                     navController = navController,
-                    transactionViewModel = transactionViewModel
+                    transactionViewModel = transactionViewModel,
+                    dismissStateMap = dismissStateMap
                 )
             }
 
@@ -486,12 +493,12 @@ fun TransactionsCard(
     transactions: Transactions,
     modifier: Modifier = Modifier,
     navController: NavController,
-    transactionViewModel: OverviewViewModel
+    transactionViewModel: OverviewViewModel,
+    dismissState: DismissState
 ) {
 
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
-    val dismissState = rememberDismissState()
 
 
 
@@ -552,19 +559,23 @@ fun TransactionsCard(
 
             }
         }
+
+        if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+            transactionViewModel.deleteTransaction(transactions)
+        }
     }
 
-    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-        transactionViewModel.deleteTransaction(transactions)
-    }
+
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TransactionList(
     transactionsList: List<Transactions>,
     modifier: Modifier = Modifier,
     navController: NavController,
-    transactionViewModel: OverviewViewModel
+    transactionViewModel: OverviewViewModel,
+    dismissStateMap: MutableMap<Transactions, DismissState>
 ) {
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
     var lastDate = ""
@@ -589,7 +600,9 @@ fun TransactionList(
                     .padding(5.dp)
                     .fillMaxWidth(),
                 navController = navController,
-                transactionViewModel = transactionViewModel
+                transactionViewModel = transactionViewModel,
+                dismissState = dismissStateMap[item] ?: rememberDismissState().also { dismissStateMap[item] = it }
+
             )
 
             lastDate = dateFormat.format(item.date)
