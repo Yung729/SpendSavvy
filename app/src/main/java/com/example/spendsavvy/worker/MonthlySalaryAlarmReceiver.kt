@@ -47,7 +47,7 @@ class MonthlySalaryAlarmReceiver : BroadcastReceiver() {
                             description = "Total Salary",
                             date = Date(),
                             category = Category(
-                                id = "T0013",
+                                id = "CT0013",
                                 imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fsalary.png?alt=media&token=102737bc-9da6-48ef-827c-b0b05d9fb052"),
                                 categoryName = "Total Staff Salary",
                                 categoryType = "Expenses"
