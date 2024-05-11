@@ -177,6 +177,7 @@ fun AddNewStockScreen(
                             qty.toInt()
                         )
                     )
+                    navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

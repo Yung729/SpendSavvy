@@ -69,59 +69,20 @@ fun FixedDepositDetailsScreen(
         mutableStateOf("")
     }
 
-    val options = mutableStateListOf<String>("3 Month", "6 Month", "1 Year")
-
     var duration by remember {
         mutableStateOf(0)
     }
 
-    var selectedIndex by remember {
-        mutableStateOf(0)
-    }
-
-
-    Card(
-        shape = RoundedCornerShape(15.dp),
+    Column(
         modifier = Modifier
-            .fillMaxWidth(0.85f)
-            .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
-            .shadow(elevation = 15.dp)
-    ) {
+        .fillMaxWidth()
+        .padding(start = 15.dp, top = 15.dp
+        )) {
         Text(
             text = "Fixed Deposit",
             fontFamily = poppinsFontFamily,
-            fontSize = 15.sp,
-            modifier = Modifier
-                .padding(start = 15.dp, top = 15.dp)
+            fontSize = 20.sp
         )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            SingleChoiceSegmentedButtonRow {
-                options.forEachIndexed { index, option ->
-                    SegmentedButton(
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = options.size
-                        )
-                    ) {
-                        Text(text = option)
-                    }
-                }
-            }
-        }
-
-        if (selectedIndex == 0) {
-            duration = 3
-        } else if (selectedIndex == 1) {
-            duration = 6
-        } else
-            duration = 12
 
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -130,6 +91,14 @@ fun FixedDepositDetailsScreen(
                 .fillMaxWidth()
                 .padding(start = 15.dp, top = 15.dp)
         ) {
+            Text(
+                text = "Note: The amount of money will be locked for 1 year",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp,
+                color = Color.Red
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = "Select your bank",
@@ -205,7 +174,7 @@ fun FixedDepositDetailsScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Text(
-                text = "Interest Rate",
+                text = "Interest Rate (%)",
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -217,7 +186,7 @@ fun FixedDepositDetailsScreen(
                 },
                 placeholder = {
                     Text(
-                        text = "0.00%",
+                        text = "0.00",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
                         color = Color.Gray

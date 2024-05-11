@@ -256,7 +256,7 @@ fun WalletScreen(
 
             OutlinedButton(
                 onClick = {
-                    navController.navigate(Screen.FixedDepositDetails.route)
+                    navController.navigate(Screen.FixedDepositScreen.route)
                 },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
