@@ -69,6 +69,13 @@ class WalletViewModel(
     }
 
     fun editCashDetails(cash: Cash, updatedCashDetails: Cash) {
+        /*if (cashDetailsList.value?.any { it.typeName == cash.typeName } == false) {
+            Toast.makeText(
+                currentContext, "The cash account has not added yet, create one", Toast.LENGTH_SHORT
+            ).show()
+            return
+        }*/
+
         viewModelScope.launch {
             try {
                 val typeName = getTypeName(cash)
@@ -253,6 +260,13 @@ class WalletViewModel(
     }
 
     fun editStockDetails(stock: Stock, updatedStockDetails: Stock) {
+        /*if (stockListLive.value?.any { it.productName == stock.productName } == false) {
+            Toast.makeText(
+                currentContext, "The product has not added yet, add one", Toast.LENGTH_SHORT
+            ).show()
+            return
+        }*/
+
         viewModelScope.launch {
             try {
                 val productName = getProductName(stock)

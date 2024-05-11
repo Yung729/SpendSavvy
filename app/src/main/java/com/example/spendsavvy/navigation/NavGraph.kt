@@ -45,6 +45,7 @@ import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.screen.AddBills
+import com.example.spendsavvy.screen.AddCashAccountScreen
 import com.example.spendsavvy.screen.AddNewStockScreen
 import com.example.spendsavvy.screen.Analysis.AnalysisScreen
 import com.example.spendsavvy.screen.Analysis.BudgetScreen
@@ -57,6 +58,7 @@ import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
 import com.example.spendsavvy.screen.EditBills
+import com.example.spendsavvy.screen.EditCashAccountScreen
 import com.example.spendsavvy.screen.EditExistingStockScreen
 import com.example.spendsavvy.screen.FixedDepositDetailsScreen
 import com.example.spendsavvy.screen.ForgotPassword
@@ -366,14 +368,22 @@ fun TabsNavGraph(
             }
 
             composable(
-                route = Screen.CashDetails.route
+                route = Screen.AddCashAccount.route
             ) {
-                CashDetailsScreen(
+                AddCashAccountScreen(
                     walletViewModel = walletViewModel,
                     navController = navController
                 )
             }
 
+            composable(
+                route = Screen.EditCashAccount.route
+            ) {
+                EditCashAccountScreen(
+                    walletViewModel = walletViewModel,
+                    navController = navController
+                )
+            }
 
             composable(
                 route = Screen.Stock.route

@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -150,24 +151,43 @@ fun CashScreen(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.End
                 ) {
-                    Button(
-                        onClick = {
-                            navController.navigate(route = Screen.CashDetails.route)
-                        },
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .bounceClick()
-                            .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            text = "Edit Account",
-                            textAlign = TextAlign.Center,
-                            fontFamily = poppinsFontFamily,
-                            color = Color.White
-                        )
+                        OutlinedButton(
+                            onClick = {
+                            navController.navigate(route = Screen.AddCashAccount.route)
+                            }
+                        ){
+                            Text(
+                                text = "Add Account",
+                                textAlign = TextAlign.Center,
+                                fontFamily = poppinsFontFamily,
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                navController.navigate(route = Screen.EditCashAccount.route)
+                            },
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .bounceClick()
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Black
+                            )
+                        ) {
+                            Text(
+                                text = "Edit Account",
+                                textAlign = TextAlign.Center,
+                                fontFamily = poppinsFontFamily,
+                                color = Color.White
+                            )
+                        }
+
+
                     }
                 }
             }

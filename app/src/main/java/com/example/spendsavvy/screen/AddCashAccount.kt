@@ -1,7 +1,6 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,10 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -28,13 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -64,27 +58,11 @@ fun CashDetailsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun CashDetailsScreen(
+fun AddCashAccountScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
-    var existingAccount by remember {
-        mutableStateOf(false)
-    }
-
-    var type by remember {
-        mutableStateOf("Cash")
-    }
-
     var typeName by remember {
-        mutableStateOf("Public Bank")
-    }
-
-    var incAmt by remember {
-        mutableStateOf("")
-    }
-
-    var decAmt by remember {
         mutableStateOf("")
     }
 
@@ -97,7 +75,6 @@ fun CashDetailsScreen(
     }
 
     val options = mutableStateListOf<String>("Cash", "Bank")
-    val cashInfo by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
     Column(
         modifier = Modifier
@@ -138,8 +115,6 @@ fun CashDetailsScreen(
             Spacer(modifier = Modifier.height(15.dp))
 
             if (selectedIndex == 1) {
-                type = "Bank"
-
                 Text(
                     text = "Enter your bank",
                     fontFamily = poppinsFontFamily,
@@ -160,87 +135,40 @@ fun CashDetailsScreen(
                         )
                     }
                 )
-
+            }else{
+                typeName = "Cash"
             }
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            if (cashInfo.any { it.typeName == typeName }) {
+            Text(
+                text = "Initial Amount",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
 
-                existingAccount = true
-                Text(
-                    text = "Increase Amount",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
+            TextField(
+                value = initialAmt,
+                onValueChange = {
+                    initialAmt = it
+                },
+                placeholder = {
+                    Text(
+                        text = "RM 0.00",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp,
+                        color = Color.Gray
+                    )
+                }
+            )
 
-                TextField(
-                    value = incAmt,
-                    onValueChange = {
-                        incAmt = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "RM 0.00",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-
-                Text(
-                    text = "Decrease Amount",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = decAmt,
-                    onValueChange = {
-                        decAmt = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "RM 0.00",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-            }
-
-
-            if (!existingAccount) {
-                Text(
-                    text = "Initial Amount",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = initialAmt,
-                    onValueChange = {
-                        initialAmt = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "RM 0.00",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
         Row(
             modifier = Modifier
-                .padding(15.dp),
+                .padding(30.dp),
             horizontalArrangement = Arrangement.spacedBy(30.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -264,27 +192,12 @@ fun CashDetailsScreen(
 
             Button(
                 onClick = {
-                    if (cashInfo.any { it.typeName == typeName }) {
-
-                        walletViewModel.editCashDetails(
-                            cash = cashInfo.find { it.typeName == typeName }!!,
-                            updatedCashDetails = Cash(
-                                type = type,
-                                typeName = typeName,
-                                balance = initialAmt.toDoubleOrNull() as Double + incAmt.toDoubleOrNull() as Double - decAmt.toDoubleOrNull() as Double
-                            )
+                    walletViewModel.addCashDetailsToDatabase(
+                        Cash(
+                            typeName = typeName,
+                            balance = initialAmt.toDoubleOrNull() ?: 0.0
                         )
-                    } else
-                        walletViewModel.addCashDetailsToDatabase(
-                            Cash(
-                                type = type,
-                                typeName = typeName,
-                                balance = initialAmt.toDoubleOrNull() ?: 0.0
-                            )
-                        )
-
-
-                    navController.navigateUp()
+                    )
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
@@ -294,7 +207,7 @@ fun CashDetailsScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Update",
+                    text = "Add",
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )
