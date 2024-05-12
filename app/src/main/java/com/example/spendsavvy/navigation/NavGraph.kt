@@ -25,6 +25,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -49,7 +50,6 @@ import com.example.spendsavvy.screen.AddCashAccountScreen
 import com.example.spendsavvy.screen.AddNewStockScreen
 import com.example.spendsavvy.screen.Analysis.AnalysisScreen
 import com.example.spendsavvy.screen.Analysis.BudgetScreen
-import com.example.spendsavvy.screen.CashDetailsScreen
 import com.example.spendsavvy.screen.CashScreen
 import com.example.spendsavvy.screen.Category.AddCategoryScreen
 import com.example.spendsavvy.screen.Category.CategoryDetail
@@ -86,25 +86,40 @@ import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
-import com.example.spendsavvy.viewModels.MainViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
-import com.example.spendsavvy.viewModels.TaxViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
 
-    val currentContext = context
-    val isConnected = isInternetAvailable(currentContext)
+    val isConnected = isInternetAvailable(context)
     val fireAuthRepository = FireAuthRepository(
-        context = currentContext,
+        context = context,
         navController = navController,
-        CategoryViewModel(currentContext, isConnected, "")
+        CategoryViewModel(context, isConnected, "")
     )
+    var userId by remember { mutableStateOf("") }
+    userId = fireAuthRepository.getCurrentUser()
+
+    if (userId == ""){
+        userId  = "adminUser"
+    }
+
     val dateViewModel = DateSelectionViewModel()
+    val categoryViewModel = CategoryViewModel(context, isConnected, userId)
+    val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
+    val targetViewModel = TargetViewModel(context, isConnected, userId)
+    val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
+    val profileViewModel = ProfileViewModel(userId)
+    val billsViewModel = BillsViewModel(context, isConnected, userId)
+
+
+    //Wallet
+    val walletViewModel = WalletViewModel(context, userId)
+
 
     NavHost(
         navController = navController, startDestination = Screen.Login.route
@@ -119,7 +134,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                 navController = navController,
                 fireAuthRepository = fireAuthRepository
             )
-
+            userId = fireAuthRepository.getCurrentUser()
         }
 
         composable(
@@ -136,17 +151,20 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
 
         composable(route = Screen.MainScreen.route) {
 
-            val mainViewModel = MainViewModel(context, isConnected, fireAuthRepository.getCurrentUser())
-            mainViewModel.syncDatabase()
-
             TabsNavGraph(
                 userId = fireAuthRepository.getCurrentUser(),
-                context = currentContext,
+                context = context,
                 dateViewModel = dateViewModel,
-                fireAuthRepository = fireAuthRepository
+                fireAuthRepository = fireAuthRepository,
+                categoryViewModel = categoryViewModel,
+                transactionsViewModel = transactionsViewModel,
+                targetViewModel = targetViewModel,
+                staffViewModel = staffViewModel,
+                profileViewModel = profileViewModel,
+                billsViewModel = billsViewModel,
+                walletViewModel = walletViewModel
             )
         }
-
 
 
     }
@@ -158,7 +176,14 @@ fun TabsNavGraph(
     userId: String,
     context: Context,
     dateViewModel: DateSelectionViewModel,
-    fireAuthRepository: FireAuthRepository
+    fireAuthRepository: FireAuthRepository,
+    categoryViewModel: CategoryViewModel,
+    transactionsViewModel: OverviewViewModel,
+    targetViewModel: TargetViewModel,
+    staffViewModel: StaffViewModel,
+    profileViewModel: ProfileViewModel,
+    billsViewModel: BillsViewModel,
+    walletViewModel: WalletViewModel
 ) {
 
 
@@ -170,18 +195,6 @@ fun TabsNavGraph(
 
     val showOption = remember { mutableStateOf(false) }
 
-
-
-    val categoryViewModel = CategoryViewModel(context, isConnected, userId)
-    val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
-    val targetViewModel = TargetViewModel(context, isConnected, userId)
-    val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
-    val profileViewModel = ProfileViewModel(userId)
-    val billsViewModel = BillsViewModel(context, isConnected, userId)
-
-
-    //Wallet
-    val walletViewModel = WalletViewModel(context, userId)
 
 
     Scaffold(topBar = {
@@ -357,7 +370,10 @@ fun TabsNavGraph(
                 SettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController, profileViewModel = profileViewModel, fireAuthRepository = fireAuthRepository
+                        .padding(20.dp),
+                    navController = navController,
+                    profileViewModel = profileViewModel,
+                    fireAuthRepository = fireAuthRepository
                 )
             }
 
@@ -474,7 +490,8 @@ fun TabsNavGraph(
                 MyProfileScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController, profileViewModel = profileViewModel,
+                        .padding(20.dp),
+                    navController = navController, profileViewModel = profileViewModel,
                 )
             }
 
@@ -522,7 +539,8 @@ fun TabsNavGraph(
                 ManageBillsAndInstalment(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController,
+                        .padding(20.dp),
+                    navController = navController,
                     billsViewModel = billsViewModel,
                     transactionViewModel = transactionsViewModel,
                 )
@@ -564,7 +582,6 @@ fun TabsNavGraph(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(20.dp), navController = navController,
-                    taxViewModel = TaxViewModel(),
                     transactionViewModel = transactionsViewModel
                 )
             }

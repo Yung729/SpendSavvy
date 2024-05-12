@@ -1,6 +1,5 @@
 package com.example.spendsavvy.screen
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
@@ -50,9 +48,7 @@ import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.CategoryViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import com.example.spendsavvy.viewModels.MainViewModel
 
 
 @Composable
@@ -133,6 +129,8 @@ fun LoginScreen(
         ButtonComponent(onButtonClick = {
             fireAuthRepository.signIn(email = email, password = password)
 
+            val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUser())
+            mainViewModel.syncDatabase()
         }, text = "LOGIN")
 
 

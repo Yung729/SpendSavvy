@@ -69,9 +69,9 @@ import java.util.Date
 fun TaxCalculator(
     modifier: Modifier = Modifier,
     navController: NavController,
-    taxViewModel: TaxViewModel,
     transactionViewModel: OverviewViewModel
 ) {
+    val taxViewModel = TaxViewModel()
     val context = LocalContext.current
     var initialAmount by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -636,7 +636,6 @@ fun TaxCalculatorPreview() {
             .fillMaxSize()
             .padding(20.dp),
         navController = rememberNavController(),
-        taxViewModel = TaxViewModel(),
         transactionViewModel = viewModel()
     )
 }

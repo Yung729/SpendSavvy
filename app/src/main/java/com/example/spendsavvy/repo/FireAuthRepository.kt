@@ -24,6 +24,7 @@ class FireAuthRepository(
 
                 val currentUser = auth.currentUser
                 if (currentUser != null) {
+                    val userId = getCurrentUser()
                     navController.navigate(route = Screen.MainScreen.route) {
                         popUpTo(navController.graph.id) {
                             inclusive = true
@@ -73,7 +74,11 @@ class FireAuthRepository(
 
     fun signOut(){
         auth.signOut()
-        navController.navigate(Screen.Login.route)
+        navController.navigate(Screen.Login.route){
+            popUpTo(Screen.Login.route){
+                inclusive = true
+            }
+        }
     }
 
     fun getCurrentUser(): String {
