@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
@@ -79,6 +80,14 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
     var amount by remember { mutableStateOf("") }
     var selectedDueDate by remember { mutableStateOf(Date()) }
     var selectedDuration by remember { mutableStateOf("") }
+    val currentDate = Calendar.getInstance()
+    val selectedCalendar = Calendar.getInstance().apply {
+        time = selectedDueDate
+    }
+
+    val billsStatus by remember { mutableStateOf(
+        if (selectedCalendar.before(currentDate)) "OVERDUE" else "UPCOMING"
+    )}
 
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
     var isExpanded by remember { mutableStateOf(false) }
@@ -180,13 +189,6 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         )
 
         Spacer(modifier = Modifier.height(5.dp))
-        val currentDate = LocalDate.now()
-        val selectedLocalDate = selectedDueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-
-        val billsStatus by remember { mutableStateOf(
-            if (selectedLocalDate.isBefore(currentDate)) "OVERDUE" else "UPCOMING"
-        )}
-
         Button(
             onClick = {
                 if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && selectedDueDate != null && selectedDuration.isNotBlank()) {
@@ -270,6 +272,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                     ).show()
                                 }
                                 showDialog = false
+                                navController.navigate(Screen.ManageBillsAndInstalment.route)
                             },
                             modifier = Modifier
                                 .weight(1f)
