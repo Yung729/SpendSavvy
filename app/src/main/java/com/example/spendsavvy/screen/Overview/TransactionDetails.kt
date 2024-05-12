@@ -144,6 +144,7 @@ fun TransactionDetail(
                             categoryName = transactions.category.categoryName,
                             categoryType = transactions.category.categoryType
                         ),
+                        paymentMethod = transactions.paymentMethod,
                         description = updatedTransactionDescription,
                         transactionType = transactions.transactionType,
                         date = updatedDate.value

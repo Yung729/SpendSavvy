@@ -36,6 +36,7 @@ class DatabaseHelper(context: Context) :
                 internalId TEXT,
                 amount REAL NOT NULL,
                 categoryId TEXT,
+                paymentMethod TEXT,
                 description TEXT,
                 date LONG,
                 transactionType TEXT,
@@ -241,6 +242,7 @@ class DatabaseHelper(context: Context) :
         internalId: String,
         amount: Double,
         categoryId: String,  // Category ID to link the transaction with a category
+        paymentMethod : String,
         description: String,
         date: Date,
         transactionType: String,
@@ -253,6 +255,7 @@ class DatabaseHelper(context: Context) :
             put("internalId", internalId)
             put("amount", amount)
             put("categoryId", categoryId)
+            put("paymentMethod", paymentMethod)
             put("description", description)
             put("date", currentDateMillis)
             put("transactionType", transactionType)
@@ -267,6 +270,7 @@ class DatabaseHelper(context: Context) :
         internalId: String,
         amount: Double,
         categoryId: String,
+        paymentMethod : String,
         description: String,
         date: Date,
         transactionType: String,
@@ -279,6 +283,7 @@ class DatabaseHelper(context: Context) :
             put("internalId", internalId)
             put("amount", amount)
             put("categoryId", categoryId)
+            put("paymentMethod", paymentMethod)
             put("description", description)
             put("date", currentDateMillis)
             put("transactionType", transactionType)
@@ -308,6 +313,7 @@ class DatabaseHelper(context: Context) :
         val internalIdIndex = cursor.getColumnIndex("internalId")
         val amountIndex = cursor.getColumnIndex("amount")
         val categoryIdIndex = cursor.getColumnIndex("categoryId")
+        val paymentMethodIndex = cursor.getColumnIndex("paymentMethod")
         val descriptionIndex = cursor.getColumnIndex("description")
         val dateIndex = cursor.getColumnIndex("date")
         val transactionTypeIndex = cursor.getColumnIndex("transactionType")
@@ -319,6 +325,7 @@ class DatabaseHelper(context: Context) :
                 val internalId = cursor.getString(internalIdIndex)
                 val amount = cursor.getDouble(amountIndex)
                 val categoryId = cursor.getString(categoryIdIndex)
+                val paymentMethod = cursor.getString(paymentMethodIndex)
                 val description = cursor.getString(descriptionIndex)
                 val dateMillis = cursor.getLong(dateIndex)
                 val transactionType = cursor.getString(transactionTypeIndex)
@@ -329,7 +336,7 @@ class DatabaseHelper(context: Context) :
                 val category = getCategoryById(categoryId)
 
                 // Create a Transaction object and add it to the list
-                val transaction = Transactions(internalId,amount, category, description, date, transactionType)
+                val transaction = Transactions(internalId,amount, category,paymentMethod, description, date, transactionType)
                 transactionList.add(transaction)
             } while (cursor.moveToNext())
         }
@@ -362,6 +369,7 @@ class DatabaseHelper(context: Context) :
                 put("internalId", transaction.id)
                 put("amount", transaction.amount)
                 put("categoryId", categoryId)
+                put("paymentMethod", transaction.paymentMethod)
                 put("description", transaction.description)
                 put("date", currentDateMillis)
                 put("transactionType", transaction.transactionType)
@@ -387,6 +395,7 @@ class DatabaseHelper(context: Context) :
         val internalIdIndex = cursor.getColumnIndex("internalId")
         val amountIndex = cursor.getColumnIndex("amount")
         val categoryIdIndex = cursor.getColumnIndex("categoryId")
+        val paymentMethodIndex = cursor.getColumnIndex("paymentMethod")
         val descriptionIndex = cursor.getColumnIndex("description")
         val dateIndex = cursor.getColumnIndex("date")
         val transactionTypeIndex = cursor.getColumnIndex("transactionType")
@@ -395,6 +404,7 @@ class DatabaseHelper(context: Context) :
             val internalId = cursor.getString(internalIdIndex)
             val amount = cursor.getDouble(amountIndex)
             val categoryId = cursor.getString(categoryIdIndex)
+            val paymentMethod = cursor.getString(paymentMethodIndex)
             val description = cursor.getString(descriptionIndex)
             val dateMillis = cursor.getLong(dateIndex)
             val transactionType = cursor.getString(transactionTypeIndex)
@@ -405,7 +415,7 @@ class DatabaseHelper(context: Context) :
             val category = getCategoryById(categoryId)
 
             // Create a Transaction object and add it to the list
-            val transaction = Transactions(internalId, amount, category, description, date, transactionType)
+            val transaction = Transactions(internalId, amount, category,paymentMethod, description, date, transactionType)
             transactions.add(transaction)
         }
 
@@ -915,6 +925,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 27
+        private const val DATABASE_VERSION = 28
     }
 }

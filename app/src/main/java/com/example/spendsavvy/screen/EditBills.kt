@@ -211,7 +211,7 @@ fun EditBills(
                                     )
                                 )
                                 showDialog = false
-                                navController.navigate(Screen.ManageBillsAndInstalment.route)
+                                navController.navigateUp()
                             },
                             modifier = Modifier
                                 .weight(1f)

@@ -53,6 +53,7 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.WalletViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -69,7 +70,8 @@ fun AddExpensesScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     transactionViewModel: OverviewViewModel,
-    catViewModel: CategoryViewModel
+    catViewModel: CategoryViewModel,
+    walletViewModel: WalletViewModel
 ) {
 
     var isExpanded by remember {
@@ -97,6 +99,7 @@ fun AddExpensesScreen(
     }
 
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
+    val paymentList by walletViewModel.cashDetailsList.observeAsState(emptyList())
 
     val todayDate = Date()
     val calendarState = rememberSheetState()
@@ -278,11 +281,11 @@ fun AddExpensesScreen(
                     ExposedDropdownMenu(
                         expanded = isExpanded1,
                         onDismissRequest = { isExpanded1 = false }) {
-                        for (data in expenseList) {
+                        for (data in paymentList) {
                             DropdownMenuItem(text = {
-                                Text(text = data.categoryName)
+                                Text(text = data.typeName)
                             }, onClick = {
-                                selectedMethod = data.categoryName
+                                selectedMethod = data.typeName
                                 isExpanded1 = false
                             })
                         }
@@ -338,6 +341,7 @@ fun AddExpensesScreen(
                             description = description,
                             date = selectedDate.value,
                             category = selectedCategory,
+                            paymentMethod = selectedMethod,
                             transactionType = "Expenses"
                         ),
                         onSuccess = {
@@ -387,17 +391,4 @@ fun AddExpensesScreen(
 
 
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddExpensesPreview() {
-    AddExpensesScreen(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        navController = rememberNavController(),
-        transactionViewModel = viewModel(),
-        catViewModel = viewModel()
-    )
 }

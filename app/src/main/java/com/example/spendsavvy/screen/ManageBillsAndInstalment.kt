@@ -452,6 +452,7 @@ fun BillItem(
                                                 description = bill.description,
                                                 date = currentDate,
                                                 category = bill.category,
+                                                paymentMethod = "Cash",
                                                 transactionType = "Expenses"
                                             ),
                                             onSuccess = {

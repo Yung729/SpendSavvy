@@ -69,6 +69,7 @@ class MainViewModel(
                     internalId = transactionFirestore.id,
                     amount = transactionFirestore.amount,
                     categoryId = categoryId, // Assuming you have categoryId defined somewhere
+                    paymentMethod = "Cash",
                     description = transactionFirestore.description,
                     date = transactionFirestore.date,
                     transactionType = transactionFirestore.transactionType,

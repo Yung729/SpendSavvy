@@ -52,6 +52,7 @@ class MonthlySalaryAlarmReceiver : BroadcastReceiver() {
                                 categoryName = "Staff Salary",
                                 categoryType = "Expenses"
                             ),
+                            paymentMethod = "Cash",
                             transactionType = "Expenses"
                         ),
                         onSuccess = {

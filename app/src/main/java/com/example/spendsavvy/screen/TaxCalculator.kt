@@ -240,6 +240,7 @@ fun TaxCalculator(
                                         categoryName = "Income Tax",
                                         categoryType = "Expenses"
                                     ),
+                                    paymentMethod = "Cash",
                                     transactionType = "Expenses"
                                 ),
                                 onSuccess = {

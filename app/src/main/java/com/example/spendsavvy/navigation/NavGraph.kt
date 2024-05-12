@@ -625,7 +625,8 @@ fun TabsNavGraph(
                         .padding(20.dp),
                     navController = navController,
                     transactionViewModel = transactionsViewModel,
-                    catViewModel = categoryViewModel
+                    catViewModel = categoryViewModel,
+                    walletViewModel = walletViewModel
                 )
             }
 
@@ -638,7 +639,8 @@ fun TabsNavGraph(
                         .padding(20.dp),
                     navController = navController,
                     transactionViewModel = transactionsViewModel,
-                    catViewModel = categoryViewModel
+                    catViewModel = categoryViewModel,
+                    walletViewModel = walletViewModel
                 )
             }
 

@@ -7,9 +7,10 @@ data class Transactions(
     val id: String ,
     val amount: Double ,
     val category: Category ,
+    val paymentMethod : String ,
     val description: String,
     val date: Date ,
     val transactionType: String
 ): Serializable {
-    constructor() : this("",0.0, Category(), "",Date(),"")
+    constructor() : this("",0.0, Category(),"", "",Date(),"")
 }

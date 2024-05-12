@@ -291,7 +291,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                     ).show()
                                 }
                                 showDialog = false
-                                navController.navigate(Screen.ManageBillsAndInstalment.route)
+                                navController.navigateUp()
                             },
                             modifier = Modifier
                                 .weight(1f)
