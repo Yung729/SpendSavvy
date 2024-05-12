@@ -61,7 +61,6 @@ class WalletViewModel(
 
     private fun updateCashInfo(cash: List<Cash>) {
         cashDetailsList.postValue(cash)
-
     }
 
     private suspend fun getTypeName(cash: Cash): String {
