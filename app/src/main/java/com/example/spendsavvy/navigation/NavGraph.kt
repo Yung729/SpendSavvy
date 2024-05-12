@@ -42,6 +42,7 @@ import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Question
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
@@ -88,6 +89,7 @@ import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.ProfileViewModel
+import com.example.spendsavvy.viewModels.QuestionViewModel
 import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
@@ -115,6 +117,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId)
     val billsViewModel = BillsViewModel(context, isConnected, userId)
+    val questionsViewModel = QuestionViewModel(context, isConnected, userId)
 
 
     //Wallet
@@ -172,6 +175,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                 staffViewModel = staffViewModel,
                 profileViewModel = profileViewModel,
                 billsViewModel = billsViewModel,
+                questionsViewModel = questionsViewModel,
                 walletViewModel = walletViewModel
             )
         }
@@ -193,6 +197,7 @@ fun TabsNavGraph(
     staffViewModel: StaffViewModel,
     profileViewModel: ProfileViewModel,
     billsViewModel: BillsViewModel,
+    questionsViewModel: QuestionViewModel,
     walletViewModel: WalletViewModel
 ) {
 
@@ -617,13 +622,32 @@ fun TabsNavGraph(
                 )
             }
 
+//            composable(
+//                route = Screen.EditQuestion.route
+//            ) {
+//                val selectedQuestion =
+//                    navController.previousBackStackEntry?.savedStateHandle?.get<Question>("currentQuestion")
+//
+//                if (selectedQuestion != null) {
+//                    EditQuestion(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(20.dp),
+//                        navController = navController,
+//                        questionsViewModel = questionsViewModel
+//                    )
+//                }
+//            }
+
             composable(
                 route = Screen.HelpAndSupport.route
             ) {
                 HelpAndSupport(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp),
+                    navController = navController,
+                    questionsViewModel = questionsViewModel
                 )
             }
             composable(

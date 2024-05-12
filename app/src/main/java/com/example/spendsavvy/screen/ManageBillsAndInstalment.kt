@@ -210,21 +210,12 @@ fun ManageBillsAndInstalment(
 
             when (selectedIndex) {
                 0 -> BillList(allBillsList, navController, transactionViewModel, billsViewModel)
-                1 -> BillList(
-                    upcomingBillsList,
-                    navController,
-                    transactionViewModel,
-                    billsViewModel
-                )
-
+                1 -> BillList(upcomingBillsList, navController, transactionViewModel, billsViewModel)
                 2 -> BillList(paidBillsList, navController, transactionViewModel, billsViewModel)
                 3 -> BillList(overdueBillsList, navController, transactionViewModel, billsViewModel)
             }
         }
     }
-
-
-
 }
 
 @Composable

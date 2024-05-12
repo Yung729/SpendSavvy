@@ -100,6 +100,14 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
 // Print the result
     println("$daysLeft days left")
 
+    val dayList = listOf("1", "2", "7", "14", "30")
+// Check if daysLeft matches any value in dayList
+    dayList.forEachIndexed { index, day ->
+        if ((daysLeft * -1).toInt() == day.toInt()) {
+            // Set alarm here
+            println("Alarm set for $day days before")
+        }
+    }
 
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
     var isExpanded by remember { mutableStateOf(false) }

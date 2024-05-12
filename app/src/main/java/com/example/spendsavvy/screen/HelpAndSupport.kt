@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
@@ -22,6 +23,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,15 +33,26 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,155 +72,132 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.models.Bills
+import com.example.spendsavvy.models.Question
 import com.example.spendsavvy.navigation.Screen
-
+import com.example.spendsavvy.viewModels.BillsViewModel
+import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.QuestionViewModel
+import java.util.Date
+@SuppressLint("UnrememberedMutableState")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) {
+fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, questionsViewModel: QuestionViewModel) {
 
     val context = LocalContext.current
+    val options = mutableStateListOf("Pending", "Answered")
+    var selectedIndex by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
-    var commentText by remember { mutableStateOf("") }
-    var success by remember { mutableStateOf(false) }
+    var questionText by remember { mutableStateOf("") }
+    val pendingQuestionsList by questionsViewModel.pendingQuestionsList.observeAsState(initial = emptyList())
+    val answeredQuestionsList by questionsViewModel.answeredQuestionsList.observeAsState(initial = emptyList())
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-    ) {
-        Text(
-            text = "Frequently Asked Questions",
-            textAlign = TextAlign.Center,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
-        )
-        Dropdown(
-            text = stringResource(id = R.string.q1),
-            modifier = Modifier.padding(15.dp)
-        ){
-            Text(
-                text = stringResource(id = R.string.a1),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .background(Color.LightGray)
-            )
-        }
-        Dropdown(
-            text = stringResource(id = R.string.q2),
-            modifier = Modifier.padding(15.dp)
-        ){
-            Text(
-                text = stringResource(id = R.string.a2),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .background(Color.LightGray)
-            )
-        }
-        Dropdown(
-            text = stringResource(id = R.string.q3),
-            modifier = Modifier.padding(15.dp)
-        ){
-            Text(
-                text = stringResource(id = R.string.a3),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .background(Color.LightGray)
-            )
-        }
-    }
-
-
-    FloatingActionButton(
-        onClick = {
-            sendCallIntent(context)
+    Scaffold(
+        floatingActionButton = {
+            // FloatingActionButton
+            Column {
+                FloatingActionButton(
+                    onClick = {
+                        sendCallIntent(context)
+                    },
+                    modifier = Modifier
+                        .size(95.dp, 50.dp)
+                        .clip(CircleShape)
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                            shape = CircleShape
+                        ),
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                    containerColor = Color.Gray,
+                    contentColor = Color.White,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.support_icon),
+                        contentDescription = "Support",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                FloatingActionButton(
+                    onClick = {
+                        showDialog = true
+                    },
+                    modifier = Modifier
+                        .size(95.dp, 50.dp)
+                        .clip(CircleShape)
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                            shape = CircleShape
+                        ),
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                    containerColor = Color.Gray,
+                    contentColor = Color.White,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.comment_icon),
+                        contentDescription = "Upload question",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                    )
+                }
+            }
         },
-        modifier = Modifier
-            .size(95.dp, 50.dp)
-            .offset(
-                x = (285).dp, y = (530).dp
+        floatingActionButtonPosition = FabPosition.End
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+        ) {
+            Text(
+                text = "Frequently Asked Questions",
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
+            )
+            Row(
+                horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+            ) {
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
+                ) {
+                    options.forEachIndexed { index, option ->
+                        SegmentedButton(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index, count = options.size
+                            )
+                        ) {
+                            Text(
+                                text = option,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp,
+                            )
+                        }
+                    }
+                }
+            }
 
-            )
-            .clip(CircleShape)
-            .border(
-                width = 1.dp,
-                color = Color.Black,
-                shape = CircleShape
-            ),
-        elevation = FloatingActionButtonDefaults.elevation(8.dp),
-        containerColor = Color.Gray,
-        contentColor = Color.White,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.support_icon),
-            contentDescription = "Support",
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-        )
-    }
-    FloatingActionButton(
-        onClick = {
-            showDialog = true
-        },
-        modifier = Modifier
-            .size(95.dp, 50.dp)
-            .offset(
-                x = (285).dp, y = (590).dp
-            )
-            .clip(CircleShape)
-            .border(
-                width = 1.dp,
-                color = Color.Black,
-                shape = CircleShape
-            ),
-        elevation = FloatingActionButtonDefaults.elevation(8.dp),
-        containerColor = Color.Gray,
-        contentColor = Color.White,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.comment_icon),
-            contentDescription = "Upload question",
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-        )
-    }
-    FloatingActionButton(
-        onClick = {
-            //show history questions
-        },
-        modifier = Modifier
-            .size(95.dp, 50.dp)
-            .offset(
-                x = (285).dp, y = (650).dp
-            )
-            .clip(CircleShape)
-            .border(
-                width = 1.dp,
-                color = Color.Black,
-                shape = CircleShape
-            ),
-        elevation = FloatingActionButtonDefaults.elevation(8.dp),
-        containerColor = Color.Gray,
-        contentColor = Color.White,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.history_icon),
-            contentDescription = "History",
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-        )
-    }
+            when (selectedIndex) {
+                0 -> QuestionList(pendingQuestionsList, navController, questionsViewModel)
+                1 -> QuestionList(answeredQuestionsList, navController, questionsViewModel)
+            }
 
+        }
+    }
     if(showDialog){
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -222,8 +213,8 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
             },
             text = {
                 OutlinedTextField(
-                    value = commentText,
-                    onValueChange = { commentText = it },
+                    value = questionText,
+                    onValueChange = { questionText = it },
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth()
@@ -252,17 +243,35 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
 
                     Button(
                         onClick = {
-                            //update questions to user firestore
-                            try {
-                                if (success) {
-                                    Toast.makeText(context, "Questions sent successfully", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(context, "Fail to send questions", Toast.LENGTH_SHORT).show()
+                            questionsViewModel.addQuestionToFirestore(
+                                Question(
+                                    id = questionsViewModel.generateQuestionId(),
+                                    questionText = questionText,
+                                    answer = "WAITING FOR REPLY....",
+                                    status = "PENDING",
+                                    questionDate = Date(),
+                                ),
+                                onSuccess = {
+                                    Toast.makeText(
+                                        context,
+                                        "Questions sent successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            } catch (e: NumberFormatException) {
-                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                            ) {
+                                Toast.makeText(
+                                    context,
+                                    "Fail to send questions",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                             showDialog = false
+
+                            Toast.makeText(
+                                context,
+                                "Questions sent!!!!!!!!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
                         modifier = Modifier
                             .weight(1f)
@@ -277,6 +286,85 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController) 
                 }
             }
         )
+    }
+}
+@Composable
+fun QuestionList(
+    questions: List<Question>,
+    navController: NavController,
+    questionViewModel: QuestionViewModel
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        this.items(questions) { question ->
+            QuestionItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+    //                        navController.currentBackStackEntry?.savedStateHandle?.set(
+    //                            key = "currentQuestion", value = question
+    //                        )
+    //                        // Navigate to the screen where you want to display the details of the question
+    //                        navController.navigate(Screen.QuestionDetails.route)
+                    },
+                question = question,
+                questionViewModel = questionViewModel
+            )
+        }
+    }
+}
+
+@Composable
+fun QuestionItem(
+    modifier: Modifier = Modifier,
+    question: Question,
+    questionViewModel: QuestionViewModel
+) {
+    Card(
+        modifier = modifier
+            .padding(vertical = 5.dp, horizontal = 10.dp)
+            .border(
+                width = 2.dp,
+                color = Color.Gray,
+                shape = RoundedCornerShape(20.dp),
+            )
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Dropdown(
+                text = question.questionText,
+                modifier = Modifier.padding(15.dp)
+            ) {
+                Text(
+                    text = question.answer,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .background(Color.LightGray)
+                )
+            }
+//            Dropdown(
+//                text = stringResource(id = R.string.q1),
+//                modifier = Modifier.padding(15.dp)
+//            ){
+//                Text(
+//                    text = stringResource(id = R.string.a1),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(70.dp)
+//                        .background(Color.LightGray)
+//                )
+//            }
+        }
     }
 }
 
@@ -297,7 +385,7 @@ fun Dropdown(text: String, modifier: Modifier = Modifier, initiallyOpened: Boole
         )
     )
 
-    Column(modifier = Modifier.fillMaxWidth())
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp))
     {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -317,7 +405,7 @@ fun Dropdown(text: String, modifier: Modifier = Modifier, initiallyOpened: Boole
                     .clickable {
                         isOpen = !isOpen
                     }
-                    .scale(1f, if (isOpen) -1f else 1f)
+                    .scale(1.85f, if (isOpen) -1f else 1f)
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -350,6 +438,7 @@ fun HelpAndSupportPreview() {
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        questionsViewModel = viewModel()
     )
 }
