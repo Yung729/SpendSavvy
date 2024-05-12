@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.GreenColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
@@ -212,11 +214,7 @@ fun WalletScreen(
                 text = "Bank Accounts"
             )
 
-            for (cashAccount in cashDetailsList) {
-                if (cashAccount.typeName == "Cash"){
-                    bankCount++
-                }
-            }
+            bankCount = bankAccountCount(cashDetailsList)
 
             Text(
                 text = "$bankCount Account(s)"
@@ -336,9 +334,7 @@ fun WalletScreen(
                 text = "Stocks"
             )
 
-            for (stockDetails in stockListLive)
-                stockCount++
-
+            stockCount = stocksCount(stockListLive)
 
             Text(
                 text = "$stockCount stocks"
@@ -346,6 +342,26 @@ fun WalletScreen(
         }
 
     }
+}
+
+fun bankAccountCount(cashList: List<Cash>): Int{
+    var count = 0
+
+    for (cashAccount in cashList) {
+        if(cashAccount.typeName != "Cash")
+            count++
+    }
+
+    return count
+}
+
+fun stocksCount(stockList: List<Stock>): Int{
+    var count = 0
+
+    for (stockDetails in stockList)
+        count++
+
+    return count
 }
 
 /*

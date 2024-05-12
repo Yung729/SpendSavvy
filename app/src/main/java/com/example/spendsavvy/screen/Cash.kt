@@ -108,12 +108,20 @@ fun CashScreen(
 
             }
 
-            for (cashDetails in cashDetailsList) {
+            /*for (cashDetails in cashDetailsList) {
                 if (cashDetails.typeName == "Cash") {
                     count = 1
                     cashAmount = cashDetails.balance
                 } else
                     totalAccount.value++
+            }*/
+            totalAccount.value = accountCount(cashList = cashDetailsList)
+
+            for (cashDetails in cashDetailsList) {
+                if (cashDetails.typeName == "Cash") {
+                    count = 1
+                    cashAmount = cashDetails.balance
+                }
             }
 
             if (count == 1)
@@ -255,6 +263,17 @@ fun BankAccList(
     }
 }
 
+@Composable
+fun accountCount(cashList: List<Cash>): Int{
+    var count = 0
+
+    for (cashAccount in cashList) {
+        if(cashAccount.typeName != "Cash")
+            count++
+    }
+
+    return count
+}
 
 /*@Preview(showBackground = true)
 @Composable
