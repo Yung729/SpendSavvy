@@ -9,6 +9,7 @@ import android.net.Uri
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Question
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
@@ -89,6 +90,19 @@ class DatabaseHelper(context: Context) :
         """
         db.execSQL(CREATE_BILL_TABLE)
 
+        val CREATE_QUESTION_TABLE = """
+            CREATE TABLE questions (
+                id TEXT PRIMARY KEY,
+                internalId TEXT,
+                questionText TEXT,
+                answer TEXT,
+                status TEXT,
+                date LONG,
+                userId TEXT
+            )
+        """
+        db.execSQL(CREATE_QUESTION_TABLE)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -98,6 +112,7 @@ class DatabaseHelper(context: Context) :
         db.execSQL("DROP TABLE IF EXISTS goal")
         db.execSQL("DROP TABLE IF EXISTS staff")
         db.execSQL("DROP TABLE IF EXISTS bills")
+        db.execSQL("DROP TABLE IF EXISTS questions")
         onCreate(db)
     }
 
@@ -559,7 +574,120 @@ class DatabaseHelper(context: Context) :
         }
         db.close()
     }
+//------------------------------------------    Question   ----------------------------------------------------------------------
 
+    fun addNewQuestion(
+        questionId: String,
+        questionText: String,
+        answer: String?,
+        status: String,
+        questionDate: Date,
+        userId: String
+    ) {
+        val dateMillis = questionDate.time
+
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("internalId", questionId)
+            put("questionText", questionText)
+            put("answer", answer)
+            put("status", status)
+            put("questionDate", dateMillis)
+            put("userId", userId)
+        }
+        db.insert("questions", null, values)
+        db.close()
+    }
+
+    fun updateQuestion(
+        questionId: String,
+        questionText: String,
+        answer: String?,
+        status: String,
+        questionDate: Date,
+        userId: String
+    ) {
+        val dateMillis = questionDate.time
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("internalId", questionId)
+            put("questionText", questionText)
+            put("answer", answer)
+            put("status", status)
+            put("questionDate", dateMillis)
+            put("userId", userId)
+        }
+        db.update("questions", values, "id=? AND userId=?", arrayOf(questionId, userId))
+        db.close()
+    }
+
+    fun deleteAllQuestions() {
+        val db = this.writableDatabase
+        db.delete("questions", null, null)
+        db.close()
+    }
+
+    fun deleteQuestion(questionId: String, userId: String) {
+        val db = this.writableDatabase
+        db.delete("questions", "id=? AND userId=?", arrayOf(questionId, userId))
+        db.close()
+    }
+
+    fun readQuestions(userId: String): ArrayList<Question> {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM questions WHERE userId=?", arrayOf(userId))
+        val questionsList: ArrayList<Question> = ArrayList()
+
+        val internalIdIndex = cursor.getColumnIndex("internalId")
+        val questionTextIndex = cursor.getColumnIndex("questionText")
+        val answerIndex = cursor.getColumnIndex("answer")
+        val statusIndex = cursor.getColumnIndex("status")
+        val dateIndex = cursor.getColumnIndex("date")
+
+        if (cursor.moveToFirst()) {
+            do {
+                val internalId = cursor.getString(internalIdIndex)
+                val questionText = cursor.getString(questionTextIndex)
+                val answer = cursor.getString(answerIndex)
+                val status = cursor.getString(statusIndex)
+                val dateMillis = cursor.getLong(dateIndex)
+                val date = Date(dateMillis)
+
+                val question = Question(internalId, questionText, answer, status, date)
+                questionsList.add(question)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return questionsList
+    }
+
+    private suspend fun getQuestionId(question: Question, userId: String): String {
+        return FirestoreRepository().getDocumentId("Questions", userId, question)
+    }
+
+    suspend fun addNewQuestionsList(
+        questions: List<Question>, userId: String
+    ) {
+        val db = this.writableDatabase
+
+        for (question in questions) {
+            val questionId = getQuestionId(question = question, userId = userId)
+
+            // Convert Date to milliseconds
+            val dateMillis = question.questionDate.time
+
+            val values = ContentValues().apply {
+                put("id", questionId)
+                put("questionText", question.questionText)
+                put("answer", question.answer)
+                put("status", question.status)
+                put("questionDate", dateMillis)
+                put("userId", userId)
+            }
+            db.insert("questions", null, values)
+        }
+        db.close()
+    }
 
 //------------------------------------------    Budget   ----------------------------------------------------------------------
 
@@ -914,6 +1042,14 @@ class DatabaseHelper(context: Context) :
                 isEmpty = isEmpty && (count == 0)
             }
         }
+        // Check if the question table has any records
+        val questionCursor = db.rawQuery("SELECT COUNT(*) FROM questions", null)
+        questionCursor.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val count = cursor.getInt(0)
+                isEmpty = isEmpty && (count == 0)
+            }
+        }
 
         // Optionally, you can check other tables as well if needed
 
@@ -925,6 +1061,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 28
+        private const val DATABASE_VERSION = 30
     }
 }

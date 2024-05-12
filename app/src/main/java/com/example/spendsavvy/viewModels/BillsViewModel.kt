@@ -1,23 +1,17 @@
 package com.example.spendsavvy.viewModels
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.util.Calendar
-import java.util.Date
 import java.util.UUID
 
 class BillsViewModel(
