@@ -160,35 +160,31 @@ fun CashScreen(
                 fontFamily = poppinsFontFamily
             )
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
+        Spacer(modifier = Modifier.height(15.dp))
 
         BankAccList(cashDetailsList, modifier)
 
-        Spacer(modifier = Modifier.height(15.dp))
-        Divider(color = Color.Gray, thickness = 0.7.dp)
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            ) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
-                ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        modifier = Modifier
+                            .padding(start = 35.dp),
+                        horizontalArrangement = Arrangement.spacedBy(30.dp)
                     ) {
                         OutlinedButton(
                             onClick = {
                                 navController.navigate(route = Screen.AddCashAccount.route)
-                            }
+                            },
+                                    modifier = Modifier
+                                    .bounceClick()
                         ) {
                             Text(
                                 text = "Add Account",
@@ -202,9 +198,7 @@ fun CashScreen(
                                 navController.navigate(route = Screen.EditCashAccount.route)
                             },
                             modifier = Modifier
-                                .padding(bottom = 10.dp)
-                                .bounceClick()
-                                .fillMaxWidth(),
+                                .bounceClick(),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Black
                             )
@@ -218,7 +212,7 @@ fun CashScreen(
                         }
 
 
-                    }
+
                 }
             }
         }
@@ -237,10 +231,6 @@ fun BankAccList(
     LazyColumn {
         items(bankList) { item: Cash ->
             if (item.typeName != "Cash") {
-                Spacer(modifier = Modifier.height(15.dp))
-                Divider(color = Color.Gray, thickness = 0.7.dp)
-                Spacer(modifier = Modifier.height(15.dp))
-
                 Row(
                     modifier = modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -258,6 +248,9 @@ fun BankAccList(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(15.dp))
+                Divider(color = Color.Gray, thickness = 0.7.dp)
+                Spacer(modifier = Modifier.height(15.dp))
             }
         }
     }

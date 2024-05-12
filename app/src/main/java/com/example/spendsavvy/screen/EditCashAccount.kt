@@ -140,15 +140,17 @@ fun EditCashAccountScreen(
                         onDismissRequest = { isExpanded = false }
                     ) {
                         for (cashDetails in cashInfo) {          //read from existing stock items
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = cashDetails.typeName)
-                                },
-                                onClick = {
-                                    searchCashAccount = cashDetails.typeName
-                                    isExpanded = false
-                                }
-                            )
+                            if (cashDetails.typeName != "Cash") {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = cashDetails.typeName)
+                                    },
+                                    onClick = {
+                                        searchCashAccount = cashDetails.typeName
+                                        isExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -239,6 +241,8 @@ fun EditCashAccountScreen(
                             )
                         }
                     }
+
+                    navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
@@ -256,3 +260,15 @@ fun EditCashAccountScreen(
         }
     }
 }
+
+/*
+@Composable
+fun cashUpdateDetails(cashList: List<Cash>, typeName: String): Cash {
+
+    for (cashDetails in cashList) {
+        if (cashDetails.typeName == typeName) {
+            return cashDetails
+        }
+    }
+
+}*/
