@@ -75,6 +75,7 @@ class DatabaseHelper(context: Context) :
         val CREATE_BILL_TABLE = """
             CREATE TABLE bills (
                 id TEXT PRIMARY KEY,
+                internalId TEXT,
                 amount REAL NOT NULL,
                 categoryId TEXT,
                 description TEXT,
@@ -914,6 +915,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 26
+        private const val DATABASE_VERSION = 27
     }
 }

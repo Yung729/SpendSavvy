@@ -91,6 +91,10 @@ class BillsViewModel(
             overdueBillsList.postValue(overdueBills)
             paidBillsList.postValue(paidBills)
 
+            Log.e(TAG, "upcomingBills =${upcomingBills.size} ")
+            Log.e(TAG, "overdueBills =${overdueBills.size} ")
+            Log.e(TAG, "paidBills =${paidBills.size} ")
+
             totalUpcomingBills.postValue(upcomingBills.size)
             totalOverdueBills.postValue(overdueBills.size)
             totalPaidBills.postValue(paidBills.size)
