@@ -790,14 +790,12 @@ class DatabaseHelper(context: Context) :
     }
 
     fun addNewCashDetails(
-        type: String,
         typeName: String,
         balance: Double,
         userId: String
     ){
         val db = this.writableDatabase
         val values = ContentValues().apply{
-            put("type", type)
             put("typeName", typeName)
             put("balance", balance)
             put("userId", userId)

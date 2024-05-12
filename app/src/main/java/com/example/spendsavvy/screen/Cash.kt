@@ -56,11 +56,15 @@ fun CashScreen(
     navController: NavController,
     cashViewModel: WalletViewModel
 ) {
+    var cashAmount by remember {
+        mutableStateOf(0.00)
+    }
+
     var count by remember {
         mutableStateOf(0)
     }
 
-    var totalAccount = remember {
+    val totalAccount = remember {
         mutableStateOf(0)
     }
 
@@ -105,20 +109,26 @@ fun CashScreen(
             }
 
             for (cashDetails in cashDetailsList) {
-                if (cashDetails.typeName == "Cash"){
+                if (cashDetails.typeName == "Cash") {
                     count = 1
-                    CashList(cash = cashDetails)
-                }
-                else
+                    cashAmount = cashDetails.balance
+                } else
                     totalAccount.value++
             }
 
-            if (count != 1)
+            if (count == 1)
+                Text(
+                    text = "RM $cashAmount",
+                    fontSize = 20.sp,
+                    fontFamily = poppinsFontFamily
+                )
+            else
                 Text(
                     text = "RM 0.00",
                     fontSize = 20.sp,
                     fontFamily = poppinsFontFamily
                 )
+
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -146,14 +156,11 @@ fun CashScreen(
         Spacer(modifier = Modifier.height(20.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
 
-        for (cashDetails in cashDetailsList) {
-            if (cashDetails.typeName != "Cash")
-                BankAccList(cashDetailsList, modifier)
+        BankAccList(cashDetailsList, modifier)
 
-            Spacer(modifier = Modifier.height(15.dp))
-            Divider(color = Color.Gray, thickness = 0.7.dp)
-            Spacer(modifier = Modifier.height(15.dp))
-        }
+        Spacer(modifier = Modifier.height(15.dp))
+        Divider(color = Color.Gray, thickness = 0.7.dp)
+        Spacer(modifier = Modifier.height(15.dp))
 
         Box(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -172,9 +179,9 @@ fun CashScreen(
                     ) {
                         OutlinedButton(
                             onClick = {
-                            navController.navigate(route = Screen.AddCashAccount.route)
+                                navController.navigate(route = Screen.AddCashAccount.route)
                             }
-                        ){
+                        ) {
                             Text(
                                 text = "Add Account",
                                 textAlign = TextAlign.Center,
@@ -213,17 +220,6 @@ fun CashScreen(
 
 }
 
-@Composable
-fun CashList(           //used to return cash balance only
-    cash: Cash
-) {
-    Text(
-        text = "RM ${cash.balance}",
-        fontSize = 15.sp,
-        fontFamily = poppinsFontFamily
-    )
-}
-
 //do all are clickable later
 @Composable
 fun BankAccList(
@@ -232,19 +228,28 @@ fun BankAccList(
 ) {
     LazyColumn {
         items(bankList) { item: Cash ->
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = item.typeName,
-                    fontSize = 15.sp
-                )
+            if (item.typeName != "Cash") {
+                Spacer(modifier = Modifier.height(15.dp))
+                Divider(color = Color.Gray, thickness = 0.7.dp)
+                Spacer(modifier = Modifier.height(15.dp))
 
-                Text(
-                    text = "RM ${item.balance}",
-                    fontSize = 15.sp
-                )
+                Row(
+                    modifier = modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = item.typeName,
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
+                    )
+
+                    Text(
+                        text = "RM ${item.balance}",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
+                    )
+                }
+
             }
         }
     }

@@ -45,15 +45,12 @@ fun WalletScreen(
     var count by remember {
         mutableStateOf(0)
     }
-
     var bankCount by remember {
         mutableStateOf(0)
     }
-
     var fdCount by remember {
         mutableStateOf(0)
     }
-
     var stockCount by remember {
         mutableStateOf(0)
     }
@@ -215,10 +212,10 @@ fun WalletScreen(
                 text = "Bank Accounts"
             )
 
-
             for (cashAccount in cashDetailsList) {
-                if (cashAccount.typeName != "Cash")
+                if (cashAccount.typeName == "Cash"){
                     bankCount++
+                }
             }
 
             Text(

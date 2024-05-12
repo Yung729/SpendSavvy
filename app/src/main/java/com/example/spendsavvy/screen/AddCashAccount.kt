@@ -62,6 +62,10 @@ fun AddCashAccountScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
+    /*var type by remember {
+        mutableStateOf("")
+    }*/
+
     var typeName by remember {
         mutableStateOf("")
     }

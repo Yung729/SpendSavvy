@@ -12,9 +12,7 @@ import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.repo.FirestoreRepository
-import com.example.spendsavvy.screen.CashList
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class WalletViewModel(
     context: Context,
@@ -25,8 +23,6 @@ class WalletViewModel(
     private val dbHelper = DatabaseHelper(context)
 
     val cashDetailsList = MutableLiveData<List<Cash>>()
-
-
     val fdAccDetailsList = MutableLiveData<List<FDAccount>>()
     val stockListLive = MutableLiveData<List<Stock>>()
 
@@ -311,7 +307,7 @@ class WalletViewModel(
         }
     }
 
-    fun updateStockDetails(stockList: List<Stock>) {
+    private fun updateStockDetails(stockList: List<Stock>) {
         stockListLive.postValue(stockList)
     }
 }
