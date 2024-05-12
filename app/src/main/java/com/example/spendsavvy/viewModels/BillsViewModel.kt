@@ -143,6 +143,10 @@ class BillsViewModel(
         viewModelScope.launch {
             val billId: String = getBillId(bills)
             val categoryId: String = getCategoryId(bills.category)
+
+            Log.e(TAG, "bill id =$billId ")
+            Log.e(TAG, "category id =$categoryId ")
+            Log.e(TAG, "currentUserId =$currentUserId ")
             try {
 //                val billId: String = getBillId(bills)
 //                val categoryId: String = getCategoryId(bills.category)
@@ -176,9 +180,6 @@ class BillsViewModel(
                 )
 
             } catch (e: Exception) {
-                Log.e(TAG, "bill id =$billId ")
-                Log.e(TAG, "category id =$categoryId ")
-                Log.e(TAG, "currentUserId =$currentUserId ")
                 Log.e(TAG, "Error editing Bills", e)
             }
         }
