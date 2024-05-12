@@ -48,10 +48,14 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.ProfileViewModel
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController,profileViewModel: ProfileViewModel,fireAuthRepository: FireAuthRepository) {
+fun SettingsScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    profileViewModel: ProfileViewModel,
+    fireAuthRepository: FireAuthRepository
+) {
     var showDialog by remember { mutableStateOf(false) }
     val userData by profileViewModel.userData.observeAsState(UserData())
 
@@ -78,9 +82,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController,p
                         .size(150.dp)
                         .clip(CircleShape)
                         .border(
-                            width = 1.dp,
-                            color = Color.Gray,
-                            shape = CircleShape
+                            width = 1.dp, color = Color.Gray, shape = CircleShape
                         )
                 )
                 Text(
@@ -144,16 +146,10 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController,p
                 Screen.TaxCalculator.route
             )
             List(
-                R.drawable.category_icon,
-                "Manage Category",
-                navController,
-                Screen.Category.route
+                R.drawable.category_icon, "Manage Category", navController, Screen.Category.route
             )
             List(
-                R.drawable.staff_icon,
-                "Manage Staff",
-                navController,
-                Screen.StaffScreen.route
+                R.drawable.staff_icon, "Manage Staff", navController, Screen.StaffScreen.route
             )
         }
 
@@ -165,21 +161,13 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController,p
                 modifier = Modifier.padding(vertical = 5.dp)
             )
             List(
-                R.drawable.bell_icon,
-                "Notifications",
-                navController,
-                Screen.Notifications.route
+                R.drawable.bell_icon, "Notifications", navController, Screen.Notifications.route
             )
             List(
-                R.drawable.language_icon,
-                "Languages", navController,
-                Screen.Language.route
+                R.drawable.language_icon, "Languages", navController, Screen.Language.route
             )
             List(
-                R.drawable.help_icon,
-                "Help and Support",
-                navController,
-                Screen.HelpAndSupport.route
+                R.drawable.help_icon, "Help and Support", navController, Screen.HelpAndSupport.route
             )
         }
 
@@ -190,8 +178,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController,p
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Red
+                    containerColor = Color.Transparent, contentColor = Color.Red
                 )
             ) {
                 Text(
@@ -206,70 +193,56 @@ fun SettingsScreen(modifier: Modifier = Modifier, navController: NavController,p
     }
 
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.cross_icon),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clickable { showDialog = false }
-                            .padding(bottom = 10.dp)
-                    )
-                    Text(
-                        text = "Are you sure you want to\nLog Out ?",
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = { fireAuthRepository.signOut() },
+        AlertDialog(onDismissRequest = { showDialog = false }, title = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                Image(painter = painterResource(R.drawable.cross_icon),
+                    contentDescription = "",
                     modifier = Modifier
-                        .padding(end = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Color.Red
-                    )
-                ) {
-                    Text(text = "Log Out")
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = { showDialog = false },
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                ) {
-                    Text(text = "Cancel")
-                }
+                        .size(20.dp)
+                        .clickable { showDialog = false }
+                        .padding(bottom = 10.dp))
+                Text(
+                    text = "Are you sure you want to\nLog Out ?",
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-        )
+        }, confirmButton = {
+            Button(
+                onClick = { fireAuthRepository.signOut() },
+                modifier = Modifier.padding(end = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent, contentColor = Color.Red
+                )
+            ) {
+                Text(text = "Log Out")
+            }
+        }, dismissButton = {
+            Button(
+                onClick = { showDialog = false }, modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Text(text = "Cancel")
+            }
+        })
     }
 }
 
 @Composable
 fun List(imgId: Int, text: String, navController: NavController, route: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navController.navigate(route = route) }
-            .padding(vertical = 8.dp, horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .clickable { navController.navigate(route = route) }
+        .padding(vertical = 8.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically) {
         Image(
             painter = painterResource(id = imgId),
             contentDescription = "",
-            modifier = Modifier
-                .size(25.dp)
+            modifier = Modifier.size(25.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
 

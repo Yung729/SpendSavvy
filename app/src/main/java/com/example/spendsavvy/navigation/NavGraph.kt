@@ -102,7 +102,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         CategoryViewModel(context, isConnected, "")
     )
     var userId by remember { mutableStateOf("") }
-    userId = fireAuthRepository.getCurrentUser()
+    userId = fireAuthRepository.getCurrentUserId()
 
     if (userId == ""){
         userId  = "adminUser"
@@ -134,7 +134,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                 navController = navController,
                 fireAuthRepository = fireAuthRepository
             )
-            userId = fireAuthRepository.getCurrentUser()
+            userId = fireAuthRepository.getCurrentUserId()
         }
 
         composable(
@@ -155,14 +155,16 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
             ForgotPassword(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(20.dp), navController = navController
+                    .padding(20.dp), navController = navController,
+                profileViewModel = profileViewModel,
+                fireAuthRepository = fireAuthRepository
             )
         }
 
         composable(route = Screen.MainScreen.route) {
 
             TabsNavGraph(
-                userId = fireAuthRepository.getCurrentUser(),
+                userId = fireAuthRepository.getCurrentUserId(),
                 context = context,
                 dateViewModel = dateViewModel,
                 fireAuthRepository = fireAuthRepository,
@@ -531,7 +533,9 @@ fun TabsNavGraph(
                 ForgotPassword(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp), navController = navController
+                        .padding(20.dp), navController = navController,
+                    profileViewModel = profileViewModel,
+                    fireAuthRepository = fireAuthRepository
                 )
             }
             composable(

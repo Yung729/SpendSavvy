@@ -1,6 +1,8 @@
 package com.example.spendsavvy.repo
 
+import android.content.ContentValues
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.navigation.NavController
 import com.example.spendsavvy.models.UserData
@@ -8,6 +10,7 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
 
 class FireAuthRepository(
@@ -24,7 +27,7 @@ class FireAuthRepository(
 
                 val currentUser = auth.currentUser
                 if (currentUser != null) {
-                    val userId = getCurrentUser()
+                    val userId = getCurrentUserId()
                     navController.navigate(route = Screen.MainScreen.route) {
                         popUpTo(navController.graph.id) {
                             inclusive = true
@@ -49,7 +52,7 @@ class FireAuthRepository(
                     val user = auth.currentUser
                     if (user != null) {
                         val uid = user.uid
-                        val userData = UserData("", "", userName, phoneNo, email, password)
+                        val userData = UserData(uid, "", userName, phoneNo, email, password)
                         val db = Firebase.firestore
                         val usersCollection = db.collection("Users")
                         usersCollection.document(uid)
@@ -72,17 +75,60 @@ class FireAuthRepository(
             }
     }
 
-    fun signOut(){
+    fun signOut() {
         auth.signOut()
-        navController.navigate(Screen.Login.route){
-            popUpTo(Screen.Login.route){
+        navController.navigate(Screen.Login.route) {
+            popUpTo(Screen.Login.route) {
                 inclusive = true
             }
         }
     }
 
-    fun getCurrentUser(): String {
+    fun resetPassword(email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(
+                        context,
+                        "Password reset email sent successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Failed to send password reset email",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
+    fun updateUser(
+        userId: String,
+        newPassword: String
+    ) {
+        val db = Firebase.firestore
+        val docRef = db.collection("Users").document(userId)
+
+        docRef.update("password", newPassword)
+            .addOnSuccessListener {
+                Log.d(ContentValues.TAG, "Password successfully updated in Firestore")
+
+            }
+            .addOnFailureListener { e ->
+                Log.d(ContentValues.TAG, "Error updating password in Firestore: $e")
+
+            }
+    }
+
+    fun getCurrentUserId(): String {
         return auth.currentUser?.uid ?: ""
+    }
+
+    fun getCurrentUser(): FirebaseUser {
+        return auth.currentUser as FirebaseUser
     }
 
 }

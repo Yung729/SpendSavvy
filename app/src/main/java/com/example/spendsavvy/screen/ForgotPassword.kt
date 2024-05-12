@@ -13,6 +13,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,17 +31,19 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
-import com.google.firebase.auth.FirebaseAuth
+import com.example.spendsavvy.repo.FireAuthRepository
+import com.example.spendsavvy.viewModels.ProfileViewModel
 
 
 @Composable
-fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) {
+fun ForgotPassword(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    profileViewModel: ProfileViewModel,
+    fireAuthRepository: FireAuthRepository
+) {
 
-    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
-    val auth = FirebaseAuth.getInstance()
-    getUserData(auth.currentUser?.uid ?: "") { user ->
-        userData = user
-    }
+    val userData by profileViewModel.userData.observeAsState(UserData())
     val context = LocalContext.current
 
     Column(
@@ -77,7 +80,7 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
         Button(
             onClick = {
                 if (emailValidation(email)) {
-                    if (email == userData.email) {
+                    /*if (email == userData.email) {
                         navController.navigate(Screen.CreatePassword.route)
                     } else {
                         Toast.makeText(
@@ -85,9 +88,16 @@ fun ForgotPassword(modifier: Modifier = Modifier, navController: NavController) 
                             "User Email incorrect",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }
-                }
-                else{
+                    }*/
+
+                    fireAuthRepository.resetPassword(email)
+                    Toast.makeText(
+                        context,
+                        "Password recovery instructions sent to your email",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                } else {
                     Toast.makeText(
                         context,
                         "Please enter a valid email",
@@ -131,6 +141,9 @@ fun EmailTextField(
     }
 }
 
+
+/*
+
 @Preview(showBackground = true)
 @Composable
 fun ForgotPasswordPreview() {
@@ -140,4 +153,4 @@ fun ForgotPasswordPreview() {
             .padding(20.dp),
         navController = rememberNavController()
     )
-}
+}*/

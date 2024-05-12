@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.components.ButtonComponent
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.ui.theme.ButtonColor
@@ -49,6 +51,7 @@ import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
+import com.example.spendsavvy.viewModels.ProfileViewModel
 
 
 @Composable
@@ -129,7 +132,7 @@ fun LoginScreen(
         ButtonComponent(onButtonClick = {
             fireAuthRepository.signIn(email = email, password = password)
 
-            val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUser())
+            val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUserId())
             mainViewModel.syncDatabase()
         }, text = "LOGIN")
 
