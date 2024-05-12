@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -108,6 +110,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
             text = "Enter your bill details below, so we can \nnotify you in time for upcoming bills.",

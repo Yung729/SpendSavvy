@@ -1,7 +1,6 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,10 +26,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -64,7 +62,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Bills
-import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.BillsViewModel
@@ -76,11 +73,16 @@ import java.util.Locale
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManageBillsAndInstalment(modifier: Modifier = Modifier, navController: NavController, billsViewModel: BillsViewModel, transactionViewModel: OverviewViewModel) {
+fun ManageBillsAndInstalment(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    billsViewModel: BillsViewModel,
+    transactionViewModel: OverviewViewModel
+) {
 
     val categories = listOf("Upcoming", "Paid", "Overdue")
     val options = mutableStateListOf("All", "Upcoming", "Paid", "Overdue")
-    var selectedIndex by remember { mutableIntStateOf(0)}
+    var selectedIndex by remember { mutableIntStateOf(0) }
     val gradientBrush = Brush.horizontalGradient(
         colors = listOf(Color.LightGray, Color.DarkGray)
     )
@@ -93,120 +95,136 @@ fun ManageBillsAndInstalment(modifier: Modifier = Modifier, navController: NavCo
     val totalOverdueBills by billsViewModel.totalOverdueBills.observeAsState(initial = 0)
     val totalPaidBills by billsViewModel.totalPaidBills.observeAsState(initial = 0)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 10.dp, horizontal = 3.dp),
-        verticalArrangement = Arrangement.Top,
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(60.dp)
-        ) {
-            Row(
+
+    Scaffold(
+        floatingActionButton = {
+            // FloatingActionButton
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Screen.AddBills.route)
+                },
                 modifier = Modifier
-                    .background(
-                        brush = gradientBrush,
-                        shape = RoundedCornerShape(20.dp),
-                    )
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(20.dp),
-                    )
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .size(55.dp, 55.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                containerColor = Color.Gray,
+                contentColor = Color.White,
             ) {
-                categories.forEachIndexed { index, category ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(top = 5.dp)
-
-                    ) {
-                        CategoryItem(category)
-                        val textColor = when (category) {
-                            "Upcoming" -> Color.Yellow
-                            "Overdue" -> Color.Red
-                            "Paid" -> Color.Green
-                            else -> Color.Black
-                        }
-                        Text(
-                            text = when (category) {
-                                "Upcoming" -> totalUpcomingBills.toString()
-                                "Overdue" -> totalOverdueBills.toString()
-                                "Paid" -> totalPaidBills.toString()
-                                else -> ""
-                            },
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = textColor
-                        )
-                    }
-                    if (index < categories.size - 1) {
-                        VerticalDivider(
-                            color = Color.Black,
-                            thickness = 2.dp,
-                            modifier = Modifier.height(60.dp)
-                        )
-                    }
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.add_icon),
+                    contentDescription = "Add bills",
+                    modifier = Modifier
+                        .size(50.dp)
+                )
             }
-        }
-        // Segmented Button Row
-        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
-        ) {
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
-            ) {
-                options.forEachIndexed { index, option ->
-                    SegmentedButton(
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = options.size)
-                    ) {
-                        Text(
-                            text = option,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 12.sp,
-                        )
-                    }
-                }
-            }
-        }
-
-        when (selectedIndex) {
-            0 -> BillList(allBillsList, navController, transactionViewModel, billsViewModel)
-            1 -> BillList(upcomingBillsList, navController, transactionViewModel, billsViewModel)
-            2 -> BillList(paidBillsList, navController, transactionViewModel, billsViewModel)
-            3 -> BillList(overdueBillsList, navController, transactionViewModel, billsViewModel)
-        }
-    }
-
-    // FloatingActionButton
-    FloatingActionButton(
-        onClick = {
-            navController.navigate(Screen.AddBills.route)
         },
-        modifier = Modifier
-            .size(55.dp, 55.dp)
-            .offset(x = (325).dp, y = (640).dp),
-        shape = RoundedCornerShape(16.dp),
-        elevation = FloatingActionButtonDefaults.elevation(8.dp),
-        containerColor = Color.Gray,
-        contentColor = Color.White,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.add_icon),
-            contentDescription = "Add bills",
+        floatingActionButtonPosition = FabPosition.End,
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .size(50.dp)
-        )
+                .fillMaxSize()
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.Top,
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(60.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .background(
+                            brush = gradientBrush,
+                            shape = RoundedCornerShape(20.dp),
+                        )
+                        .border(
+                            width = 2.dp,
+                            color = Color.Black,
+                            shape = RoundedCornerShape(20.dp),
+                        )
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    categories.forEachIndexed { index, category ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(top = 5.dp)
+
+                        ) {
+                            CategoryItem(category)
+                            val textColor = when (category) {
+                                "Upcoming" -> Color.Yellow
+                                "Overdue" -> Color.Red
+                                "Paid" -> Color.Green
+                                else -> Color.Black
+                            }
+                            Text(
+                                text = when (category) {
+                                    "Upcoming" -> totalUpcomingBills.toString()
+                                    "Overdue" -> totalOverdueBills.toString()
+                                    "Paid" -> totalPaidBills.toString()
+                                    else -> ""
+                                },
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = textColor
+                            )
+                        }
+                        if (index < categories.size - 1) {
+                            VerticalDivider(
+                                color = Color.Black,
+                                thickness = 2.dp,
+                                modifier = Modifier.height(60.dp)
+                            )
+                        }
+                    }
+                }
+            }
+            // Segmented Button Row
+            Row(
+                horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+            ) {
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)
+                ) {
+                    options.forEachIndexed { index, option ->
+                        SegmentedButton(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index, count = options.size
+                            )
+                        ) {
+                            Text(
+                                text = option,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp,
+                            )
+                        }
+                    }
+                }
+            }
+
+            when (selectedIndex) {
+                0 -> BillList(allBillsList, navController, transactionViewModel, billsViewModel)
+                1 -> BillList(
+                    upcomingBillsList,
+                    navController,
+                    transactionViewModel,
+                    billsViewModel
+                )
+
+                2 -> BillList(paidBillsList, navController, transactionViewModel, billsViewModel)
+                3 -> BillList(overdueBillsList, navController, transactionViewModel, billsViewModel)
+            }
+        }
     }
+
+
+
 }
 
 @Composable
@@ -240,7 +258,13 @@ fun BillList(
 }
 
 @Composable
-fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavController, transactionViewModel: OverviewViewModel, billsViewModel: BillsViewModel) {
+fun BillItem(
+    modifier: Modifier = Modifier,
+    bill: Bills,
+    navController: NavController,
+    transactionViewModel: OverviewViewModel,
+    billsViewModel: BillsViewModel
+) {
     val currentDate: Date = Date()
     val context = LocalContext.current
     var showConfirmationDialog by remember { mutableStateOf(false) }
@@ -500,6 +524,7 @@ fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavContr
         }
     }
 }
+
 @Composable
 fun CategoryItem(category: String) {
     Text(

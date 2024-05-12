@@ -33,7 +33,6 @@ class BillsViewModel(
     private val currentUserId = userId
     val isLoading = MutableLiveData<Boolean>()
 
-    val billsList = MutableLiveData<List<Bills>>()
     val allBillsList = MutableLiveData<List<Bills>>() // All bills List
     val upcomingBillsList = MutableLiveData<List<Bills>>() // upcoming bills List
     val overdueBillsList = MutableLiveData<List<Bills>>() // overdue bills List
@@ -162,7 +161,7 @@ class BillsViewModel(
                             billsStatus = updatedBills.billsStatus,
                             userId = currentUserId
                         )
-                        val currentBills = billsList.value ?: emptyList()
+                        val currentBills = allBillsList.value ?: emptyList()
                         val updatedBillsList = currentBills.map {
                             if (it == bills) updatedBills else it
                         }
@@ -193,7 +192,7 @@ class BillsViewModel(
                     billId,
                     onSuccess = {
                         dbHelper.deleteBill(billId, currentUserId)
-                        val currentBills = billsList.value ?: emptyList()
+                        val currentBills = allBillsList.value ?: emptyList()
                         val updatedBills = currentBills.filter { it != bill }
                         updateBills(
                             bills = updatedBills
