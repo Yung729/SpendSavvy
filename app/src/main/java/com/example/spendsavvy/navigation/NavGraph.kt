@@ -149,6 +149,16 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
             )
         }
 
+        composable(
+            route = Screen.ForgotPassword.route
+        ) {
+            ForgotPassword(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp), navController = navController
+            )
+        }
+
         composable(route = Screen.MainScreen.route) {
 
             TabsNavGraph(
