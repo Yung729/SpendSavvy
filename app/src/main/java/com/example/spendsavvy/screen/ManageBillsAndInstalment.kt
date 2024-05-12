@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +70,7 @@ import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @SuppressLint("UnrememberedMutableState")
@@ -177,10 +180,10 @@ fun ManageBillsAndInstalment(modifier: Modifier = Modifier, navController: NavCo
         }
 
         when (selectedIndex) {
-            0 -> BillList(allBillsList, navController, transactionViewModel )
-            1 -> BillList(upcomingBillsList, navController, transactionViewModel)
-            2 -> BillList(paidBillsList, navController, transactionViewModel)
-            3 -> BillList(overdueBillsList, navController, transactionViewModel)
+            0 -> BillList(allBillsList, navController, transactionViewModel, billsViewModel)
+            1 -> BillList(upcomingBillsList, navController, transactionViewModel, billsViewModel)
+            2 -> BillList(paidBillsList, navController, transactionViewModel, billsViewModel)
+            3 -> BillList(overdueBillsList, navController, transactionViewModel, billsViewModel)
         }
     }
 
@@ -211,6 +214,7 @@ fun BillList(
     bills: List<Bills>,
     navController: NavController,
     transactionViewModel: OverviewViewModel,
+    billsViewModel: BillsViewModel
 ) {
 
     LazyColumn(
@@ -228,14 +232,20 @@ fun BillList(
                     },
                 bill = bill,
                 navController = navController,
-                transactionViewModel = transactionViewModel
+                transactionViewModel = transactionViewModel,
+                billsViewModel = billsViewModel
             )
         }
     }
 }
 
 @Composable
-fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavController, transactionViewModel: OverviewViewModel) {
+fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavController, transactionViewModel: OverviewViewModel, billsViewModel: BillsViewModel) {
+    val currentDate: Date = Date()
+    val context = LocalContext.current
+    var showConfirmationDialog by remember { mutableStateOf(false) }
+    var isDelete by remember { mutableStateOf(false) }
+
     // Display bill details
     Card(
         modifier = modifier
@@ -277,7 +287,11 @@ fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavContr
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = " Due Date: ${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(bill.selectedDueDate)}",
+                    text = " Due Date: ${
+                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                            bill.selectedDueDate
+                        )
+                    }",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -332,7 +346,10 @@ fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavContr
         ) {
             Spacer(modifier = Modifier.width(30.dp))
             Button(
-                onClick = { /* Handle mark as paid */ },
+                onClick = {
+                    showConfirmationDialog = true
+                    isDelete = false
+                },
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 4.dp, vertical = 2.dp),
@@ -357,7 +374,10 @@ fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavContr
             }
             Spacer(modifier = Modifier.width(40.dp))
             Button(
-                onClick = { /* Handle delete */ },
+                onClick = {
+                    showConfirmationDialog = true
+                    isDelete = true
+                },
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 4.dp, vertical = 2.dp),
@@ -381,11 +401,105 @@ fun BillItem(modifier: Modifier = Modifier, bill: Bills, navController: NavContr
                 }
             }
             Spacer(modifier = Modifier.width(40.dp))
+
+            if (showConfirmationDialog) {
+                AlertDialog(
+                    onDismissRequest = { showConfirmationDialog = false },
+                    title = {
+                        Text(
+                            text = if (isDelete) "Confirm to delete bill" else "Confirm to add expense",
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 22.sp,
+                            color = Color.Black,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                if (bill.billsStatus != "PAID") {
+                                    showConfirmationDialog = false
+                                    if (!isDelete) {
+                                        transactionViewModel.addTransactionToFirestore(
+                                            Transactions(
+                                                id = transactionViewModel.generateTransactionId(),
+                                                amount = bill.amount,
+                                                description = bill.description,
+                                                date = currentDate,
+                                                category = bill.category,
+                                                transactionType = "Expenses"
+                                            ),
+                                            onSuccess = {
+                                                billsViewModel.editBill(
+                                                    bills = bill,
+                                                    updatedBills = Bills(
+                                                        id = bill.id,
+                                                        amount = bill.amount,
+                                                        category = bill.category,
+                                                        description = bill.description,
+                                                        selectedDueDate = bill.selectedDueDate,
+                                                        selectedDuration = bill.selectedDuration,
+                                                        billsStatus = "PAID"
+                                                    )
+                                                )
+                                                Toast.makeText(
+                                                    context,
+                                                    "Bill has been added successfully",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            },
+                                            onFailure = {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Unsuccessful to add in expense",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        )
+                                    } else {
+                                        billsViewModel.deleteBill(bill)
+                                        Toast.makeText(
+                                            context,
+                                            "Bill has been deleted successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } else {
+                                    showConfirmationDialog = false
+                                    Toast.makeText(
+                                        context,
+                                        "This bill has already been paid",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.DarkGray,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(text = if (!isDelete) "ADD" else "DELETE")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = { showConfirmationDialog = false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp)
+                        ) {
+                            Text(text = "Cancel")
+                        }
+                    }
+                )
+            }
         }
     }
 }
-
-
 @Composable
 fun CategoryItem(category: String) {
     Text(

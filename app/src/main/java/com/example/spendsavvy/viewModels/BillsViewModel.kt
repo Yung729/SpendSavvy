@@ -91,10 +91,6 @@ class BillsViewModel(
             overdueBillsList.postValue(overdueBills)
             paidBillsList.postValue(paidBills)
 
-            Log.e(TAG, "upcomingBills =${upcomingBills.size} ")
-            Log.e(TAG, "overdueBills =${overdueBills.size} ")
-            Log.e(TAG, "paidBills =${paidBills.size} ")
-
             totalUpcomingBills.postValue(upcomingBills.size)
             totalOverdueBills.postValue(overdueBills.size)
             totalPaidBills.postValue(paidBills.size)
@@ -145,15 +141,9 @@ class BillsViewModel(
 
     fun editBill(bills: Bills, updatedBills: Bills) {
         viewModelScope.launch {
-            val billId: String = getBillId(bills)
-            val categoryId: String = getCategoryId(bills.category)
-
-            Log.e(TAG, "bill id =$billId ")
-            Log.e(TAG, "category id =$categoryId ")
-            Log.e(TAG, "currentUserId =$currentUserId ")
             try {
-//                val billId: String = getBillId(bills)
-//                val categoryId: String = getCategoryId(bills.category)
+                val billId: String = getBillId(bills)
+                val categoryId: String = getCategoryId(bills.category)
 
                 firestoreRepository.updateItemInFirestoreById(
                     currentUserId,
@@ -189,7 +179,9 @@ class BillsViewModel(
         }
     }
 
-    fun deleteBill(bill: Bills) {
+    fun deleteBill(
+        bill: Bills
+    ) {
         viewModelScope.launch {
             try {
                 val billId: String =

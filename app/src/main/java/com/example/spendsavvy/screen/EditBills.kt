@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
@@ -210,6 +211,7 @@ fun EditBills(
                                     )
                                 )
                                 showDialog = false
+                                navController.navigate(Screen.ManageBillsAndInstalment.route)
                             },
                             modifier = Modifier
                                 .weight(1f)

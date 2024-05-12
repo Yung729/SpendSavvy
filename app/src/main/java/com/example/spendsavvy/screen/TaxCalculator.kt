@@ -258,9 +258,6 @@ fun TaxCalculator(
                             showDialog = true
                             success = false
                         }
-                        println("$tax")
-                        println("$selectedDate")
-                        println("$currentDate")
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -271,6 +268,7 @@ fun TaxCalculator(
                 if (showDialog) {
                     TransactionResultDialog(
                         success = success,
+                        message = if (success) "Your income tax has been added successfully" else "Failed to add income tax",
                         onDismiss = { showDialog = false }
                     )
                 }
@@ -278,16 +276,18 @@ fun TaxCalculator(
         }
     }
 }
+
 @Composable
 fun TransactionResultDialog(
     success: Boolean,
+    message: String,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (success) "Your income tax has been added successfully" else "Failed to add income tax",
+                text = message,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 22.sp,

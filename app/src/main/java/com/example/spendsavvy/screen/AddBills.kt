@@ -89,6 +89,16 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         if (selectedCalendar.before(currentDate)) "OVERDUE" else "UPCOMING"
     )}
 
+// Calculate the difference in milliseconds between the selected date and the current date
+    val differenceInMillis = selectedCalendar.timeInMillis - currentDate.timeInMillis
+
+// Convert the difference to days
+    val daysLeft = differenceInMillis / (1000 * 60 * 60 * 24)
+
+// Print the result
+    println("$daysLeft days left")
+
+
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -110,6 +120,12 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                 .padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 18.dp)
         )
 
+        Text(
+            text = "$daysLeft days left",
+            color = Color.Black,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+        )
         Text(
             text = "Description",
             color = Color.Black,
@@ -293,8 +309,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropDown(label: String, selectedDuration: String, onDurationSelected: (String) -> Unit) {
-    val list =
-        listOf("1 day before", "2 days before", "1 week before", "2 weeks before", "1 month before")
+    val list = listOf("1 day before", "2 days before", "1 week before", "2 weeks before", "1 month before")
 
     var expandedState by remember { mutableStateOf(false) }
     var currentSelectedDuration by remember { mutableStateOf(selectedDuration) }
@@ -342,7 +357,6 @@ fun DueDatePicker(
     onDateSelected: (Date) -> Unit
 ) {
     val calendarState = rememberSheetState()
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier
