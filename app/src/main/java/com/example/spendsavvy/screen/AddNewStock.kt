@@ -170,14 +170,15 @@ fun AddNewStockScreen(
 
             Button(
                 onClick = {
-                    walletViewModel.addStockDetailsToDatabase(
+                    val opt = walletViewModel.addStockDetailsToDatabase(
                         Stock(
                             stockName,
                             price.toDoubleOrNull() ?: 0.0,
                             qty.toInt()
                         )
                     )
-                    navController.navigateUp()
+                    if(opt == 1)
+                        navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

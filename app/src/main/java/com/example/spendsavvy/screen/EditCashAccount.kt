@@ -64,10 +64,6 @@ fun EditCashAccountScreen(
         mutableStateOf("")
     }
 
-    var initialAmt by remember {
-        mutableStateOf("")
-    }
-
     var selectedIndex by remember {
         mutableStateOf(0)
     }
@@ -236,12 +232,12 @@ fun EditCashAccountScreen(
                                 cash = cashDetails,
                                 updatedCashDetails = Cash(
                                     typeName = typeName,
-                                    balance = cashDetails.balance + incAmt.toDoubleOrNull() as Double - decAmt.toDoubleOrNull() as Double
+                                    balance = cashDetails.balance + (incAmt.toDoubleOrNull()
+                                        ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
                                 )
                             )
                         }
                     }
-
                     navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(

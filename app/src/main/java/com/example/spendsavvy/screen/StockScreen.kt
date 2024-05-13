@@ -319,7 +319,7 @@ fun AddStockSelectionScreen(
 
     if (isAddNewStock)
         navController.navigate(route = Screen.AddStock.route)
-    else if (isAddExistingStock) {
+    else if (isAddExistingStock){
         navController.navigate(route = Screen.AddExistingStock.route)
     }
 }

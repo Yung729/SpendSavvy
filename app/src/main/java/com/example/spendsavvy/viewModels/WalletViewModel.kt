@@ -64,7 +64,7 @@ class WalletViewModel(
     }
 
     private suspend fun getTypeName(cash: Cash): String {
-        return firestoreRepository.getDocumentId("Cash", userId, cash)
+        return firestoreRepository.getWalletDocumentId("Cash", userId, cash)
     }
 
     fun editCashDetails(cash: Cash, updatedCashDetails: Cash) {
@@ -109,7 +109,6 @@ class WalletViewModel(
     }
 
     fun updateCashBalance(cashName: String, updateAmount: Double,onSuccess : () -> Unit) {
-
         viewModelScope.launch {
             try {
 
@@ -131,7 +130,6 @@ class WalletViewModel(
                         }
                         updateCashInfo(cash = updatedCashDetailsList)
 
-                        onSuccess()
                     },
                     onFailure = {errorMessage ->
                         Toast.makeText(
@@ -147,12 +145,12 @@ class WalletViewModel(
         }
     }
 
-    fun addCashDetailsToDatabase(cash: Cash) {
+    fun addCashDetailsToDatabase(cash: Cash): Int {
         if (cashDetailsList.value?.any { it.typeName == cash.typeName } == true) {
             Toast.makeText(
                 currentContext, "Cash Account with the same name already exists", Toast.LENGTH_SHORT
             ).show()
-            return
+            return 0
         }
 
         viewModelScope.launch {
@@ -184,6 +182,7 @@ class WalletViewModel(
                 Log.e(ContentValues.TAG, "Error adding cash details", e)
             }
         }
+        return 1
     }
 
     //FIXED DEPOSIT
@@ -265,7 +264,7 @@ class WalletViewModel(
     }
 
     private fun updateStockTotalPrice(stockList: List<Stock>) {
-        var totalPrice = 0.0
+        var totalPrice = 0.00
 
         for (stock in stockList) {
             totalPrice += stock.originalPrice * stock.quantity
@@ -275,12 +274,12 @@ class WalletViewModel(
         stockListLive.postValue(stockList)
     }
 
-    fun addStockDetailsToDatabase(stock: Stock) {
+    fun addStockDetailsToDatabase(stock: Stock) : Int {
         if (stockListLive.value?.any { it.productName == stock.productName } == true) {
             Toast.makeText(
                 currentContext, "The product already existed", Toast.LENGTH_SHORT
             ).show()
-            return
+            return 0
         }
 
         viewModelScope.launch {
@@ -310,10 +309,11 @@ class WalletViewModel(
                 Log.e(ContentValues.TAG, "Error adding cash details", e)
             }
         }
+        return 1
     }
 
     private suspend fun getProductName(stock: Stock): String {
-        return firestoreRepository.getDocumentId("Stock", userId, stock)
+        return firestoreRepository.getWalletDocumentId("Stock", userId, stock)
     }
 
     fun editStockDetails(stock: Stock, updatedStockDetails: Stock) {
