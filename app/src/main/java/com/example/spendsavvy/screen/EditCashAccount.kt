@@ -241,6 +241,7 @@ fun EditCashAccountScreen(
                             )
                         }
                     }
+                        navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
