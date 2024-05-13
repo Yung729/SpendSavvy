@@ -191,13 +191,13 @@ fun EditExistingStockScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        if(mode == 1) {
+        if (mode == 1) {
             Text(
                 text = "Quantity To Add",
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
-        }else{
+        } else {
             Text(
                 text = "Quantity To Sell",
                 fontFamily = poppinsFontFamily,
@@ -316,20 +316,20 @@ fun EditExistingStockScreen(
 
                             }
                         }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                Text(
-                    text = "Sell",
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily
-                )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Sell",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
             }
         }
     }
