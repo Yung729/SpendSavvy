@@ -182,13 +182,13 @@ fun EditExistingStockScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        if(mode == 1) {
+        if (mode == 1) {
             Text(
                 text = "Quantity To Add",
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
-        }else{
+        } else {
             Text(
                 text = "Quantity To Sell",
                 fontFamily = poppinsFontFamily,
@@ -237,11 +237,41 @@ fun EditExistingStockScreen(
                 )
             }
 
-            Button(
-                onClick = {
-                    for (stock in stockDetails) {
-                        if (searchProduct == stock.productName) {
-                            if (mode == 2) {                                        //sell existing stock
+            if (mode == 1) {
+                Button(
+                    onClick = {
+                        for (stock in stockDetails) {
+                            if (searchProduct == stock.productName) {
+                                walletViewModel.editStockDetails(
+                                    stock = stock,
+                                    updatedStockDetails = Stock(
+                                        searchProduct,
+                                        stock.originalPrice,
+                                        stock.quantity + qty.toInt()
+                                    )
+                                )
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Add",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
+            } else {
+                Button(
+                    onClick = {
+                        for (stock in stockDetails) {
+                            if (searchProduct == stock.productName) {
+                                //sell existing stock
                                 walletViewModel.editStockDetails(
                                     stock = stock,
                                     updatedStockDetails = Stock(
@@ -250,31 +280,22 @@ fun EditExistingStockScreen(
                                         stock.quantity - qty.toInt()
                                     )
                                 )
-                            } else {                                            //add existing stock
-                                walletViewModel.editStockDetails(
-                                    stock = stock,
-                                    updatedStockDetails = Stock(
-                                        searchProduct,
-                                        stock.originalPrice,
-                                        qty.toInt()
-                                    )
-                                )
                             }
                         }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                Text(
-                    text = "Sell",
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily
-                )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Sell",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
             }
         }
     }
