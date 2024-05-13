@@ -252,6 +252,8 @@ fun FixedDepositDetailsScreen(
                             depositAmt.toDoubleOrNull() ?: 0.0
                         )
                     )
+
+                    navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

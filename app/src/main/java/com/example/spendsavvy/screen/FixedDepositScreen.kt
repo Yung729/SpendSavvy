@@ -2,6 +2,7 @@ package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,12 +63,8 @@ fun FixedDepositScreen(
 
     val fdAccDetailsList by walletViewModel.fdAccDetailsList.observeAsState(initial = emptyList())
 
-    var accountCount by remember {
-        mutableStateOf(0)
-    }
-
     Column(
-        modifier = Modifier.padding(start = 30.dp, top = 15.dp)
+        modifier = Modifier.padding(15.dp)
     ) {
         Spacer(modifier = Modifier.height(25.dp))
         Text(
@@ -82,9 +79,7 @@ fun FixedDepositScreen(
             color = Color.Gray
         )
 
-        for (fdAccount in fdAccDetailsList) {
-            accountCount++
-        }
+        val accountCount = fDcount(fdAccDetailsList = fdAccDetailsList)
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -113,7 +108,7 @@ fun FixedDepositScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            BankList(fdAccountList = fdAccDetailsList)
+            BankList(fdAccountList = fdAccDetailsList, navController = navController, walletViewModel = walletViewModel)
 
             Box(
                 modifier = Modifier
@@ -150,15 +145,20 @@ fun FixedDepositScreen(
 }
 
 @Composable
-fun BankCard(fdAccount: FDAccount, modifier: Modifier) {
+fun BankCard(fdAccount: FDAccount, modifier: Modifier, navController: NavController) {
     Card(
-        modifier = modifier,
+        modifier = modifier
+            .clickable {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    key = "currentFDAccount",
+                    value = fdAccount
+                )
+                navController.navigate(Screen.FDEarnScreen.route)
+                       },
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         )
-
     ) {
-
         Row(
             modifier = Modifier
                 .padding(10.dp)
@@ -193,13 +193,12 @@ fun BankCard(fdAccount: FDAccount, modifier: Modifier) {
                 Spacer(modifier = Modifier.height(15.dp))
                 Divider(color = Color.Gray, thickness = 0.7.dp)
             }
-
         }
     }
 }
 
 @Composable
-fun BankList(fdAccountList: List<FDAccount>, modifier: Modifier = Modifier) {
+fun BankList(fdAccountList: List<FDAccount>, modifier: Modifier = Modifier, navController: NavController, walletViewModel: WalletViewModel) {
     LazyColumn(modifier = modifier) {
         items(fdAccountList) { bankAccount ->
             Row(
@@ -209,7 +208,8 @@ fun BankList(fdAccountList: List<FDAccount>, modifier: Modifier = Modifier) {
                     fdAccount = bankAccount,
                     modifier = Modifier
                         .padding(5.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    navController = navController
                 )
             }
 
@@ -217,6 +217,15 @@ fun BankList(fdAccountList: List<FDAccount>, modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun fDcount(fdAccDetailsList: List<FDAccount>): Int{
+    var accountCount = 0
+
+    for (fdAccount in fdAccDetailsList) {
+        accountCount++
+    }
+    return accountCount
+}
 
 /*
 @Composable

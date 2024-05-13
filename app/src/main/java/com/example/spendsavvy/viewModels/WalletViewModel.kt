@@ -26,7 +26,6 @@ class WalletViewModel(
     val fdAccDetailsList = MutableLiveData<List<FDAccount>>()
     val stockListLive = MutableLiveData<List<Stock>>()
 
-    //stock
     val totalPriceStock = MutableLiveData<Double>()
 
     val userId = userId
@@ -35,7 +34,7 @@ class WalletViewModel(
 
     init {
         getCashDetails()
-        //getFDAccountDetails()
+        getFDAccountDetails()
         getStockDetails()
     }
 
@@ -189,7 +188,9 @@ class WalletViewModel(
                     "FDAccount",
                     FDAccount::class.java
                 )
+
                 updateFDDetails(fdDetailsFromFirestore)
+
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding FD details", e)
             }
@@ -198,13 +199,6 @@ class WalletViewModel(
     }
 
     fun addFDDetailsToDatabase(fdAccount: FDAccount) {
-        if (fdAccDetailsList.value?.any { it.bankName == fdAccount.bankName } == true) {
-            Toast.makeText(
-                currentContext, "The FD Account already existed", Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
         viewModelScope.launch {
             try {
                 firestoreRepository.addWalletItems(
@@ -238,7 +232,6 @@ class WalletViewModel(
     }
 
     //STOCK
-
     private fun getStockDetails(
     ) {
         viewModelScope.launch {

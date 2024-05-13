@@ -36,13 +36,14 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object AddIncomes : Screen(route = "Incomes", 0)
 
     object Cash : Screen(route = "Cash", 0)
-    object AddCashAccount : Screen(route = "AddCashAccount", 0)
-    object EditCashAccount : Screen(route = "EditCashAccount", 0)
-    object AddStock : Screen(route = "Add New Stock", 0)
-    object EditStock : Screen(route = "Edit Stock", 0)
-    object AddExistingStock : Screen(route = "Add Existing Stock", 0)
-    object FixedDepositDetails : Screen(route = "Fixed Deposit Details", 0)
-    object FixedDepositScreen : Screen(route = "FixedDepositScreen", 0)
+    object AddCashAccount : Screen(route = "Add Cash Account", 0)
+    object EditCashAccount : Screen(route = "Edit Cash Account", 0)
+    object AddStock : Screen (route = "Add New Stock", 0)
+    object EditStock : Screen (route = "Sell Stock", 0)
+    object AddExistingStock : Screen (route = "Add Existing Stock", 0)
+    object FixedDepositDetails : Screen (route = "Fixed Deposit Details", 0)
+    object FixedDepositScreen : Screen (route = "Fixed Deposit", 0)
+    object FDEarnScreen : Screen (route = "FD Info", 0)
 
     object BudgetScreen : Screen(route = "Budget & Goal", 0)
 

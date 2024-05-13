@@ -45,6 +45,7 @@ import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
@@ -63,6 +64,7 @@ import com.example.spendsavvy.screen.CreatePassword
 import com.example.spendsavvy.screen.EditBills
 import com.example.spendsavvy.screen.EditCashAccountScreen
 import com.example.spendsavvy.screen.EditExistingStockScreen
+import com.example.spendsavvy.screen.FDEarnScreen
 import com.example.spendsavvy.screen.FixedDepositDetailsScreen
 import com.example.spendsavvy.screen.FixedDepositScreen
 import com.example.spendsavvy.screen.ForgotPassword
@@ -522,6 +524,24 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                         navController = navController
                     )
 
+                }
+
+                composable(
+                    route = Screen.FDEarnScreen.route
+                ) {
+                    val selectedFDAccount =
+                        navController.previousBackStackEntry?.savedStateHandle?.get<FDAccount>("currentFDAccount")
+
+                    if (selectedFDAccount != null) {
+                        FDEarnScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            navController = navController,
+                            fdAccount = selectedFDAccount
+                        )
+
+                    }
                 }
 
                 composable(
