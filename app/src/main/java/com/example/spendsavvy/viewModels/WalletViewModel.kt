@@ -131,7 +131,6 @@ class WalletViewModel(
                         }
                         updateCashInfo(cash = updatedCashDetailsList)
 
-                        onSuccess()
                     },
                     onFailure = {errorMessage ->
                         Toast.makeText(
@@ -147,7 +146,7 @@ class WalletViewModel(
         }
     }
 
-    fun addCashDetailsToDatabase(cash: Cash) {
+    fun addCashDetailsToDatabase(cash: Cash): Int {
         if (cashDetailsList.value?.any { it.typeName == cash.typeName } == true) {
             Toast.makeText(
                 currentContext, "Cash Account with the same name already exists", Toast.LENGTH_SHORT

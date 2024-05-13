@@ -236,12 +236,13 @@ fun EditCashAccountScreen(
                                 cash = cashDetails,
                                 updatedCashDetails = Cash(
                                     typeName = typeName,
-                                    balance = cashDetails.balance + (incAmt.toDoubleOrNull() ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
+                                    balance = cashDetails.balance + (incAmt.toDoubleOrNull()
+                                        ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
                                 )
                             )
                         }
                     }
-                        navController.navigateUp()
+                    navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
