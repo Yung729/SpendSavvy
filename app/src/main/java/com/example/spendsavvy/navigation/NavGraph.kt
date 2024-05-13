@@ -121,11 +121,8 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
 
 
-
-
-
     NavHost(
-        navController = navController, startDestination = Screen.Login.route
+        navController = navController, startDestination = Screen.Login.route, route = "First"
     ) {
         composable(
             route = Screen.Login.route
@@ -338,7 +335,8 @@ fun TabsNavGraph(
         NavHost(
             navController = navController,
             startDestination = Screen.Overview.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            route = "Second"
         ) {
 
 
