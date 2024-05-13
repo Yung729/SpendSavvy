@@ -123,7 +123,9 @@ fun EditCashAccountScreen(
                 ) {
                     TextField(
                         value = searchCashAccount,
-                        onValueChange = {},
+                        onValueChange = {
+                            searchCashAccount = it
+                        },
                         readOnly = true,
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
@@ -147,10 +149,13 @@ fun EditCashAccountScreen(
                                         isExpanded = false
                                     }
                                 )
+                                typeName = searchCashAccount
                             }
                         }
                     }
                 }
+            }else{
+                typeName = "Cash"
             }
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -257,6 +262,7 @@ fun EditCashAccountScreen(
         }
     }
 }
+
 
 /*
 @Composable
