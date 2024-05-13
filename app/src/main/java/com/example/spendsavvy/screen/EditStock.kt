@@ -216,7 +216,7 @@ fun EditExistingStockScreen(
                                     stock = stock,
                                     updatedStockDetails = Stock(
                                         searchProduct,
-                                        price.toDoubleOrNull() ?: 0.0,
+                                        stock.originalPrice,
                                         stock.quantity - qty.toInt()
                                     )
                                 )

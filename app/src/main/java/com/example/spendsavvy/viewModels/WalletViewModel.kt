@@ -35,7 +35,7 @@ class WalletViewModel(
 
     init {
         getCashDetails()
-        getFDAccountDetails()
+        //getFDAccountDetails()
         getStockDetails()
     }
 
@@ -326,12 +326,11 @@ class WalletViewModel(
 
         viewModelScope.launch {
             try {
-                val productName = getProductName(stock)
 
                 firestoreRepository.updateWalletItemsInFirestoreByName(
                     userId,
                     "Stock",
-                    productName,
+                    stock.productName,
                     updatedStockDetails,
                     onSuccess = {
                         /*dbHelper.updateCashDetails(

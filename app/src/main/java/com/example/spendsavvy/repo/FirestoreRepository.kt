@@ -549,7 +549,17 @@ class FirestoreRepository {
                             val field = itemClass.getDeclaredField(fieldName)
                             field.isAccessible = true
 
-                            field.set(item, value)
+                            when (fieldName) {
+
+                                "quantity" -> {
+                                    val quantity = document.getDouble("quantity")?.toInt()
+                                    field.set(item, quantity)
+                                }
+
+                                else -> {
+                                    field.set(item, value)
+                                }
+                            }
 
                         } catch (e: NoSuchFieldException) {
                             Log.e(TAG, "Field '$fieldName' not found in $itemClass", e)
