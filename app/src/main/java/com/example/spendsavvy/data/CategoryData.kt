@@ -86,6 +86,12 @@ class CategoryData {
                 imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fsalary.png?alt=media&token=102737bc-9da6-48ef-827c-b0b05d9fb052"),
                 categoryName = "Staff Salary",
                 categoryType = "Expenses"
+            ),
+            Category(
+                id = "CT0014",
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
+                categoryName = "Stock Purchase",
+                categoryType = "Expenses"
             )
 
         )

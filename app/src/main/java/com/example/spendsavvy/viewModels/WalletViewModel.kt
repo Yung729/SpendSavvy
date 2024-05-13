@@ -129,7 +129,7 @@ class WalletViewModel(
                             if (it.typeName == cashName) it.copy(balance = newBalance) else it
                         }
                         updateCashInfo(cash = updatedCashDetailsList)
-
+                        onSuccess()
                     },
                     onFailure = {errorMessage ->
                         Toast.makeText(

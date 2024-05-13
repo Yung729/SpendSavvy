@@ -441,6 +441,7 @@ fun TabsNavGraph(
                         .fillMaxSize()
                         .padding(20.dp),
                     walletViewModel = walletViewModel,
+                    transactionViewModel = transactionsViewModel,
                     navController = navController
                 )
             }
@@ -450,6 +451,7 @@ fun TabsNavGraph(
             ) {
                 EditExistingStockScreen(
                     walletViewModel = walletViewModel,
+                    transactionViewModel = transactionsViewModel,
                     navController = navController,
                     mode = 1
                 )
@@ -460,6 +462,7 @@ fun TabsNavGraph(
             ) {
                 EditExistingStockScreen(
                     walletViewModel = walletViewModel,
+                    transactionViewModel = transactionsViewModel,
                     navController = navController,
                     mode = 2
                 )
