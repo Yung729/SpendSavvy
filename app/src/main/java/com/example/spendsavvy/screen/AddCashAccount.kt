@@ -196,14 +196,14 @@ fun AddCashAccountScreen(
 
             Button(
                 onClick = {
-                    walletViewModel.addCashDetailsToDatabase(
+                    val opt = walletViewModel.addCashDetailsToDatabase(
                         Cash(
                             typeName = typeName,
                             balance = initialAmt.toDoubleOrNull() ?: 0.0
                         )
                     )
-
-                    navController.navigateUp()
+                    if(opt == 1)
+                        navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

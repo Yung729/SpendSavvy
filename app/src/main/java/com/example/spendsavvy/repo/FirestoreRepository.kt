@@ -484,6 +484,41 @@ class FirestoreRepository {
 
     }
 
+    suspend fun getWalletDocumentId(collectionName: String, userId: String, data: Any): String {
+        try {
+            val querySnapshot = firestore.collection("Users").document(userId).collection("Wallet").document("1")
+                .collection(collectionName).get().await()
+
+            for (document in querySnapshot.documents) {
+                val itemData = document.data
+
+                val item = data::class.java.newInstance()
+                // Set the values of item fields
+                if (itemData != null) {
+
+                    for ((fieldName, value) in itemData) {
+                        try {
+                            val field = item::class.java.getDeclaredField(fieldName)
+                            field.isAccessible = true
+
+                            field.set(item, value)
+
+
+                        } catch (e: NoSuchFieldException) {
+                            Log.e(TAG, "Field '$fieldName' not found in ${data::class.java}", e)
+                        }
+                    }
+                    if (data == item) {
+                        return document.id
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting document ID from $collectionName", e)
+        }
+        return ""
+    }
+
     suspend fun <T : Any> readWalletItemsFromDatabase(
         userId: String,
         collectionName: String,
