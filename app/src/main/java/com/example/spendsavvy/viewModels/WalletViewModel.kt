@@ -130,6 +130,12 @@ class WalletViewModel(
                             balance = cash.balance,
                             userId = userId
                         )*/
+
+                        val cashInfo = cashDetailsList.value ?: emptyList()
+                        val updatedCashDetailsList = cashInfo + cash
+                        updateCashInfo(
+                            cash = updatedCashDetailsList
+                        )
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding cash details", exception)
@@ -180,6 +186,9 @@ class WalletViewModel(
                             balance = cash.balance,
                             userId = userId
                         )*/
+                        val fdInfo = fdAccDetailsList.value ?: emptyList()
+                        val fdDetailsFromFirestore = fdInfo + fdAccount
+                        updateFDDetails(fdDetailsFromFirestore)
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding FD details", exception)
@@ -208,7 +217,6 @@ class WalletViewModel(
                     Stock::class.java
                 )
 
-                updateStockDetails(stockDetailsFromFirestore)
                 updateStockTotalPrice(stockDetailsFromFirestore)
 
             } catch (e: Exception) {
@@ -225,6 +233,7 @@ class WalletViewModel(
         }
 
         totalPriceStock.postValue(totalPrice)
+        stockListLive.postValue(stockList)
     }
 
     fun addStockDetailsToDatabase(stock: Stock) {
@@ -249,6 +258,10 @@ class WalletViewModel(
                             balance = cash.balance,
                             userId = userId
                         )*/
+
+                        val stockInfo = stockListLive.value ?: emptyList()
+                        val updatedStockDetailsList = stockInfo + stock
+                        updateStockTotalPrice(updatedStockDetailsList)
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding cash details", exception)
@@ -294,9 +307,7 @@ class WalletViewModel(
                             if (it == stock) updatedStockDetails else it
                         }
 
-                        updateStockDetails(
-                            stockList = updatedStockDetailsList
-                        )
+                        updateStockTotalPrice(updatedStockDetailsList)
 
                     }
                 )
@@ -306,7 +317,4 @@ class WalletViewModel(
         }
     }
 
-    private fun updateStockDetails(stockList: List<Stock>) {
-        stockListLive.postValue(stockList)
-    }
 }
