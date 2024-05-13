@@ -101,7 +101,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     val fireAuthRepository = FireAuthRepository(
         context = context,
         navController = navController,
-        CategoryViewModel(context, isConnected, "")
+        CategoryViewModel(context, isConnected, "adminUser")
     )
     var userId by remember { mutableStateOf("") }
     userId = fireAuthRepository.getCurrentUserId()

@@ -78,7 +78,7 @@ class FireAuthRepository(
     fun signOut() {
         auth.signOut()
         navController.navigate(Screen.Login.route) {
-            popUpTo(Screen.Login.route) {
+            popUpTo(Screen.Settings.route) {
                 inclusive = true
             }
         }
