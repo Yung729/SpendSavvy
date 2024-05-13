@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.components.ButtonComponent
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -207,6 +208,7 @@ fun SignUpScreen(
                     isError = false
 
                     fireAuthRepository.signUp(email, password, userName, phoneNo)
+                    navController.navigate(route = Screen.Login.route)
                 }
             },
             text = "SIGN UP"
@@ -242,7 +244,7 @@ fun SignUpScreenPreview() {
             .fillMaxSize()
             .padding(20.dp), navController = rememberNavController(),
         fireAuthRepository = FireAuthRepository(
-            LocalContext.current, rememberNavController(), categoryViewModel = CategoryViewModel(
+            LocalContext.current,  categoryViewModel = CategoryViewModel(
                 LocalContext.current, false, ""
             )
         )

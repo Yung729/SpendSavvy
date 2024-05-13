@@ -214,7 +214,13 @@ fun SettingsScreen(
             }
         }, confirmButton = {
             Button(
-                onClick = { fireAuthRepository.signOut() },
+                onClick = {
+                    fireAuthRepository.signOut()
+
+                    navController.navigate("First") {
+                        popUpTo(0) {}
+                    }
+                },
                 modifier = Modifier.padding(end = 8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent, contentColor = Color.Red
@@ -281,7 +287,6 @@ fun SettingsScreenPreview() {
         profileViewModel = viewModel(),
         fireAuthRepository = FireAuthRepository(
             context = LocalContext.current,
-            navController = rememberNavController(),
             CategoryViewModel(LocalContext.current, false, "")
         )
     )

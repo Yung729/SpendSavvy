@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -20,7 +20,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,9 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.components.ButtonComponent
-import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.ui.theme.ButtonColor
@@ -51,7 +47,6 @@ import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
-import com.example.spendsavvy.viewModels.ProfileViewModel
 
 
 @Composable
@@ -134,31 +129,37 @@ fun LoginScreen(
 
             val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUserId())
             mainViewModel.syncDatabase()
+
+            navController.navigate("Second") {
+                popUpTo(0) {}
+            }
+
         }, text = "LOGIN")
 
 
-        ClickableText(
-            text = AnnotatedString("Forgot Password ?"),
-            onClick = {
-                navController.navigate(route = Screen.ForgotPassword.route)
-            },
-            style = TextStyle(
-                color = ButtonColor, fontFamily = poppinsFontFamily
-            ),
-            modifier = Modifier.bounceClick()
-        )
 
-        ClickableText(
-            text = AnnotatedString("Register Account ?"),
-            onClick = {
-                navController.navigate(route = Screen.SignUp.route)
-            },
+        Text(
+            text = "Forgot Password ?",
             style = TextStyle(
                 color = ButtonColor,
                 fontFamily = poppinsFontFamily
             ),
-            modifier = Modifier.bounceClick()
+            modifier = Modifier.clickable {
+                navController.navigate(route = Screen.ForgotPassword.route)
+            }
         )
+
+        Text(
+            text = "Register Account ?",
+            style = TextStyle(
+                color = ButtonColor,
+                fontFamily = poppinsFontFamily
+            ),
+            modifier = Modifier.clickable {
+                navController.navigate(route = Screen.SignUp.route)
+            }
+        )
+
 
     }
 }
@@ -173,7 +174,7 @@ fun LoginScreenPreview() {
             .padding(20.dp),
         navController = rememberNavController(),
         fireAuthRepository = FireAuthRepository(
-            LocalContext.current, rememberNavController(), categoryViewModel = CategoryViewModel(
+            LocalContext.current, categoryViewModel = CategoryViewModel(
                 LocalContext.current, false, ""
             )
         )

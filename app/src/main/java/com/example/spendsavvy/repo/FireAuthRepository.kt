@@ -4,9 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.navigation.NavController
 import com.example.spendsavvy.models.UserData
-import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -15,7 +13,6 @@ import com.google.firebase.firestore.firestore
 
 class FireAuthRepository(
     val context: Context,
-    val navController: NavController,
     private val categoryViewModel: CategoryViewModel
 ) {
 
@@ -28,11 +25,7 @@ class FireAuthRepository(
                 val currentUser = auth.currentUser
                 if (currentUser != null) {
                     val userId = getCurrentUserId()
-                    navController.navigate(route = Screen.MainScreen.route) {
-                        popUpTo(navController.graph.id) {
-                            inclusive = true
-                        }
-                    }
+
                 }
 
             } else if (!task.isSuccessful) {
@@ -62,7 +55,6 @@ class FireAuthRepository(
                         categoryViewModel.initializeCategoryToFirestore(user.uid)
                     }
 
-                    navController.navigate(route = Screen.Login.route)
 
                 } else {
                     Toast.makeText(
@@ -77,11 +69,7 @@ class FireAuthRepository(
 
     fun signOut() {
         auth.signOut()
-        navController.navigate("First") {
-            popUpTo("Second") {
-                inclusive = true
-            }
-        }
+
     }
 
     fun resetPassword(email: String) {

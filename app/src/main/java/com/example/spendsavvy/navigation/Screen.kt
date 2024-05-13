@@ -4,8 +4,8 @@ import com.example.spendsavvy.R
 
 sealed class Screen(val route: String, val iconResourceId: Int) {
 
-    object Login : Screen(route = "login_screen", 0)
-    object SignUp : Screen(route = "signUp_screen", 0)
+    object Login : Screen(route = "Login", 0)
+    object SignUp : Screen(route = "SignUp", 0)
     object Overview : Screen(route = "Overview", R.drawable.bar_chart)
     object AllTransaction : Screen(route = "Transaction Record", 0)
     object TransactionDetails : Screen(route = "Transaction Details", 0)
@@ -38,17 +38,17 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Cash : Screen(route = "Cash", 0)
     object AddCashAccount : Screen(route = "AddCashAccount", 0)
     object EditCashAccount : Screen(route = "EditCashAccount", 0)
-    object AddStock : Screen (route = "Add New Stock", 0)
-    object EditStock : Screen (route = "Edit Stock", 0)
-    object AddExistingStock : Screen (route = "Add Existing Stock", 0)
-    object FixedDepositDetails : Screen (route = "Fixed Deposit Details", 0)
-    object FixedDepositScreen : Screen (route = "FixedDepositScreen", 0)
+    object AddStock : Screen(route = "Add New Stock", 0)
+    object EditStock : Screen(route = "Edit Stock", 0)
+    object AddExistingStock : Screen(route = "Add Existing Stock", 0)
+    object FixedDepositDetails : Screen(route = "Fixed Deposit Details", 0)
+    object FixedDepositScreen : Screen(route = "FixedDepositScreen", 0)
 
     object BudgetScreen : Screen(route = "Budget & Goal", 0)
 
-    object StaffScreen : Screen(route = "Staff",0)
-    object StaffDetailScreen : Screen(route = "Edit Staff",0)
-    object AddStaffScreen : Screen(route = "Add Staff",0)
+    object StaffScreen : Screen(route = "Staff", 0)
+    object StaffDetailScreen : Screen(route = "Edit Staff", 0)
+    object AddStaffScreen : Screen(route = "Add Staff", 0)
 
 
 }

@@ -38,11 +38,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.example.spendsavvy.components.HeaderTopBar
-import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.models.Question
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
@@ -100,530 +99,564 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     val isConnected = isInternetAvailable(context)
     val fireAuthRepository = FireAuthRepository(
         context = context,
-        navController = navController,
         CategoryViewModel(context, isConnected, "adminUser")
     )
     var userId by remember { mutableStateOf("") }
     userId = fireAuthRepository.getCurrentUserId()
 
-    if (userId == ""){
-        userId  = "adminUser"
+    if (userId == "") {
+        userId = "adminUser"
     }
 
     val walletViewModel = WalletViewModel(context, userId)
     val dateViewModel = DateSelectionViewModel()
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
-    val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel,walletViewModel)
+    val transactionsViewModel =
+        OverviewViewModel(context, isConnected, userId, dateViewModel, walletViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId)
     val billsViewModel = BillsViewModel(context, isConnected, userId)
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
 
-
-    NavHost(
-        navController = navController, startDestination = Screen.Login.route, route = "First"
-    ) {
-        composable(
-            route = Screen.Login.route
-        ) {
-            LoginScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-                navController = navController,
-                fireAuthRepository = fireAuthRepository
-            )
-            userId = fireAuthRepository.getCurrentUserId()
-        }
-
-        composable(
-            route = Screen.SignUp.route
-        ) {
-            SignUpScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-                navController = navController,
-                fireAuthRepository = fireAuthRepository
-            )
-        }
-
-        composable(
-            route = Screen.ForgotPassword.route
-        ) {
-            ForgotPassword(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp), navController = navController,
-                profileViewModel = profileViewModel,
-                fireAuthRepository = fireAuthRepository
-            )
-        }
-
-        composable(route = Screen.MainScreen.route) {
-
-            TabsNavGraph(
-                context = context,
-                dateViewModel = dateViewModel,
-                fireAuthRepository = fireAuthRepository,
-                categoryViewModel = categoryViewModel,
-                transactionsViewModel = transactionsViewModel,
-                targetViewModel = targetViewModel,
-                staffViewModel = staffViewModel,
-                profileViewModel = profileViewModel,
-                billsViewModel = billsViewModel,
-                questionsViewModel = questionsViewModel,
-                walletViewModel = walletViewModel
-            )
-        }
-
-
-    }
-}
-
-@Composable
-fun TabsNavGraph(
-    navController: NavHostController = rememberNavController(),
-    context: Context,
-    dateViewModel: DateSelectionViewModel,
-    fireAuthRepository: FireAuthRepository,
-    categoryViewModel: CategoryViewModel,
-    transactionsViewModel: OverviewViewModel,
-    targetViewModel: TargetViewModel,
-    staffViewModel: StaffViewModel,
-    profileViewModel: ProfileViewModel,
-    billsViewModel: BillsViewModel,
-    questionsViewModel: QuestionViewModel,
-    walletViewModel: WalletViewModel
-) {
-
-
+    val showOption = remember { mutableStateOf(false) }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
-    val context = context
-    val isConnected = isInternetAvailable(context)
 
-    val showOption = remember { mutableStateOf(false) }
-
-
-
-    Scaffold(topBar = {
-        HeaderTopBar(text = currentScreenName,
-            canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
-                Screen.Overview.route,
-                Screen.Wallet.route,
-                Screen.Analysis.route,
-                Screen.Settings.route
-            ),
-            navUp = { navController.navigateUp() })
-
-    }, bottomBar = {
-
-        NavigationBar(
-            modifier = Modifier.height(70.dp),
-            containerColor = Color(0xFFfdfdfd),
-            tonalElevation = 5.dp
-        ) {
-
-            items.forEach { screen ->
-                NavigationBarItem(
-                    selected = backStackEntry?.destination?.hierarchy?.any {
-                        it.route == screen.route
-                    } == true,
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = screen.iconResourceId),
-                            contentDescription = null,
-                            Modifier.size(16.dp, 16.dp)
-                        )
-
-                    }, label = {
-                        Text(
-                            text = screen.route,
-                            fontSize = 11.sp
-                        )
-                    },
-                    colors = NavigationBarItemColors(
-                        selectedIconColor = Color(0xFF6347EB),
-                        selectedTextColor = Color(0xFF6347EB),
-                        selectedIndicatorColor = Color.Transparent,
-                        unselectedIconColor = Color.Gray,
-                        unselectedTextColor = Color.Gray,
-                        disabledIconColor = Color.Gray,
-                        disabledTextColor = Color.Gray
-                    ),
-                    onClick = {
-                        navController.navigate(screen.route) {
-
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                                inclusive = true
-                            }
-                            restoreState = true
-                            launchSingleTop = false
-
-                        }
-                    })
-            }
-        }
-
-    }, floatingActionButton = {
-
-        if (currentScreenName == Screen.Overview.route) {
-
-            FloatingActionButton(
-                onClick = {
-                    showOption.value = !showOption.value
-                },
-                elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                containerColor = ButtonColor,
-                contentColor = Color.White,
-                modifier = Modifier
-                    .offset(y = 50.dp, x = if (showOption.value) 21.dp else 0.dp)
-                    .size(50.dp)
-
-            ) {
-                Icon(
-                    Icons.Default.Add, contentDescription = "Add"
+    Scaffold(
+        topBar = {
+            if (currentScreenName !in listOf(
+                    Screen.Login.route,
+                    Screen.SignUp.route,
+                    Screen.ForgotPassword.route
                 )
+            ) {
+
+                HeaderTopBar(text = currentScreenName,
+                    canNavBack = navController.previousBackStackEntry != null && currentScreenName !in listOf(
+                        Screen.Overview.route,
+                        Screen.Wallet.route,
+                        Screen.Analysis.route,
+                        Screen.Settings.route
+                    ),
+                    navUp = { navController.navigateUp() })
             }
 
-            if (showOption.value) {
+        },
+        bottomBar = {
+            if (currentScreenName !in listOf(
+                    Screen.Login.route,
+                    Screen.SignUp.route,
+                    Screen.ForgotPassword.route
+                )
+            ) {
 
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate(Screen.AddExpenses.route)
-                    },
-                    modifier = Modifier
-                        .size(95.dp, 50.dp)
-                        .offset(
-                            x = (-65).dp, y = (-25).dp
-                        ), // Position to the left of the main FAB
-                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                    containerColor = ButtonColor,
-                    contentColor = Color.White
+                NavigationBar(
+                    modifier = Modifier.height(70.dp),
+                    containerColor = Color(0xFFfdfdfd),
+                    tonalElevation = 5.dp
                 ) {
-                    Text(text = "Expense")
-                }
 
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate(Screen.AddIncomes.route)
-                    },
-                    modifier = Modifier
-                        .size(95.dp, 50.dp)
-                        .offset(
-                            x = 65.dp, y = (-25).dp
-                        ), // Position to the right of the main FAB
-                    elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                    containerColor = ButtonColor,
-                    contentColor = Color.White
-                ) {
-                    Text(text = "Income")
+                    items.forEach { screen ->
+                        NavigationBarItem(
+                            selected = backStackEntry?.destination?.hierarchy?.any {
+                                it.route == screen.route
+                            } == true,
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = screen.iconResourceId),
+                                    contentDescription = null,
+                                    Modifier.size(16.dp, 16.dp)
+                                )
+
+                            }, label = {
+                                Text(
+                                    text = screen.route,
+                                    fontSize = 11.sp
+                                )
+                            },
+                            colors = NavigationBarItemColors(
+                                selectedIconColor = Color(0xFF6347EB),
+                                selectedTextColor = Color(0xFF6347EB),
+                                selectedIndicatorColor = Color.Transparent,
+                                unselectedIconColor = Color.Gray,
+                                unselectedTextColor = Color.Gray,
+                                disabledIconColor = Color.Gray,
+                                disabledTextColor = Color.Gray
+                            ),
+                            onClick = {
+                                navController.navigate(screen.route) {
+
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                        inclusive = true
+                                    }
+                                    restoreState = true
+                                    launchSingleTop = false
+
+                                }
+                            })
+                    }
                 }
             }
+        },
+        floatingActionButton = {
+            if (currentScreenName !in listOf(
+                    Screen.Login.route,
+                    Screen.SignUp.route,
+                    Screen.ForgotPassword.route
+                )
+            ) {
 
-        }
-    }, floatingActionButtonPosition = FabPosition.Center
+                if (currentScreenName == Screen.Overview.route) {
 
-    ) { innerPadding ->
+                    FloatingActionButton(
+                        onClick = {
+                            showOption.value = !showOption.value
+                        },
+                        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                        containerColor = ButtonColor,
+                        contentColor = Color.White,
+                        modifier = Modifier
+                            .offset(y = 50.dp, x = if (showOption.value) 21.dp else 0.dp)
+                            .size(50.dp)
 
-        InternetAwareContent(isConnected, context)
+                    ) {
+                        Icon(
+                            Icons.Default.Add, contentDescription = "Add"
+                        )
+                    }
+
+                    if (showOption.value) {
+
+                        FloatingActionButton(
+                            onClick = {
+                                navController.navigate(Screen.AddExpenses.route)
+                            },
+                            modifier = Modifier
+                                .size(95.dp, 50.dp)
+                                .offset(
+                                    x = (-65).dp, y = (-25).dp
+                                ), // Position to the left of the main FAB
+                            elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                            containerColor = ButtonColor,
+                            contentColor = Color.White
+                        ) {
+                            Text(text = "Expense")
+                        }
+
+                        FloatingActionButton(
+                            onClick = {
+                                navController.navigate(Screen.AddIncomes.route)
+                            },
+                            modifier = Modifier
+                                .size(95.dp, 50.dp)
+                                .offset(
+                                    x = 65.dp, y = (-25).dp
+                                ), // Position to the right of the main FAB
+                            elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                            containerColor = ButtonColor,
+                            contentColor = Color.White
+                        ) {
+                            Text(text = "Income")
+                        }
+                    }
+
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+
+        ) { innerPadding ->
 
         NavHost(
             navController = navController,
-            startDestination = Screen.Overview.route,
-            modifier = Modifier.padding(innerPadding),
-            route = "Second"
+            startDestination = "First",
+            modifier = Modifier.padding(innerPadding)
         ) {
 
 
-            composable(route = Screen.Overview.route) {
+            navigation(startDestination = Screen.Login.route, route = "First") {
 
-                DisposableEffect(Unit) {
-                    onDispose { showOption.value = false }
+                composable(
+                    route = Screen.Login.route
+                ) {
+                    LoginScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        fireAuthRepository = fireAuthRepository
+                    )
+                    userId = fireAuthRepository.getCurrentUserId()
                 }
 
-                OverviewScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    transactionViewModel = transactionsViewModel,
-                    budgetViewModel = targetViewModel,
-                    dateViewModel = dateViewModel,
-                    profileViewModel = profileViewModel,
-                    navController = navController
-                )
+                composable(
+                    route = Screen.SignUp.route
+                ) {
+                    SignUpScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        fireAuthRepository = fireAuthRepository
+                    )
+                }
+
+                composable(
+                    route = Screen.ForgotPassword.route
+                ) {
+                    ForgotPassword(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        profileViewModel = profileViewModel,
+                        fireAuthRepository = fireAuthRepository
+                    )
+                }
+
             }
 
-            composable(route = Screen.Wallet.route) {
+            navigation(startDestination = Screen.Overview.route, route = "Second") {
 
-                WalletScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController,
-                    walletViewModel = walletViewModel
-                )
-            }
 
-            composable(route = Screen.Analysis.route) {
-                AnalysisScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController,
-                    transactionViewModel = transactionsViewModel,
-                    budgetViewModel = targetViewModel
-                )
-            }
+                composable(route = Screen.Overview.route) {
 
-            composable(route = Screen.Settings.route) {
-                SettingsScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController,
-                    profileViewModel = profileViewModel,
-                    fireAuthRepository = fireAuthRepository
-                )
-            }
+                    DisposableEffect(Unit) {
+                        onDispose { showOption.value = false }
+                    }
 
-            composable(
-                route = Screen.Cash.route
-            ) {
-                CashScreen(
-                    cashViewModel = walletViewModel,
-                    navController = navController
-                )
-            }
 
-            composable(
-                route = Screen.AddCashAccount.route
-            ) {
-                AddCashAccountScreen(
-                    walletViewModel = walletViewModel,
-                    navController = navController
-                )
-            }
+                    OverviewScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        transactionViewModel = transactionsViewModel,
+                        budgetViewModel = targetViewModel,
+                        dateViewModel = dateViewModel,
+                        profileViewModel = profileViewModel,
+                        navController = navController
+                    )
 
-            composable(
-                route = Screen.EditCashAccount.route
-            ) {
-                EditCashAccountScreen(
-                    walletViewModel = walletViewModel,
-                    navController = navController
-                )
-            }
+                }
 
-            composable(
-                route = Screen.Stock.route
-            ) {
-                StockScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    walletViewModel = walletViewModel,
-                    navController = navController
-                )
-            }
+                composable(route = Screen.Wallet.route) {
 
-            composable(
-                route = Screen.AddStock.route
-            ) {
-                AddNewStockScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    walletViewModel = walletViewModel,
-                    transactionViewModel = transactionsViewModel,
-                    navController = navController
-                )
-            }
 
-            composable(
-                route = Screen.AddExistingStock.route
-            ) {
-                EditExistingStockScreen(
-                    walletViewModel = walletViewModel,
-                    transactionViewModel = transactionsViewModel,
-                    navController = navController,
-                    mode = 1
-                )
-            }
-
-            composable(
-                route = Screen.EditStock.route
-            ) {
-                EditExistingStockScreen(
-                    walletViewModel = walletViewModel,
-                    transactionViewModel = transactionsViewModel,
-                    navController = navController,
-                    mode = 2
-                )
-            }
-
-            composable(
-                route = Screen.FixedDepositScreen.route
-            ) {
-                FixedDepositScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    walletViewModel = walletViewModel,
-                    navController = navController
-                )
-            }
-
-            composable(
-                route = Screen.FixedDepositDetails.route
-            ) {
-                FixedDepositDetailsScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    walletViewModel = walletViewModel,
-                    navController = navController
-                )
-            }
-
-            composable(
-                route = Screen.Category.route
-            ) {
-                CategoryScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    catViewModel = categoryViewModel,
-                    navController = navController
-                )
-            }
-
-            composable(
-                route = Screen.MyProfile.route
-            ) {
-                MyProfileScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController, profileViewModel = profileViewModel,
-                )
-            }
-
-            composable(
-                route = Screen.ChangeProfile.route
-            ) {
-                ChangeProfileScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController
-                )
-            }
-
-            composable(
-                route = Screen.ChangePassword.route
-            ) {
-                ChangePassword(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController
-                )
-            }
-
-            composable(
-                route = Screen.ForgotPassword.route
-            ) {
-                ForgotPassword(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController,
-                    profileViewModel = profileViewModel,
-                    fireAuthRepository = fireAuthRepository
-                )
-            }
-            composable(
-                route = Screen.CreatePassword.route
-            ) {
-                CreatePassword(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController
-                )
-            }
-            composable(
-                route = Screen.ManageBillsAndInstalment.route
-            ) {
-                ManageBillsAndInstalment(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController,
-                    billsViewModel = billsViewModel,
-                    transactionViewModel = transactionsViewModel,
-                )
-            }
-            composable(
-                route = Screen.AddBills.route
-            ) {
-                AddBills(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController,
-                    billsViewModel = billsViewModel,
-                    catViewModel = categoryViewModel
-                )
-            }
-
-            composable(
-                route = Screen.EditBills.route
-            ) {
-                val selectedBills =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<Bills>("currentBill")
-
-                if (selectedBills != null) {
-                    EditBills(
+                    WalletScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp), navController = navController,
-                        bill = selectedBills,
+                        walletViewModel = walletViewModel
+                    )
+
+                }
+
+                composable(route = Screen.Analysis.route) {
+
+                    AnalysisScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        transactionViewModel = transactionsViewModel,
+                        budgetViewModel = targetViewModel
+                    )
+
+                }
+
+                composable(route = Screen.Settings.route) {
+
+                    SettingsScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        profileViewModel = profileViewModel,
+                        fireAuthRepository = fireAuthRepository
+                    )
+
+                }
+
+                composable(
+                    route = Screen.Cash.route
+                ) {
+
+                    CashScreen(
+                        cashViewModel = walletViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.AddCashAccount.route
+                ) {
+
+                    AddCashAccountScreen(
+                        walletViewModel = walletViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.EditCashAccount.route
+                ) {
+
+                    EditCashAccountScreen(
+                        walletViewModel = walletViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.Stock.route
+                ) {
+
+                    StockScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        walletViewModel = walletViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.AddStock.route
+                ) {
+
+                    AddNewStockScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        walletViewModel = walletViewModel,
+                        transactionViewModel = transactionsViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.AddExistingStock.route
+                ) {
+
+                    EditExistingStockScreen(
+                        walletViewModel = walletViewModel,
+                        transactionViewModel = transactionsViewModel,
+                        navController = navController,
+                        mode = 1
+                    )
+
+                }
+
+                composable(
+                    route = Screen.EditStock.route
+                ) {
+
+                    EditExistingStockScreen(
+                        walletViewModel = walletViewModel,
+                        transactionViewModel = transactionsViewModel,
+                        navController = navController,
+                        mode = 2
+                    )
+
+                }
+
+                composable(
+                    route = Screen.FixedDepositScreen.route
+                ) {
+
+                    FixedDepositScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        walletViewModel = walletViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.FixedDepositDetails.route
+                ) {
+
+                    FixedDepositDetailsScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        walletViewModel = walletViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.Category.route
+                ) {
+
+                    CategoryScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        catViewModel = categoryViewModel,
+                        navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.MyProfile.route
+                ) {
+
+                    MyProfileScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController, profileViewModel = profileViewModel,
+                    )
+
+                }
+
+                composable(
+                    route = Screen.ChangeProfile.route
+                ) {
+
+                    ChangeProfileScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.ChangePassword.route
+                ) {
+
+                    ChangePassword(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController
+                    )
+
+                }
+
+                /*composable(
+                    route = Screen.ForgotPassword.route
+                ) {
+
+                    ForgotPassword(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController,
+                        profileViewModel = profileViewModel,
+                        fireAuthRepository = fireAuthRepository
+                    )
+
+                }*/
+
+                composable(
+                    route = Screen.CreatePassword.route
+                ) {
+
+                    CreatePassword(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController
+                    )
+
+                }
+                composable(
+                    route = Screen.ManageBillsAndInstalment.route
+                ) {
+
+                    ManageBillsAndInstalment(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        billsViewModel = billsViewModel,
+                        transactionViewModel = transactionsViewModel,
+                    )
+
+                }
+                composable(
+                    route = Screen.AddBills.route
+                ) {
+
+                    AddBills(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController,
                         billsViewModel = billsViewModel,
                         catViewModel = categoryViewModel
                     )
+
                 }
-            }
 
-            composable(
-                route = Screen.TaxCalculator.route
-            ) {
-                TaxCalculator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController,
-                    transactionViewModel = transactionsViewModel
-                )
-            }
+                composable(
+                    route = Screen.EditBills.route
+                ) {
+                    val selectedBills =
+                        navController.previousBackStackEntry?.savedStateHandle?.get<Bills>("currentBill")
+
+                    if (selectedBills != null) {
+
+                        EditBills(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp), navController = navController,
+                            bill = selectedBills,
+                            billsViewModel = billsViewModel,
+                            catViewModel = categoryViewModel
+                        )
+
+                    }
+                }
+
+                composable(
+                    route = Screen.TaxCalculator.route
+                ) {
+
+                    TaxCalculator(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController,
+                        transactionViewModel = transactionsViewModel
+                    )
+
+                }
 
 
-            composable(
-                route = Screen.Notifications.route
-            ) {
-                Notification(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController
-                )
-            }
+                composable(
+                    route = Screen.Notifications.route
+                ) {
 
-            composable(
-                route = Screen.Language.route
-            ) {
-                Language(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp), navController = navController
-                )
-            }
+                    Notification(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController
+                    )
+
+                }
+
+                composable(
+                    route = Screen.Language.route
+                ) {
+
+                    Language(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp), navController = navController
+                    )
+
+                }
 
 //            composable(
 //                route = Screen.EditQuestion.route
@@ -634,185 +667,198 @@ fun TabsNavGraph(
 //                if (selectedQuestion != null) {
 //                    EditQuestion(
 //                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(20.dp),
+//                            .fillMaxSize().padding(20.dp)
+//                            ,
 //                        navController = navController,
 //                        questionsViewModel = questionsViewModel
 //                    )
 //                }
 //            }
 
-            composable(
-                route = Screen.HelpAndSupport.route
-            ) {
-                HelpAndSupport(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController,
-                    questionsViewModel = questionsViewModel
-                )
-            }
-            composable(
-                route = Screen.AddExpenses.route
-            ) {
-                AddExpensesScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController,
-                    transactionViewModel = transactionsViewModel,
-                    catViewModel = categoryViewModel,
-                    walletViewModel = walletViewModel
-                )
-            }
+                composable(
+                    route = Screen.HelpAndSupport.route
+                ) {
 
-            composable(
-                route = Screen.AddIncomes.route
-            ) {
-                AddIncomeScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    navController = navController,
-                    transactionViewModel = transactionsViewModel,
-                    catViewModel = categoryViewModel,
-                    walletViewModel = walletViewModel
-                )
-            }
-
-
-            composable(
-                route = Screen.AddCategory.route
-            ) {
-
-                AddCategoryScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    catViewModel = categoryViewModel
-                )
-            }
-
-            composable(
-                route = Screen.CategoryDetail.route,
-            ) {
-
-
-                val selectedCategory =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<Category>("currentCategory")
-
-                if (selectedCategory != null) {
-                    CategoryDetail(
+                    HelpAndSupport(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp),
-                        category = selectedCategory,
+                        navController = navController,
+                        questionsViewModel = questionsViewModel
+                    )
+
+                }
+                composable(
+                    route = Screen.AddExpenses.route
+                ) {
+
+                    AddExpensesScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        transactionViewModel = transactionsViewModel,
+                        catViewModel = categoryViewModel,
+                        walletViewModel = walletViewModel
+                    )
+
+                }
+
+                composable(
+                    route = Screen.AddIncomes.route
+                ) {
+
+                    AddIncomeScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        navController = navController,
+                        transactionViewModel = transactionsViewModel,
+                        catViewModel = categoryViewModel,
+                        walletViewModel = walletViewModel
+                    )
+
+                }
+
+
+                composable(
+                    route = Screen.AddCategory.route
+                ) {
+
+                    AddCategoryScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
                         catViewModel = categoryViewModel
                     )
+
                 }
 
-            }
-
-            composable(
-                route = Screen.TransactionDetails.route,
-            ) {
+                composable(
+                    route = Screen.CategoryDetail.route,
+                ) {
 
 
-                val selectedTransactions =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<Transactions>("currentTransaction")
+                    val selectedCategory =
+                        navController.previousBackStackEntry?.savedStateHandle?.get<Category>("currentCategory")
 
-                if (selectedTransactions != null) {
-                    TransactionDetail(
+                    if (selectedCategory != null) {
+
+                        CategoryDetail(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            category = selectedCategory,
+                            catViewModel = categoryViewModel
+                        )
+
+                    }
+
+                }
+
+                composable(
+                    route = Screen.TransactionDetails.route,
+                ) {
+
+
+                    val selectedTransactions =
+                        navController.previousBackStackEntry?.savedStateHandle?.get<Transactions>("currentTransaction")
+
+                    if (selectedTransactions != null) {
+
+                        TransactionDetail(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            transactions = selectedTransactions,
+                            transactionViewModel = transactionsViewModel
+                        )
+
+                    }
+
+                }
+
+                composable(
+                    route = Screen.BudgetScreen.route,
+                ) {
+
+                    BudgetScreen(
+                        budgetViewModel = targetViewModel
+                    )
+
+
+                }
+
+                composable(
+                    route = Screen.AllTransaction.route,
+                ) {
+
+                    AllTransactionScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp),
-                        transactions = selectedTransactions,
-                        transactionViewModel = transactionsViewModel
+                        transactionViewModel = transactionsViewModel,
+                        dateViewModel = dateViewModel,
+                        navController = navController
                     )
+
+
                 }
 
-            }
+                composable(
+                    route = Screen.StaffScreen.route,
+                ) {
 
-            composable(
-                route = Screen.BudgetScreen.route,
-            ) {
-
-                BudgetScreen(
-                    budgetViewModel = targetViewModel
-                )
-
-
-            }
-
-            composable(
-                route = Screen.AllTransaction.route,
-            ) {
-
-                AllTransactionScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    transactionViewModel = transactionsViewModel,
-                    dateViewModel = dateViewModel,
-                    navController = navController
-                )
-
-
-            }
-
-            composable(
-                route = Screen.StaffScreen.route,
-            ) {
-
-                StaffScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    staffViewModel = staffViewModel,
-                    navController = navController
-                )
-
-
-            }
-
-            composable(
-                route = Screen.StaffDetailScreen.route,
-            ) {
-
-                val selectedStaff =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<Staff>("currentStaff")
-
-                if (selectedStaff != null) {
-                    StaffDetailScreen(
+                    StaffScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp),
                         staffViewModel = staffViewModel,
-                        staff = selectedStaff
+                        navController = navController
                     )
+
+
                 }
 
+                composable(
+                    route = Screen.StaffDetailScreen.route,
+                ) {
 
+                    val selectedStaff =
+                        navController.previousBackStackEntry?.savedStateHandle?.get<Staff>("currentStaff")
+
+                    if (selectedStaff != null) {
+
+                        StaffDetailScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            staffViewModel = staffViewModel,
+                            staff = selectedStaff
+                        )
+
+                    }
+
+
+                }
+
+                composable(
+                    route = Screen.AddStaffScreen.route,
+                ) {
+
+                    StaffAddScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        staffViewModel = staffViewModel
+                    )
+
+
+                }
             }
-
-            composable(
-                route = Screen.AddStaffScreen.route,
-            ) {
-
-                StaffAddScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    staffViewModel = staffViewModel
-                )
-
-
-            }
-
         }
-
     }
+
 
 }
 
