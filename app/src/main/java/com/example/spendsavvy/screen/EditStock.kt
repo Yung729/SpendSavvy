@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -29,9 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Stock
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
+import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +46,7 @@ import com.example.spendsavvy.viewModels.WalletViewModel
 @Composable
 fun EditExistingStockScreen(
     walletViewModel: WalletViewModel,
+    transactionViewModel : OverviewViewModel,
     navController: NavController,
     mode: Int
 ) {
@@ -65,6 +73,7 @@ fun EditExistingStockScreen(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 15.dp, top = 15.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         if (mode == 1) {
             Text(
@@ -237,49 +246,74 @@ fun EditExistingStockScreen(
                 )
             }
 
-            if (mode == 1) {
-                Button(
-                    onClick = {
-                        for (stock in stockDetails) {
-                            if (searchProduct == stock.productName) {
-                                walletViewModel.editStockDetails(
-                                    stock = stock,
-                                    updatedStockDetails = Stock(
-                                        searchProduct,
-                                        stock.originalPrice,
-                                        stock.quantity + qty.toInt()
-                                    )
+            Button(
+                onClick = {
+                    for (stock in stockDetails) {
+                        if (searchProduct == stock.productName) {
+                            if (mode == 2) {                                        //sell existing stock
+
+                                transactionViewModel.addTransactionToFirestore(
+                                    Transactions(
+                                        id = transactionViewModel.generateTransactionId(),
+                                        amount = ((price.toDoubleOrNull() ?: 0.0 )* qty.toInt()) ,
+                                        description = "Sell Stock",
+                                        date = Date(),
+                                        category = Category(
+                                            id = "CT0002",
+                                            imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
+                                            categoryName = "Stock Sales",
+                                            categoryType = "Incomes"
+                                        ),
+                                        paymentMethod = "Cash",
+                                        transactionType = "Incomes"
+                                    ),
+                                    onSuccess = {
+                                        walletViewModel.editStockDetails(
+                                            stock = stock,
+                                            updatedStockDetails = Stock(
+                                                searchProduct,
+                                                stock.originalPrice,
+                                                stock.quantity - qty.toInt()
+                                            )
+                                        )
+                                    },
+                                    onFailure = {
+                                    }
                                 )
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Add",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
-                }
-            } else {
-                Button(
-                    onClick = {
-                        for (stock in stockDetails) {
-                            if (searchProduct == stock.productName) {
-                                //sell existing stock
-                                walletViewModel.editStockDetails(
-                                    stock = stock,
-                                    updatedStockDetails = Stock(
-                                        searchProduct,
-                                        stock.originalPrice,
-                                        stock.quantity - qty.toInt()
-                                    )
+
+
+                            } else {                                            //add existing stock
+
+                                transactionViewModel.addTransactionToFirestore(
+                                    Transactions(
+                                        id = transactionViewModel.generateTransactionId(),
+                                        amount = ((stock.originalPrice )* qty.toInt()) ,
+                                        description = "Purchase Stock",
+                                        date = Date(),
+                                        category = Category(
+                                            id = "CT0014",
+                                            imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
+                                            categoryName = "Stock Purchase",
+                                            categoryType = "Expenses"
+                                        ),
+                                        paymentMethod = "Cash",
+                                        transactionType = "Expenses"
+                                    ),
+                                    onSuccess = {
+                                        walletViewModel.editStockDetails(
+                                            stock = stock,
+                                            updatedStockDetails = Stock(
+                                                searchProduct,
+                                                stock.originalPrice,
+                                                qty.toInt()
+                                            )
+                                        )
+                                    },
+                                    onFailure = {
+                                    }
                                 )
+
+
                             }
                         }
                     },
