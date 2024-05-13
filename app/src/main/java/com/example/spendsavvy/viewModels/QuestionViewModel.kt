@@ -128,10 +128,10 @@ class QuestionViewModel(
                     onSuccess = {
                         dbHelper.updateQuestion(
                             questionId = questionId,
-                            questionText = question.questionText,
-                            answer = question.answer,
-                            status = question.status,
-                            questionDate = question.questionDate,
+                            questionText = updatedQuestion.questionText,
+                            answer = updatedQuestion.answer,
+                            status = updatedQuestion.status,
+                            questionDate = updatedQuestion.questionDate,
                             userId = currentUserId
                         )
                         val currentQuestions = allQuestionsList.value ?: emptyList()
@@ -150,6 +150,7 @@ class QuestionViewModel(
             }
         }
     }
+
 
     fun deleteQuestion(question: Question) {
         viewModelScope.launch {
