@@ -108,7 +108,46 @@ class WalletViewModel(
         }
     }
 
-    fun addCashDetailsToDatabase(cash: Cash) : Int {
+    fun updateCashBalance(cashName: String, updateAmount: Double,onSuccess : () -> Unit) {
+
+        viewModelScope.launch {
+            try {
+
+                firestoreRepository.updateWalletBalanceInFirestore(
+                    userId,
+                    cashName,
+                    updateAmount,
+                    onSuccess = {newBalance ->
+                        /*dbHelper.updateCashDetails(
+                            updatedCashDetails.type,
+                            typeName,
+                            updatedCashDetails.balance,
+                            userId
+                        )*/
+
+                        val cashInfo = cashDetailsList.value ?: emptyList()
+                        val updatedCashDetailsList = cashInfo.map {
+                            if (it.typeName == cashName) it.copy(balance = newBalance) else it
+                        }
+                        updateCashInfo(cash = updatedCashDetailsList)
+
+                        onSuccess()
+                    },
+                    onFailure = {errorMessage ->
+                        Toast.makeText(
+                            currentContext, errorMessage, Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
+
+
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error editing cash details", e)
+            }
+        }
+    }
+
+    fun addCashDetailsToDatabase(cash: Cash) {
         if (cashDetailsList.value?.any { it.typeName == cash.typeName } == true) {
             Toast.makeText(
                 currentContext, "Cash Account with the same name already exists", Toast.LENGTH_SHORT

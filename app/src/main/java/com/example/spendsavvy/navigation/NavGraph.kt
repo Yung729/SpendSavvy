@@ -110,9 +110,10 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         userId  = "adminUser"
     }
 
+    val walletViewModel = WalletViewModel(context, userId)
     val dateViewModel = DateSelectionViewModel()
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
-    val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel)
+    val transactionsViewModel = OverviewViewModel(context, isConnected, userId, dateViewModel,walletViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId)
@@ -120,8 +121,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
 
 
-    //Wallet
-    val walletViewModel = WalletViewModel(context, userId)
+
 
 
     NavHost(

@@ -9,6 +9,7 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.WalletViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -31,7 +32,8 @@ class MonthlySalaryAlarmReceiver : BroadcastReceiver() {
                         context = it,
                         true,
                         userId,
-                        DateSelectionViewModel()
+                        DateSelectionViewModel(),
+                        WalletViewModel(context,userId)
                     )
                 }
 
