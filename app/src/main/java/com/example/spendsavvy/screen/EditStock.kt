@@ -326,7 +326,7 @@ fun EditExistingStockScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = if (mode == 2)  "Sell" else "Add",
+                    text = if (mode == 2) "Sell" else "Add",
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )
@@ -335,7 +335,6 @@ fun EditExistingStockScreen(
     }
 }
 
-}
 
 //for sell , use qty*setPrice
 //profit earned = qty*setPrice - qty*originalPrice
