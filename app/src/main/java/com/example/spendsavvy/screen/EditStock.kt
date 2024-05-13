@@ -82,93 +82,92 @@ fun EditExistingStockScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        Text(
+            text = "Product",
+            fontFamily = poppinsFontFamily,
+            fontSize = 15.sp
+        )
 
-            Text(
-                text = "Product",
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
+        ExposedDropdownMenuBox(
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = it }
+        ) {
+            TextField(
+                value = searchProduct,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor()
             )
 
-            ExposedDropdownMenuBox(
+            ExposedDropdownMenu(
                 expanded = isExpanded,
-                onExpandedChange = { isExpanded = it }
+                onDismissRequest = { isExpanded = false }
             ) {
-                TextField(
-                    value = searchProduct,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                    },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    modifier = Modifier.menuAnchor()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = isExpanded,
-                    onDismissRequest = { isExpanded = false }
-                ) {
-                    for (stock in stockDetails) {          //read from existing stock items
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = stock.productName)
-                            },
-                            onClick = {
-                                searchProduct = stock.productName
-                                isExpanded = false
-                            }
-                        )
-                    }
+                for (stock in stockDetails) {          //read from existing stock items
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = stock.productName)
+                        },
+                        onClick = {
+                            searchProduct = stock.productName
+                            isExpanded = false
+                        }
+                    )
                 }
             }
+        }
 
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Text(
+            text = "Original Price",
+            fontFamily = poppinsFontFamily,
+            fontSize = 15.sp
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+        for (stock in stockDetails) {
+            if (searchProduct == stock.productName)
+                Text(
+                    text = stock.originalPrice.toString()
+                )
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Text(
+            text = "Current Stock",
+            fontFamily = poppinsFontFamily,
+            fontSize = 15.sp
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+        for (stock in stockDetails) {
+            if (searchProduct == stock.productName)
+                Text(
+                    text = stock.quantity.toString()
+                )
+        }
+
+        if (mode == 2) {
             Spacer(modifier = Modifier.height(30.dp))
 
-            if (mode == 1) {
-                Text(
-                    text = "Product Price",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                for (stock in stockDetails) {
-                    if (searchProduct == stock.productName)
-                        Text(
-                            text = stock.originalPrice.toString()
-                        )
-                }
-            } else {
-                Text(
-                    text = "Set Product Price Sold",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = price,
-                    onValueChange = {
-                        price = it
-                    },
-                    placeholder = {
-                        Text(
-                            text = "0",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-            }
             Text(
-                text = "Quantity",
+                text = "Set Product Price Sold",
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
 
             TextField(
-                value = qty,
+                value = price,
                 onValueChange = {
-                    qty = it
+                    price = it
                 },
                 placeholder = {
                     Text(
@@ -179,6 +178,37 @@ fun EditExistingStockScreen(
                     )
                 }
             )
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        if(mode == 1) {
+            Text(
+                text = "Quantity To Add",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
+        }else{
+            Text(
+                text = "Quantity To Sell",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
+        }
+        TextField(
+            value = qty,
+            onValueChange = {
+                qty = it
+            },
+            placeholder = {
+                Text(
+                    text = "0",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp,
+                    color = Color.Gray
+                )
+            }
+        )
 
 
         Spacer(modifier = Modifier.height(30.dp))

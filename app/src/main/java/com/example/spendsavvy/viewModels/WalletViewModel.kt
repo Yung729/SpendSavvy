@@ -109,7 +109,6 @@ class WalletViewModel(
     }
 
     fun updateCashBalance(cashName: String, updateAmount: Double,onSuccess : () -> Unit) {
-
         viewModelScope.launch {
             try {
 
@@ -314,7 +313,7 @@ class WalletViewModel(
     }
 
     private suspend fun getProductName(stock: Stock): String {
-        return firestoreRepository.getDocumentId("Stock", userId, stock)
+        return firestoreRepository.getWalletDocumentId("Stock", userId, stock)
     }
 
     fun editStockDetails(stock: Stock, updatedStockDetails: Stock) {

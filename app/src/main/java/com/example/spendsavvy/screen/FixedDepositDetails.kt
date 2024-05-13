@@ -56,11 +56,11 @@ fun FixedDepositDetailsScreen(
 ) {
     val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
-    var isExpanded by remember {
+    /*var isExpanded by remember {
         mutableStateOf(false)
-    }
+    }*/
 
-    var searchBank by remember {
+    var selectedBank by remember {
         mutableStateOf("")
     }
 
@@ -74,9 +74,10 @@ fun FixedDepositDetailsScreen(
 
     Column(
         modifier = Modifier
-        .fillMaxWidth()
-        .padding(start = 15.dp, top = 15.dp
-        )) {
+            .fillMaxWidth()
+            .padding(
+                start = 15.dp, top = 15.dp
+            )) {
         Text(
             text = "Fixed Deposit",
             fontFamily = poppinsFontFamily,
@@ -112,7 +113,7 @@ fun FixedDepositDetailsScreen(
                 }
             )
 
-            ExposedDropdownMenuBox(
+            /*ExposedDropdownMenuBox(
                 expanded = isExpanded,
                 onExpandedChange = { isExpanded = it }
             ) {
@@ -145,7 +146,21 @@ fun FixedDepositDetailsScreen(
                         )
                     }
                 }
-            }
+            }*/
+            TextField(
+                value = selectedBank,
+                onValueChange = {
+                    selectedBank = it
+                },
+                placeholder = {
+                    Text(
+                        text = "Public bank",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp,
+                        color = Color.Gray
+                    )
+                }
+            )
 
             Spacer(modifier = Modifier.height(15.dp))
         }
@@ -232,7 +247,7 @@ fun FixedDepositDetailsScreen(
                     //addFDDetailsIntoDatabase(FDAccount(searchName, duration, interestRate, depositAmt))
                     walletViewModel.addFDDetailsToDatabase(
                         FDAccount(
-                            searchBank,
+                            selectedBank,
                             interestRate.toDoubleOrNull() ?: 0.0,
                             depositAmt.toDoubleOrNull() ?: 0.0
                         )
