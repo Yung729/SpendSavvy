@@ -246,7 +246,7 @@ fun SignUpScreenPreview() {
         fireAuthRepository = FireAuthRepository(
             LocalContext.current,  categoryViewModel = CategoryViewModel(
                 LocalContext.current, false, ""
-            )
+            ),false
         )
     )
 }

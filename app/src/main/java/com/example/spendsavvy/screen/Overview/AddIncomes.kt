@@ -111,6 +111,7 @@ fun AddIncomeScreen(
 
     //validation
     var isCategoryValid by remember { mutableStateOf(false) }
+    var isPaymentValid by remember { mutableStateOf(false) }
     var isAmountValid by remember { mutableStateOf(false) }
 
     Column(
@@ -292,6 +293,7 @@ fun AddIncomeScreen(
                             }, onClick = {
                                 selectedMethod = data.typeName
                                 isExpanded1 = false
+                                isPaymentValid = true
                             })
                         }
                     }
@@ -336,7 +338,7 @@ fun AddIncomeScreen(
         Button(
             onClick = {
 
-                if (isAmountValid && isCategoryValid) {
+                if (isAmountValid && isCategoryValid && isPaymentValid) {
                     transactionViewModel.addTransactionToFirestore(
                         Transactions(
                             id = transactionViewModel.generateTransactionId(),
@@ -373,6 +375,12 @@ fun AddIncomeScreen(
                         Toast.makeText(
                             context,
                             "Category is Empty",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }else if (!isPaymentValid) {
+                        Toast.makeText(
+                            context,
+                            "Payment is Empty",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

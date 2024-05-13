@@ -287,7 +287,7 @@ fun SettingsScreenPreview() {
         profileViewModel = viewModel(),
         fireAuthRepository = FireAuthRepository(
             context = LocalContext.current,
-            CategoryViewModel(LocalContext.current, false, "")
+            CategoryViewModel(LocalContext.current, false, ""),false
         )
     )
 }

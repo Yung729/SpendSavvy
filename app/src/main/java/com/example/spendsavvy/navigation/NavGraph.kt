@@ -1,6 +1,7 @@
 package com.example.spendsavvy.navigation
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -19,6 +20,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -40,6 +42,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.spendsavvy.components.HeaderTopBar
+import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Staff
@@ -97,16 +100,30 @@ import com.example.spendsavvy.viewModels.WalletViewModel
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
 
     val isConnected = isInternetAvailable(context)
+
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
+
     val fireAuthRepository = FireAuthRepository(
         context = context,
-        CategoryViewModel(context, isConnected, "adminUser")
+        CategoryViewModel(context, isConnected, "adminUser"),
+        isConnected
     )
+
+    val sharedPreferences: SharedPreferences by lazy {
+        context.getSharedPreferences("UserAcc", Context.MODE_PRIVATE)
+    }
     var userId by remember { mutableStateOf("") }
     userId = fireAuthRepository.getCurrentUserId()
 
-    if (userId == "") {
-        userId = "adminUser"
+    if (isConnected){
+        if (userId == "") {
+            userId = "adminUser"
+        }
+    }else {
+        userId = sharedPreferences.getString("userID", "")!!
     }
+
 
     val walletViewModel = WalletViewModel(context, userId)
     val dateViewModel = DateSelectionViewModel()
@@ -120,8 +137,6 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
 
     val showOption = remember { mutableStateOf(false) }
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
 
 
     Scaffold(
@@ -267,8 +282,21 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
+        snackbarHost = {
+            if (!isConnected){
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    action = {
+                        // You can add an action here, such as prompting the user to check their connection settings
+                    }
+                ) {
+                    Text(text = "No Internet Connection")
+                }
+            }
 
+        }
         ) { innerPadding ->
+
 
         NavHost(
             navController = navController,

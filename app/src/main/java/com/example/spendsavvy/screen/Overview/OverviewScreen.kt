@@ -120,13 +120,14 @@ fun OverviewScreen(
     }
 
 
+    if (isLoading) {
+        LoadingScreen() // Display loading animation
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
 
-        if (isLoading) {
-            LoadingScreen() // Display loading animation
-        }
+
 
         Surface(
             modifier = Modifier.fillMaxSize(),

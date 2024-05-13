@@ -2,6 +2,7 @@ package com.example.spendsavvy.repo
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import com.example.spendsavvy.models.UserData
@@ -13,29 +14,65 @@ import com.google.firebase.firestore.firestore
 
 class FireAuthRepository(
     val context: Context,
-    private val categoryViewModel: CategoryViewModel
+    private val categoryViewModel: CategoryViewModel,
+    internet : Boolean
 ) {
 
     private var auth = FirebaseAuth.getInstance()
+    val connection = internet
 
-    fun signIn(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
+    private val sharedPreferences: SharedPreferences by lazy {
+        context.getSharedPreferences("UserAcc", Context.MODE_PRIVATE)
+    }
 
-                val currentUser = auth.currentUser
-                if (currentUser != null) {
-                    val userId = getCurrentUserId()
+    fun signIn(email: String, password: String,onSuccess : () -> Unit) {
+
+        if (connection){
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+
+                    val currentUser = auth.currentUser
+                    if (currentUser != null) {
+                        saveCredentials(email, password,currentUser.uid)
+                        onSuccess()
+                    }
+
+                } else if (!task.isSuccessful) {
+                    Toast.makeText(
+                        context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
+                    ).show()
 
                 }
+            }
+        }else {
+            val offlineEmail = sharedPreferences.getString("email", null)
+            val offlinePassword = sharedPreferences.getString("password", null)
 
-            } else if (!task.isSuccessful) {
-                Toast.makeText(
-                    context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
-                ).show()
+
+            if (offlineEmail != null && offlinePassword != null) {
+                if (offlineEmail == email && password == offlinePassword){
+                    onSuccess()
+
+                }else{
+                    Toast.makeText(
+                        context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
+                    ).show()
+                }
 
             }
         }
+
+
     }
+
+    private fun saveCredentials(email: String, password: String,userId: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("email", email)
+        editor.putString("password", password)
+        editor.putString("userID", userId)
+        editor.apply()
+    }
+
 
     fun signUp(email: String, password: String, userName: String, phoneNo: String) {
         auth.createUserWithEmailAndPassword(email, password)

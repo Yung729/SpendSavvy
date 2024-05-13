@@ -125,14 +125,16 @@ fun LoginScreen(
         )
 
         ButtonComponent(onButtonClick = {
-            fireAuthRepository.signIn(email = email, password = password)
+            fireAuthRepository.signIn(email = email, password = password){
+                val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUserId())
+                mainViewModel.syncDatabase()
 
-            val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUserId())
-            mainViewModel.syncDatabase()
-
-            navController.navigate("Second") {
-                popUpTo(0) {}
+                navController.navigate("Second") {
+                    popUpTo(0) {}
+                }
             }
+
+
 
         }, text = "LOGIN")
 
@@ -176,7 +178,8 @@ fun LoginScreenPreview() {
         fireAuthRepository = FireAuthRepository(
             LocalContext.current, categoryViewModel = CategoryViewModel(
                 LocalContext.current, false, ""
-            )
+            ),
+            true
         )
     )
 }
