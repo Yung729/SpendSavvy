@@ -167,7 +167,6 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         composable(route = Screen.MainScreen.route) {
 
             TabsNavGraph(
-                userId = fireAuthRepository.getCurrentUserId(),
                 context = context,
                 dateViewModel = dateViewModel,
                 fireAuthRepository = fireAuthRepository,
@@ -189,7 +188,6 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
 @Composable
 fun TabsNavGraph(
     navController: NavHostController = rememberNavController(),
-    userId: String,
     context: Context,
     dateViewModel: DateSelectionViewModel,
     fireAuthRepository: FireAuthRepository,

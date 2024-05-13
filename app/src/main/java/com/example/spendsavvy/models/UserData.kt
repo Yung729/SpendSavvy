@@ -1,5 +1,7 @@
 package com.example.spendsavvy.models
 
+import java.io.Serializable
+
 data class UserData(
     val userID: String,
     val photoURL: String?,
@@ -7,6 +9,6 @@ data class UserData(
     var phoneNo: String,
     var email: String,
     val password: String,
-){
+): Serializable {
     constructor() : this("","", "","","", "")
 }
