@@ -613,13 +613,13 @@ class FirestoreRepository {
     fun updateWalletItemsInFirestoreByName(
         userId: String,
         collectionName: String,
-        typeName: String,
+        name: String,
         item: Any,
         onSuccess: () -> Unit
     ) {
         val documentRef =
             firestore.collection("Users").document(userId).collection("Wallet").document("1")
-                .collection(collectionName).document(typeName)
+                .collection(collectionName).document(name)
 
         documentRef.set(item)
             .addOnSuccessListener {

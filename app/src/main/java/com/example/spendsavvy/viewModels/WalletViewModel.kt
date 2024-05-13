@@ -63,10 +63,6 @@ class WalletViewModel(
         cashDetailsList.postValue(cash)
     }
 
-    private suspend fun getTypeName(cash: Cash): String {
-        return firestoreRepository.getWalletDocumentId("Cash", userId, cash)
-    }
-
     fun editCashDetails(cash: Cash, updatedCashDetails: Cash) {
         /*if (cashDetailsList.value?.any { it.typeName == cash.typeName } == false) {
             Toast.makeText(
@@ -77,12 +73,11 @@ class WalletViewModel(
 
         viewModelScope.launch {
             try {
-                val typeName = getTypeName(cash)
 
                 firestoreRepository.updateWalletItemsInFirestoreByName(
                     userId,
                     "Cash",
-                    typeName,
+                    cash.typeName,
                     updatedCashDetails,
                     onSuccess = {
                         /*dbHelper.updateCashDetails(
@@ -312,9 +307,6 @@ class WalletViewModel(
         return 1
     }
 
-    private suspend fun getProductName(stock: Stock): String {
-        return firestoreRepository.getWalletDocumentId("Stock", userId, stock)
-    }
 
     fun editStockDetails(stock: Stock, updatedStockDetails: Stock) {
         /*if (stockListLive.value?.any { it.productName == stock.productName } == false) {
