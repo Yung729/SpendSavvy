@@ -46,7 +46,7 @@ import java.util.Date
 @Composable
 fun EditExistingStockScreen(
     walletViewModel: WalletViewModel,
-    transactionViewModel : OverviewViewModel,
+    transactionViewModel: OverviewViewModel,
     navController: NavController,
     mode: Int
 ) {
@@ -255,7 +255,7 @@ fun EditExistingStockScreen(
                                 transactionViewModel.addTransactionToFirestore(
                                     Transactions(
                                         id = transactionViewModel.generateTransactionId(),
-                                        amount = ((price.toDoubleOrNull() ?: 0.0 )* qty.toInt()) ,
+                                        amount = ((price.toDoubleOrNull() ?: 0.0) * qty.toInt()),
                                         description = "Sell Stock",
                                         date = Date(),
                                         category = Category(
@@ -287,7 +287,7 @@ fun EditExistingStockScreen(
                                 transactionViewModel.addTransactionToFirestore(
                                     Transactions(
                                         id = transactionViewModel.generateTransactionId(),
-                                        amount = ((stock.originalPrice )* qty.toInt()) ,
+                                        amount = ((stock.originalPrice) * qty.toInt()),
                                         description = "Purchase Stock",
                                         date = Date(),
                                         category = Category(
@@ -316,23 +316,24 @@ fun EditExistingStockScreen(
 
                             }
                         }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = "Sell",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
-                    )
-                }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Text(
+                    text = if (mode == 2)  "Sell" else "Add",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily
+                )
             }
         }
     }
+}
 
 }
 
