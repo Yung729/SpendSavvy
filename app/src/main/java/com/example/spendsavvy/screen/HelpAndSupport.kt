@@ -3,7 +3,6 @@ package com.example.spendsavvy.screen
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
@@ -20,16 +19,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,7 +48,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -66,7 +66,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -76,15 +75,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.models.Bills
+import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.models.Question
-import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.viewModels.BillsViewModel
-import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.QuestionViewModel
 import java.util.Date
+
 @SuppressLint("UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, questionsViewModel: QuestionViewModel) {
 
@@ -95,6 +92,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
     var questionText by remember { mutableStateOf("") }
     val pendingQuestionsList by questionsViewModel.pendingQuestionsList.observeAsState(initial = emptyList())
     val answeredQuestionsList by questionsViewModel.answeredQuestionsList.observeAsState(initial = emptyList())
+    val dismissStateMap = remember { mutableMapOf<Question, DismissState>() }
 
     Scaffold(
         floatingActionButton = {
@@ -192,8 +190,8 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
             }
 
             when (selectedIndex) {
-                0 -> QuestionList(pendingQuestionsList, navController, questionsViewModel)
-                1 -> QuestionList(answeredQuestionsList, navController, questionsViewModel)
+                0 -> QuestionList(pendingQuestionsList, questionsViewModel,dismissStateMap)
+                1 -> QuestionList(answeredQuestionsList, questionsViewModel,dismissStateMap)
             }
 
         }
@@ -257,6 +255,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
                                         "Questions sent successfully",
                                         Toast.LENGTH_SHORT
                                     ).show()
+                                    questionText = ""
                                 }
                             ) {
                                 Toast.makeText(
@@ -266,12 +265,6 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
                                 ).show()
                             }
                             showDialog = false
-
-                            Toast.makeText(
-                                context,
-                                "Questions sent!!!!!!!!",
-                                Toast.LENGTH_SHORT
-                            ).show()
                         },
                         modifier = Modifier
                             .weight(1f)
@@ -288,88 +281,173 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
         )
     }
 }
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun QuestionList(
     questions: List<Question>,
-    navController: NavController,
-    questionViewModel: QuestionViewModel
+    questionViewModel: QuestionViewModel,
+    dismissStateMap: MutableMap<Question, DismissState>
 ) {
+    var showEditDialog by remember { mutableStateOf(false) }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        this.items(questions) { question ->
+        items(questions) { question ->
             QuestionItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-    //                        navController.currentBackStackEntry?.savedStateHandle?.set(
-    //                            key = "currentQuestion", value = question
-    //                        )
-    //                        // Navigate to the screen where you want to display the details of the question
-    //                        navController.navigate(Screen.QuestionDetails.route)
+                        showEditDialog = true
                     },
                 question = question,
-                questionViewModel = questionViewModel
+                questionViewModel = questionViewModel,
+                dismissState = dismissStateMap[question]
+                    ?: rememberDismissState().also { dismissStateMap[question] = it }
             )
+            if(showEditDialog){
+                EditQuestionDialog(
+                    question,
+                    questionViewModel,
+                    onDismiss = { showEditDialog = false }
+                )
+            }
         }
     }
 }
+@Composable
+fun EditQuestionDialog(
+    question: Question,
+    questionViewModel: QuestionViewModel,
+    onDismiss: () -> Unit
+){
+    var updatedQuestionText by remember { mutableStateOf(question.questionText) }
 
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Edit your question",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        text = {
+            OutlinedTextField(
+                value = updatedQuestionText,
+                onValueChange = { updatedQuestionText = it },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(120.dp)
+            )
+        },
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                OutlinedButton(
+                    onClick = onDismiss ,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color.DarkGray,
+                    )
+                ) {
+                    Text(text = "Cancel")
+                }
+                Button(
+                    onClick = {
+
+                        questionViewModel.editQuestion(
+                            question = question,
+                            updatedQuestion = Question(
+                                id = question.id,
+                                questionText = updatedQuestionText,
+                                answer = "WAITING FOR REPLY....",
+                                status = "PENDING",
+                                questionDate = Date(),
+                            ),
+                        )
+                        onDismiss()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.DarkGray,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(text = "Save Changes")
+                }
+            }
+        }
+    )
+}
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun QuestionItem(
     modifier: Modifier = Modifier,
     question: Question,
-    questionViewModel: QuestionViewModel
+    questionViewModel: QuestionViewModel,
+    dismissState: DismissState
 ) {
-    Card(
-        modifier = modifier
-            .padding(vertical = 5.dp, horizontal = 10.dp)
-            .border(
-                width = 2.dp,
-                color = Color.Gray,
-                shape = RoundedCornerShape(20.dp),
-            )
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Dropdown(
-                text = question.questionText,
-                modifier = Modifier.padding(15.dp)
-            ) {
-                Text(
-                    text = question.answer,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(70.dp)
-                        .background(Color.LightGray)
+    val context = LocalContext.current
+
+    SwipeToDeleteItem(state = dismissState) {
+
+        if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
+            Card(
+                modifier = modifier
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Gray,
+                        shape = RoundedCornerShape(20.dp),
+                    )
+                    .fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
                 )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Dropdown(text = question.questionText)
+                    {
+                        Text(
+                            text = question.answer,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(70.dp)
+                                .background(Color.LightGray)
+                        )
+                    }
+                }
             }
-//            Dropdown(
-//                text = stringResource(id = R.string.q1),
-//                modifier = Modifier.padding(15.dp)
-//            ){
-//                Text(
-//                    text = stringResource(id = R.string.a1),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(70.dp)
-//                        .background(Color.LightGray)
-//                )
-//            }
+        }
+        if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+            questionViewModel.deleteQuestion(question)
+            Toast.makeText(
+                context,
+                "Question has been deleted successfully",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }
 
 @Composable
-fun Dropdown(text: String, modifier: Modifier = Modifier, initiallyOpened: Boolean = false, content: @Composable () -> Unit ){
+fun Dropdown(text: String, initiallyOpened: Boolean = false, content: @Composable () -> Unit ){
 
     var isOpen by remember { mutableStateOf(initiallyOpened) }
     val alpha = animateFloatAsState(

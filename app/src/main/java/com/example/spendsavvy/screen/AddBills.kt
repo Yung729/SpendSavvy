@@ -82,31 +82,20 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
     var amount by remember { mutableStateOf("") }
     var selectedDueDate by remember { mutableStateOf(Date()) }
     var selectedDuration by remember { mutableStateOf("") }
+
     val currentDate = Calendar.getInstance()
     val selectedCalendar = Calendar.getInstance().apply {
         time = selectedDueDate
     }
+    val currentDateMillis = Calendar.getInstance().timeInMillis
+    val selectedCalendarMillis = selectedCalendar.timeInMillis
 
-    val billsStatus by remember { mutableStateOf(
-        if (selectedCalendar.before(currentDate)) "OVERDUE" else "UPCOMING"
-    )}
+    var billsStatus by remember { mutableStateOf("") }
 
-// Calculate the difference in milliseconds between the selected date and the current date
-    val differenceInMillis = selectedCalendar.timeInMillis - currentDate.timeInMillis
-
-// Convert the difference to days
-    val daysLeft = differenceInMillis / (1000 * 60 * 60 * 24)
-
-// Print the result
-    println("$daysLeft days left")
-
-    val dayList = listOf("1", "2", "7", "14", "30")
-// Check if daysLeft matches any value in dayList
-    dayList.forEachIndexed { index, day ->
-        if ((daysLeft * -1).toInt() == day.toInt()) {
-            // Set alarm here
-            println("Alarm set for $day days before")
-        }
+    billsStatus = if (selectedCalendarMillis < currentDateMillis) {
+        "OVERDUE"
+    } else {
+        "UPCOMING"
     }
 
     val expenseList by catViewModel.expensesList.observeAsState(initial = emptyList())
@@ -129,13 +118,6 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 18.dp)
-        )
-
-        Text(
-            text = "$daysLeft days left",
-            color = Color.Black,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
         )
         Text(
             text = "Description",
@@ -218,7 +200,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         Spacer(modifier = Modifier.height(5.dp))
         Button(
             onClick = {
-                if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && selectedDueDate != null && selectedDuration.isNotBlank()) {
+                if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && selectedDuration.isNotBlank()) {
                     showDialog = true
                 }
                 else{
