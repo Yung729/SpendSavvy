@@ -280,10 +280,12 @@ class FirestoreRepository {
                                     val date = document.getDate("date") ?: Date()
                                     field.set(item, date)
                                 }
+
                                 "selectedDueDate" -> {
                                     val date = document.getDate("selectedDueDate") ?: Date()
                                     field.set(item, date)
                                 }
+
                                 "questionDate" -> {
                                     val date = document.getDate("questionDate") ?: Date()
                                     field.set(item, date)
@@ -380,14 +382,17 @@ class FirestoreRepository {
                                     val date = document.getDate("date") ?: Date()
                                     field.set(item, date)
                                 }
+
                                 "selectedDueDate" -> {
                                     val date = document.getDate("selectedDueDate") ?: Date()
                                     field.set(item, date)
                                 }
+
                                 "questionDate" -> {
                                     val date = document.getDate("questionDate") ?: Date()
                                     field.set(item, date)
                                 }
+
                                 else -> {
                                     field.set(item, value)
                                 }
@@ -432,6 +437,42 @@ class FirestoreRepository {
 
     //----------------------  Two Collection -----------------------------------------------------------
 
+    suspend fun <T : Any> readWalletById(
+        userId: String,
+        collectionName: String,
+        documentId: String,
+        itemClass: Class<T>
+    ): T? {
+        try {
+            val documentSnapshot =
+                firestore.collection("Users").document(userId).collection("Wallet").document("1")
+                    .collection(collectionName).document(documentId)
+                    .get()
+                    .await()
+
+            if (documentSnapshot.exists()) {
+                val itemData = documentSnapshot.data
+                if (itemData != null) {
+                    val item = itemClass.newInstance()
+                    for ((fieldName, value) in itemData) {
+                        try {
+                            val field = itemClass.getDeclaredField(fieldName)
+                            field.isAccessible = true
+                            field.set(item, value)
+                        } catch (e: NoSuchFieldException) {
+                            Log.e(TAG, "Field '$fieldName' not found in $itemClass", e)
+                        }
+                    }
+                    return item
+                }
+            } else {
+                Log.d(TAG, "Document not found with ID: $documentId")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting item from $collectionName with ID $documentId", e)
+        }
+        return null
+    }
 
     suspend fun readItemsWalletCollection(
         userId: String,
@@ -542,6 +583,51 @@ class FirestoreRepository {
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "Error updating document in Firestore: $e")
+            }
+    }
+
+    fun updateWalletBalanceInFirestore(
+        userId: String,
+        typeName: String, balance: Double,
+        onSuccess: (Double) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val documentRef = firestore.collection("Users")
+            .document(userId)
+            .collection("Wallet")
+            .document("1").collection("Cash").document(typeName)
+
+
+        documentRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val originalBalance = documentSnapshot.getDouble("balance") ?: 0.0
+
+                    // Calculate the new balance
+                    val newBalance = originalBalance + balance
+
+                    if (newBalance >= 0) {
+                        // Update the balance in Firestore
+                        documentRef.update("balance", newBalance)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "Balance successfully updated in Firestore")
+                                onSuccess(newBalance)
+                            }
+                            .addOnFailureListener { e ->
+                                Log.d(TAG, "Error updating balance in Firestore: $e")
+                                onFailure("Failed to update balance: $e")
+                            }
+                    } else {
+                        // Show toast message indicating insufficient balance
+                        onFailure("Insufficient balance")
+                    }
+                } else {
+                    Log.d(TAG, "Document not found for cash account: $typeName")
+                    onFailure("Document not found for cash account: $typeName")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "Error fetching balance from Firestore: $e")
             }
     }
 

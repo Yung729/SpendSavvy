@@ -21,7 +21,8 @@ class OverviewViewModel(
     context: Context,
     isOnline: Boolean,
     userId: String,
-    dateViewModel: DateSelectionViewModel
+    dateViewModel: DateSelectionViewModel,
+    val walletViewModel: WalletViewModel
 ) : ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
@@ -216,38 +217,53 @@ class OverviewViewModel(
                 val transactionId: String = getTransactionId(transactions)
                 val categoryId: String = getCategoryId(transactions.category)
 
-                firestoreRepository.updateItemInFirestoreById(
-                    currentUserId,
-                    "Transactions",
-                    transactionId,
-                    updatedTransactions,
-                    onSuccess = {
+                // Calculate the difference in amount
+                val amountDifference = updatedTransactions.amount - transactions.amount
 
-                        dbHelper.updateTransaction(
-                            transactionId = transactionId,
-                            internalId = updatedTransactions.id,
-                            amount = updatedTransactions.amount,
-                            categoryId = categoryId,
-                            paymentMethod = updatedTransactions.paymentMethod,
-                            description = updatedTransactions.description,
-                            date = updatedTransactions.date,
-                            transactionType = updatedTransactions.transactionType,
-                            userId = currentUserId
+                // Calculate the balance adjustment based on transaction type
+                val balanceAdjustment = when (updatedTransactions.transactionType) {
+                    "Incomes" -> amountDifference
+                    "Expenses" -> -amountDifference
+                    else -> 0.0
+                }
 
-                        )
+                walletViewModel.updateCashBalance(
+                    updatedTransactions.paymentMethod,
+                    balanceAdjustment
+                ) {
+                    firestoreRepository.updateItemInFirestoreById(
+                        currentUserId,
+                        "Transactions",
+                        transactionId,
+                        updatedTransactions,
+                        onSuccess = {
 
-                        val currentTransactions = transactionsList.value ?: emptyList()
-                        val updatedTransactionsList = currentTransactions.map {
-                            if (it == transactions) updatedTransactions else it
+                            dbHelper.updateTransaction(
+                                transactionId = transactionId,
+                                internalId = updatedTransactions.id,
+                                amount = updatedTransactions.amount,
+                                categoryId = categoryId,
+                                paymentMethod = updatedTransactions.paymentMethod,
+                                description = updatedTransactions.description,
+                                date = updatedTransactions.date,
+                                transactionType = updatedTransactions.transactionType,
+                                userId = currentUserId
+
+                            )
+
+                            val currentTransactions = transactionsList.value ?: emptyList()
+                            val updatedTransactionsList = currentTransactions.map {
+                                if (it == transactions) updatedTransactions else it
+                            }
+                            updateTransactions(
+                                transactions = updatedTransactionsList
+                            )
+                            Toast.makeText(
+                                currentContext, "Transaction edited", Toast.LENGTH_SHORT
+                            ).show()
                         }
-                        updateTransactions(
-                            transactions = updatedTransactionsList
-                        )
-                        Toast.makeText(
-                            currentContext, "Transaction edited", Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                )
+                    )
+                }
 
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error editing Transactions", e)
@@ -261,24 +277,40 @@ class OverviewViewModel(
                 val transactionId: String =
                     firestoreRepository.getDocumentId("Transactions", currentUserId, transaction)
 
-                firestoreRepository.deleteItemFromFirestoreById(
-                    currentUserId,
-                    "Transactions",
-                    transactionId,
-                    onSuccess = {
-                        dbHelper.deleteTransaction(transactionId, currentUserId)
+                walletViewModel.updateCashBalance(
+                    transaction.paymentMethod,
+                    when (transaction.transactionType) {
+                        "Incomes" -> {
+                            -transaction.amount
+                        }
 
-                        val currentTransactions = transactionsList.value ?: emptyList()
-                        val updatedTransactions = currentTransactions.filter { it != transaction }
-                        updateTransactions(
-                            transactions = updatedTransactions,
-                            selectedDate = selectedDateFromUser.value ?: Date()
-                        )
-                        Toast.makeText(
-                            currentContext, "Transaction deleted", Toast.LENGTH_SHORT
-                        ).show()
+                        "Expenses" -> {
+                            transaction.amount
+                        }
+
+                        else -> 0.0
                     }
-                )
+                ) {
+                    firestoreRepository.deleteItemFromFirestoreById(
+                        currentUserId,
+                        "Transactions",
+                        transactionId,
+                        onSuccess = {
+                            dbHelper.deleteTransaction(transactionId, currentUserId)
+
+                            val currentTransactions = transactionsList.value ?: emptyList()
+                            val updatedTransactions =
+                                currentTransactions.filter { it != transaction }
+                            updateTransactions(
+                                transactions = updatedTransactions,
+                                selectedDate = selectedDateFromUser.value ?: Date()
+                            )
+                            Toast.makeText(
+                                currentContext, "Transaction deleted", Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    )
+                }
 
 
             } catch (e: Exception) {
@@ -296,36 +328,57 @@ class OverviewViewModel(
             try {
                 val categoryId: String = getCategoryId(transaction.category)
 
-                firestoreRepository.addItem(
-                    currentUserId,
-                    "Transactions",
-                    transaction,
-                    "T%04d",
-                    onSuccess = { documentId ->
-                        dbHelper.addNewTransaction(
-                            transactionId = documentId,
-                            internalId = transaction.id,
-                            amount = transaction.amount,
-                            categoryId = categoryId,
-                            paymentMethod = transaction.paymentMethod,
-                            description = transaction.description,
-                            date = transaction.date,
-                            transactionType = transaction.transactionType,
-                            userId = currentUserId
-                        )
-                        val currentTransactions = transactionsList.value ?: emptyList()
-                        val updatedTransactions = currentTransactions + transaction
-                        updateTransactions(
-                            transactions = updatedTransactions
-                        )
+                walletViewModel.updateCashBalance(
+                    transaction.paymentMethod,
+                    when (transaction.transactionType) {
+                        "Incomes" -> {
+                            transaction.amount
+                        }
 
-                        onSuccess() // Invoke the onSuccess callback
-                    },
-                    onFailure = { exception ->
-                        Log.e(ContentValues.TAG, "Error adding transaction", exception)
-                        onFailure(exception) // Invoke the onFailure callback
+                        "Expenses" -> {
+                            -transaction.amount
+                        }
+
+                        else -> 0.0
                     }
-                )
+                ) {
+
+
+                    firestoreRepository.addItem(
+                        currentUserId,
+                        "Transactions",
+                        transaction,
+                        "T%04d",
+                        onSuccess = { documentId ->
+                            dbHelper.addNewTransaction(
+                                transactionId = documentId,
+                                internalId = transaction.id,
+                                amount = transaction.amount,
+                                categoryId = categoryId,
+                                paymentMethod = transaction.paymentMethod,
+                                description = transaction.description,
+                                date = transaction.date,
+                                transactionType = transaction.transactionType,
+                                userId = currentUserId
+                            )
+
+
+                            val currentTransactions = transactionsList.value ?: emptyList()
+                            val updatedTransactions = currentTransactions + transaction
+                            updateTransactions(
+                                transactions = updatedTransactions
+                            )
+
+                            onSuccess() // Invoke the onSuccess callback
+                        },
+                        onFailure = { exception ->
+                            Log.e(ContentValues.TAG, "Error adding transaction", exception)
+                            onFailure(exception) // Invoke the onFailure callback
+                        }
+                    )
+                }
+
+
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding transaction", e)
                 onFailure(e) // Invoke the onFailure callback
@@ -344,36 +397,54 @@ class OverviewViewModel(
             try {
                 val categoryId: String = getCategoryId(transaction.category)
 
-                firestoreRepository.addItem(
-                    userId,
-                    "Transactions",
-                    transaction,
-                    "T%04d",
-                    onSuccess = { documentId ->
-                        dbHelper.addNewTransaction(
-                            transactionId = documentId,
-                            internalId = transaction.id,
-                            amount = transaction.amount,
-                            categoryId = categoryId,
-                            paymentMethod = transaction.paymentMethod,
-                            description = transaction.description,
-                            date = transaction.date,
-                            transactionType = transaction.transactionType,
-                            userId = userId
-                        )
-                        val currentTransactions = transactionsList.value ?: emptyList()
-                        val updatedTransactions = currentTransactions + transaction
-                        updateTransactions(
-                            transactions = updatedTransactions
-                        )
+                firestoreRepository.updateWalletBalanceInFirestore(userId = userId,
+                    typeName = transaction.paymentMethod,
+                    when (transaction.transactionType) {
+                        "Incomes" -> {
+                            transaction.amount
+                        }
 
-                        onSuccess() // Invoke the onSuccess callback
+                        "Expenses" -> {
+                            -transaction.amount
+                        }
+
+                        else -> 0.0
                     },
-                    onFailure = { exception ->
-                        Log.e(ContentValues.TAG, "Error adding transaction", exception)
-                        onFailure(exception) // Invoke the onFailure callback
-                    }
-                )
+                    onSuccess = {
+                        firestoreRepository.addItem(
+                            userId,
+                            "Transactions",
+                            transaction,
+                            "T%04d",
+                            onSuccess = { documentId ->
+                                dbHelper.addNewTransaction(
+                                    transactionId = documentId,
+                                    internalId = transaction.id,
+                                    amount = transaction.amount,
+                                    categoryId = categoryId,
+                                    paymentMethod = transaction.paymentMethod,
+                                    description = transaction.description,
+                                    date = transaction.date,
+                                    transactionType = transaction.transactionType,
+                                    userId = userId
+                                )
+                                val currentTransactions = transactionsList.value ?: emptyList()
+                                val updatedTransactions = currentTransactions + transaction
+                                updateTransactions(
+                                    transactions = updatedTransactions
+                                )
+
+                                onSuccess() // Invoke the onSuccess callback
+                            },
+                            onFailure = { exception ->
+                                Log.e(ContentValues.TAG, "Error adding transaction", exception)
+                                onFailure(exception) // Invoke the onFailure callback
+                            }
+                        )
+                    },
+                    onFailure = {})
+
+
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding transaction", e)
                 onFailure(e) // Invoke the onFailure callback
