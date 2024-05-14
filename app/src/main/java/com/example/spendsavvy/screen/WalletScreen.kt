@@ -1,7 +1,9 @@
 package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,35 +67,35 @@ fun WalletScreen(
     Column(
         modifier = modifier
     ) {
-        /* Row(
-             modifier = Modifier.fillMaxWidth(),
-             horizontalArrangement = Arrangement.SpaceBetween
-         ) {
-             HeaderTitle(text = "Wallet")
-
-             Icon(
-                 Icons.Default.Notifications,
-                 contentDescription = "Notifications",
-                 modifier = Modifier.align(Alignment.CenterVertically)
-             )
-         }*/
 
         Spacer(modifier = Modifier.height(25.dp))
 
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = Color.White, //later need change to brush color
-                contentColor = Color.Black
+                contentColor = Color.White
             ),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 5.dp
             ),
             shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
         ) {
+
+            Box(
+                modifier = Modifier.background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF696161), // Start color
+                            Color(0xFF1B1B1B)  // End color
+                        )
+                    )
+                ).fillMaxWidth()
+            ){
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(text = "Available Balance")
 
                 Text(text = "RM 9,000")
+            }
             }
         }
 
