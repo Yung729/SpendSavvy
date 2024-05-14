@@ -1,17 +1,29 @@
 package com.example.spendsavvy.screen
 
+import android.R
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,11 +72,21 @@ fun AddNewStockScreen(
         mutableStateOf("")
     }
 
+    var selectedImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectedImageUri = it
+        })
+
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 15.dp, top = 15.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
             text = "Add New Product",
@@ -78,6 +101,63 @@ fun AddNewStockScreen(
                 .fillMaxWidth()
                 .padding(start = 40.dp, top = 30.dp, bottom = 30.dp)
         ) {
+
+            Text(
+                text = "Pick Icon Photo",
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF46484B), contentColor = Color.White
+                ),
+                onClick = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }) {
+
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_input_add),
+                        contentDescription = "Add Image"
+                    )
+
+                    Text(
+                        text = "Pick a Photo",
+                    )
+                }
+            }
+
+            if (selectedImageUri != null) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Image added", color = Color.Green
+                    )
+                    IconButton(
+                        onClick = { selectedImageUri = null },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear Image"
+                        )
+                    }
+                }
+            }
+
+
             Text(
                 text = "Product Name",
                 fontFamily = poppinsFontFamily,
@@ -189,10 +269,11 @@ fun AddNewStockScreen(
                         onSuccess = {
                             val valid = walletViewModel.addStockDetailsToDatabase(
                                 Stock(
+                                    selectedImageUri,
                                     stockName,
                                     price.toDoubleOrNull() ?: 0.0,
                                     qty.toInt()
-                                )
+                                ),selectedImageUri
                             )
                             if(valid == 1)
                             navController.navigateUp()

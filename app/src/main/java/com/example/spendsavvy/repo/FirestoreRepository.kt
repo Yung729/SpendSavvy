@@ -205,13 +205,14 @@ class FirestoreRepository {
     }
 
     fun uploadImageToStorage(
+        fileName : String,
         storageRef: StorageReference,
         imageUri: Uri,
         onSuccess: (Uri) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         val uniqueImageName = UUID.randomUUID().toString()
-        val imageRef = storageRef.child("images/$uniqueImageName.jpg")
+        val imageRef = storageRef.child("$fileName/$uniqueImageName.jpg")
 
         val uploadTask = imageRef.putFile(imageUri)
         uploadTask.continueWithTask { task ->
@@ -596,6 +597,13 @@ class FirestoreRepository {
                                 "date" -> {
                                     val date = document.getDate("date") ?: Date()
                                     field.set(item, date)
+                                }
+
+                                "imageUri" -> {
+                                    val imageUriString = value as String
+                                    val imageUri =
+                                        if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
+                                    field.set(item, imageUri)
                                 }
 
                                 else -> {

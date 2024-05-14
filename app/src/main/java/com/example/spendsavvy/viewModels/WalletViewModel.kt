@@ -2,6 +2,7 @@ package com.example.spendsavvy.viewModels
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,7 @@ import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.repo.FirestoreRepository
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -307,7 +309,7 @@ class WalletViewModel(
         stockListLive.postValue(stockList)
     }
 
-    fun addStockDetailsToDatabase(stock: Stock) : Int {
+    fun addStockDetailsToDatabase(stock: Stock,imageUri : Uri?) : Int {
         if (stockListLive.value?.any { it.productName == stock.productName } == true) {
             Toast.makeText(
                 currentContext, "The product already existed", Toast.LENGTH_SHORT
@@ -317,27 +319,62 @@ class WalletViewModel(
 
         viewModelScope.launch {
             try {
-                firestoreRepository.addWalletItems(
-                    userId,
-                    "Stock",
-                    stock,
-                    stock.productName,
-                    onSuccess = {
-                        /*dbHelper.addNewCashDetails(
+                if (imageUri != null) {
+                    val storageRef = FirebaseStorage.getInstance().reference
+
+                    firestoreRepository.uploadImageToStorage("stockImages",storageRef, imageUri,
+                        { downloadUri ->
+                            stock.imageUri = downloadUri
+                            firestoreRepository.addWalletItems(
+                                userId,
+                                "Stock",
+                                stock,
+                                stock.productName,
+                                onSuccess = {
+                                    /*dbHelper.addNewCashDetails(
                             type = cash.type,
                             typeName = cash.typeName,
                             balance = cash.balance,
                             userId = userId
                         )*/
 
-                        val stockInfo = stockListLive.value ?: emptyList()
-                        val updatedStockDetailsList = stockInfo + stock
-                        updateStockTotalPrice(updatedStockDetailsList)
-                    },
-                    onFailure = { exception ->
-                        Log.e(ContentValues.TAG, "Error adding cash details", exception)
-                    }
-                )
+                                    val stockInfo = stockListLive.value ?: emptyList()
+                                    val updatedStockDetailsList = stockInfo + stock
+                                    updateStockTotalPrice(updatedStockDetailsList)
+                                },
+                                onFailure = { exception ->
+                                    Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                                }
+                            )
+                        }, { exception ->
+                            Log.e(ContentValues.TAG, "Error uploading image", exception)
+                            // Handle failure
+                        })
+
+                }else {
+
+                    firestoreRepository.addWalletItems(
+                        userId,
+                        "Stock",
+                        stock,
+                        stock.productName,
+                        onSuccess = {
+                            /*dbHelper.addNewCashDetails(
+                            type = cash.type,
+                            typeName = cash.typeName,
+                            balance = cash.balance,
+                            userId = userId
+                        )*/
+
+                            val stockInfo = stockListLive.value ?: emptyList()
+                            val updatedStockDetailsList = stockInfo + stock
+                            updateStockTotalPrice(updatedStockDetailsList)
+                        },
+                        onFailure = { exception ->
+                            Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                        }
+                    )
+                }
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding cash details", e)
             }

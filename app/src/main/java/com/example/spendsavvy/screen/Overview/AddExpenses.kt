@@ -284,7 +284,7 @@ fun AddExpensesScreen(
                         onDismissRequest = { isExpanded1 = false }) {
                         for (data in paymentList) {
                             DropdownMenuItem(text = {
-                                Text(text = data.typeName)
+                                Text(text = "${data.typeName} RM ${data.balance}")
                             }, onClick = {
                                 selectedMethod = data.typeName
                                 isExpanded1 = false

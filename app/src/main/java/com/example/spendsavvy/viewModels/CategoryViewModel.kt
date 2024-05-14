@@ -193,7 +193,7 @@ class CategoryViewModel(
         if (imageUri != null) {
             val storageRef = FirebaseStorage.getInstance().reference
 
-            firestoreRepository.uploadImageToStorage(storageRef, imageUri, { downloadUri ->
+            firestoreRepository.uploadImageToStorage("images",storageRef, imageUri, { downloadUri ->
                 category.imageUri = downloadUri
                 firestoreRepository.addItem(currentUserId, "Categories", category, "CT%04d",
 

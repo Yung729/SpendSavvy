@@ -271,6 +271,7 @@ fun EditExistingStockScreen(
                                         walletViewModel.editStockDetails(
                                             stock = stock,
                                             updatedStockDetails = Stock(
+                                                stock.imageUri,
                                                 searchProduct,
                                                 stock.originalPrice,
                                                 stock.quantity - qty.toInt()
@@ -303,6 +304,7 @@ fun EditExistingStockScreen(
                                         walletViewModel.editStockDetails(
                                             stock = stock,
                                             updatedStockDetails = Stock(
+                                                stock.imageUri,
                                                 searchProduct,
                                                 stock.originalPrice,
                                                 qty.toInt()
