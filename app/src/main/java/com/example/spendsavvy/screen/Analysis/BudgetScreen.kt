@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,12 +39,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendsavvy.components.bounceClick
+import com.example.spendsavvy.ui.theme.ScreenSize
+import com.example.spendsavvy.ui.theme.WindowType
 import com.example.spendsavvy.viewModels.TargetViewModel
 import java.time.YearMonth
 
 
 @Composable
-fun BudgetScreen(budgetViewModel: TargetViewModel) {
+fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
 
 
     var budgetAmountText by remember { mutableStateOf("0") }
@@ -78,11 +81,12 @@ fun BudgetScreen(budgetViewModel: TargetViewModel) {
                 verticalArrangement = Arrangement.Center
             ) {
 
-                Text(text = "Budget", fontWeight = FontWeight.Bold)
 
                 DetailCard(
+                    title = "Budget",
                     dailyAmount = budgetAmountFromDB.value,
-                    monthlyAmount = monthlyBudgetAmount
+                    monthlyAmount = monthlyBudgetAmount,
+                    window = window
                 )
                 Spacer(modifier = Modifier.height(30.dp))
                 Card(
@@ -130,9 +134,13 @@ fun BudgetScreen(budgetViewModel: TargetViewModel) {
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                Text(text = "Goal", fontWeight = FontWeight.Bold)
 
-                DetailCard(dailyAmount = goalAmountFromDB.value, monthlyAmount = monthlyGoalAmount)
+                DetailCard(
+                    title = "Goal",
+                    dailyAmount = goalAmountFromDB.value,
+                    monthlyAmount = monthlyGoalAmount,
+                    window = window
+                )
                 Spacer(modifier = Modifier.height(30.dp))
                 Card(
                     elevation = CardDefaults.cardElevation(
@@ -186,74 +194,164 @@ fun BudgetScreen(budgetViewModel: TargetViewModel) {
 
 @Composable
 fun DetailCard(
+    title: String,
     dailyAmount: Double,
-    monthlyAmount: Double
+    monthlyAmount: Double,
+    window: ScreenSize
 ) {
 
 
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+    when (window.height) {
+        WindowType.Expanded -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
 
-    ) {
-        Box(
-            modifier = Modifier.background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF696161), // Start color
-                        Color(0xFF1B1B1B)  // End color
-                    )
-                )
-            )
-        ) {
-
-            Column(
-                modifier = Modifier.padding(15.dp)
             ) {
-                Row {
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Column {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .wrapContentWidth()
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
                         Text(
-                            text = "Daily Amount",
+                            text = title,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 19.sp,
+                            fontSize = 25.sp,
+                            textAlign = TextAlign.Center,
                             color = Color.White
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "RM $dailyAmount",
-                            fontSize = 14.sp,
-                            color = Color.White
 
-                        )
 
-                    }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
 
-                    Spacer(modifier = Modifier.width(29.dp))
+                            Column {
+                                Text(
+                                    text = "Daily Amount",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "RM $dailyAmount",
+                                    fontSize = 18.sp,
+                                    color = Color.White
 
-                    Column {
-                        Text(
-                            text = "Monthly Amount",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp,
-                            color = Color.White
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "RM $monthlyAmount",
-                            fontSize = 14.sp,
-                            color = Color.White
-                        )
+                                )
+
+                            }
+
+                            Spacer(modifier = Modifier.width(20.dp))
+
+                            Column {
+                                Text(
+                                    text = "Monthly Amount",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "RM $monthlyAmount",
+                                    fontSize = 18.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
                     }
                 }
+
+
             }
         }
 
+        else -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
 
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .fillMaxWidth()
+                ) {
+
+                    Column(
+                        modifier = Modifier.padding(15.dp)
+                    ) {
+                        Row() {
+
+                            Column {
+                                Text(
+                                    text = "Daily Amount",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 19.sp,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "RM $dailyAmount",
+                                    fontSize = 14.sp,
+                                    color = Color.White
+
+                                )
+
+                            }
+
+                            Spacer(modifier = Modifier.width(20.dp))
+
+                            Column {
+                                Text(
+                                    text = "Monthly Amount",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "RM $monthlyAmount",
+                                    fontSize = 14.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
     }
 
 

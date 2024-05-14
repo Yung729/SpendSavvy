@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,6 +88,7 @@ import com.example.spendsavvy.screen.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
+import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
@@ -100,7 +100,11 @@ import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
 
 @Composable
-fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
+fun SetupNavGraph(
+    navController: NavHostController = rememberNavController(),
+    context: Context,
+    window: ScreenSize
+) {
 
     val isConnected = isInternetAvailable(context)
     var showSnackBar by remember {
@@ -120,7 +124,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences("UserAcc", Context.MODE_PRIVATE)
     }
-    var userId by remember { mutableStateOf("") }
+    var userId by remember { mutableStateOf("adminUser") }
     userId = fireAuthRepository.getCurrentUserId()
 
 
@@ -379,7 +383,8 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                         budgetViewModel = targetViewModel,
                         dateViewModel = dateViewModel,
                         profileViewModel = profileViewModel,
-                        navController = navController
+                        navController = navController,
+                        window = window
                     )
 
                 }
@@ -404,7 +409,8 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                             .padding(20.dp),
                         navController = navController,
                         transactionViewModel = transactionsViewModel,
-                        budgetViewModel = targetViewModel
+                        budgetViewModel = targetViewModel,
+                        window = window
                     )
 
                 }
@@ -843,7 +849,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                 ) {
 
                     BudgetScreen(
-                        budgetViewModel = targetViewModel
+                        budgetViewModel = targetViewModel,window = window
                     )
 
 
@@ -859,7 +865,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                             .padding(20.dp),
                         transactionViewModel = transactionsViewModel,
                         dateViewModel = dateViewModel,
-                        navController = navController
+                        navController = navController, window = window
                     )
 
 

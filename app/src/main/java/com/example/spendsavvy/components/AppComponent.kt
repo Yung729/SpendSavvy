@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -332,38 +333,41 @@ fun RemainingChart(
         animationSpec = tween(1000)
     )
 
-    Column(
-        modifier = Modifier
-            .size(canvasSize)
-            .drawBehind {
-                val componentSize = size / 1.25f
-                backgroundIndicator(
-                    componentSize = componentSize,
-                    indicatorColor = backgroundIndicatorColor,
-                    indicatorStrokeWidth = backgroundIndicatorStrokeWidth,
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(canvasSize)
+                .drawBehind {
+                    val componentSize = size / 1.25f
+                    backgroundIndicator(
+                        componentSize = componentSize,
+                        indicatorColor = backgroundIndicatorColor,
+                        indicatorStrokeWidth = backgroundIndicatorStrokeWidth,
 //                    indicatorStokeCap = indicatorStrokeCap
-                )
-                foregroundIndicator(
-                    sweepAngle = sweepAngle,
-                    componentSize = componentSize,
-                    indicatorColor = foregroundIndicatorColor,
-                    indicatorStrokeWidth = foregroundIndicatorStrokeWidth,
+                    )
+                    foregroundIndicator(
+                        sweepAngle = sweepAngle,
+                        componentSize = componentSize,
+                        indicatorColor = foregroundIndicatorColor,
+                        indicatorStrokeWidth = foregroundIndicatorStrokeWidth,
 //                    indicatorStokeCap = indicatorStrokeCap
-                )
-            },
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        EmbeddedElements(
-            bigText = (maxIndicatorValue - receivedValue),
-            bigTextFontSize = bigTextFontSize,
-            bigTextColor = animatedBigTextColor,
-            bigTextSuffix = bigTextSuffix,
-            smallText = smallText,
-            smallTextColor = smallTextColor,
-            smallTextFontSize = smallTextFontSize
-        )
-    }
+                    )
+                },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            EmbeddedElements(
+                bigText = (maxIndicatorValue - receivedValue),
+                bigTextFontSize = bigTextFontSize,
+                bigTextColor = animatedBigTextColor,
+                bigTextSuffix = bigTextSuffix,
+                smallText = smallText,
+                smallTextColor = smallTextColor,
+                smallTextFontSize = smallTextFontSize
+            )
+        }
+
 }
 
 fun DrawScope.backgroundIndicator(
@@ -498,7 +502,8 @@ fun PieChart(
 
         // Pie Chart using Canvas Arc
         Column(
-            modifier = Modifier.size(animateSize.dp)
+            modifier = Modifier.size(animateSize.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Canvas(
                 modifier = Modifier
@@ -517,10 +522,10 @@ fun PieChart(
                     lastValue += value
                 }
             }
+
+
         }
 
-        // To see the data in more structured way
-        // Compose Function in which Items are showing data
         DetailsPieChart(
             data = data,
             colors = colors
@@ -537,7 +542,8 @@ fun DetailsPieChart(
     Column(
         modifier = Modifier
             .padding(top = 40.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // create the data items
         data.values.forEachIndexed { index, value ->
@@ -559,7 +565,7 @@ fun DetailsPieChartItem(
 
     Surface(
         modifier = Modifier
-            .padding(vertical = 10.dp, horizontal = 40.dp),
+            .padding(vertical = 10.dp, horizontal = 40.dp).fillMaxWidth(),
         color = Color.Transparent
     ) {
 

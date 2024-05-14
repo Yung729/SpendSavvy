@@ -1,15 +1,25 @@
 package com.example.spendsavvy.screen.Overview
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -25,12 +35,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.ui.theme.ScreenSize
+import com.example.spendsavvy.ui.theme.WindowType
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
@@ -49,7 +67,8 @@ fun AllTransactionScreen(
     modifier: Modifier = Modifier,
     transactionViewModel: OverviewViewModel,
     dateViewModel: DateSelectionViewModel,
-    navController: NavController
+    navController: NavController,
+    window : ScreenSize
 ) {
 
     val allTransactionList by transactionViewModel.transactionsList.observeAsState(initial = emptyList())
@@ -159,7 +178,7 @@ fun AllTransactionScreen(
 
         when (selectedIndex) {
             0 -> {
-                OverViewCard(incomes = yearIncomes, expenses = yearExpenses)
+                DetailCard(incomes = yearIncomes, expenses = yearExpenses, window = window)
                 Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     yearSortedTransactions,
@@ -170,7 +189,7 @@ fun AllTransactionScreen(
             }
 
             1 -> {
-                OverViewCard(incomes = monthIncomes, expenses = monthExpenses)
+                DetailCard(incomes = monthIncomes, expenses = monthExpenses, window = window)
                 Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     monthSortedTransactions,
@@ -181,7 +200,7 @@ fun AllTransactionScreen(
             }
 
             2 -> {
-                OverViewCard(incomes = todayIncomes, expenses = todayExpenses)
+                DetailCard(incomes = todayIncomes, expenses = todayExpenses, window = window)
                 Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     dayTransactionList,
@@ -192,7 +211,7 @@ fun AllTransactionScreen(
             }
 
             3 -> {
-                OverViewCard(incomes = allIncomes, expenses = allExpenses)
+                DetailCard(incomes = allIncomes, expenses = allExpenses, window = window)
                 Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     allSortedTransactions,
@@ -203,7 +222,7 @@ fun AllTransactionScreen(
             }
 
             4 -> {
-                OverViewCard(incomes = dateRangeIncomes, expenses = dateRangeExpenses)
+                DetailCard(incomes = dateRangeIncomes, expenses = dateRangeExpenses, window = window)
                 Spacer(modifier = Modifier.height(10.dp))
                 TransactionList(
                     customTransactionList,
@@ -216,5 +235,229 @@ fun AllTransactionScreen(
 
 
     }
+
+}
+
+@Composable
+fun DetailCard(
+    incomes: Double,
+    expenses: Double,
+    window: ScreenSize
+) {
+
+    when (window.height) {
+        WindowType.Expanded -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ), shape = RoundedCornerShape(16.dp), modifier = Modifier
+
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .wrapContentWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp)
+                        , horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Overview",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 25.sp,
+                            textAlign = TextAlign.Center,
+                            color = Color.White
+                        )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.incomes),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(35.dp, 35.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Income",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 20.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $incomes",
+                                            fontSize = 18.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.expenses),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(35.dp, 35.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Expenses",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 20.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $expenses",
+                                            fontSize = 18.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+
+                        }
+                    }
+                }
+            }
+        }
+
+        else -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ), shape = RoundedCornerShape(16.dp), modifier = Modifier
+                    .fillMaxWidth()
+
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(10.dp)
+
+                    ) {
+                        Text(
+                            text = "Overview",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.incomes),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(30.dp, 30.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Income",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $incomes",
+                                            fontSize = 14.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.expenses),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(30.dp, 30.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Expenses",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $expenses",
+                                            fontSize = 14.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 }

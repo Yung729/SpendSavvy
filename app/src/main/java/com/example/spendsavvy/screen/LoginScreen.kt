@@ -95,7 +95,7 @@ fun LoginScreen(
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
             singleLine = true,
-
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
         OutlinedTextField(

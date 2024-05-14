@@ -28,23 +28,14 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SpendSavvy">
+            android:theme="@style/Theme.SpendSavvy"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--
-        <receiver
-            android:name=".worker.MonthlySalaryAlarmReceiver"
-            android:exported="false">
-        </receiver>-->
-
-        <receiver
-            android:name=".worker.BillsAlarmReceiver"
-            android:exported="false">
-        </receiver>
 
     </application>
 

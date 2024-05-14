@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -57,6 +58,8 @@ import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
+import com.example.spendsavvy.ui.theme.ScreenSize
+import com.example.spendsavvy.ui.theme.WindowType
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
@@ -73,7 +76,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
+@OptIn(
+    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
     ExperimentalMaterialApi::class
 )
 @Composable
@@ -83,7 +87,8 @@ fun OverviewScreen(
     budgetViewModel: TargetViewModel,
     dateViewModel: DateSelectionViewModel,
     profileViewModel: ProfileViewModel,
-    navController: NavController
+    navController: NavController,
+    window: ScreenSize
 ) {
     val isLoading by transactionViewModel.isLoading.observeAsState(initial = false)
 
@@ -127,8 +132,6 @@ fun OverviewScreen(
     Box(modifier = Modifier.fillMaxSize()) {
 
 
-
-
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Color.Transparent
@@ -155,120 +158,275 @@ fun OverviewScreen(
             )
         }
 
-        LazyColumn(
-            modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-
-            item {
-                Text(
-                    text = "Hi, ${userData.userName}", //current User
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = HeaderTitle
-                )
-            }
-
-            item {
-                val selectedDateString = selectedDate.value.let {
-                    if (dateFormat.format(it) == dateFormat.format(Date())) {
-                        "Today"
-                    } else {
-                        dateFormat.format(it)
-                    }
-                } ?: "Select Month"
-
-                Row(
-                    modifier = Modifier
-                        .clickable(onClick = { calendarState.show() })
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.calendar),
-                        contentDescription = "Calendar",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = selectedDateString,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                }
-
-
-            }
-
-            item {
-                OverViewCard(incomes = totalIncomes, expenses = totalExpenses)
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+        when (window.height) {
+            WindowType.Expanded -> {
+                LazyColumn(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
 
-                    BudgetCard(budgetAmount = budgetAmount, totalExpenses = totalExpenses)
-                    GoalCard(
-                        goalAmount = goalAmount,
-                        totalIncomes = totalIncomes,
-                        totalExpenses = totalExpenses
-                    )
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Record",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = HeaderTitle
-                    )
-
-                    ClickableText(
-                        text = AnnotatedString("See All"),
-                        onHover = {
-                            TextStyle(
-                                fontFamily = poppinsFontFamily,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF0B2E41),
-                            )
-                        },
-                        onClick = {
-                            navController.navigate(Screen.AllTransaction.route)
-                        },
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        style = TextStyle(
+                    item {
+                        Text(
+                            text = "Hi, ${userData.userName}", //current User
                             fontFamily = poppinsFontFamily,
-                            fontSize = 10.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF489FCD),
+                            color = HeaderTitle
                         )
-                    )
+                    }
+
+                    item {
+                        val selectedDateString = selectedDate.value.let {
+                            if (dateFormat.format(it) == dateFormat.format(Date())) {
+                                "Today"
+                            } else {
+                                dateFormat.format(it)
+                            }
+                        } ?: "Select Month"
+
+                        Row(
+                            modifier = Modifier
+                                .clickable(onClick = { calendarState.show() })
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.calendar),
+                                contentDescription = "Calendar",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = selectedDateString,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        }
+
+
+                    }
+
+                    item {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+
+                            OverViewCard(
+                                incomes = totalIncomes,
+                                expenses = totalExpenses,
+                                window = window
+                            )
+
+                            Column(
+                                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                            ) {
+
+                                BudgetCard(
+                                    budgetAmount = budgetAmount,
+                                    totalExpenses = totalExpenses,
+                                    navController = navController,
+                                    window = window
+                                )
+
+
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                GoalCard(
+                                    goalAmount = goalAmount,
+                                    totalIncomes = totalIncomes,
+                                    totalExpenses = totalExpenses,
+                                    navController = navController,
+                                    window = window
+                                )
+                            }
+                        }
+
+                    }
+
+
+
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Record",
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = HeaderTitle
+                            )
+
+                            ClickableText(
+                                text = AnnotatedString("See All"),
+                                onHover = {
+                                    TextStyle(
+                                        fontFamily = poppinsFontFamily,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFF0B2E41),
+                                    )
+                                },
+                                onClick = {
+                                    navController.navigate(Screen.AllTransaction.route)
+                                },
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                style = TextStyle(
+                                    fontFamily = poppinsFontFamily,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF489FCD),
+                                )
+                            )
+
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        TransactionList(
+                            modifier = Modifier.height(400.dp),
+                            transactionsList = transactionList,
+                            navController = navController,
+                            transactionViewModel = transactionViewModel,
+                            dismissStateMap = dismissStateMap
+                        )
+                    }
+
 
                 }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                TransactionList(
-                    modifier = Modifier.height(400.dp),
-                    transactionsList = transactionList,
-                    navController = navController,
-                    transactionViewModel = transactionViewModel,
-                    dismissStateMap = dismissStateMap
-                )
             }
 
+            else -> {
+                LazyColumn(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
 
+                    item {
+                        Text(
+                            text = "Hi, ${userData.userName}", //current User
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = HeaderTitle
+                        )
+                    }
+
+                    item {
+                        val selectedDateString = selectedDate.value.let {
+                            if (dateFormat.format(it) == dateFormat.format(Date())) {
+                                "Today"
+                            } else {
+                                dateFormat.format(it)
+                            }
+                        } ?: "Select Month"
+
+                        Row(
+                            modifier = Modifier
+                                .clickable(onClick = { calendarState.show() })
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.calendar),
+                                contentDescription = "Calendar",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = selectedDateString,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        }
+
+
+                    }
+
+                    item {
+                        OverViewCard(
+                            incomes = totalIncomes,
+                            expenses = totalExpenses,
+                            window = window
+                        )
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier.horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+
+                            BudgetCard(
+                                budgetAmount = budgetAmount,
+                                totalExpenses = totalExpenses,
+                                navController = navController,
+                                window = window
+                            )
+                            GoalCard(
+                                goalAmount = goalAmount,
+                                totalIncomes = totalIncomes,
+                                totalExpenses = totalExpenses,
+                                navController = navController,
+                                window = window
+                            )
+                        }
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Record",
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = HeaderTitle
+                            )
+
+                            ClickableText(
+                                text = AnnotatedString("See All"),
+                                onHover = {
+                                    TextStyle(
+                                        fontFamily = poppinsFontFamily,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFF0B2E41),
+                                    )
+                                },
+                                onClick = {
+                                    navController.navigate(Screen.AllTransaction.route)
+                                },
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                style = TextStyle(
+                                    fontFamily = poppinsFontFamily,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF489FCD),
+                                )
+                            )
+
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        TransactionList(
+                            modifier = Modifier.height(400.dp),
+                            transactionsList = transactionList,
+                            navController = navController,
+                            transactionViewModel = transactionViewModel,
+                            dismissStateMap = dismissStateMap
+                        )
+                    }
+
+
+                }
+            }
         }
+
+
     }
 
 }
@@ -277,95 +435,221 @@ fun OverviewScreen(
 @Composable
 fun OverViewCard(
     incomes: Double,
-    expenses: Double
+    expenses: Double,
+    window: ScreenSize
 ) {
 
-
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ), shape = RoundedCornerShape(16.dp), modifier = Modifier
-            .fillMaxWidth()
-
-    ) {
-        Box(
-            modifier = Modifier.background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF696161), // Start color
-                        Color(0xFF1B1B1B)  // End color
-                    )
-                )
-            )
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(10.dp)
+    when (window.height) {
+        WindowType.Expanded -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ), shape = RoundedCornerShape(16.dp), modifier = Modifier
 
             ) {
-                Text(
-                    text = "Overview",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = Color.White
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .wrapContentWidth()
                 ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .width(350.dp)
+                            .height(260.dp)
 
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = R.drawable.incomes),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(30.dp, 30.dp)
-                                    .padding(end = 10.dp)
-                            )
-                            Text(
-                                text = "Income",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = Color.White
-                            )
-                        }
-
+                    ) {
                         Text(
-                            text = "RM $incomes",
-                            fontSize = 14.sp,
+                            text = "Overview",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp,
                             color = Color.White
                         )
-                    }
 
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = R.drawable.expenses),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(30.dp, 30.dp)
-                                    .padding(end = 10.dp)
-                            )
-                            Text(
-                                text = "Expenses",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = Color.White
-                            )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Column(
+
+                        ) {
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.incomes),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(40.dp, 40.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Income",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 25.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $incomes",
+                                            fontSize = 16.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+                            Spacer(modifier = Modifier.height(40.dp))
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.expenses),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(40.dp, 40.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Expenses",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 25.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $expenses",
+                                            fontSize = 16.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+
                         }
+                    }
+                }
+            }
+        }
 
+        else -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ), shape = RoundedCornerShape(16.dp), modifier = Modifier
+                    .fillMaxWidth()
+
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(10.dp)
+
+                    ) {
                         Text(
-                            text = "RM $expenses",
-                            fontSize = 14.sp,
+                            text = "Overview",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
                             color = Color.White
                         )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.incomes),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(30.dp, 30.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Income",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $incomes",
+                                            fontSize = 14.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.expenses),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(30.dp, 30.dp)
+                                            .padding(end = 10.dp)
+                                    )
+
+                                    Column {
+                                        Text(
+                                            text = "Expenses",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = "RM $expenses",
+                                            fontSize = 14.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                }
+
+
+                            }
+
+
+                        }
                     }
-
-
                 }
             }
         }
@@ -377,56 +661,120 @@ fun OverViewCard(
 @Composable
 fun BudgetCard(
     budgetAmount: Double,
-    totalExpenses: Double
+    totalExpenses: Double,
+    navController: NavController,
+    window: ScreenSize
 ) {
 
+    when (window.height) {
+        WindowType.Expanded -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
 
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-
-    ) {
-        Box(
-            modifier = Modifier.background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF696161), // Start color
-                        Color(0xFF1B1B1B)  // End color
-                    )
-                )
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
             ) {
-                Text(
-                    text = "Budget",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "RM $budgetAmount",
-                    modifier = Modifier,
-                    color = Color.White
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .wrapContentWidth()
 
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Available Balance : RM ${budgetAmount - totalExpenses}",
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(20.dp).width(300.dp)
+                            .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
+                    ) {
+                        Text(
+                            text = "Budget",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "RM $budgetAmount",
+                            modifier = Modifier,
+                            color = Color.White
+
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Available Balance : RM ${budgetAmount - totalExpenses}",
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
 
 
+                    }
+                }
+            }
+        }
+
+        else -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .fillMaxWidth()
+
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
+                    ) {
+                        Text(
+                            text = "Budget",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "RM $budgetAmount",
+                            modifier = Modifier,
+                            color = Color.White
+
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Available Balance : RM ${budgetAmount - totalExpenses}",
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+
+
+                    }
+                }
             }
         }
     }
+
 
 
 }
@@ -435,55 +783,117 @@ fun BudgetCard(
 fun GoalCard(
     goalAmount: Double,
     totalIncomes: Double,
-    totalExpenses: Double
+    totalExpenses: Double,
+    navController: NavController,
+    window: ScreenSize
 ) {
 
+    when (window.height) {
+        WindowType.Expanded -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
 
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-
-    ) {
-        Box(
-            modifier = Modifier.background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF696161), // Start color
-                        Color(0xFF1B1B1B)  // End color
-                    )
-                )
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
             ) {
-                Text(
-                    text = "Goal",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "RM $goalAmount",
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .wrapContentWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp).width(300.dp)
+                            .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
+                    ) {
+                        Text(
+                            text = "Goal",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "RM $goalAmount",
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+
+
             }
         }
 
+        else -> {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
 
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF696161), // Start color
+                                    Color(0xFF1B1B1B)  // End color
+                                )
+                            )
+                        )
+                        .fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
+                    ) {
+                        Text(
+                            text = "Goal",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "RM $goalAmount",
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+
+
+            }
+        }
     }
+
+
 
 
 }
@@ -602,7 +1012,8 @@ fun TransactionList(
                     .fillMaxWidth(),
                 navController = navController,
                 transactionViewModel = transactionViewModel,
-                dismissState = dismissStateMap[item] ?: rememberDismissState().also { dismissStateMap[item] = it }
+                dismissState = dismissStateMap[item]
+                    ?: rememberDismissState().also { dismissStateMap[item] = it }
 
             )
 

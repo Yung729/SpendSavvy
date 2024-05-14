@@ -31,6 +31,8 @@ import com.example.spendsavvy.components.RemainingChart
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.screen.LineDivider
+import com.example.spendsavvy.ui.theme.ScreenSize
+import com.example.spendsavvy.ui.theme.WindowType
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import java.time.YearMonth
@@ -42,7 +44,8 @@ fun AnalysisScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     transactionViewModel: OverviewViewModel,
-    budgetViewModel: TargetViewModel
+    budgetViewModel: TargetViewModel,
+    window : ScreenSize
 ) {
     val scrollState = rememberScrollState()
     val expensesData by transactionViewModel.currentMonthExpenses.observeAsState(initial = 0.0)
@@ -124,10 +127,23 @@ fun AnalysisScreen(
             )
 
 
-            RemainingChart(
-                indicatorValue = expensesData,
-                maxIndicatorValue = monthlyBudgetAmount,
-            )
+            when (window.height) {
+                WindowType.Expanded -> {
+                    RemainingChart(
+                        canvasSize = 500.dp,
+                        indicatorValue = expensesData,
+                        maxIndicatorValue = monthlyBudgetAmount,
+                    )
+                }
+
+                else -> {
+                    RemainingChart(
+                        indicatorValue = expensesData,
+                        maxIndicatorValue = monthlyBudgetAmount,
+                    )
+                }
+            }
+
         }
 
         LineDivider()
@@ -152,23 +168,27 @@ fun AnalysisScreen(
             )
 
 
-            RemainingChart(
-                indicatorValue = incomesData - expensesData,
-                maxIndicatorValue = monthlyGoalAmount,
-            )
+            when (window.height) {
+                WindowType.Expanded -> {
+                    RemainingChart(
+                        canvasSize = 500.dp,
+                        indicatorValue = incomesData - expensesData,
+                        maxIndicatorValue = monthlyGoalAmount,
+                    )
+                }
+
+                else -> {
+                    RemainingChart(
+                        indicatorValue = incomesData - expensesData,
+                        maxIndicatorValue = monthlyGoalAmount,
+                    )
+                }
+            }
+
+
         }
 
 
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun AnalysisScreenPreview() {
-    AnalysisScreen(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp), rememberNavController(), viewModel(), viewModel()
-    )
-}
