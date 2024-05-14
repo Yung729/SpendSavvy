@@ -245,7 +245,7 @@ fun FixedDepositDetailsScreen(
             Button(
                 onClick = {
                     //addFDDetailsIntoDatabase(FDAccount(searchName, duration, interestRate, depositAmt))
-                    walletViewModel.addFDDetailsToDatabase(
+                    val valid = walletViewModel.addFDDetailsToDatabase(
                         FDAccount(
                             selectedBank,
                             interestRate.toDoubleOrNull() ?: 0.0,
@@ -253,7 +253,8 @@ fun FixedDepositDetailsScreen(
                         )
                     )
 
-                    navController.navigateUp()
+                    if(valid == 1)
+                        navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

@@ -185,7 +185,7 @@ class WalletViewModel(
             try {
                 val fdDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
                     userId,
-                    "FDAccount",
+                    "Fixed Deposit",
                     FDAccount::class.java
                 )
 
@@ -198,7 +198,14 @@ class WalletViewModel(
         }
     }
 
-    fun addFDDetailsToDatabase(fdAccount: FDAccount) {
+    fun addFDDetailsToDatabase(fdAccount: FDAccount): Int {
+        if (fdAccDetailsList.value?.any { it.bankName == fdAccount.bankName } == true) {
+            Toast.makeText(
+                currentContext, "The FD Account with the same name already exists", Toast.LENGTH_SHORT
+            ).show()
+            return 0
+        }
+
         viewModelScope.launch {
             try {
                 firestoreRepository.addWalletItems(
@@ -225,6 +232,7 @@ class WalletViewModel(
                 Log.e(ContentValues.TAG, "Error adding FD details", e)
             }
         }
+        return 1
     }
 
     private fun updateFDDetails(fdAccountList: List<FDAccount>) {

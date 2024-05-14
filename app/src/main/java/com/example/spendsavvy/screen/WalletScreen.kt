@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.GreenColor
@@ -94,7 +95,7 @@ fun WalletScreen(
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(text = "Available Balance")
 
-                Text(text = "RM 9,000")
+                Text(text = "RM $")
             }
             }
         }
@@ -108,7 +109,7 @@ fun WalletScreen(
             Text(
                 text = "Assets",
                 fontFamily = poppinsFontFamily,
-                fontSize = 15.sp,
+                fontSize = 25.sp,
                 color = HeaderTitle,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
@@ -116,7 +117,7 @@ fun WalletScreen(
             Text(
                 text = "RM $",
                 fontFamily = poppinsFontFamily,
-                fontSize = 15.sp,
+                fontSize = 25.sp,
                 color = GreenColor,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
@@ -280,8 +281,7 @@ fun WalletScreen(
                 text = "FD Account"
             )
 
-            for (fdAccount in fdAccDetailsList)
-                fdCount++
+            fdCount = fdCount(fdAccDetailsList)
 
             Text(text = "$fdCount accounts")
         }
@@ -365,6 +365,15 @@ fun stocksCount(stockList: List<Stock>): Int{
         count++
 
     return count
+}
+
+fun fdCount(fdAccDetailsList: List<FDAccount>): Int{
+    var accountCount = 0
+
+    for (fdAccount in fdAccDetailsList) {
+        accountCount++
+    }
+    return accountCount
 }
 
 /*

@@ -7,7 +7,8 @@ data class FDAccount(
     //@DrawableRes val BankImages: Int,
     val bankName: String,
     val interestRate: Double,
-    val deposit: Double
+    val deposit: Double,
+    //val date: Date      //store start date
 ) : Serializable {
     constructor() : this("",0.0,0.0)
 }
