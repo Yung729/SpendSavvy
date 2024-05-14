@@ -23,6 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpendSavvy"
         tools:targetApi="31"
+        android:localeConfig="@xml/locales_config"
         tools:ignore="UnusedAttribute">
         <activity
             android:name=".MainActivity"
@@ -35,16 +36,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true"/>
+        </service>
 <!--
         <receiver
             android:name=".worker.MonthlySalaryAlarmReceiver"
             android:exported="false">
         </receiver>-->
 
-        <receiver
-            android:name=".worker.BillsAlarmReceiver"
-            android:exported="false">
-        </receiver>
+<!--        <receiver-->
+<!--            android:name=".worker.BillsAlarmReceiver"-->
+<!--            android:exported="false">-->
+<!--        </receiver>-->
 
     </application>
 
