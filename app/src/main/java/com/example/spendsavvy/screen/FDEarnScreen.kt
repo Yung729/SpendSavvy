@@ -105,12 +105,12 @@ fun FDEarnScreen(
             Card(
                 border = BorderStroke(2.dp, Color.Black),
                 modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp)
+                    .padding(start = 20.dp, end = 15.dp)
             ) {
                 Column {
 
                     Text(
-                        "Interest Earned",
+                        "Interest To Be Earned",
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(
                             start = 10.dp,
@@ -138,7 +138,7 @@ fun FDEarnScreen(
             Card(
                 border = BorderStroke(2.dp, Color.Black),
                 modifier = Modifier
-                    .padding(start = 50.dp)
+                    .padding(start = 15.dp)
             ) {
                 Column {
 
@@ -155,7 +155,7 @@ fun FDEarnScreen(
 
                     //show how many days left
                     Text(
-                        "$daysLeft Days",
+                        "${365 - (daysLeft/(24*60*60*1000))} Days",
                         color = Color.Gray,
                         fontSize = 15.sp,
                         modifier = Modifier.padding(
@@ -246,7 +246,7 @@ fun FDEarnScreen(
                         Text(
                             text = "Cancel",
                             textAlign = TextAlign.Center,
-                            color = Color.White
+                            color = Color.Black
                         )
                     }
                 }
@@ -254,7 +254,14 @@ fun FDEarnScreen(
         }
     }
     if (isPopUp)
-        WithdrawFDScreen(onCancelClick = { isPopUp = false }, {}, walletViewModel, daysLeft, (fdAccount.deposit + (fdAccount.deposit * fdAccount.interestRate / 100)))
+        WithdrawFDScreen(
+            onCancelClick = { isPopUp = false },
+            {},
+            walletViewModel,
+            fdAccount,
+            daysLeft,
+            (fdAccount.deposit + (fdAccount.deposit * fdAccount.interestRate / 100))
+        )
 
 }
 
@@ -265,6 +272,7 @@ fun WithdrawFDScreen(
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
     walletViewModel: WalletViewModel,
+    fdAccount: FDAccount,
     daysLeft: Long,
     totalEarned: Double
 ) {
@@ -326,13 +334,15 @@ fun WithdrawFDScreen(
 
                 Spacer(modifier = Modifier.height(15.dp))
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        "To",
-                        fontWeight = FontWeight.Bold
-                    )
+                Column {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "To",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -341,7 +351,7 @@ fun WithdrawFDScreen(
                     "Cash Account"
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(25.dp))
 
                 ExposedDropdownMenuBox(
                     expanded = isExpanded,
@@ -392,38 +402,58 @@ fun WithdrawFDScreen(
                 }
                 Spacer(modifier = Modifier.height(20.dp))
 
-                OutlinedButton(
-                    onClick = {
-                        if (daysLeft == 0.toLong()) {
-                            for(cashDetails in cashDetailsList){
-                                if(cashDetails.typeName == searchAccount)
-                                    walletViewModel.editCashDetails(
-                                        cash = cashDetails,
-                                        updatedCashDetails = Cash(
-                                            cashDetails.typeName,
-                                            cashDetails.balance + totalEarned
-                                        )
-                                    )
-                            }
-
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "The FD Account is still locked\nRemaining days: $daysLeft",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        //walletViewModel.editCashDetails()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
+                Box(
+                    Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Withdraw FD Money",
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = poppinsFontFamily
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
                     )
+                    OutlinedButton(
+                        onClick = {
+                            if (daysLeft == 31536000000) {
+                                for (cashDetails in cashDetailsList) {
+                                    if (cashDetails.typeName == searchAccount){
+                                        walletViewModel.editCashDetails(
+                                            cash = cashDetails,
+                                            updatedCashDetails = Cash(
+                                                cashDetails.typeName,
+                                                cashDetails.balance + totalEarned
+                                            )
+                                        )
+
+                                        walletViewModel.editFDDetails(
+                                            fdAccount = fdAccount,
+                                            updatedFDDetails = FDAccount(
+                                                bankName = fdAccount.bankName,
+                                                interestRate = fdAccount.interestRate,
+                                                deposit = 0.0,                          //successfully withdraw
+                                                date = fdAccount.date
+                                            )
+                                        )
+
+                                    }
+                                }
+
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "The FD Account is still locked\nRemaining days: ${365 - (daysLeft/ (24*60*60*1000))}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            //walletViewModel.editCashDetails()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Withdraw FD Money",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily
+                        )
+                    }
                 }
             }
 

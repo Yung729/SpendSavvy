@@ -206,7 +206,7 @@ class WalletViewModel(
     fun addFDDetailsToDatabase(fdAccount: FDAccount): Int {
         if (fdAccDetailsList.value?.any { it.bankName == fdAccount.bankName } == true) {
             Toast.makeText(
-                currentContext, "The FD Account with the same name already exists", Toast.LENGTH_SHORT
+                currentContext, "The FD Account with the same name already existed", Toast.LENGTH_SHORT
             ).show()
             return 0
         }
@@ -227,7 +227,7 @@ class WalletViewModel(
                         )*/
                         val fdInfo = fdAccDetailsList.value ?: emptyList()
                         val updatedFDDetailsFromFirestore = fdInfo + fdAccount
-                        updateFDDetails(updatedFDDetailsFromFirestore)
+                        updateFDDetails(fdAccountList =  updatedFDDetailsFromFirestore)
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding FD details", exception)
@@ -238,6 +238,38 @@ class WalletViewModel(
             }
         }
         return 1
+    }
+
+    fun editFDDetails(fdAccount: FDAccount, updatedFDDetails: FDAccount) {
+
+        viewModelScope.launch {
+            try {
+
+                firestoreRepository.updateWalletItemsInFirestoreByName(
+                    userId,
+                    "Fixed Deposit",
+                    fdAccount.bankName,
+                    updatedFDDetails,
+                    onSuccess = {
+
+
+                        val fdInfo = fdAccDetailsList.value ?: emptyList()
+                        val updatedFDInfo = fdInfo.map {
+                            if (it == fdAccount) updatedFDDetails else it
+                        }
+
+                        updateFDDeposit(updatedFDInfo)
+
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(ContentValues.TAG, "Error editing stock details", e)
+            }
+        }
+    }
+
+    private fun updateFDDeposit(fdAccountList: List<FDAccount>){
+        fdAccDetailsList.postValue(fdAccountList)
     }
 
     private fun updateFDDetails(fdAccountList: List<FDAccount>) {

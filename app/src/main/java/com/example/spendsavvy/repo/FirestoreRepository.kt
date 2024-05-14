@@ -593,6 +593,11 @@ class FirestoreRepository {
                                     field.set(item, quantity)
                                 }
 
+                                "date" -> {
+                                    val date = document.getDate("date") ?: Date()
+                                    field.set(item, date)
+                                }
+
                                 else -> {
                                     field.set(item, value)
                                 }
