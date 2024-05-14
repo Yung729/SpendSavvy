@@ -1,5 +1,10 @@
 package com.example.spendsavvy.screen
 
+import android.app.LocaleManager
+import android.os.Build
+import android.os.Build.VERSION_CODES.TIRAMISU
+import android.os.LocaleList
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,6 +55,7 @@ import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.MainViewModel
 
 
+@RequiresApi(TIRAMISU)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
@@ -72,7 +79,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Login",
+            text = stringResource(id = R.string.login_text),
             fontFamily = poppinsFontFamily,
             textAlign = TextAlign.Center,
             fontSize = 40.sp,
@@ -131,6 +138,7 @@ fun LoginScreen(
 
                 navController.navigate("Second") {
                     popUpTo(0) {}
+
                 }
             }
 
@@ -167,19 +175,18 @@ fun LoginScreen(
 }
 
 
+@RequiresApi(TIRAMISU)
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    LoginScreen(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        navController = rememberNavController(),
-        fireAuthRepository = FireAuthRepository(
-            LocalContext.current, categoryViewModel = CategoryViewModel(
-                LocalContext.current, false, ""
-            ),
-            true
-        )
+fun LoginScreenPreview() = LoginScreen(
+    modifier = Modifier
+        .fillMaxSize()
+        .padding(20.dp),
+    navController = rememberNavController(),
+    fireAuthRepository = FireAuthRepository(
+        LocalContext.current, categoryViewModel = CategoryViewModel(
+            LocalContext.current, false, ""
+        ),
+        true
     )
-}
+)

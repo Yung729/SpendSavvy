@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SpendSavvy</string>
     <string name="q1">1. How to add expense and income</string>
@@ -6,7 +7,7 @@
     <string name="a1">Go to your overview screen and click on the add button at the bottom</string>
     <string name="a2">Go to your settings screen and click on the tax calculator row.</string>
     <string name="a3">Click on the Analysis icon at the bottom navigation bar to view the overall expense and income.</string>
-    <string name="login_text">Login</string>
+    <string name="login_text">Log masuk</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="forgotPw">Forgot Password</string>
@@ -91,7 +92,7 @@
     <string name="sell">Sell</string>
     <string name="setBudgetGoal">Set Budget &amp; Goal</string>
     <string name="amp">&amp;</string>
-<!--&-->
+    <!--&-->
     <string name="transactionAnal">Transaction Analysis</string>
     <string name="budgetAnal">Budget Analysis</string>
     <string name="monthlyBudget">Monthly Budget</string>
@@ -128,7 +129,7 @@
     <string name="currentPw">Current Password</string>
     <string name="newPw">New Password</string>
     <string name="saveNewPw">Save New Password</string>
-    <string name="billsInstal">Bills &amp; Installment</string>
+    <string name="billsInstal">Bills &amp; Instalment</string>
     <string name="upcoming">Upcoming</string>
     <string name="paid">Paid</string>
     <string name="overdue">Overdue</string>
