@@ -21,19 +21,20 @@ class DatabaseHelper(context: Context) :
 
         val CREATE_CATEGORY_TABLE = """
             CREATE TABLE categories (
-                id TEXT PRIMARY KEY,
+                id TEXT,
                 internalId TEXT,
                 imageUri TEXT,
                 categoryName TEXT NOT NULL,
                 categoryType TEXT NOT NULL,
-                userId TEXT
+                userId TEXT,
+                PRIMARY KEY (id, userId)
             )
         """
         db.execSQL(CREATE_CATEGORY_TABLE)
 
         val CREATE_TRANSACTION_TABLE = """
             CREATE TABLE transactions (
-                id TEXT PRIMARY KEY,
+                id TEXT,
                 internalId TEXT,
                 amount REAL NOT NULL,
                 categoryId TEXT,
@@ -42,6 +43,7 @@ class DatabaseHelper(context: Context) :
                 date LONG,
                 transactionType TEXT,
                 userId TEXT,
+                PRIMARY KEY (id, userId),
                 FOREIGN KEY(categoryId) REFERENCES categories(id)
             )
         """
@@ -49,11 +51,12 @@ class DatabaseHelper(context: Context) :
 
         val CREATE_STAFF_TABLE = """
             CREATE TABLE staff (
-                id TEXT PRIMARY KEY,
+                id TEXT,
                 staffIC TEXT,
                 staffName TEXT,
                 salary REAL,
-                userId TEXT
+                userId TEXT,
+                PRIMARY KEY (id, userId)
             )
         """
         db.execSQL(CREATE_STAFF_TABLE)
@@ -76,7 +79,7 @@ class DatabaseHelper(context: Context) :
 
         val CREATE_BILL_TABLE = """
             CREATE TABLE bills (
-                id TEXT PRIMARY KEY,
+                id TEXT,
                 internalId TEXT,
                 amount REAL NOT NULL,
                 categoryId TEXT,
@@ -85,6 +88,7 @@ class DatabaseHelper(context: Context) :
                 selectedDuration TEXT,
                 billsStatus TEXT,
                 userId TEXT,
+                PRIMARY KEY (id, userId),
                 FOREIGN KEY(categoryId) REFERENCES categories(id)
             )
         """
@@ -92,13 +96,14 @@ class DatabaseHelper(context: Context) :
 
         val CREATE_QUESTION_TABLE = """
             CREATE TABLE questions (
-                id TEXT PRIMARY KEY,
+                id TEXT,
                 internalId TEXT,
                 questionText TEXT,
                 answer TEXT,
                 status TEXT,
                 date LONG,
-                userId TEXT
+                userId TEXT,
+                PRIMARY KEY (id, userId)
             )
         """
         db.execSQL(CREATE_QUESTION_TABLE)
@@ -172,9 +177,9 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
-    private fun getCategoryById(categoryId: String): Category {
+    private fun getCategoryById(categoryId: String,userId: String): Category {
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM categories WHERE id=?", arrayOf(categoryId))
+        val cursor = db.rawQuery("SELECT * FROM categories WHERE id=? AND userId=?", arrayOf(categoryId,userId))
 
         val internalIdIndex = cursor.getColumnIndex("internalId")
         val imageUriIndex = cursor.getColumnIndex("imageUri")
@@ -348,7 +353,7 @@ class DatabaseHelper(context: Context) :
                 val date = Date(dateMillis)
 
                 // Get the category linked with this transaction
-                val category = getCategoryById(categoryId)
+                val category = getCategoryById(categoryId,userId)
 
                 // Create a Transaction object and add it to the list
                 val transaction = Transactions(internalId,amount, category,paymentMethod, description, date, transactionType)
@@ -403,7 +408,7 @@ class DatabaseHelper(context: Context) :
         val transactions = mutableListOf<Transactions>()
 
         val query = "SELECT * FROM transactions WHERE userId=? AND categoryId IN " +
-                "(SELECT id FROM categories WHERE categoryName=?)"
+                "(SELECT id FROM categories WHERE categoryName=? AND userId=?)"
 
         val cursor = db.rawQuery(query, arrayOf(userId, categoryName))
 
@@ -427,7 +432,7 @@ class DatabaseHelper(context: Context) :
             val date = Date(dateMillis)
 
             // Get the category linked with this transaction
-            val category = getCategoryById(categoryId)
+            val category = getCategoryById(categoryId,userId)
 
             // Create a Transaction object and add it to the list
             val transaction = Transactions(internalId, amount, category,paymentMethod, description, date, transactionType)
@@ -532,7 +537,7 @@ class DatabaseHelper(context: Context) :
                 val billsStatus = cursor.getString(billsStatusIndex)
 
                 // Get the category linked with this bill
-                val category = getCategoryById(categoryId)
+                val category = getCategoryById(categoryId,userId)
                 val selectedDueDate = Date(selectedDueDateMillis)
 
                 // Create a Bills object and add it to the list
@@ -986,12 +991,12 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
-    fun isDatabaseEmpty(): Boolean {
+    fun isDatabaseEmpty(userId: String): Boolean {
         val db = this.readableDatabase
         var isEmpty = true
 
         // Check if the categories table has any records
-        val categoriesCursor = db.rawQuery("SELECT COUNT(*) FROM categories", null)
+        val categoriesCursor = db.rawQuery("SELECT COUNT(*) FROM categories WHERE userId=?", arrayOf(userId))
         categoriesCursor.use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -1000,7 +1005,7 @@ class DatabaseHelper(context: Context) :
         }
 
         // Check if the transactions table has any records
-        val transactionsCursor = db.rawQuery("SELECT COUNT(*) FROM transactions", null)
+        val transactionsCursor = db.rawQuery("SELECT COUNT(*) FROM transactions WHERE userId=?", arrayOf(userId))
         transactionsCursor.use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -1009,7 +1014,7 @@ class DatabaseHelper(context: Context) :
         }
 
         // Check if the budget table has any records
-        val budgetCursor = db.rawQuery("SELECT COUNT(*) FROM budget", null)
+        val budgetCursor = db.rawQuery("SELECT COUNT(*) FROM budget WHERE userId=?", arrayOf(userId))
         budgetCursor.use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -1018,7 +1023,7 @@ class DatabaseHelper(context: Context) :
         }
 
         // Check if the goal table has any records
-        val goalCursor = db.rawQuery("SELECT COUNT(*) FROM goal", null)
+        val goalCursor = db.rawQuery("SELECT COUNT(*) FROM goal WHERE userId=?", arrayOf(userId))
         goalCursor.use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -1027,7 +1032,7 @@ class DatabaseHelper(context: Context) :
         }
 
         // Check if the staff table has any records
-        val staffCursor = db.rawQuery("SELECT COUNT(*) FROM staff", null)
+        val staffCursor = db.rawQuery("SELECT COUNT(*) FROM staff WHERE userId=?",  arrayOf(userId))
         staffCursor.use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -1035,7 +1040,7 @@ class DatabaseHelper(context: Context) :
             }
         }
         // Check if the bill table has any records
-        val billCursor = db.rawQuery("SELECT COUNT(*) FROM bills", null)
+        val billCursor = db.rawQuery("SELECT COUNT(*) FROM bills WHERE userId=?",  arrayOf(userId))
         billCursor.use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -1043,7 +1048,7 @@ class DatabaseHelper(context: Context) :
             }
         }
         // Check if the question table has any records
-        val questionCursor = db.rawQuery("SELECT COUNT(*) FROM questions", null)
+        val questionCursor = db.rawQuery("SELECT COUNT(*) FROM questions WHERE userId=?",  arrayOf(userId))
         questionCursor.use { cursor ->
             if (cursor.moveToFirst()) {
                 val count = cursor.getInt(0)
@@ -1061,6 +1066,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 30
+        private const val DATABASE_VERSION = 33
     }
 }

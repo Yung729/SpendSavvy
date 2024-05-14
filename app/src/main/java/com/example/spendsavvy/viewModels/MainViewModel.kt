@@ -22,7 +22,7 @@ class MainViewModel(
     private val firestoreRepo = FirestoreRepository()
 
     fun syncDatabase() {
-        if (databaseHelper.isDatabaseEmpty()) {
+        if (databaseHelper.isDatabaseEmpty(userId = currentUserId)) {
             viewModelScope.launch {
                 try {
                     migrateFirestoreDataToSQLite(currentUserId)

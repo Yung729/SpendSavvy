@@ -28,10 +28,12 @@ class FireAuthRepository(
     fun signIn(email: String, password: String, onSuccess: () -> Unit) {
 
         if (connection) {
+
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
 
                     val currentUser = auth.currentUser
+
                     if (currentUser != null && currentUser.isEmailVerified) {
                         saveCredentials(email, password, currentUser.uid)
                         onSuccess()
@@ -51,7 +53,9 @@ class FireAuthRepository(
 
                 }
             }
+
         } else {
+
             val offlineEmail = sharedPreferences.getString("email", null)
             val offlinePassword = sharedPreferences.getString("password", null)
 
