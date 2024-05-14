@@ -834,9 +834,9 @@ class DatabaseHelper(context: Context) :
         db.close()
     }
 
-    private fun getStaffById(staffId: String): Staff {
+    private fun getStaffById(staffId: String,userId: String): Staff {
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM staff WHERE id=?", arrayOf(staffId))
+        val cursor = db.rawQuery("SELECT * FROM staff WHERE id=? AND userId=?", arrayOf(staffId,userId))
 
         val staffICIndex = cursor.getColumnIndex("staffIC")
         val staffNameIndex = cursor.getColumnIndex("staffName")
