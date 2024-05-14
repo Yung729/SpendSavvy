@@ -115,41 +115,41 @@ class QuestionViewModel(
         }
     }
 
-    fun editQuestion(question: Question, updatedQuestion: Question) {
-        viewModelScope.launch {
-            try {
-                val questionId: String = getQuestionId(question)
-
-                firestoreRepository.updateItemInFirestoreById(
-                    currentUserId,
-                    "Questions",
-                    questionId,
-                    updatedQuestion,
-                    onSuccess = {
-                        dbHelper.updateQuestion(
-                            questionId = questionId,
-                            questionText = updatedQuestion.questionText,
-                            answer = updatedQuestion.answer,
-                            status = updatedQuestion.status,
-                            questionDate = updatedQuestion.questionDate,
-                            userId = currentUserId
-                        )
-                        val currentQuestions = allQuestionsList.value ?: emptyList()
-                        val updatedQuestionsList = currentQuestions.map {
-                            if (it == question) updatedQuestion else it
-                        }
-                        updateQuestions(updatedQuestionsList)
-                        Toast.makeText(
-                            currentContext, "Question edited", Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                )
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Error editing Question", e)
-            }
-        }
-    }
+//    fun editQuestion(question: Question, updatedQuestion: Question) {
+//        viewModelScope.launch {
+//            try {
+//                val questionId: String = getQuestionId(question)
+//
+//                firestoreRepository.updateItemInFirestoreById(
+//                    currentUserId,
+//                    "Questions",
+//                    questionId,
+//                    updatedQuestion,
+//                    onSuccess = {
+//                        dbHelper.updateQuestion(
+//                            questionId = questionId,
+//                            questionText = updatedQuestion.questionText,
+//                            answer = updatedQuestion.answer,
+//                            status = updatedQuestion.status,
+//                            questionDate = updatedQuestion.questionDate,
+//                            userId = currentUserId
+//                        )
+//                        val currentQuestions = allQuestionsList.value ?: emptyList()
+//                        val updatedQuestionsList = currentQuestions.map {
+//                            if (it == question) updatedQuestion else it
+//                        }
+//                        updateQuestions(updatedQuestionsList)
+//                        Toast.makeText(
+//                            currentContext, "Question edited", Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                )
+//
+//            } catch (e: Exception) {
+//                Log.e(TAG, "Error editing Question", e)
+//            }
+//        }
+//    }
 
 
     fun deleteQuestion(question: Question) {
