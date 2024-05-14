@@ -41,6 +41,11 @@
             android:exported="false">
         </receiver>
 
+        <receiver
+            android:name=".worker.BillsAlarmReceiver"
+            android:exported="false">
+        </receiver>
+
     </application>
 
 </manifest>
