@@ -340,47 +340,6 @@ class FirestoreRepository {
         return totalSalariesPerUser
     }
 
-    data class BillInfo(val remainingDays: Long, val description: String, val amount: Double, val selectedDueDate: Date)
-    suspend fun calculateBillsRemainingDate(): Map<String, BillInfo> {
-        val remainingDaysPerBill = mutableMapOf<String, BillInfo>()
-        // Define a mapping between duration strings and their respective durations in days
-        val durationMapping = mapOf(
-            "1 day before" to 1L,
-            "2 days before" to 2L,
-            "1 week before" to 7L,
-            "2 weeks before" to 14L,
-            "1 month before" to 30L
-        )
-
-        try {
-            val billsSnapshot = firestore.collection("Bills").whereEqualTo("billsStatus", "UPCOMING").get().await()
-            for (billDocument in billsSnapshot.documents) {
-                val billId = billDocument.id
-                val selectedDueDateTimestamp = billDocument["selectedDueDate"] as? Timestamp
-                val selectedDurationString = billDocument["selectedDuration"] as? String ?: ""
-                val description = billDocument["description"] as? String ?: ""
-                val amount = billDocument["amount"] as? Double ?: 0.0
-
-                if (selectedDueDateTimestamp != null && selectedDurationString.isNotBlank()) {
-                    val selectedDueDate = selectedDueDateTimestamp.toDate()
-                    val currentDate = Date()
-                    val differenceInMillis = selectedDueDate.time - currentDate.time
-                    val daysLeft = TimeUnit.MILLISECONDS.toDays(differenceInMillis)
-
-                    // Look up the duration in days from the mapping
-                    val selectedDuration = durationMapping[selectedDurationString]
-
-                    if (selectedDuration != null && daysLeft == selectedDuration) {
-                        remainingDaysPerBill[billId] = BillInfo(daysLeft, description, amount, selectedDueDate)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error calculating bills remaining date", e)
-        }
-
-        return remainingDaysPerBill
-    }
 
     suspend fun getDocumentId(collectionName: String, userId: String, data: Any): String {
         try {

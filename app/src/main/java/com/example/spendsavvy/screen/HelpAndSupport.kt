@@ -298,20 +298,12 @@ fun QuestionList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        showEditDialog = true
                     },
                 question = question,
                 questionViewModel = questionViewModel,
                 dismissState = dismissStateMap[question]
                     ?: rememberDismissState().also { dismissStateMap[question] = it }
             )
-            if(showEditDialog){
-                EditQuestionDialog(
-                    question,
-                    questionViewModel,
-                    onDismiss = { showEditDialog = false }
-                )
-            }
         }
     }
 }
@@ -364,16 +356,16 @@ fun EditQuestionDialog(
                 Button(
                     onClick = {
 
-                        questionViewModel.editQuestion(
-                            question = question,
-                            updatedQuestion = Question(
-                                id = question.id,
-                                questionText = updatedQuestionText,
-                                answer = "WAITING FOR REPLY....",
-                                status = "PENDING",
-                                questionDate = Date(),
-                            ),
-                        )
+//                        questionViewModel.editQuestion(
+//                            question = question,
+//                            updatedQuestion = Question(
+//                                id = question.id,
+//                                questionText = updatedQuestionText,
+//                                answer = "WAITING FOR REPLY....",
+//                                status = "PENDING",
+//                                questionDate = Date(),
+//                            ),
+//                        )
                         onDismiss()
                     },
                     modifier = Modifier

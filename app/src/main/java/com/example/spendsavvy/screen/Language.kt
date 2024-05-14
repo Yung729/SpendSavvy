@@ -28,6 +28,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import kotlinx.coroutines.launch
 
+
+data class LanguageSelection(
+    val id: Int,
+    var isSelected: Boolean,
+    val text: String
+)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun Language(modifier: Modifier = Modifier, navController: NavController) {
@@ -101,13 +107,6 @@ fun Language(modifier: Modifier = Modifier, navController: NavController) {
         }
     )
 }
-
-data class LanguageSelection(
-    val id: Int,
-    var isSelected: Boolean,
-    val text: String
-)
-
 
 @Preview(showBackground = true)
 @Composable
