@@ -15,7 +15,7 @@ import com.google.firebase.firestore.firestore
 class FireAuthRepository(
     val context: Context,
     private val categoryViewModel: CategoryViewModel,
-    internet : Boolean
+    internet: Boolean
 ) {
 
     private var auth = FirebaseAuth.getInstance()
@@ -25,16 +25,23 @@ class FireAuthRepository(
         context.getSharedPreferences("UserAcc", Context.MODE_PRIVATE)
     }
 
-    fun signIn(email: String, password: String,onSuccess : () -> Unit) {
+    fun signIn(email: String, password: String, onSuccess: () -> Unit) {
 
-        if (connection){
+        if (connection) {
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
 
                     val currentUser = auth.currentUser
-                    if (currentUser != null) {
-                        saveCredentials(email, password,currentUser.uid)
+                    if (currentUser != null && currentUser.isEmailVerified) {
+                        saveCredentials(email, password, currentUser.uid)
                         onSuccess()
+                    } else if (currentUser != null && !currentUser.isEmailVerified) {
+                        Toast.makeText(
+                            context,
+                            "Please verify your email address before signing in.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        auth.signOut()
                     }
 
                 } else if (!task.isSuccessful) {
@@ -44,16 +51,16 @@ class FireAuthRepository(
 
                 }
             }
-        }else {
+        } else {
             val offlineEmail = sharedPreferences.getString("email", null)
             val offlinePassword = sharedPreferences.getString("password", null)
 
 
             if (offlineEmail != null && offlinePassword != null) {
-                if (offlineEmail == email && password == offlinePassword){
+                if (offlineEmail == email && password == offlinePassword) {
                     onSuccess()
 
-                }else{
+                } else {
                     Toast.makeText(
                         context, "Unsuccessful to Sign In Account", Toast.LENGTH_SHORT
                     ).show()
@@ -65,7 +72,7 @@ class FireAuthRepository(
 
     }
 
-    private fun saveCredentials(email: String, password: String,userId: String) {
+    private fun saveCredentials(email: String, password: String, userId: String) {
         val editor = sharedPreferences.edit()
         editor.putString("email", email)
         editor.putString("password", password)
@@ -92,6 +99,24 @@ class FireAuthRepository(
                         categoryViewModel.initializeCategoryToFirestore(user.uid)
                     }
 
+                    user?.sendEmailVerification()?.addOnCompleteListener { emailTask ->
+                        if (emailTask.isSuccessful) {
+                            // Email sent successfully
+                            Toast.makeText(
+                                context,
+                                "Verification email sent. Please check your inbox.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        } else {
+                            // Failed to send verification email
+                            Toast.makeText(
+                                context,
+                                "Failed to send verification email.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
 
                 } else {
                     Toast.makeText(
