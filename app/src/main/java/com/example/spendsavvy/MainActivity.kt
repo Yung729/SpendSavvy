@@ -1,6 +1,5 @@
 package com.example.spendsavvy
 
-import com.example.spendsavvy.worker.BillsAlarmReceiver
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -12,7 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import com.example.spendsavvy.navigation.SetupNavGraph
 import com.example.spendsavvy.ui.theme.SpendSavvyTheme
-import com.example.spendsavvy.worker.MonthlySalaryAlarmReceiver
+import com.example.spendsavvy.worker.BillsAlarmReceiver
 import java.util.Calendar
 
 
@@ -22,7 +21,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        scheduleMonthlySalaryAlarm(applicationContext)
+        /*scheduleMonthlySalaryAlarm(applicationContext)*/
         scheduleBillsAlarm(applicationContext)
         setContent {
             SpendSavvyTheme {
@@ -44,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
 }
 
+/*
 @SuppressLint("ScheduleExactAlarm")
 fun scheduleMonthlySalaryAlarm(context: Context) {
     // Create an Intent that will be triggered by the alarm
@@ -76,7 +76,7 @@ fun scheduleMonthlySalaryAlarm(context: Context) {
         endOfMonth.timeInMillis,
         pendingIntent
     )
-}
+}*/
 @SuppressLint("ScheduleExactAlarm")
 fun scheduleBillsAlarm(context: Context) {   //calculate the due date at midnight every day
     // Create an Intent that will be triggered by the alarm

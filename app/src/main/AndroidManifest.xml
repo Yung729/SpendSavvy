@@ -35,11 +35,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+<!--
         <receiver
             android:name=".worker.MonthlySalaryAlarmReceiver"
             android:exported="false">
-        </receiver>
+        </receiver>-->
 
         <receiver
             android:name=".worker.BillsAlarmReceiver"

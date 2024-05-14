@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -122,13 +123,16 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     var userId by remember { mutableStateOf("") }
     userId = fireAuthRepository.getCurrentUserId()
 
-    if (isConnected) {
-        if (userId == "") {
-            userId = "adminUser"
+    LaunchedEffect(isConnected) {
+        if (isConnected) {
+            if (userId == "") {
+                userId = "adminUser"
+            }
+        } else {
+            userId = sharedPreferences.getString("userID", "")!!
         }
-    } else {
-        userId = sharedPreferences.getString("userID", "")!!
     }
+
 
 
     val walletViewModel = WalletViewModel(context, userId)
