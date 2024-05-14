@@ -11,7 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import com.example.spendsavvy.navigation.SetupNavGraph
 import com.example.spendsavvy.ui.theme.SpendSavvyTheme
-import com.example.spendsavvy.worker.BillsAlarmReceiver
+//import com.example.spendsavvy.worker.BillsAlarmReceiver
 import java.util.Calendar
 
 
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         /*scheduleMonthlySalaryAlarm(applicationContext)*/
-        scheduleBillsAlarm(applicationContext)
+//        scheduleBillsAlarm(applicationContext)
         setContent {
             SpendSavvyTheme {
                 val context = LocalContext.current
@@ -77,34 +77,34 @@ fun scheduleMonthlySalaryAlarm(context: Context) {
         pendingIntent
     )
 }*/
-@SuppressLint("ScheduleExactAlarm")
-fun scheduleBillsAlarm(context: Context) {   //calculate the due date at midnight every day
-    // Create an Intent that will be triggered by the alarm
-    val intent = Intent(context, BillsAlarmReceiver::class.java)
-    // Create a PendingIntent that will be triggered by the alarm
-    val pendingIntent = PendingIntent.getBroadcast(
-        context,
-        0,
-        intent,
-        PendingIntent.FLAG_IMMUTABLE
-    )
-
-    // Get the AlarmManager service
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-    // Set the alarm at midnight every day
-    val calendar = Calendar.getInstance().apply {
-        set(Calendar.HOUR_OF_DAY, 0)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
-        set(Calendar.MILLISECOND, 0)
-        add(Calendar.DAY_OF_MONTH, 1) // Trigger at midnight of the next day
-    }
-    val triggerTime = calendar.timeInMillis
-
-    alarmManager.setExactAndAllowWhileIdle(
-        AlarmManager.RTC_WAKEUP,
-        triggerTime,
-        pendingIntent
-    )
-}
+//@SuppressLint("ScheduleExactAlarm")
+//fun scheduleBillsAlarm(context: Context) {   //calculate the due date at midnight every day
+//    // Create an Intent that will be triggered by the alarm
+//    val intent = Intent(context, BillsAlarmReceiver::class.java)
+//    // Create a PendingIntent that will be triggered by the alarm
+//    val pendingIntent = PendingIntent.getBroadcast(
+//        context,
+//        0,
+//        intent,
+//        PendingIntent.FLAG_IMMUTABLE
+//    )
+//
+//    // Get the AlarmManager service
+//    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//
+//    // Set the alarm at midnight every day
+//    val calendar = Calendar.getInstance().apply {
+//        set(Calendar.HOUR_OF_DAY, 0)
+//        set(Calendar.MINUTE, 0)
+//        set(Calendar.SECOND, 0)
+//        set(Calendar.MILLISECOND, 0)
+//        add(Calendar.DAY_OF_MONTH, 1) // Trigger at midnight of the next day
+//    }
+//    val triggerTime = calendar.timeInMillis
+//
+//    alarmManager.setExactAndAllowWhileIdle(
+//        AlarmManager.RTC_WAKEUP,
+//        triggerTime,
+//        pendingIntent
+//    )
+//}
