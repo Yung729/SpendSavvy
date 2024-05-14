@@ -83,74 +83,80 @@ fun AnalysisScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Transaction Analysis",
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        PieChart(
-            data = mapOf(
-                Pair("Expenses", expensesData.roundToInt()),
-                Pair("Incomes", incomesData.roundToInt())
+        Column {
+            Text(
+                text = "Transaction Analysis",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier.fillMaxWidth()
             )
-        )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            PieChart(
+                data = mapOf(
+                    Pair("Expenses", expensesData.roundToInt()),
+                    Pair("Incomes", incomesData.roundToInt())
+                )
+            )
+        }
 
         LineDivider()
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = "Budget Analysis",
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Column {
+            Text(
+                text = "Budget Analysis",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
 
 
-        Text(
-            text = "Monthly Budget : $monthlyBudgetAmount",
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
+            Text(
+                text = "Monthly Budget : $monthlyBudgetAmount",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
 
 
-        RemainingChart(
-            indicatorValue = expensesData,
-            maxIndicatorValue = monthlyBudgetAmount,
-        )
+            RemainingChart(
+                indicatorValue = expensesData,
+                maxIndicatorValue = monthlyBudgetAmount,
+            )
+        }
 
         LineDivider()
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = "Goal Analysis",
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Column {
+            Text(
+                text = "Goal Analysis",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
 
 
-        Text(
-            text = "Monthly Goal : $monthlyGoalAmount",
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
+            Text(
+                text = "Monthly Goal : $monthlyGoalAmount",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
 
 
-        RemainingChart(
-            indicatorValue = incomesData - expensesData,
-            maxIndicatorValue = monthlyGoalAmount,
-        )
+            RemainingChart(
+                indicatorValue = incomesData - expensesData,
+                maxIndicatorValue = monthlyGoalAmount,
+            )
+        }
 
 
     }

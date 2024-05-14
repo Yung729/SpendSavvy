@@ -123,16 +123,14 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     var userId by remember { mutableStateOf("") }
     userId = fireAuthRepository.getCurrentUserId()
 
-    LaunchedEffect(isConnected) {
-        if (isConnected) {
-            if (userId == "") {
-                userId = "adminUser"
-            }
-        } else {
-            userId = sharedPreferences.getString("userID", "")!!
-        }
-    }
 
+    if (isConnected) {
+        if (userId == "") {
+            userId = "adminUser"
+        }
+    } else {
+        userId = sharedPreferences.getString("userID", "")!!
+    }
 
 
     val walletViewModel = WalletViewModel(context, userId)
@@ -300,7 +298,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                 Snackbar(
                     modifier = Modifier.padding(16.dp),
                     action = {
-                        TextButton(onClick = { showSnackBar = false}) {
+                        TextButton(onClick = { showSnackBar = false }) {
                             Text("Close", color = Color.White)
                         }
                     }
