@@ -550,7 +550,8 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
                                 .fillMaxSize()
                                 .padding(20.dp),
                             navController = navController,
-                            fdAccount = selectedFDAccount
+                            fdAccount = selectedFDAccount,
+                            walletViewModel = walletViewModel
                         )
 
                     }

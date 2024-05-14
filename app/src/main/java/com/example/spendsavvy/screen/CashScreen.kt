@@ -142,7 +142,9 @@ fun CashScreen(
         Divider(color = Color.Gray, thickness = 0.7.dp)
         Spacer(modifier = Modifier.height(15.dp))
 
-        BankAccList(cashDetailsList, modifier)
+        Column {
+            BankAccList(cashDetailsList, modifier)
+        }
 
         Box(modifier = Modifier
             .fillMaxSize()
