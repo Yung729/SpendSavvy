@@ -1,7 +1,9 @@
 package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.GreenColor
@@ -64,35 +68,35 @@ fun WalletScreen(
     Column(
         modifier = modifier
     ) {
-        /* Row(
-             modifier = Modifier.fillMaxWidth(),
-             horizontalArrangement = Arrangement.SpaceBetween
-         ) {
-             HeaderTitle(text = "Wallet")
-
-             Icon(
-                 Icons.Default.Notifications,
-                 contentDescription = "Notifications",
-                 modifier = Modifier.align(Alignment.CenterVertically)
-             )
-         }*/
 
         Spacer(modifier = Modifier.height(25.dp))
 
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = Color.White, //later need change to brush color
-                contentColor = Color.Black
+                contentColor = Color.White
             ),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 5.dp
             ),
             shape = RoundedCornerShape(15.dp), modifier = Modifier.fillMaxWidth()
         ) {
+
+            Box(
+                modifier = Modifier.background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF696161), // Start color
+                            Color(0xFF1B1B1B)  // End color
+                        )
+                    )
+                ).fillMaxWidth()
+            ){
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(text = "Available Balance")
 
-                Text(text = "RM 9,000")
+                Text(text = "RM $")
+            }
             }
         }
 
@@ -105,7 +109,7 @@ fun WalletScreen(
             Text(
                 text = "Assets",
                 fontFamily = poppinsFontFamily,
-                fontSize = 15.sp,
+                fontSize = 25.sp,
                 color = HeaderTitle,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
@@ -113,7 +117,7 @@ fun WalletScreen(
             Text(
                 text = "RM $",
                 fontFamily = poppinsFontFamily,
-                fontSize = 15.sp,
+                fontSize = 25.sp,
                 color = GreenColor,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
@@ -277,8 +281,7 @@ fun WalletScreen(
                 text = "FD Account"
             )
 
-            for (fdAccount in fdAccDetailsList)
-                fdCount++
+            fdCount = fdCount(fdAccDetailsList)
 
             Text(text = "$fdCount accounts")
         }
@@ -362,6 +365,15 @@ fun stocksCount(stockList: List<Stock>): Int{
         count++
 
     return count
+}
+
+fun fdCount(fdAccDetailsList: List<FDAccount>): Int{
+    var accountCount = 0
+
+    for (fdAccount in fdAccDetailsList) {
+        accountCount++
+    }
+    return accountCount
 }
 
 /*

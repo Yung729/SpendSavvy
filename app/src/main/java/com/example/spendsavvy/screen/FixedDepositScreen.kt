@@ -79,7 +79,7 @@ fun FixedDepositScreen(
             color = Color.Gray
         )
 
-        val accountCount = fDcount(fdAccDetailsList = fdAccDetailsList)
+        val accountCount = fdCount(fdAccDetailsList = fdAccDetailsList)
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -108,7 +108,7 @@ fun FixedDepositScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            BankList(fdAccountList = fdAccDetailsList, navController = navController, walletViewModel = walletViewModel)
+            BankList(fdAccountList = fdAccDetailsList, navController = navController)
 
             Box(
                 modifier = Modifier
@@ -123,7 +123,7 @@ fun FixedDepositScreen(
                     Button(
                         onClick = {
                             navController.navigate(route = Screen.FixedDepositDetails.route)
-                                  },
+                        },
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .bounceClick()
@@ -154,7 +154,7 @@ fun BankCard(fdAccount: FDAccount, modifier: Modifier, navController: NavControl
                     value = fdAccount
                 )
                 navController.navigate(Screen.FDEarnScreen.route)
-                       },
+            },
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         )
@@ -198,7 +198,11 @@ fun BankCard(fdAccount: FDAccount, modifier: Modifier, navController: NavControl
 }
 
 @Composable
-fun BankList(fdAccountList: List<FDAccount>, modifier: Modifier = Modifier, navController: NavController, walletViewModel: WalletViewModel) {
+fun BankList(
+    fdAccountList: List<FDAccount>,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     LazyColumn(modifier = modifier) {
         items(fdAccountList) { bankAccount ->
             Row(
@@ -217,15 +221,6 @@ fun BankList(fdAccountList: List<FDAccount>, modifier: Modifier = Modifier, navC
     }
 }
 
-@Composable
-fun fDcount(fdAccDetailsList: List<FDAccount>): Int{
-    var accountCount = 0
-
-    for (fdAccount in fdAccDetailsList) {
-        accountCount++
-    }
-    return accountCount
-}
 
 /*
 @Composable

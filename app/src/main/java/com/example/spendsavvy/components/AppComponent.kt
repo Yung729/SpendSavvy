@@ -73,9 +73,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendsavvy.ui.theme.HeaderTitle
-import com.example.spendsavvy.ui.theme.Purple40
-import com.example.spendsavvy.ui.theme.PurpleGrey40
-import com.example.spendsavvy.ui.theme.RedColor
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import kotlinx.coroutines.delay
 
@@ -459,11 +456,8 @@ fun PieChart(
     // add the colors as per the number of data(no. of pie chart entries)
     // so that each data will get a color
     val colors = listOf(
-        Purple40,
-        PurpleGrey40,
-        HeaderTitle,
-        RedColor,
-        Color.Blue
+        Color(0xFF992933),
+        Color(0xFF1A6D1E)
 
     )
 

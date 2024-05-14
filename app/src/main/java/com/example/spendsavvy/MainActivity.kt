@@ -6,13 +6,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import com.example.spendsavvy.navigation.SetupNavGraph
 import com.example.spendsavvy.ui.theme.SpendSavvyTheme
-import com.example.spendsavvy.worker.MonthlySalaryAlarmReceiver
+import com.example.spendsavvy.worker.BillsAlarmReceiver
 import java.util.Calendar
 
 
@@ -22,7 +21,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        scheduleMonthlySalaryAlarm(applicationContext)
+        /*scheduleMonthlySalaryAlarm(applicationContext)*/
+        scheduleBillsAlarm(applicationContext)
         setContent {
             SpendSavvyTheme {
                 val context = LocalContext.current
@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
 }
 
+/*
 @SuppressLint("ScheduleExactAlarm")
 fun scheduleMonthlySalaryAlarm(context: Context) {
     // Create an Intent that will be triggered by the alarm
@@ -75,5 +76,35 @@ fun scheduleMonthlySalaryAlarm(context: Context) {
         endOfMonth.timeInMillis,
         pendingIntent
     )
-    Log.i("Alarm Manager time","End of Month: " + endOfMonth.time)
+}*/
+@SuppressLint("ScheduleExactAlarm")
+fun scheduleBillsAlarm(context: Context) {   //calculate the due date at midnight every day
+    // Create an Intent that will be triggered by the alarm
+    val intent = Intent(context, BillsAlarmReceiver::class.java)
+    // Create a PendingIntent that will be triggered by the alarm
+    val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        0,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
+
+    // Get the AlarmManager service
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    // Set the alarm at midnight every day
+    val calendar = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+        add(Calendar.DAY_OF_MONTH, 1) // Trigger at midnight of the next day
+    }
+    val triggerTime = calendar.timeInMillis
+
+    alarmManager.setExactAndAllowWhileIdle(
+        AlarmManager.RTC_WAKEUP,
+        triggerTime,
+        pendingIntent
+    )
 }

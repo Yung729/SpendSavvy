@@ -22,8 +22,10 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +44,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.spendsavvy.components.HeaderTopBar
-import com.example.spendsavvy.components.InternetAwareContent
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.FDAccount
@@ -102,6 +103,10 @@ import com.example.spendsavvy.viewModels.WalletViewModel
 fun SetupNavGraph(navController: NavHostController = rememberNavController(), context: Context) {
 
     val isConnected = isInternetAvailable(context)
+    var showSnackBar by remember {
+        mutableStateOf(!isConnected)
+    }
+
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreenName = backStackEntry?.destination?.route ?: Screen.Overview.route
@@ -118,11 +123,12 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
     var userId by remember { mutableStateOf("") }
     userId = fireAuthRepository.getCurrentUserId()
 
-    if (isConnected){
+
+    if (isConnected) {
         if (userId == "") {
             userId = "adminUser"
         }
-    }else {
+    } else {
         userId = sharedPreferences.getString("userID", "")!!
     }
 
@@ -285,19 +291,25 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController(), co
         },
         floatingActionButtonPosition = FabPosition.Center,
         snackbarHost = {
-            if (!isConnected){
+
+
+            if (!isConnected && showSnackBar) {
+
                 Snackbar(
                     modifier = Modifier.padding(16.dp),
                     action = {
-                        // You can add an action here, such as prompting the user to check their connection settings
+                        TextButton(onClick = { showSnackBar = false }) {
+                            Text("Close", color = Color.White)
+                        }
                     }
                 ) {
                     Text(text = "No Internet Connection")
                 }
+
             }
 
         }
-        ) { innerPadding ->
+    ) { innerPadding ->
 
 
         NavHost(
