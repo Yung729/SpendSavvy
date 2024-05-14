@@ -221,6 +221,34 @@ class BillsViewModel(
         return "B$random"
     }
 
+    private fun createBillMadeNotification(bills: Bills){
+        val notificationId = 2
+        val builder = NotificationCompat.Builder(currentContext, "CHANNEL_ID")
+            .setSmallIcon(R.drawable.bills_icon)
+            .setContentTitle("New bill made")
+            .setContentText("Bill ${bills.id} (${bills.description}) with amount ${bills.amount} && ${bills.selectedDueDate} is due date!")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        with(NotificationManagerCompat.from(currentContext)){
+
+            if (ActivityCompat.checkSelfPermission(
+                    currentContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            notify(notificationId, builder.build())
+        }
+    }
+
 //    private fun createNotificationChannel(context: Context) {
 //        val name = "NOTIFICAITONCHANNELNAME"
 //        val descriptionText = "DESCRIPTION"
@@ -285,31 +313,4 @@ class BillsViewModel(
 //        }
 //    }
 
-    private fun createBillMadeNotification(bills: Bills){
-        val notificationId = 2
-        val builder = NotificationCompat.Builder(currentContext, "CHANNEL_ID")
-            .setSmallIcon(R.drawable.bills_icon)
-            .setContentTitle("New bill made")
-            .setContentText("Bill ${bills.id} (${bills.description}) with amount ${bills.amount} && ${bills.selectedDueDate} is due date!")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-
-        with(NotificationManagerCompat.from(currentContext)){
-
-            if (ActivityCompat.checkSelfPermission(
-                    currentContext,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
-            }
-            notify(notificationId, builder.build())
-        }
-    }
 }

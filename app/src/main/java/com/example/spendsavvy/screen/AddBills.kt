@@ -83,7 +83,6 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
     var selectedDueDate by remember { mutableStateOf(Date()) }
     var selectedDuration by remember { mutableStateOf("") }
 
-    val currentDate = Calendar.getInstance()
     val selectedCalendar = Calendar.getInstance().apply {
         time = selectedDueDate
     }

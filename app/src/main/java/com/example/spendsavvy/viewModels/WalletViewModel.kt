@@ -13,6 +13,11 @@ import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 class WalletViewModel(
     context: Context,
@@ -221,8 +226,8 @@ class WalletViewModel(
                             userId = userId
                         )*/
                         val fdInfo = fdAccDetailsList.value ?: emptyList()
-                        val fdDetailsFromFirestore = fdInfo + fdAccount
-                        updateFDDetails(fdDetailsFromFirestore)
+                        val updatedFDDetailsFromFirestore = fdInfo + fdAccount
+                        updateFDDetails(updatedFDDetailsFromFirestore)
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding FD details", exception)
@@ -348,4 +353,24 @@ class WalletViewModel(
         }
     }
 
+    fun convertDateIntoMillisecond(date: String): Long {
+        val formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+        val localDate = LocalDateTime.parse(date, formatter)
+        val setDayInMilliseconds = localDate.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
+
+        val todayDate = (Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time).toString()
+        val todayLocalDate = LocalDateTime.parse(todayDate, formatter)
+        val todayInMilliseconds = todayLocalDate.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
+
+        val millisecondsDifference = todayInMilliseconds - setDayInMilliseconds
+
+        val daysDifference = (millisecondsDifference / (1000 * 60 * 60 * 24))
+
+        return daysDifference
+    }
 }

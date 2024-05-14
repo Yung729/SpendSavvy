@@ -43,6 +43,10 @@ import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
+import java.text.DateFormat
+import java.time.ZoneId
+import java.util.Calendar
+import java.util.Date
 import kotlin.time.toDuration
 
 
@@ -54,11 +58,12 @@ fun FixedDepositDetailsScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
-    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
-
-    /*var isExpanded by remember {
-        mutableStateOf(false)
-    }*/
+    val currentDate = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.time
 
     var selectedBank by remember {
         mutableStateOf("")
@@ -249,7 +254,8 @@ fun FixedDepositDetailsScreen(
                         FDAccount(
                             selectedBank,
                             interestRate.toDoubleOrNull() ?: 0.0,
-                            depositAmt.toDoubleOrNull() ?: 0.0
+                            depositAmt.toDoubleOrNull() ?: 0.0,
+                            date = currentDate
                         )
                     )
 
