@@ -191,6 +191,7 @@ class WalletViewModel(
                             // Handle failure
                         })
                 } else {
+                    
                     firestoreRepository.addWalletItems(
                         userId,
                         "Cash",

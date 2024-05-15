@@ -207,7 +207,7 @@ fun AddCashAccountScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             if (selectedIndex == 1) {
-                
+
                 Text(
                     text = "Enter your bank",
                     fontFamily = poppinsFontFamily,
