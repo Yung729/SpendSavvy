@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -31,6 +33,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,6 +56,9 @@ import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun FDEarnScreen(
@@ -61,12 +67,19 @@ fun FDEarnScreen(
     fdAccount: FDAccount,
     walletViewModel: WalletViewModel
 ) {
+    var withdrawalTotalAmt by remember {
+        mutableDoubleStateOf(0.0)
+    }
 
     var isPopUp by remember {
         mutableStateOf(false)
     }
 
     val daysLeft = walletViewModel.convertDateIntoMillisecond(fdAccount.date.toString())
+    val accountDeposit by walletViewModel.latestDeposit.observeAsState(0.0)
+    walletViewModel.withdrawalAmtApproved(fdAccount.deposit, withdrawalTotalAmt)
+
+    val fdAccDetailsList by walletViewModel.fdAccDetailsList.observeAsState(initial = emptyList())
 
     Column(
         modifier = Modifier.padding(start = 15.dp)
@@ -79,6 +92,7 @@ fun FDEarnScreen(
         )
 
         Spacer(modifier = Modifier.height(15.dp))
+
 
         Row {
             Column(
@@ -97,7 +111,7 @@ fun FDEarnScreen(
                             .padding(end = 10.dp)
                     )
 
-                    Text(text = "RM ${fdAccount.deposit}")
+                    Text(text = "RM $accountDeposit")
 
                     Text(
                         "Account Balance",
@@ -214,7 +228,8 @@ fun FDEarnScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            //FDTransferList()
+            FDTransferList(fdAccDetailsList, fdAccount.bankName)
+
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -238,7 +253,7 @@ fun FDEarnScreen(
                         )
                     ) {
                         Text(
-                            text = "Withdraw All",
+                            text = "Withdraw FD",
                             textAlign = TextAlign.Center,
                             color = Color.White
                         )
@@ -264,7 +279,7 @@ fun FDEarnScreen(
         }
     }
     if (isPopUp)
-        WithdrawFDScreen(
+        withdrawFDDialog(
             onCancelClick = { isPopUp = false },
             {},
             walletViewModel,
@@ -278,7 +293,7 @@ fun FDEarnScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun WithdrawFDScreen(
+fun withdrawFDDialog(
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
     walletViewModel: WalletViewModel,
@@ -295,7 +310,6 @@ fun WithdrawFDScreen(
     var isExpanded by remember {
         mutableStateOf(false)
     }
-
 
     var withdrawalAmt by remember {
         mutableStateOf("")
@@ -322,7 +336,8 @@ fun WithdrawFDScreen(
             ) {
                 Text(
                     "Transfer",
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
@@ -348,7 +363,8 @@ fun WithdrawFDScreen(
                         )
                     },
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Decimal
                     )
                 )
 
@@ -440,28 +456,49 @@ fun WithdrawFDScreen(
                     OutlinedButton(
                         onClick = {
                             if (daysLeft == 31536000000) {
-                                for (cashDetails in cashDetailsList) {
-                                    if (cashDetails.typeName == searchAccount) {
-                                        walletViewModel.editCashDetails(
-                                            cash = cashDetails,
-                                            updatedCashDetails = Cash(
-                                                cashDetails.imageUri,
-                                                cashDetails.typeName,
-                                                cashDetails.balance + totalEarned
+                                if ((withdrawalAmt.toDoubleOrNull() ?: 0.0) > fdAccount.deposit) {
+                                    Toast.makeText(
+                                        context,
+                                        "Please enter the amount that less than your deposit amount\nAccount Balance: ${fdAccount.deposit}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    for (cashDetails in cashDetailsList) {
+                                        if (cashDetails.typeName == searchAccount) {
+                                            walletViewModel.editCashDetails(
+                                                cash = cashDetails,
+                                                updatedCashDetails = Cash(
+                                                    cashDetails.imageUri,
+                                                    cashDetails.typeName,
+                                                    cashDetails.balance + totalEarned
+                                                )
                                             )
-                                        )
 
-                                        walletViewModel.editFDDetails(
-                                            fdAccount = fdAccount,
-                                            updatedFDDetails = FDAccount(
-                                                imageUri = fdAccount.imageUri,
-                                                bankName = fdAccount.bankName,
-                                                interestRate = fdAccount.interestRate,
-                                                deposit = 0.0,                          //successfully withdraw
-                                                date = fdAccount.date
+                                            walletViewModel.editFDDetails(
+                                                fdAccount = fdAccount,
+                                                updatedFDDetails = FDAccount(
+                                                    imageUri = fdAccount.imageUri,
+                                                    bankName = fdAccount.bankName,
+                                                    interestRate = fdAccount.interestRate,
+                                                    deposit = fdAccount.deposit - (withdrawalAmt.toDoubleOrNull()
+                                                        ?: 0.0),                          //successfully withdraw
+                                                    date = fdAccount.date,
+                                                    transferType = "Deposit"
+                                                )
                                             )
-                                        )
 
+                                            walletViewModel.addFDDetailsToDatabase(
+                                                fdAccount = FDAccount(
+                                                    imageUri = fdAccount.imageUri,
+                                                    bankName = fdAccount.bankName,
+                                                    interestRate = fdAccount.interestRate,
+                                                    deposit = fdAccount.deposit - (withdrawalAmt.toDoubleOrNull()
+                                                        ?: 0.0),                          //successfully withdraw
+                                                    date = fdAccount.date,
+                                                    transferType = "Withdraw"
+                                                ), fdAccount.imageUri
+                                            )
+                                        }
                                     }
                                 }
 
@@ -488,39 +525,84 @@ fun WithdrawFDScreen(
 
         }
     }
+
+    walletViewModel.withdrawalAmtApproved(fdAccount.deposit, withdrawalAmt.toDoubleOrNull() ?: 0.0)
 }
 
-/*
+
 @Composable
 fun FDTransferList(
-
+    fdAccountTypeList: List<FDAccount>, fdAccName: String
 ) {
     LazyColumn {
-items() { item: Cash ->
-            if (item.typeName != "Cash") {
-                Row(
-                    modifier = modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = item.,
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
-                    )
+        items(fdAccountTypeList) { item: FDAccount ->
+            if (item.bankName == fdAccName)
+                FDTransferCard(
+                    fdAccount = item,
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxWidth()
+                )
+        }
+    }
+}
 
-                    Text(
-                        text = "RM ${item.}",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
-                    )
-                }
+@Composable
+fun FDTransferCard(
+    fdAccount: FDAccount,
+    modifier: Modifier
+) {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-                Spacer(modifier = Modifier.height(15.dp))
-                Divider(color = Color.Gray, thickness = 0.7.dp)
-                Spacer(modifier = Modifier.height(15.dp))
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        ),
+        border = BorderStroke(width = 1.dp, Color.Black)
+    ) {
+
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
+
+            Image(
+                painter = rememberAsyncImagePainter(model = fdAccount.imageUri),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(30.dp, 30.dp)
+                    .padding(end = 10.dp)
+            )
+
+            Column(
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier
+            ) {
+                Text(
+                    text = fdAccount.transferType,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Text(
+                    text = "${dateFormat.format(fdAccount.date)}",
+                    fontSize = 12.sp
+                )
             }
+
+            Text(
+                text = "RM ${fdAccount.deposit}",
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Green,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         }
 
     }
+
 }
-*/

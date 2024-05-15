@@ -353,7 +353,8 @@ fun FixedDepositDetailsScreen(
                             selectedBank,
                             interestRate.toDoubleOrNull() ?: 0.0,
                             depositAmt.toDoubleOrNull() ?: 0.0,
-                            currentDate
+                            currentDate,
+                            "Deposit"
                         ), selectedImageUri
                     )
                 },

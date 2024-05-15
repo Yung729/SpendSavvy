@@ -312,8 +312,8 @@ fun AddStockSelectionScreen(
 
 
 @Composable
-fun StockList(stockList: List<Stock>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
+fun StockList(stockList: List<Stock>) {
+    LazyColumn{
         items(stockList) { item: Stock ->
             StockCard(
                 stock = item,

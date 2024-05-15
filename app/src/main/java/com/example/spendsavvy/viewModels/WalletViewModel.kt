@@ -38,11 +38,17 @@ class WalletViewModel(
     val userId = userId
     val currentContext = context
 
+    val latestDeposit = MutableLiveData<Double>()
 
     init {
         getCashDetails()
         getFDAccountDetails()
         getStockDetails()
+    }
+
+    //Used for FD Earn
+    fun withdrawalAmtApproved(deposit:Double, withdrawalAmt: Double){
+        latestDeposit.postValue(deposit - withdrawalAmt)
     }
 
     //CASH DETAILS
