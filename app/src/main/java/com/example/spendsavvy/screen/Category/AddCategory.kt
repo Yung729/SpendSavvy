@@ -45,6 +45,7 @@ import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.viewModels.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +53,8 @@ import com.example.spendsavvy.viewModels.CategoryViewModel
 @Composable
 fun AddCategoryScreen(
     modifier: Modifier,
-    catViewModel: CategoryViewModel
+    catViewModel: CategoryViewModel,
+    window : ScreenSize
 ) {
     val options = mutableStateListOf(stringResource(id = com.example.spendsavvy.R.string.expense),stringResource(id = com.example.spendsavvy.R.string.income))
     var selectedIndex by remember {

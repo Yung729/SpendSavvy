@@ -577,7 +577,8 @@ fun SetupNavGraph(
                             .fillMaxSize()
                             .padding(20.dp),
                         catViewModel = categoryViewModel,
-                        navController = navController
+                        navController = navController,
+                        window = window
                     )
 
                 }
@@ -790,7 +791,8 @@ fun SetupNavGraph(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp),
-                        catViewModel = categoryViewModel
+                        catViewModel = categoryViewModel,
+                        window = window
                     )
 
                 }
@@ -876,7 +878,8 @@ fun SetupNavGraph(
                             .padding(20.dp),
                         staffViewModel = staffViewModel,
                         navController = navController,
-                        walletViewModel = walletViewModel
+                        walletViewModel = walletViewModel,
+                        window = window
                     )
 
 

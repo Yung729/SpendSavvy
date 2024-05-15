@@ -55,13 +55,15 @@ import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
+import com.example.spendsavvy.ui.theme.ScreenSize
+import com.example.spendsavvy.ui.theme.WindowType
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navController: NavController,walletViewModel : WalletViewModel) {
+fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navController: NavController,walletViewModel : WalletViewModel,window:ScreenSize) {
 
     val staffList by staffViewModel.staffList.observeAsState(initial = emptyList())
     val staffCount by staffViewModel.totalStaffCount.observeAsState(initial = 0)
@@ -96,13 +98,30 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            StaffList(
-                modifier = Modifier.height(290.dp),
-                staffList = staffList,
-                navController = navController,
-                staffViewModel = staffViewModel,
-                dismissStateMap = dismissStateMap
-            )
+            when (window.height) {
+                WindowType.Expanded -> {
+
+                    StaffList(
+                        modifier = Modifier.height(770.dp),
+                        staffList = staffList,
+                        navController = navController,
+                        staffViewModel = staffViewModel,
+                        dismissStateMap = dismissStateMap
+                    )
+                }
+
+                else ->{
+
+                    StaffList(
+                        modifier = Modifier.height(290.dp),
+                        staffList = staffList,
+                        navController = navController,
+                        staffViewModel = staffViewModel,
+                        dismissStateMap = dismissStateMap
+                    )
+                }
+
+            }
         }
 
         item {
