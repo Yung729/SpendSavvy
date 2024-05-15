@@ -98,6 +98,7 @@ import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
 import com.example.spendsavvy.viewModels.DateSelectionViewModel
+import com.example.spendsavvy.viewModels.NotificationViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.example.spendsavvy.viewModels.QuestionViewModel
@@ -163,9 +164,9 @@ fun SetupNavGraph(
     val targetViewModel = TargetViewModel(context, isConnected, userId)
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId, isConnected, context)
-    val billsViewModel = BillsViewModel(context, isConnected, userId)
+    val notificationViewModel = NotificationViewModel(context)
+    val billsViewModel = BillsViewModel(context, isConnected, userId,notificationViewModel)
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
-
     val showOption = remember { mutableStateOf(false) }
 
 
@@ -717,7 +718,9 @@ fun SetupNavGraph(
                     Notification(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(20.dp), navController = navController
+                            .padding(20.dp), navController = navController,
+                        billsViewModel = billsViewModel,
+                        notificationViewModel = notificationViewModel
                     )
 
                 }

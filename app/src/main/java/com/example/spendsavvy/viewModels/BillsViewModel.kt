@@ -5,9 +5,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -32,6 +34,7 @@ class BillsViewModel(
     context: Context,
     isOnline: Boolean,
     userId: String,
+    private val notificationViewModel: NotificationViewModel
 ): ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
@@ -50,7 +53,21 @@ class BillsViewModel(
     val totalPaidBills = MutableLiveData<Int>()
 
 
+    private val sharedPref: SharedPreferences by lazy {
+        context.getSharedPreferences("notification", Context.MODE_PRIVATE)
+    }
+
+    val isNotificationEnabled = MutableLiveData<Boolean>()
+
+    fun updateNotificationStatus(isEnabled: Boolean) {
+        isNotificationEnabled.value = isEnabled
+        // Update notification status in NotificationViewModel
+        notificationViewModel.isNotificationEnabled(isEnabled)
+    }
+
     init {
+        createNotificationChannel(context = currentContext)
+        isNotificationEnabled.value = sharedPref.getBoolean("notificationEnabled", true)
         getBillsRecord()
     }
 
@@ -133,7 +150,10 @@ class BillsViewModel(
                         val updatedBills = currentBills + bills
                         updateBills(updatedBills)
                         onSuccess()
-                        createBillMadeNotification(bills)
+                        println("send notification: ${isNotificationEnabled.value}")
+                        if (isNotificationEnabled.value == true) {
+                            createBillMadeNotification(bills)
+                        }
                     },
                     onFailure = { exception ->
                         Log.e(TAG, "Error adding bills", exception)
@@ -208,8 +228,6 @@ class BillsViewModel(
                         )
                     }
                 )
-
-
             } catch (e: Exception) {
                 Log.e(TAG, "Error deleting bill", e)
             }
@@ -221,13 +239,13 @@ class BillsViewModel(
         return "B$random"
     }
 
-    private fun createBillMadeNotification(bills: Bills){
-        val notificationId = 2
+    private fun createBillMadeNotification(bills: Bills) {
+        val notificationId = 1
         val builder = NotificationCompat.Builder(currentContext, "CHANNEL_ID")
             .setSmallIcon(R.drawable.bills_icon)
             .setContentTitle("New bill made")
-            .setContentText("Bill ${bills.id} (${bills.description}) with amount ${bills.amount} && ${bills.selectedDueDate} is due date!")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentText("Bill(${bills.description}) with amount ${bills.amount} && ${bills.selectedDueDate} is due date!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         with(NotificationManagerCompat.from(currentContext)){
 
@@ -243,22 +261,22 @@ class BillsViewModel(
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
-                return
+                return println("error notifications")
             }
             notify(notificationId, builder.build())
         }
     }
 
-//    private fun createNotificationChannel(context: Context) {
-//        val name = "NOTIFICAITONCHANNELNAME"
-//        val descriptionText = "DESCRIPTION"
-//        val importance = NotificationManager.IMPORTANCE_DEFAULT
-//        val channel = NotificationChannel("CHANNEL_ID", name, importance).apply{
-//            description = descriptionText
-//        }
-//        val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        notificationManager.createNotificationChannel(channel)
-//    }
+    private fun createNotificationChannel(context: Context) {
+        val name = "NOTIFICAITONCHANNELNAME"
+        val descriptionText = "DESCRIPTION"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("CHANNEL_ID", name, importance).apply{
+            description = descriptionText
+        }
+        val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
 
 //    private fun setOneTimeNotification(){
 //        val workManager = WorkManager.getInstance(currentContext)
@@ -284,7 +302,7 @@ class BillsViewModel(
 ////                }
 //            }
 //    }
-
+//
 //    private fun createSuccessNotification(){
 //        val notificationId = 1
 //        val builder = NotificationCompat.Builder(currentContext, "CHANNEL_ID")
