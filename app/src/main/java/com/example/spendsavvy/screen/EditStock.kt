@@ -2,6 +2,7 @@ package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -55,6 +57,8 @@ fun EditExistingStockScreen(
     navController: NavController,
     mode: Int
 ) {
+    val context = LocalContext.current
+
     val stockDetails by walletViewModel.stockListLive.observeAsState(initial = emptyList())
 
     var isExpanded by remember {
@@ -264,38 +268,45 @@ fun EditExistingStockScreen(
                     for (stock in stockDetails) {
                         if (searchProduct == stock.productName) {
                             if (mode == 2) {                                        //sell existing stock
-
-                                transactionViewModel.addTransactionToFirestore(
-                                    Transactions(
-                                        id = transactionViewModel.generateTransactionId(),
-                                        amount = ((price.toDoubleOrNull() ?: 0.0) * qty.toInt()),
-                                        description = "Sell Stock",
-                                        date = Date(),
-                                        category = Category(
-                                            id = "CT0002",
-                                            imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
-                                            categoryName = "Stock Sales",
-                                            categoryType = "Incomes"
-                                        ),
-                                        paymentMethod = "Cash",
-                                        transactionType = "Incomes"
-                                    ),
-                                    onSuccess = {
-                                        walletViewModel.editStockDetails(
-                                            stock = stock,
-                                            updatedStockDetails = Stock(
-                                                stock.imageUri,
-                                                searchProduct,
-                                                stock.originalPrice,
-                                                stock.quantity - qty.toInt()
-                                            )
+                                    if((qty.toIntOrNull()?:0) > stock.quantity){
+                                        Toast.makeText(
+                                            context,
+                                            "You cannot only sell more than what you have\nAvailable quantity: ${stock.quantity}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }else {
+                                        transactionViewModel.addTransactionToFirestore(
+                                            Transactions(
+                                                id = transactionViewModel.generateTransactionId(),
+                                                amount = ((price.toDoubleOrNull()
+                                                    ?: 0.0) * qty.toInt()),
+                                                description = "Sell Stock",
+                                                date = Date(),
+                                                category = Category(
+                                                    id = "CT0002",
+                                                    imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
+                                                    categoryName = "Stock Sales",
+                                                    categoryType = "Incomes"
+                                                ),
+                                                paymentMethod = "Cash",
+                                                transactionType = "Incomes"
+                                            ),
+                                            onSuccess = {
+                                                walletViewModel.editStockDetails(
+                                                    stock = stock,
+                                                    updatedStockDetails = Stock(
+                                                        stock.imageUri,
+                                                        searchProduct,
+                                                        stock.originalPrice,
+                                                        stock.quantity - qty.toInt()
+                                                    )
+                                                )
+                                            },
+                                            onFailure = {
+                                            }
                                         )
-                                    },
-                                    onFailure = {
+
                                     }
-                                )
-
-
                             } else {                                            //add existing stock
 
                                 transactionViewModel.addTransactionToFirestore(
@@ -320,7 +331,7 @@ fun EditExistingStockScreen(
                                                 stock.imageUri,
                                                 searchProduct,
                                                 stock.originalPrice,
-                                                qty.toInt()
+                                                stock.quantity + qty.toInt()
                                             )
                                         )
                                     },

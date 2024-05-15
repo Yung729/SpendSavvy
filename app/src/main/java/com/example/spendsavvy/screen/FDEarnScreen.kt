@@ -459,7 +459,7 @@ fun withdrawFDDialog(
                                 if ((withdrawalAmt.toDoubleOrNull() ?: 0.0) > fdAccount.deposit) {
                                     Toast.makeText(
                                         context,
-                                        "Please enter the amount that less than your deposit amount\nAccount Balance: ${fdAccount.deposit}",
+                                        "Please enter the amount that less than or equals to your deposit amount\nAccount Balance: ${fdAccount.deposit}",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {

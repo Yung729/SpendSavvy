@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -49,6 +51,9 @@ fun EditCashAccountScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
+
+    val context = LocalContext.current
+
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -159,7 +164,7 @@ fun EditCashAccountScreen(
                         }
                     }
                 }
-            }else{
+            } else {
                 typeName = "Cash"
             }
 
@@ -247,15 +252,25 @@ fun EditCashAccountScreen(
                 onClick = {
                     for (cashDetails in cashInfo) {
                         if (cashDetails.typeName == typeName) {
-                            walletViewModel.editCashDetails(
-                                cash = cashDetails,
-                                updatedCashDetails = Cash(
-                                    imageUri = cashDetails.imageUri,
-                                    typeName = typeName,
-                                    balance = cashDetails.balance + (incAmt.toDoubleOrNull()
-                                        ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
+                            if ((decAmt.toDoubleOrNull() ?: 0.0) > (incAmt.toDoubleOrNull()
+                                    ?: 0.0) + cashDetails.balance
+                            ) {
+                                Toast.makeText(
+                                    context,
+                                    "You cannot decrease your amount more than the total of your remaining and increased amount\nRemaining Amount: RM ${cashDetails.balance}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                walletViewModel.editCashDetails(
+                                    cash = cashDetails,
+                                    updatedCashDetails = Cash(
+                                        imageUri = cashDetails.imageUri,
+                                        typeName = typeName,
+                                        balance = cashDetails.balance + (incAmt.toDoubleOrNull()
+                                            ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                     navController.navigateUp()
