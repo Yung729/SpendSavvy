@@ -3,6 +3,7 @@ package com.example.spendsavvy.screen
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -43,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
@@ -85,7 +88,13 @@ fun FDEarnScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    //image
+                    Image(
+                        painter = rememberAsyncImagePainter(model = fdAccount.imageUri),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(30.dp, 30.dp)
+                            .padding(end = 10.dp)
+                    )
 
                     Text(text = "RM ${fdAccount.deposit}")
 
@@ -155,7 +164,7 @@ fun FDEarnScreen(
 
                     //show how many days left
                     Text(
-                        "${365 - (daysLeft/(24*60*60*1000))} Days",
+                        "${365 - (daysLeft / (24 * 60 * 60 * 1000))} Days",
                         color = Color.Gray,
                         fontSize = 15.sp,
                         modifier = Modifier.padding(
@@ -315,7 +324,13 @@ fun WithdrawFDScreen(
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Text(
+                    "Withdrawal amount"
+                )
+
+                Spacer(modifier = Modifier.height(25.dp))
 
                 TextField(
                     value = withdrawalAmt,
@@ -332,20 +347,25 @@ fun WithdrawFDScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
-                Column {
+                Row {
                     Column(
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            "To",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "To",
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
                 Text(
                     "Cash Account"
@@ -400,7 +420,7 @@ fun WithdrawFDScreen(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
                 Box(
                     Modifier.fillMaxWidth()
@@ -414,10 +434,11 @@ fun WithdrawFDScreen(
                         onClick = {
                             if (daysLeft == 31536000000) {
                                 for (cashDetails in cashDetailsList) {
-                                    if (cashDetails.typeName == searchAccount){
+                                    if (cashDetails.typeName == searchAccount) {
                                         walletViewModel.editCashDetails(
                                             cash = cashDetails,
                                             updatedCashDetails = Cash(
+                                                cashDetails.imageUri,
                                                 cashDetails.typeName,
                                                 cashDetails.balance + totalEarned
                                             )
@@ -426,6 +447,7 @@ fun WithdrawFDScreen(
                                         walletViewModel.editFDDetails(
                                             fdAccount = fdAccount,
                                             updatedFDDetails = FDAccount(
+                                                imageUri = fdAccount.imageUri,
                                                 bankName = fdAccount.bankName,
                                                 interestRate = fdAccount.interestRate,
                                                 deposit = 0.0,                          //successfully withdraw
@@ -439,7 +461,7 @@ fun WithdrawFDScreen(
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "The FD Account is still locked\nRemaining days: ${365 - (daysLeft/ (24*60*60*1000))}",
+                                    "The FD Account is still locked\nRemaining days: ${365 - (daysLeft / (24 * 60 * 60 * 1000))}",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }

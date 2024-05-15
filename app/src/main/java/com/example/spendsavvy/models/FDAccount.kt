@@ -1,15 +1,16 @@
 package com.example.spendsavvy.models
 
+import android.net.Uri
+import androidx.annotation.DrawableRes
 import java.io.Serializable
-import java.time.Duration
 import java.util.Date
 
 data class FDAccount(
-    //@DrawableRes val BankImages: Int,
+    var imageUri: Uri?,
     val bankName: String,
     val interestRate: Double,
     val deposit: Double,
-    val date: Date      //store start date
+    val date: Date
 ) : Serializable {
-    constructor() : this("",0.0,0.0, Date())
+    constructor() : this(null,"",0.0,0.0, Date())
 }

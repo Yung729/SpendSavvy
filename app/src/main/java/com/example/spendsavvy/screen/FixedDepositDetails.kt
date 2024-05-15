@@ -1,6 +1,9 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,7 +51,14 @@ import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import kotlin.time.toDuration
-
+import android.R
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
@@ -77,6 +87,15 @@ fun FixedDepositDetailsScreen(
         mutableStateOf("")
     }
 
+    var selectedImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            selectedImageUri = it
+        })
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,6 +121,67 @@ fun FixedDepositDetailsScreen(
                 fontSize = 15.sp,
                 color = Color.Red
             )
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Text(
+                text = "Pick Icon Photo",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .height(56.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF46484B), contentColor = Color.White
+                ),
+                onClick = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }) {
+
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_input_add),
+                        contentDescription = "Add Image"
+                    )
+
+                    Text(
+                        text = "Pick a Photo",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
+                    )
+                }
+            }
+
+            if (selectedImageUri != null) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Image added", color = Color.Green
+                    )
+                    IconButton(
+                        onClick = { selectedImageUri = null },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear Image"
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -250,17 +330,15 @@ fun FixedDepositDetailsScreen(
             Button(
                 onClick = {
                     //addFDDetailsIntoDatabase(FDAccount(searchName, duration, interestRate, depositAmt))
-                    val valid = walletViewModel.addFDDetailsToDatabase(
+                    walletViewModel.addFDDetailsToDatabase(
                         FDAccount(
+                            selectedImageUri,
                             selectedBank,
                             interestRate.toDoubleOrNull() ?: 0.0,
                             depositAmt.toDoubleOrNull() ?: 0.0,
                             date = currentDate
-                        )
+                        ),selectedImageUri
                     )
-
-                    if(valid == 1)
-                        navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
