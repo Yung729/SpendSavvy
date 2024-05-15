@@ -385,6 +385,7 @@ fun SetupNavGraph(
                         budgetViewModel = targetViewModel,
                         dateViewModel = dateViewModel,
                         profileViewModel = profileViewModel,
+                        walletViewModel = walletViewModel,
                         navController = navController,
                         window = window
                     )

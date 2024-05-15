@@ -66,6 +66,7 @@ import com.example.spendsavvy.viewModels.DateSelectionViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
+import com.example.spendsavvy.viewModels.WalletViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -88,6 +89,7 @@ fun OverviewScreen(
     budgetViewModel: TargetViewModel,
     dateViewModel: DateSelectionViewModel,
     profileViewModel: ProfileViewModel,
+    walletViewModel : WalletViewModel,
     navController: NavController,
     window: ScreenSize
 ) {
@@ -98,6 +100,11 @@ fun OverviewScreen(
     val totalIncomes by transactionViewModel.selectedDateIncomesTotal.observeAsState(initial = 0.0)
     val budgetAmount by budgetViewModel.budget.observeAsState(initial = 0.0)
     val goalAmount by budgetViewModel.goal.observeAsState(initial = 0.0)
+
+    //wallet
+    val totalCashAmount by walletViewModel.totalCashAmount.observeAsState(initial = 0.0)
+    val totalFixedDeposit by walletViewModel.totalFixedDeposit.observeAsState(initial = 0.0)
+    val totalPriceStock by walletViewModel.totalPriceStock.observeAsState(initial = 0.0)
 
     val userData by profileViewModel.userData.observeAsState(initial = UserData())
 
@@ -200,7 +207,7 @@ fun OverviewScreen(
 
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(
-                                            text = "RM $0.0",
+                                            text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
                                             fontSize = 16.sp,
                                             color = Color.Black
                                         )
@@ -378,7 +385,7 @@ fun OverviewScreen(
 
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(
-                                            text = "RM $0.0",
+                                            text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
                                             fontSize = 16.sp,
                                             color = Color.Black
                                         )
