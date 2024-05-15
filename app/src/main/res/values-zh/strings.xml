@@ -187,5 +187,5 @@
     <string name="text_20">向我们询问您的问题</string>
     <string name="text_21">在此输入您的问题......</string>
     <string name="submit">提交</string>
-    <string name="text_22">您确定要\n 注销吗？</string>
+    <string name="text_22">您确定要\n登出账户吗？</string>
 </resources>
