@@ -67,6 +67,10 @@ fun WalletScreen(
     val fdAccDetailsList by walletViewModel.fdAccDetailsList.observeAsState(initial = emptyList())
     val stockListLive by walletViewModel.stockListLive.observeAsState(initial = emptyList())
 
+    val totalCashAmount by walletViewModel.totalCashAmount.observeAsState(initial = 0.0)
+    val totalFixedDeposit by walletViewModel.totalFixedDeposit.observeAsState(initial = 0.0)
+    val totalPriceStock by walletViewModel.totalPriceStock.observeAsState(initial = 0.0)
+
     Column(
         modifier = modifier
     ) {
@@ -85,46 +89,29 @@ fun WalletScreen(
         ) {
 
             Box(
-                modifier = Modifier.background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF696161), // Start color
-                            Color(0xFF1B1B1B)  // End color
+                modifier = Modifier
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF696161), // Start color
+                                Color(0xFF1B1B1B)  // End color
+                            )
                         )
                     )
-                ).fillMaxWidth()
-            ){
-            Column(modifier = Modifier.padding(15.dp)) {
-                Text(stringResource(id = R.string.availableBalance))
+                    .fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(15.dp)) {
+                    Text(stringResource(id = R.string.availableBalance),
+                        fontSize = 20.sp)
 
-                Text(text = "RM $")
-            }
+                    Text(text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
+                        fontSize = 20.sp)
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = stringResource(id = R.string.assets),
-                fontFamily = poppinsFontFamily,
-                fontSize = 25.sp,
-                color = HeaderTitle,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-
-            Text(
-                text = "RM $",
-                fontFamily = poppinsFontFamily,
-                fontSize = 25.sp,
-                color = GreenColor,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-
-        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -349,18 +336,18 @@ fun WalletScreen(
     }
 }
 
-fun bankAccountCount(cashList: List<Cash>): Int{
+fun bankAccountCount(cashList: List<Cash>): Int {
     var count = 0
 
     for (cashAccount in cashList) {
-        if(cashAccount.typeName != "Cash")
+        if (cashAccount.typeName != "Cash")
             count++
     }
 
     return count
 }
 
-fun stocksCount(stockList: List<Stock>): Int{
+fun stocksCount(stockList: List<Stock>): Int {
     var count = 0
 
     for (stockDetails in stockList)
@@ -369,7 +356,7 @@ fun stocksCount(stockList: List<Stock>): Int{
     return count
 }
 
-fun fdCount(fdAccDetailsList: List<FDAccount>): Int{
+fun fdCount(fdAccDetailsList: List<FDAccount>): Int {
     var accountCount = 0
 
     for (fdAccount in fdAccDetailsList) {
