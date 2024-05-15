@@ -76,7 +76,6 @@ fun CategoryScreen(
     Column(modifier = modifier) {
 
 
-
         Row(
             horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
         ) {
@@ -97,23 +96,23 @@ fun CategoryScreen(
 
 
 
-            if (selectedIndex == 0) {
-                CategoryList(
-                    modifier = Modifier.height(445.dp),
-                    categoryList = expenseList,
-                    catViewModel = catViewModel,
-                    navController = navController,
-                    dismissStateMap = dismissStateMap
-                )
-            } else if (selectedIndex == 1) {
-                CategoryList(
-                    modifier = Modifier.height(445.dp),
-                    categoryList = incomeList,
-                    catViewModel = catViewModel,
-                    navController = navController,
-                    dismissStateMap = dismissStateMap
-                )
-            }
+        if (selectedIndex == 0) {
+            CategoryList(
+                modifier = Modifier.height(445.dp),
+                categoryList = expenseList,
+                catViewModel = catViewModel,
+                navController = navController,
+                dismissStateMap = dismissStateMap
+            )
+        } else if (selectedIndex == 1) {
+            CategoryList(
+                modifier = Modifier.height(445.dp),
+                categoryList = incomeList,
+                catViewModel = catViewModel,
+                navController = navController,
+                dismissStateMap = dismissStateMap
+            )
+        }
 
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -124,10 +123,6 @@ fun CategoryScreen(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
-
-
-
 
 
     }
@@ -149,50 +144,49 @@ fun CategoryCard(
 
     SwipeToDeleteItem(state = dismissState) {
 
-        if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
-            Card(
-                modifier = modifier.clickable {
-                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                        key = "currentCategory",
-                        value = category
-                    )
+        Card(
+            modifier = modifier.clickable {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    key = "currentCategory",
+                    value = category
+                )
 
-                    navController.navigate(Screen.CategoryDetail.route)
-                }, colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
-                ), border = BorderStroke(width = 1.dp, Color.Black)
+                navController.navigate(Screen.CategoryDetail.route)
+            }, colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            ), border = BorderStroke(width = 1.dp, Color.Black)
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+
             ) {
 
-                Row(
+                Image(
+                    painter = rememberAsyncImagePainter(model = category.imageUri),
+                    contentDescription = "",
                     modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .size(30.dp, 30.dp)
+                        .padding(end = 10.dp)
+                )
 
+                Column(
+                    horizontalAlignment = Alignment.Start, modifier = Modifier
                 ) {
-
-                    Image(
-                        painter = rememberAsyncImagePainter(model = category.imageUri),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(30.dp, 30.dp)
-                            .padding(end = 10.dp)
+                    Text(
+                        text = category.categoryName, fontWeight = FontWeight.SemiBold
                     )
-
-                    Column(
-                        horizontalAlignment = Alignment.Start, modifier = Modifier
-                    ) {
-                        Text(
-                            text = category.categoryName, fontWeight = FontWeight.SemiBold
-                        )
-
-
-                    }
 
 
                 }
 
+
             }
+
+
         }
 
         if (dismissState.isDismissed(DismissDirection.StartToEnd)) {

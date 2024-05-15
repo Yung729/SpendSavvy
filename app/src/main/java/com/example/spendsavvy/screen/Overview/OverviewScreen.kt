@@ -691,7 +691,8 @@ fun BudgetCard(
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(20.dp).width(300.dp)
+                            .padding(20.dp)
+                            .width(300.dp)
                             .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
                     ) {
                         Text(
@@ -774,7 +775,6 @@ fun BudgetCard(
             }
         }
     }
-
 
 
 }
@@ -812,7 +812,8 @@ fun GoalCard(
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(16.dp).width(300.dp)
+                            .padding(16.dp)
+                            .width(300.dp)
                             .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
                     ) {
                         Text(
@@ -894,8 +895,6 @@ fun GoalCard(
     }
 
 
-
-
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -914,62 +913,61 @@ fun TransactionsCard(
 
 
     SwipeToDeleteItem(state = dismissState) {
-        if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
-            Card(
-                modifier = modifier.clickable {
-                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                        key = "currentTransaction", value = transactions
-                    )
-
-                    navController.navigate(Screen.TransactionDetails.route)
-                }, colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
+        Card(
+            modifier = modifier.clickable {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    key = "currentTransaction", value = transactions
                 )
+
+                navController.navigate(Screen.TransactionDetails.route)
+            }, colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            )
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+
             ) {
 
-                Row(
+                Image(
+                    painter = rememberAsyncImagePainter(model = transactions.category.imageUri),
+                    contentDescription = "",
                     modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .size(30.dp, 30.dp)
+                        .padding(end = 10.dp)
+                )
 
+                Column(
+                    horizontalAlignment = Alignment.Start, modifier = Modifier
                 ) {
-
-                    Image(
-                        painter = rememberAsyncImagePainter(model = transactions.category.imageUri),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(30.dp, 30.dp)
-                            .padding(end = 10.dp)
+                    Text(
+                        text = transactions.category.categoryName,
+                        fontWeight = FontWeight.SemiBold
                     )
 
-                    Column(
-                        horizontalAlignment = Alignment.Start, modifier = Modifier
-                    ) {
-                        Text(
-                            text = transactions.category.categoryName,
-                            fontWeight = FontWeight.SemiBold
-                        )
-
-                        Text(
-                            text = dateFormat.format(transactions.date), fontSize = 10.sp
-                        )
-                    }
-
-
                     Text(
-                        text = transactions.amount.toString(),
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (transactions.transactionType == "Expenses") Color.Red else Color(
-                            0xFF119316
-                        ),
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.fillMaxWidth()
+                        text = dateFormat.format(transactions.date), fontSize = 10.sp
                     )
                 }
 
+
+                Text(
+                    text = transactions.amount.toString(),
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (transactions.transactionType == "Expenses") Color.Red else Color(
+                        0xFF119316
+                    ),
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
+
         }
+
 
         if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
             transactionViewModel.deleteTransaction(transactions)

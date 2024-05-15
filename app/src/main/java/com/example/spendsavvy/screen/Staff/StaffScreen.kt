@@ -210,51 +210,50 @@ fun StaffCard(
 
 
     SwipeToDeleteItem(state = dismissState) {
-        if (!dismissState.isDismissed(DismissDirection.StartToEnd)) {
-            Card(
-                modifier = modifier.clickable {
-                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                        key = "currentStaff", value = staff
-                    )
-
-                    navController.navigate(Screen.StaffDetailScreen.route)
-
-                }, colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
+        Card(
+            modifier = modifier.clickable {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    key = "currentStaff", value = staff
                 )
+
+                navController.navigate(Screen.StaffDetailScreen.route)
+
+            }, colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            )
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+
             ) {
 
-                Row(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
 
+                Column(
+                    horizontalAlignment = Alignment.Start, modifier = Modifier
                 ) {
-
-
-                    Column(
-                        horizontalAlignment = Alignment.Start, modifier = Modifier
-                    ) {
-                        Text(
-                            text = staff.name,
-                            fontWeight = FontWeight.SemiBold
-                        )
-
-                    }
-
-
                     Text(
-                        text = staff.salary.toString(),
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF119316),
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.fillMaxWidth()
+                        text = staff.name,
+                        fontWeight = FontWeight.SemiBold
                     )
+
                 }
 
+
+                Text(
+                    text = staff.salary.toString(),
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF119316),
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
+
         }
+
 
 
         if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
