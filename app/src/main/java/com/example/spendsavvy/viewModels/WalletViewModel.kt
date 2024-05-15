@@ -221,7 +221,7 @@ class WalletViewModel(
         }
         Toast.makeText(
             currentContext,
-            "Cash Account ${cash.typeName} has successfully added",
+            "The cash account , ${cash.typeName} , has successfully added",
             Toast.LENGTH_SHORT
         ).show()
 
@@ -261,35 +261,35 @@ class WalletViewModel(
                 if (imageUri != null) {
                     val storageRef = FirebaseStorage.getInstance().reference
 
-                    firestoreRepository.uploadImageToStorage("stockImages", storageRef, imageUri,
+                    firestoreRepository.uploadImageToStorage("fdImages", storageRef, imageUri,
                         { downloadUri ->
                             fdAccount.imageUri = downloadUri
-                firestoreRepository.addWalletItems(
-                    userId,
-                    "Fixed Deposit",
-                    fdAccount,
-                    fdAccount.bankName,
-                    onSuccess = {
-                        /*dbHelper.addNewCashDetails(
-                            type = cash.type,
-                            typeName = cash.typeName,
-                            balance = cash.balance,
-                            userId = userId
-                        )*/
-                        val fdInfo = fdAccDetailsList.value ?: emptyList()
-                        val updatedFDDetailsFromFirestore = fdInfo + fdAccount
-                        updateFDDetails(fdAccountList = updatedFDDetailsFromFirestore)
-                    },
-                    onFailure = { exception ->
-                        Log.e(ContentValues.TAG, "Error adding FD details", exception)
-                    }
-                )
+                            firestoreRepository.addWalletItems(
+                                userId,
+                                "Fixed Deposit",
+                                fdAccount,
+                                fdAccount.bankName,
+                                onSuccess = {
+                                    /*dbHelper.addNewCashDetails(
+                                        type = cash.type,
+                                        typeName = cash.typeName,
+                                        balance = cash.balance,
+                                        userId = userId
+                                    )*/
+                                    val fdInfo = fdAccDetailsList.value ?: emptyList()
+                                    val updatedFDDetailsFromFirestore = fdInfo + fdAccount
+                                    updateFDDetails(fdAccountList = updatedFDDetailsFromFirestore)
+                                },
+                                onFailure = { exception ->
+                                    Log.e(ContentValues.TAG, "Error adding FD details", exception)
+                                }
+                            )
 
                         }, { exception ->
                             Log.e(ContentValues.TAG, "Error uploading image", exception)
                             // Handle failure
                         })
-                    }else{
+                } else {
                     firestoreRepository.addWalletItems(
                         userId,
                         "Fixed Deposit",
@@ -318,7 +318,7 @@ class WalletViewModel(
 
         Toast.makeText(
             currentContext,
-            "The FD Account ${fdAccount.bankName} has successfully added",
+            "The FD Account , ${fdAccount.bankName} , has successfully added",
             Toast.LENGTH_SHORT
         ).show()
     }
@@ -424,7 +424,11 @@ class WalletViewModel(
                                     updateStockTotalPrice(updatedStockDetailsList)
                                 },
                                 onFailure = { exception ->
-                                    Log.e(ContentValues.TAG, "Error adding stock details", exception)
+                                    Log.e(
+                                        ContentValues.TAG,
+                                        "Error adding stock details",
+                                        exception
+                                    )
                                 }
                             )
                         }, { exception ->
@@ -458,11 +462,11 @@ class WalletViewModel(
                 }
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding stock details", e)
-                }
+            }
 
         }
         Toast.makeText(
-            currentContext, "The ${stock.productName} has successfully added", Toast.LENGTH_SHORT
+            currentContext, "The product, ${stock.productName} , has successfully added", Toast.LENGTH_SHORT
         ).show()
 
         return

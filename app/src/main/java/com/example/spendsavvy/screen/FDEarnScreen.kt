@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -51,7 +52,7 @@ import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
-
+import androidx.compose.ui.text.input.ImeAction
 
 @Composable
 fun FDEarnScreen(
@@ -332,6 +333,7 @@ fun WithdrawFDScreen(
 
                 Spacer(modifier = Modifier.height(25.dp))
 
+
                 TextField(
                     value = withdrawalAmt,
                     onValueChange = {
@@ -344,7 +346,10 @@ fun WithdrawFDScreen(
                             fontSize = 15.sp,
                             color = Color.Gray
                         )
-                    }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
@@ -372,6 +377,7 @@ fun WithdrawFDScreen(
                 )
 
                 Spacer(modifier = Modifier.height(25.dp))
+
 
                 ExposedDropdownMenuBox(
                     expanded = isExpanded,
@@ -419,6 +425,7 @@ fun WithdrawFDScreen(
                             }
                         }
                     }
+
                 }
                 Spacer(modifier = Modifier.height(30.dp))
 

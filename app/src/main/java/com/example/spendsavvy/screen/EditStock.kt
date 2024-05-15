@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,6 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -168,7 +171,7 @@ fun EditExistingStockScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Text(
-                text = "Set Product Price Sold",
+                text = "Set Selling Price(RM)",
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -178,9 +181,13 @@ fun EditExistingStockScreen(
                 onValueChange = {
                     price = it
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Decimal
+                ),
                 placeholder = {
                     Text(
-                        text = "0",
+                        text = "RM 0.00",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
                         color = Color.Gray
@@ -209,6 +216,10 @@ fun EditExistingStockScreen(
             onValueChange = {
                 qty = it
             },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number
+            ),
             placeholder = {
                 Text(
                     text = "0",

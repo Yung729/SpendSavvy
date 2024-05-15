@@ -54,11 +54,14 @@ import kotlin.time.toDuration
 import android.R
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
@@ -101,7 +104,8 @@ fun FixedDepositDetailsScreen(
             .fillMaxWidth()
             .padding(
                 start = 15.dp, top = 15.dp
-            )) {
+            )
+    ) {
         Text(
             text = "Fixed Deposit",
             fontFamily = poppinsFontFamily,
@@ -194,7 +198,7 @@ fun FixedDepositDetailsScreen(
             ClickableText(
                 text = AnnotatedString("Click me to add more bank"),
                 onClick = {
-                          navController.navigate(Screen.AddCashAccount.route)
+                    navController.navigate(Screen.AddCashAccount.route)
                 }
             )
 
@@ -237,6 +241,10 @@ fun FixedDepositDetailsScreen(
                 onValueChange = {
                     selectedBank = it
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                ),
                 placeholder = {
                     Text(
                         text = "Public bank",
@@ -255,7 +263,6 @@ fun FixedDepositDetailsScreen(
                 .fillMaxWidth()
                 .padding(start = 15.dp, top = 15.dp)
         ) {
-
             Text(
                 text = "Deposit Amount",
                 fontFamily = poppinsFontFamily,
@@ -267,6 +274,10 @@ fun FixedDepositDetailsScreen(
                 onValueChange = {
                     depositAmt = it
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Decimal
+                ),
                 placeholder = {
                     Text(
                         text = "RM 0.00",
@@ -285,11 +296,16 @@ fun FixedDepositDetailsScreen(
                 fontSize = 15.sp
             )
 
+
             TextField(
                 value = interestRate,
                 onValueChange = {
                     interestRate = it
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Decimal
+                ),
                 placeholder = {
                     Text(
                         text = "0.00",
@@ -300,6 +316,7 @@ fun FixedDepositDetailsScreen(
                 }
             )
         }
+
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -329,15 +346,14 @@ fun FixedDepositDetailsScreen(
 
             Button(
                 onClick = {
-                    //addFDDetailsIntoDatabase(FDAccount(searchName, duration, interestRate, depositAmt))
                     walletViewModel.addFDDetailsToDatabase(
                         FDAccount(
                             selectedImageUri,
                             selectedBank,
                             interestRate.toDoubleOrNull() ?: 0.0,
                             depositAmt.toDoubleOrNull() ?: 0.0,
-                            date = currentDate
-                        ),selectedImageUri
+                            currentDate
+                        ), selectedImageUri
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
