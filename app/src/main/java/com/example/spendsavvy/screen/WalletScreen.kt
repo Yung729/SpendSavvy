@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,19 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-<<<<<<< Updated upstream
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-=======
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
->>>>>>> Stashed changes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -133,20 +129,12 @@ fun WalletScreen(
                 Column(modifier = Modifier.padding(15.dp)) {
                     Text(
                         stringResource(id = R.string.availableBalance),
-<<<<<<< Updated upstream
-                        fontSize = 18.sp
-=======
                         fontSize = 20.sp
->>>>>>> Stashed changes
                     )
 
                     Text(
                         text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
-<<<<<<< Updated upstream
-                        fontSize = 16.sp
-=======
                         fontSize = 20.sp
->>>>>>> Stashed changes
                     )
                 }
             }
