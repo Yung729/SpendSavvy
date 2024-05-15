@@ -273,7 +273,7 @@ class FirestoreRepository {
                                 }
 
                                 "imageUri" -> {
-                                    val imageUriString = value as String
+                                    val imageUriString = if(value == null){""} else {  value as String }
                                     val imageUri =
                                         if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
                                     field.set(item, imageUri)
@@ -600,7 +600,7 @@ class FirestoreRepository {
                                 }
 
                                 "imageUri" -> {
-                                    val imageUriString = value as String
+                                    val imageUriString = if(value == null){""} else {  value as String }
                                     val imageUri =
                                         if (imageUriString.isNotEmpty()) Uri.parse(imageUriString) else null
                                     field.set(item, imageUri)
