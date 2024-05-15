@@ -141,14 +141,14 @@ fun SetupNavGraph(
     }
 
 
-    val walletViewModel = WalletViewModel(context, userId)
+    val walletViewModel = WalletViewModel(context, isConnected,userId)
     val dateViewModel = DateSelectionViewModel()
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel =
         OverviewViewModel(context, isConnected, userId, dateViewModel, walletViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
-    val profileViewModel = ProfileViewModel(userId)
+    val profileViewModel = ProfileViewModel(userId,isConnected,context)
     val billsViewModel = BillsViewModel(context, isConnected, userId)
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
 

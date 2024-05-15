@@ -23,11 +23,13 @@ import java.util.Locale
 
 class WalletViewModel(
     context: Context,
+    isOnline: Boolean,
     userId: String
 ) : ViewModel() {
 
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
+    private val internet = isOnline
 
     val cashDetailsList = MutableLiveData<List<Cash>>()
     val fdAccDetailsList = MutableLiveData<List<FDAccount>>()
@@ -49,7 +51,7 @@ class WalletViewModel(
     }
 
     //Used for FD Earn
-    fun withdrawalAmtApproved(deposit:Double, withdrawalAmt: Double){
+    fun withdrawalAmtApproved(deposit: Double, withdrawalAmt: Double) {
         latestDeposit.postValue(deposit - withdrawalAmt)
     }
 
@@ -59,11 +61,17 @@ class WalletViewModel(
         viewModelScope.launch {
             try {
 
-                val cashDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
-                    userId,
-                    "Cash",
-                    Cash::class.java
-                )
+                val cashDetailsFromFirestore = if (internet) {
+                    firestoreRepository.readWalletItemsFromDatabase(
+                        userId,
+                        "Cash",
+                        Cash::class.java
+                    )
+                } else {
+                    // Fetch data from SQLite
+                    dbHelper.readCashDetails(userId)
+
+                }
 
                 updateCashInfo(cashDetailsFromFirestore)
 
@@ -76,7 +84,7 @@ class WalletViewModel(
     private fun updateCashInfo(cash: List<Cash>) {
         var totalCash = 0.0
 
-        for(cashDetails in cash){
+        for (cashDetails in cash) {
             totalCash += cashDetails.balance
         }
 
@@ -101,12 +109,12 @@ class WalletViewModel(
                     cash.typeName,
                     updatedCashDetails,
                     onSuccess = {
-                        /*dbHelper.updateCashDetails(
-                            updatedCashDetails.type,
-                            typeName,
+                        dbHelper.updateCashDetails(
+                            updatedCashDetails.imageUri.toString(),
+                            updatedCashDetails.typeName,
                             updatedCashDetails.balance,
                             userId
-                        )*/
+                        )
 
                         val cashInfo = cashDetailsList.value ?: emptyList()
                         val updatedCashDetailsList = cashInfo.map {
@@ -128,17 +136,20 @@ class WalletViewModel(
         viewModelScope.launch {
             try {
 
+                val cashAccount =
+                    firestoreRepository.readWalletById(userId, "Cash", cashName, Cash::class.java)
+
                 firestoreRepository.updateWalletBalanceInFirestore(
                     userId,
                     cashName,
                     updateAmount,
                     onSuccess = { newBalance ->
-                        /*dbHelper.updateCashDetails(
-                            updatedCashDetails.type,
-                            typeName,
-                            updatedCashDetails.balance,
+                        dbHelper.updateCashDetails(
+                            cashAccount?.imageUri.toString(),
+                            cashName,
+                            updateAmount,
                             userId
-                        )*/
+                        )
 
                         val cashInfo = cashDetailsList.value ?: emptyList()
                         val updatedCashDetailsList = cashInfo.map {
@@ -184,12 +195,12 @@ class WalletViewModel(
                                 cash,
                                 cash.typeName,
                                 onSuccess = {
-                                    /*dbHelper.addNewCashDetails(
-                                        type = cash.type,
+                                    dbHelper.addNewCashDetails(
+                                        imageUri = cash.imageUri.toString(),
                                         typeName = cash.typeName,
                                         balance = cash.balance,
                                         userId = userId
-                                    )*/
+                                    )
 
                                     val cashInfo = cashDetailsList.value ?: emptyList()
                                     val updatedCashDetailsList = cashInfo + cash
@@ -206,19 +217,19 @@ class WalletViewModel(
                             // Handle failure
                         })
                 } else {
-                    
+
                     firestoreRepository.addWalletItems(
                         userId,
                         "Cash",
                         cash,
                         cash.typeName,
                         onSuccess = {
-                            /*dbHelper.addNewCashDetails(
-                                type = cash.type,
+                            dbHelper.addNewCashDetails(
+                                imageUri = cash.imageUri.toString(),
                                 typeName = cash.typeName,
                                 balance = cash.balance,
                                 userId = userId
-                            )*/
+                            )
 
                             val cashInfo = cashDetailsList.value ?: emptyList()
                             val updatedCashDetailsList = cashInfo + cash
@@ -247,11 +258,17 @@ class WalletViewModel(
     private fun getFDAccountDetails() {
         viewModelScope.launch {
             try {
-                val fdDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
-                    userId,
-                    "Fixed Deposit",
-                    FDAccount::class.java
-                )
+                val fdDetailsFromFirestore = if (internet) {
+                    firestoreRepository.readWalletItemsFromDatabase(
+                        userId,
+                        "Fixed Deposit",
+                        FDAccount::class.java
+                    )
+                } else {
+                    // Fetch data from SQLite
+                    dbHelper.readFdDetails(userId)
+
+                }
 
                 updateFDDetails(fdDetailsFromFirestore)
 
@@ -286,12 +303,15 @@ class WalletViewModel(
                                 fdAccount,
                                 fdAccount.bankName,
                                 onSuccess = {
-                                    /*dbHelper.addNewCashDetails(
-                                        type = cash.type,
-                                        typeName = cash.typeName,
-                                        balance = cash.balance,
+                                    dbHelper.addNewFdDetails(
+                                        imageUri = fdAccount.imageUri.toString(),
+                                        bankName = fdAccount.bankName,
+                                        interestRate = fdAccount.interestRate,
+                                        deposit = fdAccount.deposit,
+                                        date = fdAccount.date,
+                                        transactionType = fdAccount.transferType,
                                         userId = userId
-                                    )*/
+                                    )
                                     val fdInfo = fdAccDetailsList.value ?: emptyList()
                                     val updatedFDDetailsFromFirestore = fdInfo + fdAccount
                                     updateFDDetails(fdAccountList = updatedFDDetailsFromFirestore)
@@ -312,12 +332,15 @@ class WalletViewModel(
                         fdAccount,
                         fdAccount.bankName,
                         onSuccess = {
-                            /*dbHelper.addNewCashDetails(
-                                type = cash.type,
-                                typeName = cash.typeName,
-                                balance = cash.balance,
+                            dbHelper.addNewFdDetails(
+                                imageUri = fdAccount.imageUri.toString(),
+                                bankName = fdAccount.bankName,
+                                interestRate = fdAccount.interestRate,
+                                deposit = fdAccount.deposit,
+                                date = fdAccount.date,
+                                transactionType = fdAccount.transferType,
                                 userId = userId
-                            )*/
+                            )
                             val fdInfo = fdAccDetailsList.value ?: emptyList()
                             val updatedFDDetailsFromFirestore = fdInfo + fdAccount
                             updateFDDetails(fdAccountList = updatedFDDetailsFromFirestore)
@@ -351,6 +374,15 @@ class WalletViewModel(
                     updatedFDDetails,
                     onSuccess = {
 
+                        dbHelper.updateFdDetails(
+                            imageUri = updatedFDDetails.imageUri.toString(),
+                            bankName = updatedFDDetails.bankName,
+                            interestRate = updatedFDDetails.interestRate,
+                            deposit = updatedFDDetails.deposit,
+                            date = updatedFDDetails.date,
+                            transactionType = updatedFDDetails.transferType,
+                            userId = userId
+                        )
 
                         val fdInfo = fdAccDetailsList.value ?: emptyList()
                         val updatedFDInfo = fdInfo.map {
@@ -370,7 +402,7 @@ class WalletViewModel(
     private fun updateFDDetails(fdAccountList: List<FDAccount>) {
         var totalFDDeposit = 0.0
 
-        for(fdDetails in fdAccountList){
+        for (fdDetails in fdAccountList) {
             totalFDDeposit += fdDetails.deposit
         }
 
@@ -384,11 +416,15 @@ class WalletViewModel(
         viewModelScope.launch {
             try {
 
-                val stockDetailsFromFirestore = firestoreRepository.readWalletItemsFromDatabase(
-                    userId,
-                    "Stock",
-                    Stock::class.java
-                )
+                val stockDetailsFromFirestore = if (internet) {
+                    firestoreRepository.readWalletItemsFromDatabase(
+                        userId,
+                        "Stock",
+                        Stock::class.java
+                    )
+                } else {
+                    dbHelper.readStockDetails(userId)
+                }
 
                 updateStockTotalPrice(stockDetailsFromFirestore)
 
@@ -431,12 +467,14 @@ class WalletViewModel(
                                 stock,
                                 stock.productName,
                                 onSuccess = {
-                                    /*dbHelper.addNewCashDetails(
-                            type = cash.type,
-                            typeName = cash.typeName,
-                            balance = cash.balance,
-                            userId = userId
-                        )*/
+
+                                    dbHelper.addNewStockDetails(
+                                        imageUri = stock.imageUri.toString(),
+                                        productName = stock.productName,
+                                        originalPrice = stock.originalPrice,
+                                        quantity = stock.quantity,
+                                        userId = userId
+                                    )
 
                                     val stockInfo = stockListLive.value ?: emptyList()
                                     val updatedStockDetailsList = stockInfo + stock
@@ -463,12 +501,14 @@ class WalletViewModel(
                         stock,
                         stock.productName,
                         onSuccess = {
-                            /*dbHelper.addNewCashDetails(
-                            type = cash.type,
-                            typeName = cash.typeName,
-                            balance = cash.balance,
-                            userId = userId
-                        )*/
+
+                            dbHelper.addNewStockDetails(
+                                imageUri = stock.imageUri.toString(),
+                                productName = stock.productName,
+                                originalPrice = stock.originalPrice,
+                                quantity = stock.quantity,
+                                userId = userId
+                            )
 
                             val stockInfo = stockListLive.value ?: emptyList()
                             val updatedStockDetailsList = stockInfo + stock
@@ -485,7 +525,9 @@ class WalletViewModel(
 
         }
         Toast.makeText(
-            currentContext, "The product, ${stock.productName} , has successfully added", Toast.LENGTH_SHORT
+            currentContext,
+            "The product, ${stock.productName} , has successfully added",
+            Toast.LENGTH_SHORT
         ).show()
 
         return
@@ -509,12 +551,13 @@ class WalletViewModel(
                     stock.productName,
                     updatedStockDetails,
                     onSuccess = {
-                        /*dbHelper.updateCashDetails(
-                            updatedCashDetails.type,
-                            typeName,
-                            updatedCashDetails.balance,
-                            userId
-                        )*/
+                        dbHelper.updateStockDetails(
+                            imageUri = updatedStockDetails.imageUri.toString(),
+                            productName = updatedStockDetails.productName,
+                            originalPrice = updatedStockDetails.originalPrice,
+                            quantity = updatedStockDetails.quantity,
+                            userId = userId
+                        )
 
                         val stockInfo = stockListLive.value ?: emptyList()
                         val updatedStockDetailsList = stockInfo.map {

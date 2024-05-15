@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Bills
+import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Question
 import com.example.spendsavvy.models.Staff
+import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
 
@@ -20,6 +24,7 @@ class MainViewModel(
     private val databaseHelper = DatabaseHelper(context)
     private val currentUserId = userId
     private val firestoreRepo = FirestoreRepository()
+    private val internet = isOnline
 
     fun syncDatabase() {
         if (databaseHelper.isDatabaseEmpty(userId = currentUserId)) {
@@ -33,6 +38,18 @@ class MainViewModel(
                 checkTotalSalary(currentUserId)
             }
         }
+        var user : UserData
+
+        if (internet)
+            user = firestoreRepo.readUser(currentUserId,
+            onSuccess = {
+                user = it
+                databaseHelper.addUser(user.userID,user.photoURL.toString(),user.userName,user.phoneNo,user.email,user.password)
+            },
+            onFailure = {
+            }
+        )
+
 
 
     }
@@ -107,6 +124,21 @@ class MainViewModel(
                 "Questions",
                 Question::class.java
             )
+            val cash = firestoreRepo.readWalletItemsFromDatabase(
+                userId,
+                "Cash",
+                Cash::class.java
+            )
+            val fd = firestoreRepo.readWalletItemsFromDatabase(
+                userId,
+                "Fixed Deposit",
+                FDAccount::class.java
+            )
+            val stock = firestoreRepo.readWalletItemsFromDatabase(
+                userId,
+                "Stock",
+                Stock::class.java
+            )
             val budget =
                 firestoreRepo.readSingleFieldValueFromDatabase(userId, "Budget", "amount")
             val goal =
@@ -118,6 +150,9 @@ class MainViewModel(
             databaseHelper.addNewStaffList(staff, userId)
             databaseHelper.addNewBillsList(bill, userId)
             databaseHelper.addNewQuestionsList(question, userId)
+            databaseHelper.addNewCashDetailsList(cash, userId)
+            databaseHelper.addNewFdDetailsList(fd, userId)
+            databaseHelper.addNewStockDetailsList(stock, userId)
 
             if (budget != null) {
                 databaseHelper.addOrUpdateBudget(userId, budget as Double)
