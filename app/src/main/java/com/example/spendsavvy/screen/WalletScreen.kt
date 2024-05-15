@@ -1,8 +1,10 @@
 package com.example.spendsavvy.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,28 +16,52 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+<<<<<<< Updated upstream
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+=======
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+>>>>>>> Stashed changes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
@@ -44,6 +70,7 @@ import com.example.spendsavvy.ui.theme.GreenColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
+import java.util.Calendar
 
 @Composable
 fun WalletScreen(
@@ -51,17 +78,21 @@ fun WalletScreen(
     navController: NavController,
     walletViewModel: WalletViewModel
 ) {
+    var isSelectionPopUp by remember {
+        mutableStateOf(false)
+    }
+
     var count by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
     var bankCount by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
     var fdCount by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
     var stockCount by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
 
     val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
@@ -102,12 +133,20 @@ fun WalletScreen(
                 Column(modifier = Modifier.padding(15.dp)) {
                     Text(
                         stringResource(id = R.string.availableBalance),
+<<<<<<< Updated upstream
                         fontSize = 18.sp
+=======
+                        fontSize = 20.sp
+>>>>>>> Stashed changes
                     )
 
                     Text(
                         text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
+<<<<<<< Updated upstream
                         fontSize = 16.sp
+=======
+                        fontSize = 20.sp
+>>>>>>> Stashed changes
                     )
                 }
             }
@@ -377,6 +416,484 @@ fun WalletScreen(
             )
         }
 
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Button(
+                        onClick = {
+                            isSelectionPopUp = true
+                        },
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .bounceClick()
+                            .fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black
+                        )
+                    ) {
+                        Text(
+                            text = "Transfer",
+                            textAlign = TextAlign.Center,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (isSelectionPopUp)
+        TransferDialog(onCancelClick = { isSelectionPopUp = false }, {}, walletViewModel)
+}
+
+@Composable
+fun TransferDialog(
+    onCancelClick: () -> Unit,
+    onConfirmClick: () -> Unit,
+    walletViewModel: WalletViewModel
+) {
+    var isClicked by remember {
+        mutableIntStateOf(0)
+    }
+
+    Dialog(
+        onDismissRequest = { onCancelClick() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Card(
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
+                .shadow(elevation = 15.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.dp, top = 15.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(15.dp),
+                    horizontalArrangement = Arrangement.spacedBy(30.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = {
+                            isClicked = 1
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "Between Cash Accounts",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            isClicked = 2
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "Cash Account To FD Account",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (isClicked == 1)
+        TransferAccountDialog(onCancelClick = { false }, {}, walletViewModel, 1)
+    else if (isClicked == 2)
+        TransferAccountDialog(onCancelClick = { false }, {}, walletViewModel, 2)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransferAccountDialog(
+    onCancelClick: () -> Unit,
+    onConfirmClick: () -> Unit,
+    walletViewModel: WalletViewModel,
+    mode: Int
+) {
+    val context = LocalContext.current
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+
+    val currentDate = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.time
+
+    var rate by remember {
+        mutableStateOf("")
+    }
+
+    var balanceFound by remember {
+        mutableDoubleStateOf(0.0)
+    }
+
+    var newFD by remember {
+        mutableStateOf("")
+    }
+
+    var searchAccount1 by remember {
+        mutableStateOf("")
+    }
+
+    var searchAccount2 by remember {
+        mutableStateOf("")
+    }
+
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var transferAmt by remember {
+        mutableStateOf("")
+    }
+
+    Dialog(
+        onDismissRequest = { onCancelClick() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Card(
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
+                .shadow(elevation = 15.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.dp, top = 15.dp)
+            ) {
+                Text(
+                    "From Cash Account",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp
+                )
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                ExposedDropdownMenuBox(
+                    expanded = isExpanded,
+                    onExpandedChange = { isExpanded = it }
+                ) {
+                    TextField(
+                        value = searchAccount1,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
+                    ExposedDropdownMenuBox(
+                        expanded = isExpanded,
+                        onExpandedChange = { isExpanded = it }
+                    ) {
+                        TextField(
+                            value = searchAccount1,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = isExpanded,
+                            onDismissRequest = { isExpanded = false }
+                        ) {
+                            for (cash in cashDetailsList) {          //read from existing stock items
+                                if (searchAccount2 != searchAccount1)
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(text = cash.typeName)
+                                        },
+                                        onClick = {
+                                            searchAccount1 = cash.typeName
+                                            isExpanded = false
+                                        }
+                                    )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+
+                Text("Available Balance: ")
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                for (cashDetails in cashDetailsList) {
+                    if (cashDetails.typeName == searchAccount1) {
+                        Text("RM ${cashDetails.balance}")
+                        balanceFound = cashDetails.balance
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Text("Transfer amount")
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                TextField(
+                    value = transferAmt,
+                    onValueChange = {
+                        transferAmt = it
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0.00",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Decimal
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Row {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "To",
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                if (mode == 1)
+                    Text("Cash Account")
+                else
+                    Text("FD Account")
+
+                Spacer(modifier = Modifier.height(25.dp))
+
+                if (mode == 1) {
+                    ExposedDropdownMenuBox(
+                        expanded = isExpanded,
+                        onExpandedChange = { isExpanded = it }
+                    ) {
+                        TextField(
+                            value = searchAccount2,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                            modifier = Modifier.menuAnchor()
+                        )
+                        ExposedDropdownMenuBox(
+                            expanded = isExpanded,
+                            onExpandedChange = { isExpanded = it }
+                        ) {
+                            TextField(
+                                value = searchAccount2,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                                },
+                                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                modifier = Modifier.menuAnchor()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = isExpanded,
+                                onDismissRequest = { isExpanded = false }
+                            ) {
+                                for (cash in cashDetailsList) {
+                                    if (searchAccount2 != searchAccount1)
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(text = cash.typeName)
+                                            },
+                                            onClick = {
+                                                searchAccount2 = cash.typeName
+                                                isExpanded = false
+                                            }
+                                        )
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    TextField(
+                        value = newFD,
+                        onValueChange = {
+                            newFD = it
+                        },
+                        placeholder = {
+                            Text(
+                                text = "Public bank",
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 15.sp,
+                                color = Color.Gray
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                            keyboardType = KeyboardType.Text
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    TextField(
+                        value = rate,
+                        onValueChange = {
+                            rate = it
+                        },
+                        placeholder = {
+                            Text(
+                                text = "0.00%",
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 15.sp,
+                                color = Color.Gray
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Decimal
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Button(
+                    onClick = {
+                        if ((transferAmt.toDoubleOrNull() ?: 0.0) > balanceFound) {
+                            Toast.makeText(
+                                context,
+                                "Please enter the amount that less than or equals to your deposit amount\nAccount Balance: ${balanceFound}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            if (mode == 1) {
+                                for (cashDetails in cashDetailsList) {
+                                    if (cashDetails.typeName == searchAccount1) {
+                                        walletViewModel.editCashDetails(
+                                            cash = cashDetails,
+                                            updatedCashDetails = Cash(
+                                                imageUri = cashDetails.imageUri,
+                                                typeName = cashDetails.typeName,
+                                                balance = (cashDetails.balance - (transferAmt.toDoubleOrNull()
+                                                    ?: 0.0))
+                                            )
+                                        )
+                                    }
+
+                                    if (cashDetails.typeName == searchAccount2) {
+                                        walletViewModel.editCashDetails(
+                                            cash = cashDetails,
+                                            updatedCashDetails = Cash(
+                                                imageUri = cashDetails.imageUri,
+                                                typeName = cashDetails.typeName,
+                                                balance = (cashDetails.balance + (transferAmt.toDoubleOrNull()
+                                                    ?: 0.0))
+                                            )
+                                        )
+                                    }
+                                }
+                            } else {
+                                for (cashDetails in cashDetailsList) {
+                                    if (cashDetails.typeName == searchAccount1) {
+                                        walletViewModel.editCashDetails(
+                                            cash = cashDetails,
+                                            updatedCashDetails = Cash(
+                                                imageUri = cashDetails.imageUri,
+                                                typeName = cashDetails.typeName,
+                                                balance = (cashDetails.balance - (transferAmt.toDoubleOrNull()
+                                                    ?: 0.0))
+                                            )
+                                        )
+
+
+                                        walletViewModel.addFDDetailsToDatabase(
+                                            fdAccount = FDAccount(
+                                                imageUri = cashDetails.imageUri,
+                                                bankName = newFD,
+                                                interestRate = rate.toDoubleOrNull() ?: 0.0,
+                                                deposit = transferAmt.toDoubleOrNull() ?: 0.0,
+                                                date = currentDate,
+                                                transferType = "Deposit"
+                                            ), cashDetails.imageUri
+
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Transfer",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
+
+            }
+        }
     }
 }
 
@@ -409,14 +926,3 @@ fun fdCount(fdAccDetailsList: List<FDAccount>): Int {
     return accountCount
 }
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun WalletScreenPreview() {
-    WalletScreen(
-        Modifier
-            .fillMaxSize()
-            .padding(20.dp), navController = rememberNavController()
-    )
-
-}*/

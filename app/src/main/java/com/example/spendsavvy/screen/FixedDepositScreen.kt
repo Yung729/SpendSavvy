@@ -204,15 +204,3 @@ fun BankList(
     }
 }
 
-
-/*
-@Composable
-@Preview(showBackground = true)
-fun FixedDepositScreenPreview() {
-    FixedDepositScreen(
-        Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        navController = rememberNavController()
-    )
-}*/

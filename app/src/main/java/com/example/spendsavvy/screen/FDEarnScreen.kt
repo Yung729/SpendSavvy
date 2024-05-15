@@ -388,9 +388,7 @@ fun withdrawFDDialog(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                Text(
-                    "Cash Account"
-                )
+                Text("Cash Account")
 
                 Spacer(modifier = Modifier.height(25.dp))
 
