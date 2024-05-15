@@ -246,6 +246,10 @@ fun AddCashAccountScreen(
                 onValueChange = {
                     initialAmt = it
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Decimal
+                ),
                 placeholder = {
                     Text(
                         text = "RM 0.00",
