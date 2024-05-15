@@ -18,6 +18,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.PieChart
 import com.example.spendsavvy.components.RemainingChart
 import com.example.spendsavvy.components.bounceClick
@@ -78,7 +80,7 @@ fun AnalysisScreen(
             )
         ) {
             Text(
-                text = "Set Budget & Goal",
+                text = stringResource(id = R.string.setBudgetGoal),
                 textAlign = TextAlign.Center,
                 color = Color.White
             )
@@ -88,7 +90,7 @@ fun AnalysisScreen(
 
         Column {
             Text(
-                text = "Transaction Analysis",
+                text = stringResource(id = com.example.spendsavvy.R.string.transactionAnal),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
@@ -110,7 +112,7 @@ fun AnalysisScreen(
 
         Column {
             Text(
-                text = "Budget Analysis",
+                text = stringResource(id = com.example.spendsavvy.R.string.budgetAnal),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
@@ -119,7 +121,7 @@ fun AnalysisScreen(
 
 
             Text(
-                text = "Monthly Budget : $monthlyBudgetAmount",
+                text = stringResource(id = com.example.spendsavvy.R.string.monthlyBudget) +" : $monthlyBudgetAmount",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
@@ -151,7 +153,7 @@ fun AnalysisScreen(
 
         Column {
             Text(
-                text = "Goal Analysis",
+                text = stringResource(id = com.example.spendsavvy.R.string.goalAnal),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
@@ -160,7 +162,7 @@ fun AnalysisScreen(
 
 
             Text(
-                text = "Monthly Goal : $monthlyGoalAmount",
+                text = stringResource(id = com.example.spendsavvy.R.string.monthlyGoal) +" : $monthlyGoalAmount",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,

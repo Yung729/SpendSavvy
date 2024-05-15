@@ -27,11 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.navigation.Screen
@@ -61,12 +63,12 @@ fun CashScreen(
     Column(modifier = Modifier.padding(15.dp)) {
         Spacer(modifier = Modifier.height(25.dp))
         Text(
-            text = "Cash",
+            text = stringResource(id = R.string.cash),
             fontFamily = poppinsFontFamily,
             fontSize = 25.sp
         )
         Text(
-            text = "Includes cash money, bank accounts, and eWallet",
+            text = stringResource(id = R.string.text_9),
             fontSize = 10.sp,
             fontFamily = poppinsFontFamily,
             color = Color.Gray
@@ -94,13 +96,13 @@ fun CashScreen(
             Column {
 
                 Text(
-                    text = "Cash Money",
+                    text = stringResource(id = R.string.cashMoney),
                     fontSize = 20.sp,
                     fontFamily = poppinsFontFamily
                 )
 
                 Text(
-                    text = "Available balance",
+                    text = stringResource(id = R.string.availableBalance),
                     fontSize = 10.sp,
                     color = Color.Gray,
                     fontFamily = poppinsFontFamily
@@ -143,13 +145,13 @@ fun CashScreen(
         ) {
 
             Text(
-                text = "Bank Accounts",
+                text = stringResource(id = R.string.bankAccs),
                 fontSize = 20.sp,
                 fontFamily = poppinsFontFamily
             )
 
             Text(
-                text = "${totalAccount.value} Accounts",    //display total bank accounts
+                text = "${totalAccount.value} " + stringResource(id = R.string.accs),     //display total bank accounts
                 fontFamily = poppinsFontFamily
             )
         }
@@ -181,7 +183,7 @@ fun CashScreen(
                             .bounceClick()
                     ) {
                         Text(
-                            text = "Add Account",
+                            text = stringResource(id = R.string.addAcc),
                             textAlign = TextAlign.Center,
                             fontFamily = poppinsFontFamily,
                         )
@@ -198,7 +200,7 @@ fun CashScreen(
                         )
                     ) {
                         Text(
-                            text = "Edit Account",
+                            text = stringResource(id = R.string.editAcc),
                             textAlign = TextAlign.Center,
                             fontFamily = poppinsFontFamily,
                             color = Color.White

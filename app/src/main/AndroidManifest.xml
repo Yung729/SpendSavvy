@@ -23,6 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpendSavvy"
         tools:targetApi="31"
+        android:localeConfig="@xml/locales_config"
         tools:ignore="UnusedAttribute">
         <activity
             android:name=".MainActivity"

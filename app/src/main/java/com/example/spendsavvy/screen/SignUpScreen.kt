@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -77,7 +78,7 @@ fun SignUpScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Sign Up",
+            text = stringResource(id = R.string.signUp_text),
             fontFamily = poppinsFontFamily,
             textAlign = TextAlign.Center,
             fontSize = 40.sp,
@@ -90,7 +91,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = userName,
             onValueChange = { userName = it },
-            label = { Text(text = "User Name") },
+            label = { Text(stringResource(id = R.string.userName)) },
             leadingIcon = {
                 Icon(Icons.Default.Person, contentDescription = "User Name")
             },
@@ -105,7 +106,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = phoneNo,
             onValueChange = { phoneNo = it },
-            label = { Text(text = "Phone Number ") },
+            label = { Text(stringResource(id = R.string.phoneNo)) },
             leadingIcon = {
                 Icon(Icons.Default.AccountBox, contentDescription = "Phone Number")
             },
@@ -122,7 +123,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(text = "Email") },
+            label = { Text(stringResource(id = R.string.email)) },
             leadingIcon = {
                 Icon(Icons.Default.Email, contentDescription = "Email")
             },
@@ -140,7 +141,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text(text = "Password") },
+            label = { Text(stringResource(id = R.string.password)) },
             leadingIcon = {
                 Icon(Icons.Default.Info, contentDescription = "password")
             },
@@ -167,7 +168,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text(text = "Confirm Password") },
+            label = { Text(stringResource(id = R.string.confirmPw)) },
             leadingIcon = {
                 Icon(Icons.Default.Info, contentDescription = "Confirm password")
             },
@@ -211,7 +212,7 @@ fun SignUpScreen(
                     navController.navigate(route = Screen.Login.route)
                 }
             },
-            text = "SIGN UP"
+            text = stringResource(id = R.string.signUp_text)
         )
     }
 }

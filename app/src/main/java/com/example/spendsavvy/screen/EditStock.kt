@@ -28,10 +28,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.models.Transactions
@@ -77,13 +79,13 @@ fun EditExistingStockScreen(
     ) {
         if (mode == 1) {
             Text(
-                text = "Add Existing Stock",
+                text = stringResource(id = R.string.addExistingStock),
                 fontFamily = poppinsFontFamily,
                 fontSize = 30.sp
             )
         } else {
             Text(
-                text = "Sell Stock",
+                text = stringResource(id = com.example.spendsavvy.R.string.sellStock),
                 fontFamily = poppinsFontFamily,
                 fontSize = 30.sp
             )
@@ -133,7 +135,7 @@ fun EditExistingStockScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Original Price",
+            text = stringResource(id = com.example.spendsavvy.R.string.origPrice),
             fontFamily = poppinsFontFamily,
             fontSize = 15.sp
         )
@@ -150,7 +152,7 @@ fun EditExistingStockScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Current Stock",
+            text = stringResource(id = com.example.spendsavvy.R.string.currentStock),
             fontFamily = poppinsFontFamily,
             fontSize = 15.sp
         )
@@ -168,7 +170,7 @@ fun EditExistingStockScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Text(
-                text = "Set Product Price Sold",
+                text = stringResource(id = com.example.spendsavvy.R.string.setStock),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -193,13 +195,13 @@ fun EditExistingStockScreen(
 
         if (mode == 1) {
             Text(
-                text = "Quantity To Add",
+                text = stringResource(id = com.example.spendsavvy.R.string.qtyToAdd),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
         } else {
             Text(
-                text = "Quantity To Sell",
+                text = stringResource(id = com.example.spendsavvy.R.string.qtyToSell),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -241,7 +243,7 @@ fun EditExistingStockScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(id = com.example.spendsavvy.R.string.cancel),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )
@@ -329,7 +331,7 @@ fun EditExistingStockScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = if (mode == 2) "Sell" else "Add",
+                    text = if (mode == 2) stringResource(id = com.example.spendsavvy.R.string.sell) else stringResource(id = com.example.spendsavvy.R.string.all),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )

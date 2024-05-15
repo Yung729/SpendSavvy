@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Stock
 import com.example.spendsavvy.navigation.Screen
@@ -101,7 +103,7 @@ fun StockScreen(
         ) {
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(
-                    text = "Stock Balance",
+                    text = stringResource(id = R.string.stockBalance),
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp,
@@ -114,7 +116,7 @@ fun StockScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Stock",
+            text = stringResource(id = R.string.stock),
             fontFamily = poppinsFontFamily,
             fontSize = 15.sp
         )
@@ -143,7 +145,7 @@ fun StockScreen(
                         )
                     ) {
                         Text(
-                            text = "Add Stock",
+                            text = stringResource(id = R.string.addStock),
                             textAlign = TextAlign.Center,
                             color = Color.White
                         )
@@ -162,7 +164,7 @@ fun StockScreen(
                         )
                     ) {
                         Text(
-                            text = "Sell Stock",
+                            text = stringResource(id = R.string.sellStock),
                             textAlign = TextAlign.Center,
                             color = Color.Black
                         )
@@ -286,7 +288,7 @@ fun AddStockSelectionScreen(
                             .weight(1f)
                     ) {
                         Text(
-                            text = "New",
+                            text = stringResource(id = R.string.new_text),
                             fontWeight = FontWeight.Bold,
                             fontFamily = poppinsFontFamily
                         )
@@ -304,7 +306,7 @@ fun AddStockSelectionScreen(
                             .weight(1f)
                     ) {
                         Text(
-                            text = "Existing",
+                            text = stringResource(id = R.string.existing_text),
                             fontWeight = FontWeight.Bold,
                             fontFamily = poppinsFontFamily
                         )

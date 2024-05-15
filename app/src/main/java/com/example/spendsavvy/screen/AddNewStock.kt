@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,7 +87,7 @@ fun AddNewStockScreen(
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Add New Product",
+            text = stringResource(id = com.example.spendsavvy.R.string.addNewProduct),
             fontFamily = poppinsFontFamily,
             fontSize = 25.sp
         )
@@ -100,7 +101,7 @@ fun AddNewStockScreen(
         ) {
 
             Text(
-                text = "Pick Icon Photo",
+                text = stringResource(id = com.example.spendsavvy.R.string.pickIconPhoto),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -131,7 +132,7 @@ fun AddNewStockScreen(
                     )
 
                     Text(
-                        text = "Pick a Photo",
+                        text = stringResource(id = com.example.spendsavvy.R.string.pickAPhoto),
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
@@ -160,7 +161,7 @@ fun AddNewStockScreen(
 
 
             Text(
-                text = "Product Name",
+                text = stringResource(id = com.example.spendsavvy.R.string.prodName),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -181,7 +182,7 @@ fun AddNewStockScreen(
             )
 
             Text(
-                text = "Product Price",
+                text = stringResource(id = com.example.spendsavvy.R.string.prodPrice),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -202,7 +203,7 @@ fun AddNewStockScreen(
             )
 
             Text(
-                text = "Quantity",
+                text = stringResource(id = com.example.spendsavvy.R.string.qty),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -242,7 +243,7 @@ fun AddNewStockScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(id = com.example.spendsavvy.R.string.cancel),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )
@@ -290,7 +291,7 @@ fun AddNewStockScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Add",
+                    text = stringResource(id = com.example.spendsavvy.R.string.add),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )

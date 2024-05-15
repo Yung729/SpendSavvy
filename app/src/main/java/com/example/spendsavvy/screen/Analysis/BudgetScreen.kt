@@ -33,11 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.ui.theme.WindowType
@@ -83,7 +85,7 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
 
 
                 DetailCard(
-                    title = "Budget",
+                    title = stringResource(id = R.string.budget),
                     dailyAmount = budgetAmountFromDB.value,
                     monthlyAmount = monthlyBudgetAmount,
                     window = window
@@ -103,7 +105,7 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
                         OutlinedTextField(
                             value = budgetAmountText,
                             onValueChange = { budgetAmountText = it },
-                            label = { Text(text = "Daily Budget") },
+                            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.dailyBudget)) },
                             maxLines = 1,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -124,7 +126,7 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
                             )
                         ) {
                             Text(
-                                text = "Set",
+                                text = stringResource(id = com.example.spendsavvy.R.string.set),
                                 textAlign = TextAlign.Center,
                                 color = Color.White
                             )
@@ -136,7 +138,7 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
 
 
                 DetailCard(
-                    title = "Goal",
+                    title = stringResource(id = com.example.spendsavvy.R.string.goal),
                     dailyAmount = goalAmountFromDB.value,
                     monthlyAmount = monthlyGoalAmount,
                     window = window
@@ -156,7 +158,7 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
                         OutlinedTextField(
                             value = goalAmountText,
                             onValueChange = { goalAmountText = it },
-                            label = { Text(text = "Daily Goal") },
+                            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.dailyGoal)) },
                             maxLines = 1,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -178,7 +180,7 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
                             )
                         ) {
                             Text(
-                                text = "Set",
+                                text = stringResource(id = com.example.spendsavvy.R.string.set),
                                 textAlign = TextAlign.Center,
                                 color = Color.White
                             )
@@ -245,7 +247,7 @@ fun DetailCard(
 
                             Column {
                                 Text(
-                                    text = "Daily Amount",
+                                    text = stringResource(id = com.example.spendsavvy.R.string.dailyAmount),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
                                     color = Color.White
@@ -264,7 +266,7 @@ fun DetailCard(
 
                             Column {
                                 Text(
-                                    text = "Monthly Amount",
+                                    text = stringResource(id = com.example.spendsavvy.R.string.monthlyAmount),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
                                     color = Color.White
@@ -314,7 +316,7 @@ fun DetailCard(
 
                             Column {
                                 Text(
-                                    text = "Daily Amount",
+                                    text = stringResource(id = com.example.spendsavvy.R.string.dailyAmount),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 19.sp,
                                     color = Color.White
@@ -333,7 +335,7 @@ fun DetailCard(
 
                             Column {
                                 Text(
-                                    text = "Monthly Amount",
+                                    text = stringResource(id = com.example.spendsavvy.R.string.monthlyAmount),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 17.sp,
                                     color = Color.White

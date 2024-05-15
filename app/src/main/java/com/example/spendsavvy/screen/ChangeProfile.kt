@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -153,7 +154,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Choose Image Source",
+                            text = stringResource(id = com.example.spendsavvy.R.string.chooseImg),
                             fontSize = 20.sp,
                             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
                         )
@@ -184,7 +185,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "Gallery")
+                            Text(stringResource(id = com.example.spendsavvy.R.string.gallery))
                         }
                     }
                 },
@@ -205,7 +206,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
         Spacer(modifier = Modifier.height(15.dp)) // Spacer added here
 
         OutlinedTextFieldItem(
-            label = "User Name",
+            label = stringResource(id = com.example.spendsavvy.R.string.userName),
             placeholder = userData.userName,
             value = userData.userName,
             onValueChange = { userData.userName = it },
@@ -213,7 +214,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
         )
 
         OutlinedTextFieldItem(
-            label = "Email Address",
+            label = stringResource(id = com.example.spendsavvy.R.string.email),
             placeholder = userData.email,
             value = userData.email,
             keyboardType = KeyboardType.Email,
@@ -222,7 +223,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
         )
 
         OutlinedTextFieldItem(
-            label = "Phone Number",
+            label = stringResource(id = com.example.spendsavvy.R.string.phoneNo),
             placeholder = userData.phoneNo,
             value = userData.phoneNo,
             keyboardType = KeyboardType.Phone,
@@ -239,7 +240,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            Text(text = "Save Changes")
+            Text(stringResource(id = R.string.saveChanges))
         }
     }
 
@@ -319,7 +320,7 @@ fun OutlinedTextFieldItem(
             .height(height),
         textStyle = TextStyle(color = Color.Black, fontSize = 20.sp),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
-        label = { Text(text = label, color = Color.Black) },
+        label = { Text(text = "", color = Color.Black) },
         placeholder = { Text(text = placeholder, color = Color.Gray) },
         singleLine = true
     )

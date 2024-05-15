@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -178,7 +179,7 @@ fun OverviewScreen(
                     item {
                         val selectedDateString = selectedDate.value.let {
                             if (dateFormat.format(it) == dateFormat.format(Date())) {
-                                "Today"
+                                stringResource(id = R.string.today)
                             } else {
                                 dateFormat.format(it)
                             }
@@ -251,7 +252,7 @@ fun OverviewScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Record",
+                                text = stringResource(id = R.string.record),
                                 fontFamily = poppinsFontFamily,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -259,7 +260,7 @@ fun OverviewScreen(
                             )
 
                             ClickableText(
-                                text = AnnotatedString("See All"),
+                                text = AnnotatedString(stringResource(id = R.string.seeAll)),
                                 onHover = {
                                     TextStyle(
                                         fontFamily = poppinsFontFamily,
@@ -316,7 +317,7 @@ fun OverviewScreen(
                     item {
                         val selectedDateString = selectedDate.value.let {
                             if (dateFormat.format(it) == dateFormat.format(Date())) {
-                                "Today"
+                                stringResource(id = R.string.today)
                             } else {
                                 dateFormat.format(it)
                             }
@@ -379,7 +380,7 @@ fun OverviewScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Record",
+                                text = stringResource(id = R.string.record),
                                 fontFamily = poppinsFontFamily,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -387,7 +388,7 @@ fun OverviewScreen(
                             )
 
                             ClickableText(
-                                text = AnnotatedString("See All"),
+                                text = AnnotatedString(stringResource(id = R.string.seeAll)),
                                 onHover = {
                                     TextStyle(
                                         fontFamily = poppinsFontFamily,
@@ -467,7 +468,7 @@ fun OverViewCard(
 
                     ) {
                         Text(
-                            text = "Overview",
+                            text = stringResource(id = R.string.overview),
                             fontWeight = FontWeight.Bold,
                             fontSize = 30.sp,
                             color = Color.White
@@ -491,7 +492,7 @@ fun OverViewCard(
 
                                     Column {
                                         Text(
-                                            text = "Income",
+                                            text = stringResource(id = R.string.income),
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 25.sp,
                                             color = Color.White
@@ -523,7 +524,7 @@ fun OverViewCard(
 
                                     Column {
                                         Text(
-                                            text = "Expenses",
+                                            text = stringResource(id = R.string.expense),
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 25.sp,
                                             color = Color.White
@@ -574,7 +575,7 @@ fun OverViewCard(
 
                     ) {
                         Text(
-                            text = "Overview",
+                            text = stringResource(id = R.string.overview),
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White
@@ -599,7 +600,7 @@ fun OverViewCard(
 
                                     Column {
                                         Text(
-                                            text = "Income",
+                                            text = stringResource(id = R.string.income),
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 16.sp,
                                             color = Color.White
@@ -629,7 +630,7 @@ fun OverViewCard(
 
                                     Column {
                                         Text(
-                                            text = "Expenses",
+                                            text = stringResource(id = R.string.expense),
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 16.sp,
                                             color = Color.White
@@ -696,7 +697,7 @@ fun BudgetCard(
                             .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
                     ) {
                         Text(
-                            text = "Budget",
+                            text = stringResource(id = R.string.budget),
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White
@@ -710,7 +711,7 @@ fun BudgetCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Available Balance : RM ${budgetAmount - totalExpenses}",
+                            text = stringResource(id = R.string.availableBalance)+ " : RM ${budgetAmount - totalExpenses}",
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -750,7 +751,7 @@ fun BudgetCard(
                             .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
                     ) {
                         Text(
-                            text = "Budget",
+                            text = stringResource(id = R.string.budget),
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White
@@ -764,7 +765,7 @@ fun BudgetCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Available Balance : RM ${budgetAmount - totalExpenses}",
+                            text = stringResource(id = R.string.availableBalance) + " : RM ${budgetAmount - totalExpenses}",
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -817,7 +818,7 @@ fun GoalCard(
                             .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
                     ) {
                         Text(
-                            text = "Goal",
+                            text = stringResource(id = R.string.goal),
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White
@@ -830,7 +831,7 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
+                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${goalAmount - (totalIncomes - totalExpenses)}",
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -869,7 +870,7 @@ fun GoalCard(
                             .clickable(onClick = { navController.navigate(Screen.BudgetScreen.route) })
                     ) {
                         Text(
-                            text = "Goal",
+                            text = stringResource(id = R.string.goal),
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             color = Color.White
@@ -882,7 +883,7 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Balance Needed: RM ${goalAmount - (totalIncomes - totalExpenses)}",
+                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${goalAmount - (totalIncomes - totalExpenses)}",
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -996,7 +997,7 @@ fun TransactionList(
             if (dateFormat.format(item.date) != lastDate) {
 
                 if (dateFormat.format(todayDate) == dateFormat.format(item.date)) {
-                    Text(text = "Today", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(id = R.string.today), fontWeight = FontWeight.SemiBold)
                 } else {
                     Text(text = dateFormat.format(item.date), fontWeight = FontWeight.SemiBold)
                 }
