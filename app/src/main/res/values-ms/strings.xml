@@ -135,6 +135,8 @@
     <string name="overdue">Lewat</string>
     <string name="allBill">Tambah Bil</string>
     <string name="text_14">Masukkan butiran bil anda di bawah</string>
+    <string name="text_23">Masukkan data baru untuk mengedit bil anda</string>
+    <string name="text_24">Kemaskini Data Bil Baru?</string>
     <string name="description">Penerangan</string>
     <string name="category">Kategori</string>
     <string name="amount">Jumlah</string>
@@ -187,5 +189,29 @@
     <string name="text_20">Tanyakan kepada kami tentang soalan anda</string>
     <string name="text_21">Masukkan soalan anda di sini.....</string>
     <string name="submit">Hantar</string>
-    <string name="text_22">Adakah anda pasti ingin \n Log Keluar?</string>
+    <string name="text_22">Adakah anda pasti ingin \nLog Keluar?</string>
+
+    <string name="suggestedLanguage">Bahasa yang Dicadangkan</string>
+    <string name="addnSellStocks">Tambah dan Jual Stok</string>
+    <string name="stockAcc">Akaun Stok</string>
+    <string name="product">Produk</string>
+    <string name="transactionDetails">Butiran Transaksi</string>
+    <string name="categoryDetails">Butiran Kategori</string>
+    <string name="analysis">Analisis</string>
+    <string name="editProfile">Edit Profil</string>
+    <string name="createPw">Cipta Kata Laluan</string>
+    <string name="editBill">Edit Bil</string>
+    <string name="editStaff">Edit Staf</string>
+    <string name="fdInfo">Maklumat FD</string>
+    <string name="delete">padam</string>
+    <string name="text_25">Sahkan untuk memadamkan bil?</string>
+    <string name="text_26">Sahkan untuk menambah perbelanjaan ?</string>
+    <string name="text_27">Gagal menambah cukai pendapatan</string>
+    <string name="tryAgain">cuba lagi</string>
+    <string name="ctn">teruskan</string>
+    <string name="markAsPaid">Tandai Sebagai Dibayar</string>
+    <string name="success">Berjaya</string>
+    <string name="fail">Gagal</string>
+    <string name="successPw">Kata laluan anda telah berjaya ditukar</string>
+    <string name="failPw">Tidak dapat menukar kata laluan\nSila cuba lagi</string>
 </resources>

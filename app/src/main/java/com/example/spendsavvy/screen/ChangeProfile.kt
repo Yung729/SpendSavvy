@@ -55,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -196,7 +197,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp)
                     ) {
-                        Text(text = "Cancel")
+                        Text(text = stringResource(id = R.string.cancel))
                     }
                 },
                 modifier = Modifier.width(280.dp)
@@ -205,6 +206,12 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
 
         Spacer(modifier = Modifier.height(15.dp)) // Spacer added here
 
+        Text(
+            text = stringResource(id = R.string.userName),
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(vertical = 10.dp),
+        )
         OutlinedTextFieldItem(
             label = stringResource(id = com.example.spendsavvy.R.string.userName),
             placeholder = userData.userName,
@@ -212,7 +219,12 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             onValueChange = { userData.userName = it },
             height = 60.dp
         )
-
+        Text(
+            text = stringResource(id = R.string.email),
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(vertical = 10.dp),
+        )
         OutlinedTextFieldItem(
             label = stringResource(id = com.example.spendsavvy.R.string.email),
             placeholder = userData.email,
@@ -221,7 +233,12 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             onValueChange = { userData.email = it},
             height = 60.dp
         )
-
+        Text(
+            text = stringResource(id = R.string.phoneNo),
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(vertical = 10.dp),
+        )
         OutlinedTextFieldItem(
             label = stringResource(id = com.example.spendsavvy.R.string.phoneNo),
             placeholder = userData.phoneNo,
@@ -302,7 +319,6 @@ fun OutlinedTextFieldItem(
 ) {
     val (textValue, setTextValue) = remember { mutableStateOf(value) }
 
-    // Update textValue with the value of 'value' when it changes
     LaunchedEffect(value) {
         setTextValue(value)
     }

@@ -129,12 +129,14 @@
     <string name="currentPw">当前密码</string>
     <string name="newPw">新密码</string>
     <string name="saveNewPw">保存新密码</string>
-    <string name="billsInstal">账单&amp; 分期付款</string>
-    <string name="upcoming">即将到来</string>
+    <string name="billsInstal">账单&amp;分期付款</string>
+    <string name="upcoming">臨近</string>
     <string name="paid">已付</string>
     <string name="overdue">逾期的</string>
     <string name="allBill">添加账单</string>
     <string name="text_14">在下面输入您的帐单详细信息</string>
+    <string name="text_23">输入新数据以编辑您的账单</string>
+    <string name="text_24">更新新账单数据 ?</string>
     <string name="description">描述</string>
     <string name="category">类别</string>
     <string name="amount">金额</string>
@@ -188,4 +190,28 @@
     <string name="text_21">在此输入您的问题......</string>
     <string name="submit">提交</string>
     <string name="text_22">您确定要\n登出账户吗？</string>
+
+    <string name="suggestedLanguage">建议语言</string>
+    <string name="addnSellStocks">添加和出售股票</string>
+    <string name="stockAcc">股票账户</string>
+    <string name="product">产品</string>
+    <string name="transactionDetails">交易详情</string>
+    <string name="categoryDetails">类别详情</string>
+    <string name="analysis">分析</string>
+    <string name="editProfile">编辑个人资料</string>
+    <string name="createPw">创建密码</string>
+    <string name="editBill">编辑账单</string>
+    <string name="editStaff">编辑员工</string>
+    <string name="fdInfo">定期存款信息</string>
+    <string name="delete">删除</string>
+    <string name="text_25">确认删除账单吗 ？</string>
+    <string name="text_26">确认添加费用？</string>
+    <string name="text_27">未能添加所得税</string>
+    <string name="tryAgain">再试一次</string>
+    <string name="ctn">继续</string>
+    <string name="markAsPaid">标记为已付款</string>
+    <string name="success">成功</string>
+    <string name="fail">失败</string>
+    <string name="successPw">您的密码已成功更改</string>
+    <string name="failPw">无法更改密码\n请重试</string>
 </resources>

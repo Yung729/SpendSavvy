@@ -101,7 +101,7 @@ fun EditExistingStockScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Product",
+            text = stringResource(id = R.string.product),
             fontFamily = poppinsFontFamily,
             fontSize = 15.sp
         )

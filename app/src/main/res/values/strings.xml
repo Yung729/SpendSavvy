@@ -133,6 +133,8 @@
     <string name="overdue">Overdue</string>
     <string name="allBill">Add Bills</string>
     <string name="text_14">Enter your bill details below</string>
+    <string name="text_23">Enter new data to edit your bill</string>
+    <string name="text_24">Update New Bill Data ?</string>
     <string name="description">Description</string>
     <string name="category">Category</string>
     <string name="amount">Amount</string>
@@ -186,4 +188,30 @@
     <string name="text_21">Enter your question here.....</string>
     <string name="submit">Submit</string>
     <string name="text_22">Are you sure you want to \n Log Out?</string>
+
+    <string name="suggestedLanguage">Suggested Language</string>
+    <string name="addnSellStocks">Add and Sell Stocks</string>
+    <string name="stockAcc">Stock Account</string>
+    <string name="product">Product</string>
+    <string name="transactionDetails">Transaction Detials</string>
+    <string name="categoryDetails">Category Detials</string>
+    <string name="analysis">Analysis</string>
+    <string name="editProfile">Edit Profile</string>
+    <string name="createPw">Create Password</string>
+    <string name="editBill">Edit Bill</string>
+    <string name="editStaff">Edit Staff</string>
+    <string name="fdInfo">FD Info</string>
+    <string name="delete">Delete</string>
+    <string name="text_25">Confirm to delete bill ?</string>
+    <string name="text_26">Confirm to add expense ?</string>
+    <string name="text_27">Failed to add income tax</string>
+    <string name="tryAgain">Try Again</string>
+    <string name="ctn">Continue</string>
+    <string name="markAsPaid">Mark As Paid</string>
+    <string name="success">Success</string>
+    <string name="fail">Fail</string>
+    <string name="successPw">Your password has been changed successfully</string>
+    <string name="failPw">Unable to change password \n Please Try Again</string>
+
+
 </resources>

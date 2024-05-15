@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -43,6 +44,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
@@ -271,7 +273,7 @@ fun SetupNavGraph(
                             containerColor = ButtonColor,
                             contentColor = Color.White
                         ) {
-                            Text(text = "Expense")
+                            Text(text = stringResource(id = R.string.expense))
                         }
 
                         FloatingActionButton(
@@ -287,7 +289,7 @@ fun SetupNavGraph(
                             containerColor = ButtonColor,
                             contentColor = Color.White
                         ) {
-                            Text(text = "Income")
+                            Text(text = stringResource(id = R.string.income))
                         }
                     }
 

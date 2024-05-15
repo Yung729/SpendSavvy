@@ -157,16 +157,16 @@ fun ManageBillsAndInstalment(
                         ) {
                             CategoryItem(category)
                             val textColor = when (category) {
-                                "Upcoming" -> Color.Yellow
-                                "Overdue" -> Color.Red
-                                "Paid" -> Color.Green
+                                stringResource(id = com.example.spendsavvy.R.string.upcoming) -> Color.Yellow
+                                stringResource(id = com.example.spendsavvy.R.string.overdue) -> Color.Red
+                                stringResource(id = com.example.spendsavvy.R.string.paid) -> Color.Green
                                 else -> Color.Black
                             }
                             Text(
                                 text = when (category) {
-                                    "Upcoming" -> totalUpcomingBills.toString()
-                                    "Overdue" -> totalOverdueBills.toString()
-                                    "Paid" -> totalPaidBills.toString()
+                                    stringResource(id = com.example.spendsavvy.R.string.upcoming) -> totalUpcomingBills.toString()
+                                    stringResource(id = com.example.spendsavvy.R.string.overdue) -> totalOverdueBills.toString()
+                                    stringResource(id = com.example.spendsavvy.R.string.paid) -> totalPaidBills.toString()
                                     else -> ""
                                 },
                                 fontSize = 20.sp,
@@ -381,7 +381,7 @@ fun BillItem(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Mark as Paid",
+                        text = stringResource(id = com.example.spendsavvy.R.string.markAsPaid),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
                         color = Color.Black
@@ -409,7 +409,7 @@ fun BillItem(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Delete",
+                        text = stringResource(id = com.example.spendsavvy.R.string.delete),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
                         color = Color.Black
@@ -423,7 +423,7 @@ fun BillItem(
                     onDismissRequest = { showConfirmationDialog = false },
                     title = {
                         Text(
-                            text = if (isDelete) "Confirm to delete bill" else "Confirm to add expense",
+                            text = if (isDelete) stringResource(id = com.example.spendsavvy.R.string.text_25) else stringResource(id = com.example.spendsavvy.R.string.text_26),
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 22.sp,
@@ -499,7 +499,7 @@ fun BillItem(
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(text = if (!isDelete) "ADD" else "DELETE")
+                            Text(text = if (!isDelete) stringResource(id = com.example.spendsavvy.R.string.add) else stringResource(id = com.example.spendsavvy.R.string.delete))
                         }
                     },
                     dismissButton = {
@@ -509,7 +509,7 @@ fun BillItem(
                                 .fillMaxWidth()
                                 .padding(start = 8.dp)
                         ) {
-                            Text(text = "Cancel")
+                            Text(stringResource(id = com.example.spendsavvy.R.string.cancel))
                         }
                     }
                 )

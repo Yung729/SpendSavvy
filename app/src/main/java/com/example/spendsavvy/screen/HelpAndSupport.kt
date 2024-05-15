@@ -242,30 +242,40 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
 
                     Button(
                         onClick = {
-                            questionsViewModel.addQuestionToFirestore(
-                                Question(
-                                    id = questionsViewModel.generateQuestionId(),
-                                    questionText = questionText,
-                                    answer = "WAITING FOR REPLY....",
-                                    status = "PENDING",
-                                    questionDate = Date(),
-                                ),
-                                onSuccess = {
+                            if(questionText.isNotEmpty()){
+                                questionsViewModel.addQuestionToFirestore(
+                                    Question(
+                                        id = questionsViewModel.generateQuestionId(),
+                                        questionText = questionText,
+                                        answer = "WAITING FOR REPLY....",
+                                        status = "PENDING",
+                                        questionDate = Date(),
+                                    ),
+                                    onSuccess = {
+                                        Toast.makeText(
+                                            context,
+                                            "Questions sent successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        questionText = ""
+                                    }
+                                ) {
                                     Toast.makeText(
                                         context,
-                                        "Questions sent successfully",
+                                        "Fail to send questions",
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    questionText = ""
                                 }
-                            ) {
+                                showDialog = false
+                            }
+                            else
+                            {
                                 Toast.makeText(
                                     context,
-                                    "Fail to send questions",
+                                    "Cannot send empty question",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-                            showDialog = false
                         },
                         modifier = Modifier
                             .weight(1f)

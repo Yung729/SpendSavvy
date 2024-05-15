@@ -76,7 +76,7 @@ fun EditBills(
             .fillMaxSize()
     ) {
         Text(
-            text = "Enter new data to edit your bill",
+            text = stringResource(id = com.example.spendsavvy.R.string.text_23),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -173,7 +173,7 @@ fun EditBills(
                 onDismissRequest = { showDialog = false },
                 title = {
                     Text(
-                        text = "Update New Bill Data?",
+                        text = stringResource(id = com.example.spendsavvy.R.string.text_24),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp,
@@ -223,7 +223,7 @@ fun EditBills(
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(text = "OK")
+                            Text(stringResource(id = com.example.spendsavvy.R.string.saveChanges))
                         }
                     }
                 }
