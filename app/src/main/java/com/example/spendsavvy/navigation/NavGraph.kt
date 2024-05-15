@@ -2,9 +2,8 @@ package com.example.spendsavvy.navigation
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -26,12 +25,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -101,7 +104,9 @@ import com.example.spendsavvy.viewModels.QuestionViewModel
 import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SetupNavGraph(
@@ -110,9 +115,18 @@ fun SetupNavGraph(
     window: ScreenSize
 ) {
 
-    val isConnected = isInternetAvailable(context)
+
+    val connection by connectivityStatus()
+
+    val isConnected = connection === ConnectionStatus.Available
     var showSnackBar by remember {
         mutableStateOf(!isConnected)
+    }
+
+    LaunchedEffect(isConnected) {
+        if (!isConnected) {
+            showSnackBar = true
+        }
     }
 
 
@@ -141,14 +155,14 @@ fun SetupNavGraph(
     }
 
 
-    val walletViewModel = WalletViewModel(context, isConnected,userId)
+    val walletViewModel = WalletViewModel(context, isConnected, userId)
     val dateViewModel = DateSelectionViewModel()
     val categoryViewModel = CategoryViewModel(context, isConnected, userId)
     val transactionsViewModel =
         OverviewViewModel(context, isConnected, userId, dateViewModel, walletViewModel)
     val targetViewModel = TargetViewModel(context, isConnected, userId)
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
-    val profileViewModel = ProfileViewModel(userId,isConnected,context)
+    val profileViewModel = ProfileViewModel(userId, isConnected, context)
     val billsViewModel = BillsViewModel(context, isConnected, userId)
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
 
@@ -313,6 +327,8 @@ fun SetupNavGraph(
                     Text(text = "No Internet Connection")
                 }
 
+            } else if (isConnected && !showSnackBar) {
+                showSnackBar = false
             }
 
         }
@@ -846,7 +862,7 @@ fun SetupNavGraph(
                 ) {
 
                     BudgetScreen(
-                        budgetViewModel = targetViewModel,window = window
+                        budgetViewModel = targetViewModel, window = window
                     )
 
 
@@ -931,31 +947,15 @@ val items = listOf(
     Screen.Overview, Screen.Wallet, Screen.Analysis, Screen.Settings
 )
 
-private fun isInternetAvailable(context: Context): Boolean {
-    var result = false
-    val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val networkCapabilities = connectivityManager.activeNetwork ?: return false
-        val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
-        result = when {
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            else -> false
-        }
-    } else {
-        connectivityManager.run {
-            connectivityManager.activeNetworkInfo?.run {
-                result = when (type) {
-                    ConnectivityManager.TYPE_WIFI -> true
-                    ConnectivityManager.TYPE_MOBILE -> true
-                    ConnectivityManager.TYPE_ETHERNET -> true
-                    else -> false
-                }
-            }
-        }
+
+@ExperimentalCoroutinesApi
+@Composable
+fun connectivityStatus(): State<ConnectionStatus> {
+    val context = LocalContext.current
+
+    return produceState(initialValue = context.currentConnectivityStatus) {
+        Log.d("ConnectivityStatus", "New connection status: $value")
+        context.observeConnectivityAsFlow().collect { value = it }
     }
-    return result
 }
 
