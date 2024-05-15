@@ -158,7 +158,6 @@ fun SetupNavGraph(
             if (currentScreenName !in listOf(
                     Screen.Login.route,
                     Screen.SignUp.route,
-                    Screen.ForgotPassword.route
                 )
             ) {
 
@@ -617,19 +616,6 @@ fun SetupNavGraph(
 
                 }
 
-                /*composable(
-                    route = Screen.ForgotPassword.route
-                ) {
-
-                    ForgotPassword(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp), navController = navController,
-                        profileViewModel = profileViewModel,
-                        fireAuthRepository = fireAuthRepository
-                    )
-
-                }*/
 
                 composable(
                     route = Screen.CreatePassword.route

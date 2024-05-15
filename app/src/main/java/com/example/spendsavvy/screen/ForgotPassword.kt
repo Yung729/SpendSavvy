@@ -52,12 +52,7 @@ fun ForgotPassword(
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
     ) {
-        Text(
-            text = "Forgot Password",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+x
         Text(
             text = "Recover your account password",
             color = Color.Gray,
