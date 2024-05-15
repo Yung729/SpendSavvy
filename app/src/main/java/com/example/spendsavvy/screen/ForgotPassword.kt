@@ -17,20 +17,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.models.UserData
-import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.viewModels.ProfileViewModel
 
@@ -52,7 +48,7 @@ fun ForgotPassword(
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
     ) {
-x
+        
         Text(
             text = "Recover your account password",
             color = Color.Gray,
