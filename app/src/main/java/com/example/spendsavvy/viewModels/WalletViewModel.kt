@@ -109,7 +109,7 @@ class WalletViewModel(
         }
     }
 
-    fun updateCashBalance(cashName: String, updateAmount: Double,onSuccess : () -> Unit) {
+    fun updateCashBalance(cashName: String, updateAmount: Double, onSuccess: () -> Unit) {
         viewModelScope.launch {
             try {
 
@@ -117,7 +117,7 @@ class WalletViewModel(
                     userId,
                     cashName,
                     updateAmount,
-                    onSuccess = {newBalance ->
+                    onSuccess = { newBalance ->
                         /*dbHelper.updateCashDetails(
                             updatedCashDetails.type,
                             typeName,
@@ -132,7 +132,7 @@ class WalletViewModel(
                         updateCashInfo(cash = updatedCashDetailsList)
                         onSuccess()
                     },
-                    onFailure = {errorMessage ->
+                    onFailure = { errorMessage ->
                         Toast.makeText(
                             currentContext, errorMessage, Toast.LENGTH_SHORT
                         ).show()
@@ -146,44 +146,85 @@ class WalletViewModel(
         }
     }
 
-    fun addCashDetailsToDatabase(cash: Cash): Int {
+    fun addCashDetailsToDatabase(cash: Cash, imageUri: Uri?) {
         if (cashDetailsList.value?.any { it.typeName == cash.typeName } == true) {
             Toast.makeText(
                 currentContext, "Cash Account with the same name already exists", Toast.LENGTH_SHORT
             ).show()
-            return 0
+            return
         }
 
         viewModelScope.launch {
             try {
-                firestoreRepository.addWalletItems(
-                    userId,
-                    "Cash",
-                    cash,
-                    cash.typeName,
-                    onSuccess = {
-                        /*dbHelper.addNewCashDetails(
-                            type = cash.type,
-                            typeName = cash.typeName,
-                            balance = cash.balance,
-                            userId = userId
-                        )*/
+                if (imageUri != null) {
+                    val storageRef = FirebaseStorage.getInstance().reference
 
-                        val cashInfo = cashDetailsList.value ?: emptyList()
-                        val updatedCashDetailsList = cashInfo + cash
-                        updateCashInfo(
-                            cash = updatedCashDetailsList
-                        )
-                    },
-                    onFailure = { exception ->
-                        Log.e(ContentValues.TAG, "Error adding cash details", exception)
-                    }
-                )
+                    firestoreRepository.uploadImageToStorage("cashImages", storageRef, imageUri,
+                        { downloadUri ->
+                            cash.imageUri = downloadUri
+
+                            firestoreRepository.addWalletItems(
+                                userId,
+                                "Cash",
+                                cash,
+                                cash.typeName,
+                                onSuccess = {
+                                    /*dbHelper.addNewCashDetails(
+                                        type = cash.type,
+                                        typeName = cash.typeName,
+                                        balance = cash.balance,
+                                        userId = userId
+                                    )*/
+
+                                    val cashInfo = cashDetailsList.value ?: emptyList()
+                                    val updatedCashDetailsList = cashInfo + cash
+                                    updateCashInfo(
+                                        cash = updatedCashDetailsList
+                                    )
+                                },
+                                onFailure = { exception ->
+                                    Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                                }
+                            )
+                        }, { exception ->
+                            Log.e(ContentValues.TAG, "Error uploading image", exception)
+                            // Handle failure
+                        })
+                } else {
+                    firestoreRepository.addWalletItems(
+                        userId,
+                        "Cash",
+                        cash,
+                        cash.typeName,
+                        onSuccess = {
+                            /*dbHelper.addNewCashDetails(
+                                type = cash.type,
+                                typeName = cash.typeName,
+                                balance = cash.balance,
+                                userId = userId
+                            )*/
+
+                            val cashInfo = cashDetailsList.value ?: emptyList()
+                            val updatedCashDetailsList = cashInfo + cash
+                            updateCashInfo(
+                                cash = updatedCashDetailsList
+                            )
+                        },
+                        onFailure = { exception ->
+                            Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                        }
+                    )
+                }
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding cash details", e)
             }
         }
-        return 1
+        Toast.makeText(
+            currentContext,
+            "Cash Account ${cash.typeName} has successfully added",
+            Toast.LENGTH_SHORT
+        ).show()
+
     }
 
     //FIXED DEPOSIT
@@ -205,16 +246,24 @@ class WalletViewModel(
         }
     }
 
-    fun addFDDetailsToDatabase(fdAccount: FDAccount): Int {
+    fun addFDDetailsToDatabase(fdAccount: FDAccount, imageUri: Uri?) {
         if (fdAccDetailsList.value?.any { it.bankName == fdAccount.bankName } == true) {
             Toast.makeText(
-                currentContext, "The FD Account with the same name already existed", Toast.LENGTH_SHORT
+                currentContext,
+                "The FD Account with the same name already existed",
+                Toast.LENGTH_SHORT
             ).show()
-            return 0
+            return
         }
 
         viewModelScope.launch {
             try {
+                if (imageUri != null) {
+                    val storageRef = FirebaseStorage.getInstance().reference
+
+                    firestoreRepository.uploadImageToStorage("stockImages", storageRef, imageUri,
+                        { downloadUri ->
+                            fdAccount.imageUri = downloadUri
                 firestoreRepository.addWalletItems(
                     userId,
                     "Fixed Deposit",
@@ -229,17 +278,49 @@ class WalletViewModel(
                         )*/
                         val fdInfo = fdAccDetailsList.value ?: emptyList()
                         val updatedFDDetailsFromFirestore = fdInfo + fdAccount
-                        updateFDDetails(fdAccountList =  updatedFDDetailsFromFirestore)
+                        updateFDDetails(fdAccountList = updatedFDDetailsFromFirestore)
                     },
                     onFailure = { exception ->
                         Log.e(ContentValues.TAG, "Error adding FD details", exception)
                     }
                 )
+
+                        }, { exception ->
+                            Log.e(ContentValues.TAG, "Error uploading image", exception)
+                            // Handle failure
+                        })
+                    }else{
+                    firestoreRepository.addWalletItems(
+                        userId,
+                        "Fixed Deposit",
+                        fdAccount,
+                        fdAccount.bankName,
+                        onSuccess = {
+                            /*dbHelper.addNewCashDetails(
+                                type = cash.type,
+                                typeName = cash.typeName,
+                                balance = cash.balance,
+                                userId = userId
+                            )*/
+                            val fdInfo = fdAccDetailsList.value ?: emptyList()
+                            val updatedFDDetailsFromFirestore = fdInfo + fdAccount
+                            updateFDDetails(fdAccountList = updatedFDDetailsFromFirestore)
+                        },
+                        onFailure = { exception ->
+                            Log.e(ContentValues.TAG, "Error adding FD details", exception)
+                        }
+                    )
+                }
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error adding FD details", e)
             }
         }
-        return 1
+
+        Toast.makeText(
+            currentContext,
+            "The FD Account ${fdAccount.bankName} has successfully added",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun editFDDetails(fdAccount: FDAccount, updatedFDDetails: FDAccount) {
@@ -270,7 +351,7 @@ class WalletViewModel(
         }
     }
 
-    private fun updateFDDeposit(fdAccountList: List<FDAccount>){
+    private fun updateFDDeposit(fdAccountList: List<FDAccount>) {
         fdAccDetailsList.postValue(fdAccountList)
     }
 
@@ -305,16 +386,16 @@ class WalletViewModel(
             totalPrice += stock.originalPrice * stock.quantity
         }
 
-        totalPriceStock.postValue(totalPrice)
         stockListLive.postValue(stockList)
+        totalPriceStock.postValue(totalPrice)
     }
 
-    fun addStockDetailsToDatabase(stock: Stock,imageUri : Uri?) : Int {
+    fun addStockDetailsToDatabase(stock: Stock, imageUri: Uri?) {
         if (stockListLive.value?.any { it.productName == stock.productName } == true) {
             Toast.makeText(
-                currentContext, "The product already existed", Toast.LENGTH_SHORT
+                currentContext, "The product already existed, try another", Toast.LENGTH_SHORT
             ).show()
-            return 0
+            return
         }
 
         viewModelScope.launch {
@@ -322,7 +403,7 @@ class WalletViewModel(
                 if (imageUri != null) {
                     val storageRef = FirebaseStorage.getInstance().reference
 
-                    firestoreRepository.uploadImageToStorage("stockImages",storageRef, imageUri,
+                    firestoreRepository.uploadImageToStorage("stockImages", storageRef, imageUri,
                         { downloadUri ->
                             stock.imageUri = downloadUri
                             firestoreRepository.addWalletItems(
@@ -343,7 +424,7 @@ class WalletViewModel(
                                     updateStockTotalPrice(updatedStockDetailsList)
                                 },
                                 onFailure = { exception ->
-                                    Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                                    Log.e(ContentValues.TAG, "Error adding stock details", exception)
                                 }
                             )
                         }, { exception ->
@@ -351,7 +432,7 @@ class WalletViewModel(
                             // Handle failure
                         })
 
-                }else {
+                } else {
 
                     firestoreRepository.addWalletItems(
                         userId,
@@ -371,15 +452,20 @@ class WalletViewModel(
                             updateStockTotalPrice(updatedStockDetailsList)
                         },
                         onFailure = { exception ->
-                            Log.e(ContentValues.TAG, "Error adding cash details", exception)
+                            Log.e(ContentValues.TAG, "Error adding stock details", exception)
                         }
                     )
                 }
             } catch (e: Exception) {
-                Log.e(ContentValues.TAG, "Error adding cash details", e)
-            }
+                Log.e(ContentValues.TAG, "Error adding stock details", e)
+                }
+
         }
-        return 1
+        Toast.makeText(
+            currentContext, "The ${stock.productName} has successfully added", Toast.LENGTH_SHORT
+        ).show()
+
+        return
     }
 
 

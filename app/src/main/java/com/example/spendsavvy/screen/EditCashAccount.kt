@@ -237,6 +237,7 @@ fun EditCashAccountScreen(
                             walletViewModel.editCashDetails(
                                 cash = cashDetails,
                                 updatedCashDetails = Cash(
+                                    imageUri = cashDetails.imageUri,
                                     typeName = typeName,
                                     balance = cashDetails.balance + (incAmt.toDoubleOrNull()
                                         ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)

@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.navigation.Screen
@@ -55,7 +58,7 @@ fun CashScreen(
 
     val cashDetailsList by cashViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
-    Column(modifier = Modifier.padding(10.dp)) {
+    Column(modifier = Modifier.padding(15.dp)) {
         Spacer(modifier = Modifier.height(25.dp))
         Text(
             text = "Cash",
@@ -77,7 +80,19 @@ fun CashScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            for (cashDetails in cashDetailsList) {
+                if (cashDetails.typeName == "Cash")
+                    Image(
+                        painter = rememberAsyncImagePainter(model = cashDetails.imageUri),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(30.dp, 30.dp)
+                            .padding(end = 10.dp)
+                    )
+            }
+
             Column {
+
                 Text(
                     text = "Cash Money",
                     fontSize = 20.sp,
@@ -104,7 +119,7 @@ fun CashScreen(
 
             if (count == 1)
                 Text(
-                    text = "RM $cashAmount",
+                    text = "RM ${cashAmount}",
                     fontSize = 20.sp,
                     fontFamily = poppinsFontFamily
                 )
@@ -142,55 +157,53 @@ fun CashScreen(
         Divider(color = Color.Gray, thickness = 0.7.dp)
         Spacer(modifier = Modifier.height(15.dp))
 
-        Column {
-            BankAccList(cashDetailsList, modifier)
-        }
+        BankAccList(cashDetailsList, modifier)
 
-        Box(modifier = Modifier
-            .fillMaxSize()
-            ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
             ) {
-                    Row(
+                Row(
+                    modifier = Modifier
+                        .padding(start = 35.dp),
+                    horizontalArrangement = Arrangement.spacedBy(30.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            navController.navigate(route = Screen.AddCashAccount.route)
+                        },
                         modifier = Modifier
-                            .padding(start = 35.dp),
-                        horizontalArrangement = Arrangement.spacedBy(30.dp)
+                            .bounceClick()
                     ) {
-                        OutlinedButton(
-                            onClick = {
-                                navController.navigate(route = Screen.AddCashAccount.route)
-                            },
-                                    modifier = Modifier
-                                    .bounceClick()
-                        ) {
-                            Text(
-                                text = "Add Account",
-                                textAlign = TextAlign.Center,
-                                fontFamily = poppinsFontFamily,
-                            )
-                        }
+                        Text(
+                            text = "Add Account",
+                            textAlign = TextAlign.Center,
+                            fontFamily = poppinsFontFamily,
+                        )
+                    }
 
-                        Button(
-                            onClick = {
-                                navController.navigate(route = Screen.EditCashAccount.route)
-                            },
-                            modifier = Modifier
-                                .bounceClick(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Black
-                            )
-                        ) {
-                            Text(
-                                text = "Edit Account",
-                                textAlign = TextAlign.Center,
-                                fontFamily = poppinsFontFamily,
-                                color = Color.White
-                            )
-                        }
-
+                    Button(
+                        onClick = {
+                            navController.navigate(route = Screen.EditCashAccount.route)
+                        },
+                        modifier = Modifier
+                            .bounceClick(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black
+                        )
+                    ) {
+                        Text(
+                            text = "Edit Account",
+                            textAlign = TextAlign.Center,
+                            fontFamily = poppinsFontFamily,
+                            color = Color.White
+                        )
+                    }
 
 
                 }
@@ -208,18 +221,30 @@ fun BankAccList(
     bankList: List<Cash>,
     modifier: Modifier
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier.padding(10.dp)
+    ) {
         items(bankList) { item: Cash ->
             if (item.typeName != "Cash") {
                 Row(
                     modifier = modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = item.typeName,
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
-                    )
+                    Row {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = item.imageUri),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(30.dp, 30.dp)
+                                .padding(end = 10.dp)
+                        )
+
+                        Text(
+                            text = item.typeName,
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp
+                        )
+                    }
 
                     Text(
                         text = "RM ${item.balance}",

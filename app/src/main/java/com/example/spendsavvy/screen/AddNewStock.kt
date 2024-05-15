@@ -57,9 +57,6 @@ fun AddNewStockScreen(
     transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
-
-    val stockLiveDataList by walletViewModel.stockListLive.observeAsState(initial = emptyList())
-
     var stockName by remember {
         mutableStateOf("")
     }
@@ -104,12 +101,14 @@ fun AddNewStockScreen(
 
             Text(
                 text = "Pick Icon Photo",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.8f)
                 .height(56.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -133,6 +132,8 @@ fun AddNewStockScreen(
 
                     Text(
                         text = "Pick a Photo",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
                     )
                 }
             }
@@ -267,7 +268,7 @@ fun AddNewStockScreen(
                             transactionType = "Expenses"
                         ),
                         onSuccess = {
-                            val valid = walletViewModel.addStockDetailsToDatabase(
+                            walletViewModel.addStockDetailsToDatabase(
                                 Stock(
                                     selectedImageUri,
                                     stockName,
@@ -275,8 +276,6 @@ fun AddNewStockScreen(
                                     qty.toInt()
                                 ),selectedImageUri
                             )
-                            if(valid == 1)
-                            navController.navigateUp()
                         },
                         onFailure = {
                         }

@@ -910,7 +910,7 @@ class DatabaseHelper(context: Context) :
 
 
     //------------------------------ CASH ----------------------------------------
-    fun readCashDetails(userId: String): ArrayList<Cash> {
+    /*fun readCashDetails(userId: String): ArrayList<Cash> {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM cash WHERE userId=?", arrayOf(userId))
         val cashDetailsList: ArrayList<Cash> = ArrayList()
@@ -924,7 +924,7 @@ class DatabaseHelper(context: Context) :
                 val typeName = cursor.getString(typeNameIndex)
                 val balance = cursor.getDouble(balanceIndex)
 
-                val cashDetails = Cash(typeName, balance)
+                val cashDetails = Cash( typeName, balance)
                 cashDetailsList.add(cashDetails)
             } while (cursor.moveToNext())
         }
@@ -981,7 +981,7 @@ class DatabaseHelper(context: Context) :
         }
         db.update("cash", values, "userId=?", arrayOf(userId))
         db.close()
-    }
+    }*/
     //----------------------------------- Other ------------------------------------------------------
 
     fun resetPrimaryKey(tableName: String) {
