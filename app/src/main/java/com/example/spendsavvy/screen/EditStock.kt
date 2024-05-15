@@ -360,8 +360,3 @@ fun EditExistingStockScreen(
         }
     }
 }
-
-
-//for sell , use qty*setPrice
-//profit earned = qty*setPrice - qty*originalPrice
-//new stock balance = total stock balance - {newqty*originalPrice}=>addNewStock

@@ -33,7 +33,9 @@ class WalletViewModel(
     val fdAccDetailsList = MutableLiveData<List<FDAccount>>()
     val stockListLive = MutableLiveData<List<Stock>>()
 
-    val totalPriceStock = MutableLiveData<Double>()
+    var totalPriceStock = MutableLiveData<Double>()
+    var totalFixedDeposit = MutableLiveData<Double>()
+    var totalCashAmount = MutableLiveData<Double>()
 
     val userId = userId
     val currentContext = context
@@ -72,6 +74,13 @@ class WalletViewModel(
     }
 
     private fun updateCashInfo(cash: List<Cash>) {
+        var totalCash = 0.0
+
+        for(cashDetails in cash){
+            totalCash += cashDetails.balance
+        }
+
+        totalCashAmount.postValue(totalCash)
         cashDetailsList.postValue(cash)
     }
 
@@ -348,7 +357,7 @@ class WalletViewModel(
                             if (it == fdAccount) updatedFDDetails else it
                         }
 
-                        updateFDDeposit(updatedFDInfo)
+                        updateFDDetails(updatedFDInfo)
 
                     }
                 )
@@ -358,11 +367,14 @@ class WalletViewModel(
         }
     }
 
-    private fun updateFDDeposit(fdAccountList: List<FDAccount>) {
-        fdAccDetailsList.postValue(fdAccountList)
-    }
-
     private fun updateFDDetails(fdAccountList: List<FDAccount>) {
+        var totalFDDeposit = 0.0
+
+        for(fdDetails in fdAccountList){
+            totalFDDeposit += fdDetails.deposit
+        }
+
+        totalFixedDeposit.postValue(totalFDDeposit)
         fdAccDetailsList.postValue(fdAccountList)
     }
 
