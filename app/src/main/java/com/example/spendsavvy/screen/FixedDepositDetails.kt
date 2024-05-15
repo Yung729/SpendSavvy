@@ -62,6 +62,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
@@ -107,7 +108,7 @@ fun FixedDepositDetailsScreen(
             )
     ) {
         Text(
-            text = "Fixed Deposit",
+            text = stringResource(id = com.example.spendsavvy.R.string.fixedDep),
             fontFamily = poppinsFontFamily,
             fontSize = 20.sp
         )
@@ -120,7 +121,7 @@ fun FixedDepositDetailsScreen(
                 .padding(start = 15.dp, top = 15.dp)
         ) {
             Text(
-                text = "Note: The amount of money will be locked for 1 year",
+                text = stringResource(id = com.example.spendsavvy.R.string.text_10),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp,
                 color = Color.Red
@@ -129,7 +130,7 @@ fun FixedDepositDetailsScreen(
             Spacer(modifier = Modifier.height(5.dp))
 
             Text(
-                text = "Pick Icon Photo",
+                text = stringResource(id = com.example.spendsavvy.R.string.pickIconPhoto),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -160,7 +161,7 @@ fun FixedDepositDetailsScreen(
                     )
 
                     Text(
-                        text = "Pick a Photo",
+                        text = stringResource(id = com.example.spendsavvy.R.string.pickAPhoto),
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
@@ -190,13 +191,13 @@ fun FixedDepositDetailsScreen(
             Spacer(modifier = Modifier.height(5.dp))
 
             Text(
-                text = "Select your bank",
+                text = stringResource(id = com.example.spendsavvy.R.string.text_11),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
 
             ClickableText(
-                text = AnnotatedString("Click me to add more bank"),
+                text = AnnotatedString(stringResource(id = com.example.spendsavvy.R.string.text_12)),
                 onClick = {
                     navController.navigate(Screen.AddCashAccount.route)
                 }
@@ -264,7 +265,7 @@ fun FixedDepositDetailsScreen(
                 .padding(start = 15.dp, top = 15.dp)
         ) {
             Text(
-                text = "Deposit Amount",
+                text = stringResource(id = com.example.spendsavvy.R.string.depositAmount),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -291,7 +292,7 @@ fun FixedDepositDetailsScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Text(
-                text = "Interest Rate (%)",
+                text = stringResource(id = com.example.spendsavvy.R.string.interestRate),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -338,7 +339,7 @@ fun FixedDepositDetailsScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(id = com.example.spendsavvy.R.string.cancel),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )
@@ -364,7 +365,7 @@ fun FixedDepositDetailsScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Add",
+                    text = stringResource(id = com.example.spendsavvy.R.string.add),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )

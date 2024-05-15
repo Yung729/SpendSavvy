@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -123,7 +124,7 @@ fun TaxCalculator(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Amount",
+                            text = stringResource(id = R.string.amount),
                             fontSize = 20.sp,
                             modifier = Modifier.padding(bottom = 4.dp)
                         )
@@ -145,14 +146,14 @@ fun TaxCalculator(
                             modifier = Modifier.height(50.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
-                            placeholder = { Text(text = "Enter your income") }
+                            placeholder = { Text(text = stringResource(id = com.example.spendsavvy.R.string.text_15)) }
                         )
                     }
                 }
 
                 // DatePickerItem
                 DatePickerItem(
-                    label = "Tax Year",
+                    label = stringResource(id = com.example.spendsavvy.R.string.taxYear),
                     selectedDate = selectedDate,
                     onDateSelected = { selectedDate = it }
                 )
@@ -222,7 +223,7 @@ fun TaxCalculator(
                         .weight(1f)
                         .padding(12.dp),
                 ) {
-                    Text(text = "Calculate")
+                    Text(text = stringResource(id = com.example.spendsavvy.R.string.calculate))
                 }
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
@@ -264,7 +265,7 @@ fun TaxCalculator(
                         .weight(1f)
                         .padding(10.dp),
                 ) {
-                    Text(text = "Add in Expense", fontSize = 11.sp)
+                    Text(text = stringResource(id = com.example.spendsavvy.R.string.addExpense), fontSize = 11.sp)
                 }
                 if (showDialog) {
                     TransactionResultDialog(
@@ -331,7 +332,7 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
             // Icon and label text
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Income Period",
+                    text = stringResource(id = com.example.spendsavvy.R.string.incomePeriod),
                     fontSize = 20.sp,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
@@ -349,7 +350,7 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                listOf("Monthly", "Annually").forEach { option ->
+                listOf(stringResource(id = com.example.spendsavvy.R.string.monthly), stringResource(id = com.example.spendsavvy.R.string.annually)).forEach { option ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -395,13 +396,13 @@ fun DisplayIncomeTax(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Text(
-                text = "Monthly",
+                text = stringResource(id = com.example.spendsavvy.R.string.monthly),
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "Annually",
+                text = stringResource(id = com.example.spendsavvy.R.string.annually),
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold
@@ -420,7 +421,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = "Income",
+                    text = stringResource(id = com.example.spendsavvy.R.string.income),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -438,7 +439,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = "Income",
+                    text = stringResource(id = com.example.spendsavvy.R.string.income),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -464,7 +465,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = "Tax",
+                    text = stringResource(id = com.example.spendsavvy.R.string.tax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -481,7 +482,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = "Tax",
+                    text = stringResource(id = com.example.spendsavvy.R.string.tax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -507,7 +508,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = "Income after Tax",
+                    text = stringResource(id = com.example.spendsavvy.R.string.incomeAfterTax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -524,7 +525,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = "Income after Tax",
+                    text = stringResource(id = com.example.spendsavvy.R.string.incomeAfterTax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)

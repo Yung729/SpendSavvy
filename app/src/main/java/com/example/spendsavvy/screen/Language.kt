@@ -64,7 +64,7 @@ fun Language(modifier: Modifier = Modifier, navController: NavController) {
             LanguageSelection(
                 id = 1,
                 isSelected = false,
-                text = "Chinese",
+                text = "Chinese中文",
                 languageCode = "zh"
             ),
             LanguageSelection(

@@ -17,15 +17,19 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.viewModels.ProfileViewModel
@@ -50,7 +54,13 @@ fun ForgotPassword(
     ) {
 
         Text(
-            text = "Recover your account password",
+            text = stringResource(id = R.string.forgotPw),
+            fontSize = 25.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.align(CenterHorizontally)
+        )
+        Text(
+            text = stringResource(id = R.string.text_1),
             color = Color.Gray,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
@@ -65,7 +75,7 @@ fun ForgotPassword(
         EmailTextField(
             email = email,
             onEmailChange = { newEmail -> email = newEmail },
-            label = "Enter your email address"
+            label = stringResource(id = R.string.text_2)
         )
 
         Button(
@@ -105,7 +115,7 @@ fun ForgotPassword(
             )
         ) {
             Text(
-                text = "Next",
+                text = stringResource(id = R.string.next),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -125,7 +135,7 @@ fun EmailTextField(
         OutlinedTextField(
             value = email,
             onValueChange = { onEmailChange(it) },
-            label = { Text("Email") },
+            label = { Text(stringResource(id = R.string.email)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
         )

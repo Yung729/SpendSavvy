@@ -30,12 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
@@ -80,7 +82,7 @@ fun EditCashAccountScreen(
             .fillMaxWidth(0.85f)
     ) {
         Text(
-            text = "Account",
+            text = stringResource(id = R.string.acc),
             fontFamily = poppinsFontFamily,
             fontSize = 30.sp,
             modifier = Modifier
@@ -115,7 +117,7 @@ fun EditCashAccountScreen(
 
             if (selectedIndex == 1) {
                 Text(
-                    text = "Select your bank",
+                    text = stringResource(id = R.string.text_11),
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp
                 )
@@ -165,7 +167,7 @@ fun EditCashAccountScreen(
 
 
             Text(
-                text = "Increase Amount",
+                text = stringResource(id = R.string.increaseAmount),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -190,7 +192,7 @@ fun EditCashAccountScreen(
             )
 
             Text(
-                text = "Decrease Amount",
+                text = stringResource(id = R.string.decreaseAmount),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -235,7 +237,7 @@ fun EditCashAccountScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(id = R.string.cancel),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )
@@ -266,7 +268,7 @@ fun EditCashAccountScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Update",
+                    text = stringResource(id = R.string.update),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )

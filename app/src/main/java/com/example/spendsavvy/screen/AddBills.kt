@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -49,6 +50,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.navigation.Screen
@@ -109,7 +111,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Enter your bill details below, so we can \nnotify you in time for upcoming bills.",
+                text = stringResource(id = R.string.text_14),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -119,14 +121,14 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                 .padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 18.dp)
         )
         Text(
-            text = "Description",
+            text = stringResource(id = com.example.spendsavvy.R.string.description),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
         )
         OutlinedTextFieldItem(
-            label = "Description",
-            placeholder = "Description",
+            label = stringResource(id = com.example.spendsavvy.R.string.description),
+            placeholder = stringResource(id = com.example.spendsavvy.R.string.description),
             value = description,
             keyboardType = KeyboardType.Text,
             onValueChange = { description = it },
@@ -140,7 +142,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             Column(
                 modifier = Modifier.padding(10.dp)
             ) {
-                Text( text = "Category", fontFamily = poppinsFontFamily, fontSize = 15.sp)
+                Text( text = stringResource(id = com.example.spendsavvy.R.string.category), fontFamily = poppinsFontFamily, fontSize = 15.sp)
 
                 ExposedDropdownMenuBox(expanded = isExpanded,
                     onExpandedChange = { isExpanded = it }) {
@@ -171,14 +173,14 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Amount",
+            text = stringResource(id = com.example.spendsavvy.R.string.amount),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
         )
         OutlinedTextFieldItem(
             label = "Amount",
-            placeholder = "Amount",
+            placeholder = stringResource(id = com.example.spendsavvy.R.string.amount),
             value = amount,
             keyboardType = KeyboardType.Number,
             onValueChange = { amount = it},
@@ -186,12 +188,12 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         )
 
         DueDatePicker(
-            label = "Due Date",
+            label = stringResource(id = com.example.spendsavvy.R.string.dueDate),
             selectedDueDate = selectedDueDate,
             onDateSelected = { selectedDueDate = it },
         )
         DropDown(
-            label = "Set Reminder before due date",
+            label = stringResource(id = com.example.spendsavvy.R.string.setReminder),
             selectedDuration = selectedDuration,
             onDurationSelected = { selectedDuration = it }
         )
@@ -218,7 +220,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                 contentColor = Color.White
             )
         ) {
-            Text("Add Bill")
+            Text(stringResource(id = com.example.spendsavvy.R.string.addBill))
         }
 
         if(showDialog){
@@ -250,7 +252,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                 contentColor = Color.Red,
                             )
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = stringResource(id = com.example.spendsavvy.R.string.cancel))
                         }
 
                         Button(
@@ -290,7 +292,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(text = "OK")
+                            Text(text = stringResource(id = com.example.spendsavvy.R.string.add))
                         }
                     }
                 }

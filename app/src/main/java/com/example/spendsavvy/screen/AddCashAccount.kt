@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -112,7 +113,7 @@ fun AddCashAccountScreen(
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Account",
+            text = stringResource(id = com.example.spendsavvy.R.string.addCashAcc),
             fontFamily = poppinsFontFamily,
             fontSize = 30.sp,
             modifier = Modifier
@@ -146,7 +147,7 @@ fun AddCashAccountScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = "Pick Icon Photo",
+                text = stringResource(id = com.example.spendsavvy.R.string.pickIconPhoto),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -177,7 +178,7 @@ fun AddCashAccountScreen(
                     )
 
                     Text(
-                        text = "Pick a Photo",
+                        text = stringResource(id = com.example.spendsavvy.R.string.pickAPhoto),
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
@@ -239,7 +240,7 @@ fun AddCashAccountScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Text(
-                text = "Initial Amount",
+                text = stringResource(id = com.example.spendsavvy.R.string.initAmount),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
@@ -285,7 +286,7 @@ fun AddCashAccountScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(id = com.example.spendsavvy.R.string.cancel),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )
@@ -309,7 +310,7 @@ fun AddCashAccountScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Add",
+                    text = stringResource(id = com.example.spendsavvy.R.string.add),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )

@@ -95,7 +95,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(text = "Email") },
+            label = { Text(stringResource(id = R.string.email)) },
             leadingIcon = {
                 Icon(Icons.Default.Email, contentDescription = "Email")
             },
@@ -111,7 +111,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text(text = "Password") },
+            label = { Text(stringResource(id = R.string.password)) },
             leadingIcon = {
                 Icon(Icons.Default.Info, contentDescription = "password")
             },
@@ -155,12 +155,12 @@ fun LoginScreen(
 
 
 
-        }, text = "LOGIN")
+        }, text = stringResource(id = R.string.login_text))
 
 
 
         Text(
-            text = "Forgot Password ?",
+            text = stringResource(id = R.string.forgotPw),
             style = TextStyle(
                 color = ButtonColor,
                 fontFamily = poppinsFontFamily
@@ -171,7 +171,7 @@ fun LoginScreen(
         )
 
         Text(
-            text = "Register Account ?",
+            text = stringResource(id = R.string.registerAcc),
             style = TextStyle(
                 color = ButtonColor,
                 fontFamily = poppinsFontFamily

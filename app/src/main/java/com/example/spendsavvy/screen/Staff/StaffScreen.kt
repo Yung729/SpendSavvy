@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.models.Staff
@@ -65,7 +67,7 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
         item {
 
             Text(
-                text = "Staff Record",
+                text = stringResource(id = R.string.staffRecord),
                 fontFamily = poppinsFontFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -91,12 +93,12 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
             ) {
                 ButtonComponent(
                     onButtonClick = { navController.navigate(Screen.AddStaffScreen.route) },
-                    text = "Add Staff"
+                    text = stringResource(id = com.example.spendsavvy.R.string.addStaff)
                 )
 
                 ButtonComponent(
                     onButtonClick = { staffViewModel.addTotalStaffSalaryToExpenses() },
-                    text = "Add Expenses"
+                    text = stringResource(id = com.example.spendsavvy.R.string.addExpense)
                 )
 
             }
@@ -140,21 +142,21 @@ fun StaffCard(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Staff",
+                    text = stringResource(id = com.example.spendsavvy.R.string.staff),
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     color = Color.White
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Total Staff : $staffCount",
+                    text = stringResource(id = com.example.spendsavvy.R.string.totalStaff) +" : $staffCount",
                     modifier = Modifier,
                     color = Color.White
 
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Total Salary : RM $staffSalary",
+                    text = stringResource(id = com.example.spendsavvy.R.string.totalSalary) + " : RM $staffSalary",
                     fontSize = 16.sp,
                     color = Color.White
                 )

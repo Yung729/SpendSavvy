@@ -66,6 +66,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,7 +87,7 @@ import java.util.Date
 fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, questionsViewModel: QuestionViewModel) {
 
     val context = LocalContext.current
-    val options = mutableStateListOf("Pending", "Answered")
+    val options = mutableStateListOf(stringResource(id = R.string.pending), stringResource(id = R.string.answered))
     var selectedIndex by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
     var questionText by remember { mutableStateOf("") }
@@ -159,7 +160,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
             verticalArrangement = Arrangement.Top,
         ) {
             Text(
-                text = "Frequently Asked Questions",
+                text = stringResource(id = R.string.text_18),
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -201,7 +202,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
             onDismissRequest = { showDialog = false },
             title = {
                 Text(
-                    text = "Ask us about your questions",
+                    text = stringResource(id = R.string.text_20),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp,
@@ -217,7 +218,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth()
                         .height(120.dp),
-                    placeholder = { Text("Enter your question here.....") }
+                    placeholder = { Text(stringResource(id = R.string.text_21)) }
                 )
             },
             confirmButton = {
@@ -236,7 +237,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
                             contentColor = Color.DarkGray,
                         )
                     ) {
-                        Text(text = "Cancel")
+                        Text(text = stringResource(id = R.string.cancel))
                     }
 
                     Button(
@@ -274,7 +275,7 @@ fun HelpAndSupport(modifier: Modifier = Modifier, navController: NavController, 
                             contentColor = Color.White
                         )
                     ) {
-                        Text(text = "Submit")
+                        Text(text = stringResource(id = R.string.submit))
                     }
                 }
             }
@@ -351,7 +352,7 @@ fun EditQuestionDialog(
                         contentColor = Color.DarkGray,
                     )
                 ) {
-                    Text(text = "Cancel")
+                    Text(text =stringResource(id = R.string.cancel))
                 }
                 Button(
                     onClick = {
@@ -376,7 +377,7 @@ fun EditQuestionDialog(
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "Save Changes")
+                    Text(text = stringResource(id = R.string.saveChanges))
                 }
             }
         }
@@ -455,7 +456,9 @@ fun Dropdown(text: String, initiallyOpened: Boolean = false, content: @Composabl
         )
     )
 
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp))
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 20.dp))
     {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

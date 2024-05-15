@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.navigation.Screen
@@ -86,20 +88,20 @@ fun EditBills(
         OutlinedTextField(
             value = updatedDescription,
             onValueChange = { updatedDescription = it },
-            label = { Text("Description") }
+            label = { Text(stringResource(id = R.string.description)) }
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = updatedAmount,
             onValueChange = { updatedAmount = it },
-            label = { Text("Amount") },
+            label = { Text(stringResource(id = com.example.spendsavvy.R.string.amount)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Text(text = "Category", fontFamily = poppinsFontFamily, fontSize = 15.sp)
+            Text(text = stringResource(id = com.example.spendsavvy.R.string.category), fontFamily = poppinsFontFamily, fontSize = 15.sp)
 
             ExposedDropdownMenuBox(expanded = isExpanded,
                 onExpandedChange = { isExpanded = it }) {
@@ -128,7 +130,7 @@ fun EditBills(
             }
         }
         DueDatePicker(
-            label = "Due Date",
+            label = stringResource(id = com.example.spendsavvy.R.string.dueDate),
             selectedDueDate = updatedDueDate,
             onDateSelected = { updatedDueDate = it }
         )
@@ -136,7 +138,7 @@ fun EditBills(
 
         // DropDown for Status
         DropDown(
-            label = "Set reminder before due date",
+            label = stringResource(id = com.example.spendsavvy.R.string.setReminder),
             selectedDuration = updatedDuration,
             onDurationSelected = { newDuration ->
                 updatedDuration = newDuration
@@ -163,7 +165,7 @@ fun EditBills(
                 contentColor = Color.White
             )
         ) {
-            Text("Save Changes")
+            Text(stringResource(id = com.example.spendsavvy.R.string.saveChanges))
         }
 
         if (showDialog) {
@@ -193,7 +195,7 @@ fun EditBills(
                                 contentColor = Color.Red,
                             )
                         ) {
-                            Text(text = "Cancel")
+                            Text(text =stringResource(id = com.example.spendsavvy.R.string.cancel))
                         }
 
                         Button(

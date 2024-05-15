@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,13 +69,13 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
         verticalArrangement = Arrangement.Top,
     ) {
         Text(
-            text = "Change Password",
+            text = stringResource(id = R.string.changePw),
             fontSize = 25.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Text(
-            text = "Enter a new password that you wish to change",
+            text = stringResource(id = com.example.spendsavvy.R.string.text_13),
             color = Color.Gray,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
@@ -85,7 +86,7 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
         )
 
         PasswordTextField(
-            labelText = "Current Password",
+            labelText = stringResource(id = com.example.spendsavvy.R.string.currentPw),
             value = oldPassword,
             onValueChange = { oldPassword = it },
             passwordVisible = passwordVisible,
@@ -94,7 +95,7 @@ fun ChangePassword(modifier: Modifier = Modifier, navController: NavController) 
         )
 
         PasswordTextField(
-            labelText = "New Password",
+            labelText = stringResource(id = com.example.spendsavvy.R.string.new_text),
             value = newPassword,
             onValueChange = { newPassword = it },
             passwordVisible = passwordVisible,
@@ -149,7 +150,7 @@ fun SavePasswordButton(
         )
     ) {
         Text(
-            text = "Save New Password",
+            text = stringResource(id = com.example.spendsavvy.R.string.saveNewPw),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
         )

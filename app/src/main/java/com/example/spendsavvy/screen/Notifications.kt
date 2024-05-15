@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,7 @@ fun Notification(modifier: Modifier = Modifier, navController: NavController) {
                     .fillMaxSize()
             ) {
                 Text(
-                    text = "Set your notifications",
+                    text = stringResource(id = R.string.text_16),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -73,7 +74,7 @@ fun Notification(modifier: Modifier = Modifier, navController: NavController) {
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Text(
-                        text = "Notifications",
+                        text = stringResource(id = com.example.spendsavvy.R.string.notifications),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(10.dp)

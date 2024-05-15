@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -98,9 +99,9 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController,
                     contentColor = Color.Black
                 )
             ) {
-                UserInfoRow(label = "User Name", data = userData.userName)
-                UserInfoRow(label = "Email", data = userData.email)
-                UserInfoRow(label = "Phone Number", data = userData.phoneNo)
+                UserInfoRow(label = stringResource(id = R.string.userName), data = userData.userName)
+                UserInfoRow(label = stringResource(id = R.string.email), data = userData.email)
+                UserInfoRow(label = stringResource(id = R.string.phoneNo), data = userData.phoneNo)
             }
     }
 }

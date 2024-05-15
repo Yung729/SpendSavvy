@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -55,7 +56,7 @@ fun CategoryDetail(
     catViewModel: CategoryViewModel
 ) {
 
-    val options = mutableStateListOf("Expenses", "Income")
+    val options = mutableStateListOf(stringResource(id = com.example.spendsavvy.R.string.expense),stringResource(id = com.example.spendsavvy.R.string.income))
 
     var selectedIndex by remember {
         mutableIntStateOf(if (category.categoryType == "Expenses") 0 else 1)
@@ -141,7 +142,7 @@ fun CategoryDetail(
                 )
 
                 Text(
-                    text = "Pick a Photo",
+                    text = stringResource(id = com.example.spendsavvy.R.string.pickAPhoto),
                 )
             }
         }
@@ -152,7 +153,7 @@ fun CategoryDetail(
         OutlinedTextField(
             value = updatedCategoryName,
             onValueChange = { updatedCategoryName = it },
-            label = { Text(text = "Category Name") },
+            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.categoryName)) },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
@@ -206,7 +207,7 @@ fun CategoryDetail(
                 )
 
             },
-            text = "Update"
+            text = stringResource(id = com.example.spendsavvy.R.string.update)
         )
 
 

@@ -19,8 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.viewModels.StaffViewModel
@@ -55,7 +57,7 @@ fun StaffDetailScreen(
         OutlinedTextField(
             value = updatedStaffIC,
             onValueChange = { updatedStaffIC = it },
-            label = { Text(text = "Staff IC No.") },
+            label = { Text(text = stringResource(id = R.string.staffIc) +" No.") },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
@@ -69,7 +71,7 @@ fun StaffDetailScreen(
         OutlinedTextField(
             value = updatedStaffName,
             onValueChange = { updatedStaffName = it },
-            label = { Text(text = "Staff Name.") },
+            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffName) +".") },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,7 +85,7 @@ fun StaffDetailScreen(
         OutlinedTextField(
             value = updatedStaffSalary,
             onValueChange = { updatedStaffSalary = it },
-            label = { Text(text = "Staff IC No.") },
+            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffSalary) +" No.") },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,7 +116,7 @@ fun StaffDetailScreen(
             )
         ) {
             Text(
-                text = "Update", textAlign = TextAlign.Center, color = Color.White
+                text = stringResource(id = com.example.spendsavvy.R.string.update), textAlign = TextAlign.Center, color = Color.White
             )
         }
 

@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -80,8 +81,8 @@ fun ManageBillsAndInstalment(
     transactionViewModel: OverviewViewModel
 ) {
 
-    val categories = listOf("Upcoming", "Paid", "Overdue")
-    val options = mutableStateListOf("All", "Upcoming", "Paid", "Overdue")
+    val categories = listOf(stringResource(id = com.example.spendsavvy.R.string.upcoming), stringResource(id = com.example.spendsavvy.R.string.paid), stringResource(id = com.example.spendsavvy.R.string.overdue))
+    val options = mutableStateListOf(stringResource(id = com.example.spendsavvy.R.string.all),stringResource(id = com.example.spendsavvy.R.string.upcoming), stringResource(id = com.example.spendsavvy.R.string.paid), stringResource(id = com.example.spendsavvy.R.string.overdue))
     var selectedIndex by remember { mutableIntStateOf(0) }
     val gradientBrush = Brush.horizontalGradient(
         colors = listOf(Color.LightGray, Color.DarkGray)
@@ -302,7 +303,7 @@ fun BillItem(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = " Due Date: ${
+                    text = stringResource(id = R.string.dueDate) + " : ${
                         SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
                             bill.selectedDueDate
                         )

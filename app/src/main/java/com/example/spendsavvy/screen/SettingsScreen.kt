@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,30 +98,30 @@ fun SettingsScreen(
 
         item {
             Text(
-                text = "Personal Info",
+                text = stringResource(id = R.string.personalInfo),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
             )
-            List(R.drawable.profile_icon, "My Profile", navController, Screen.MyProfile.route)
+            List(R.drawable.profile_icon, stringResource(id = com.example.spendsavvy.R.string.myProfile), navController, Screen.MyProfile.route)
         }
 
         item {
             Text(
-                text = "Security",
+                text = stringResource(id = com.example.spendsavvy.R.string.security),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
             )
             List(
                 R.drawable.changepassword_icon,
-                "Change Password",
+                stringResource(id = com.example.spendsavvy.R.string.changePw),
                 navController,
                 Screen.ChangePassword.route
             )
             List(
                 R.drawable.forgotpassword_icon,
-                "Forgot Password",
+                stringResource(id = com.example.spendsavvy.R.string.forgotPw),
                 navController,
                 Screen.ForgotPassword.route
             )
@@ -128,46 +129,46 @@ fun SettingsScreen(
 
         item {
             Text(
-                text = "Tools",
+                text = stringResource(id = com.example.spendsavvy.R.string.tools),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
             )
             List(
                 R.drawable.bills_icon,
-                "Manage Bills and Instalments",
+                stringResource(id = com.example.spendsavvy.R.string.manageBill),
                 navController,
                 Screen.ManageBillsAndInstalment.route
             )
             List(
                 R.drawable.calculator_icon,
-                "Tax Calculator",
+                stringResource(id = com.example.spendsavvy.R.string.taxCalculator),
                 navController,
                 Screen.TaxCalculator.route
             )
             List(
-                R.drawable.category_icon, "Manage Category", navController, Screen.Category.route
+                R.drawable.category_icon, stringResource(id = com.example.spendsavvy.R.string.manageCategory), navController, Screen.Category.route
             )
             List(
-                R.drawable.staff_icon, "Manage Staff", navController, Screen.StaffScreen.route
+                R.drawable.staff_icon, stringResource(id = com.example.spendsavvy.R.string.manageStaff), navController, Screen.StaffScreen.route
             )
         }
 
         item {
             Text(
-                text = "General",
+                text = stringResource(id = com.example.spendsavvy.R.string.general),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
             )
             List(
-                R.drawable.bell_icon, "Notifications", navController, Screen.Notifications.route
+                R.drawable.bell_icon, stringResource(id = com.example.spendsavvy.R.string.notifications), navController, Screen.Notifications.route
             )
             List(
-                R.drawable.language_icon, "Languages", navController, Screen.Language.route
+                R.drawable.language_icon, stringResource(id = com.example.spendsavvy.R.string.language), navController, Screen.Language.route
             )
             List(
-                R.drawable.help_icon, "Help and Support", navController, Screen.HelpAndSupport.route
+                R.drawable.help_icon, stringResource(id = com.example.spendsavvy.R.string.help), navController, Screen.HelpAndSupport.route
             )
         }
 
@@ -182,7 +183,7 @@ fun SettingsScreen(
                 )
             ) {
                 Text(
-                    text = "Log Out",
+                    text = stringResource(id = com.example.spendsavvy.R.string.logOut),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
@@ -206,7 +207,7 @@ fun SettingsScreen(
                         .clickable { showDialog = false }
                         .padding(bottom = 10.dp))
                 Text(
-                    text = "Are you sure you want to\nLog Out ?",
+                    text = stringResource(id = com.example.spendsavvy.R.string.text_22),
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     modifier = Modifier.fillMaxWidth()
@@ -226,13 +227,13 @@ fun SettingsScreen(
                     containerColor = Color.Transparent, contentColor = Color.Red
                 )
             ) {
-                Text(text = "Log Out")
+                Text(text = stringResource(id = com.example.spendsavvy.R.string.logOut))
             }
         }, dismissButton = {
             Button(
                 onClick = { showDialog = false }, modifier = Modifier.padding(start = 8.dp)
             ) {
-                Text(text = "Cancel")
+                Text(text = stringResource(id = com.example.spendsavvy.R.string.cancel))
             }
         })
     }

@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Stock
@@ -93,7 +95,7 @@ fun WalletScreen(
                 ).fillMaxWidth()
             ){
             Column(modifier = Modifier.padding(15.dp)) {
-                Text(text = "Available Balance")
+                Text(stringResource(id = R.string.availableBalance))
 
                 Text(text = "RM $")
             }
@@ -107,7 +109,7 @@ fun WalletScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Assets",
+                text = stringResource(id = R.string.assets),
                 fontFamily = poppinsFontFamily,
                 fontSize = 25.sp,
                 color = HeaderTitle,
@@ -133,14 +135,14 @@ fun WalletScreen(
 
             Column {
                 Text(
-                    text = "Cash",
+                    text = stringResource(id = R.string.cash),
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp,
                     color = HeaderTitle
                 )
 
                 Text(
-                    text = "Includes Cash Money and Bank",
+                    text = stringResource(id = R.string.text_3),
                     fontSize = 10.sp,
                     color = Color.Gray
                 )
@@ -157,7 +159,7 @@ fun WalletScreen(
 
             ) {
                 Text(
-                    text = "Add Cash Details",
+                    text = stringResource(id = R.string.text_4),
                     color = Color.Black,
                     fontSize = 10.sp
                 )
@@ -174,11 +176,11 @@ fun WalletScreen(
         ) {
             Column {
                 Text(
-                    text = "Cash Money"
+                    stringResource(id = R.string.cashMoney)
                 )
 
                 Text(
-                    text = "Available balance",
+                    text = stringResource(id = R.string.availableBalance),
                     fontSize = 10.sp,
                     color = Color.Gray
                 )
@@ -215,13 +217,13 @@ fun WalletScreen(
         ) {
 
             Text(
-                text = "Bank Accounts"
+                stringResource(id = R.string.bankAccs)
             )
 
             bankCount = bankAccountCount(cashDetailsList)
 
             Text(
-                text = "$bankCount Account(s)"
+                text = "$bankCount " + stringResource(id = R.string.accs)
             )
 
         }
@@ -239,14 +241,14 @@ fun WalletScreen(
 
             Column {
                 Text(
-                    text = "Fixed Deposit",
+                    text = stringResource(id = R.string.fixedDep),
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp,
                     color = HeaderTitle
                 )
 
                 Text(
-                    text = "Assets that Earn Interest",
+                    text = stringResource(id = R.string.text_5),
                     fontSize = 10.sp,
                     color = Color.Gray
                 )
@@ -263,7 +265,7 @@ fun WalletScreen(
 
             ) {
                 Text(
-                    text = "Add/Manage FD",
+                    text = stringResource(id = R.string.text_6),
                     color = Color.Black,
                     fontSize = 10.sp
                 )
@@ -278,12 +280,12 @@ fun WalletScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "FD Account"
+                stringResource(id = R.string.fdAcc)
             )
 
             fdCount = fdCount(fdAccDetailsList)
 
-            Text(text = "$fdCount accounts")
+            Text(text = "$fdCount " + stringResource(id = R.string.accs))
         }
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -297,14 +299,14 @@ fun WalletScreen(
         ) {
             Column {
                 Text(
-                    text = "Stock",
+                    text = stringResource(id = R.string.stock),
                     fontFamily = poppinsFontFamily,
                     fontSize = 15.sp,
                     color = HeaderTitle
                 )
 
                 Text(
-                    text = "Add and sell stocks",
+                    text = stringResource(id = R.string.text_7),
                     fontSize = 10.sp,
                     color = Color.Gray
                 )
@@ -320,7 +322,7 @@ fun WalletScreen(
 
             ) {
                 Text(
-                    text = "Add/Manage Stock",
+                    text = stringResource(id = R.string.text_8),
                     color = Color.Black,
                     fontSize = 10.sp
                 )
@@ -334,13 +336,13 @@ fun WalletScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Stocks"
+                stringResource(id = R.string.stocks)
             )
 
             stockCount = stocksCount(stockListLive)
 
             Text(
-                text = "$stockCount stocks"
+                text = "$stockCount " + stringResource(id = R.string.stocks)
             )
         }
 

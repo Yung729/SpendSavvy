@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.components.bounceClick
@@ -62,7 +64,7 @@ fun CategoryScreen(
 ) {
 
 
-    val options = mutableStateListOf("Expenses", "Income")
+    val options = mutableStateListOf(stringResource(id = R.string.expense), stringResource(id = com.example.spendsavvy.R.string.income))
     var selectedIndex by remember {
         mutableIntStateOf(0)
     }
@@ -119,7 +121,7 @@ fun CategoryScreen(
 
             ButtonComponent(
                 onButtonClick = { navController.navigate(Screen.AddCategory.route) },
-                text = "Add Category",
+                text = stringResource(id = com.example.spendsavvy.R.string.addCategory),
                 modifier = Modifier.fillMaxWidth()
             )
         }

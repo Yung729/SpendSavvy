@@ -22,10 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.spendsavvy.R
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
@@ -78,7 +80,7 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
                     maxLines = 1,
                     label = {
                         Text(
-                            text = "Staff IC", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                            text = stringResource(id = R.string.staffIc), fontFamily = poppinsFontFamily, fontSize = 15.sp
                         )
                     }
                 )
@@ -104,14 +106,14 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
                     staffName = it
                 }, placeholder = {
                     Text(
-                        text = "staff 1",
+                        text = stringResource(id = com.example.spendsavvy.R.string.staff) +" 1",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
                         color = Color.Gray
                     )
                 }, label = {
                     Text(
-                        text = "Staff Name", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                        text = stringResource(id = com.example.spendsavvy.R.string.staffName), fontFamily = poppinsFontFamily, fontSize = 15.sp
                     )
                 })
             }
@@ -142,7 +144,7 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
                     )
                 }, label = {
                     Text(
-                        text = "Staff Salary", fontFamily = poppinsFontFamily, fontSize = 15.sp
+                        text = stringResource(id = com.example.spendsavvy.R.string.staffSalary), fontFamily = poppinsFontFamily, fontSize = 15.sp
                     )
                 })
             }
@@ -164,7 +166,7 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
             )
         ) {
             Text(
-                text = "Add",
+                text = stringResource(id = com.example.spendsavvy.R.string.add),
                 textAlign = TextAlign.Center,
                 color = Color.White
             )
