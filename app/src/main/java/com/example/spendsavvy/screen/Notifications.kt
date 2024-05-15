@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -28,30 +29,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.models.Bills
+import com.example.spendsavvy.viewModels.BillsViewModel
+import com.example.spendsavvy.viewModels.NotificationViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun Notification(modifier: Modifier = Modifier, navController: NavController) {
+fun Notification(modifier: Modifier = Modifier, navController: NavController, billsViewModel: BillsViewModel, notificationViewModel: NotificationViewModel) {
 
     val scaffoldState = rememberScaffoldState()
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    var isToggled by remember { mutableStateOf(true) }
+    var isToggled by remember { mutableStateOf(notificationViewModel.getNotificationStatus()) }
+
+    // Get the current notification status from the ViewModel
+    var isNotificationEnabled by remember { mutableStateOf(notificationViewModel.getNotificationStatus()) }
+
+    // Toggle notification status
+    val toggleNotification: () -> Unit = {
+        isNotificationEnabled = !isNotificationEnabled
+        // Update the notification status in the ViewModel
+        notificationViewModel.isNotificationEnabled(isNotificationEnabled)
+        // Pass the notification status to BillsViewModel
+        billsViewModel.updateNotificationStatus(isNotificationEnabled)
+    }
 
     androidx.compose.material.Scaffold(
         scaffoldState = scaffoldState,
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         content = {
             Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxSize()
+                modifier = Modifier.padding(20.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.text_16),
@@ -61,9 +75,7 @@ fun Notification(modifier: Modifier = Modifier, navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
@@ -81,9 +93,7 @@ fun Notification(modifier: Modifier = Modifier, navController: NavController) {
                     )
 
                     Column(
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.End
                     ) {
                         Image(
@@ -94,10 +104,13 @@ fun Notification(modifier: Modifier = Modifier, navController: NavController) {
                                 .clickable {
                                     isToggled = !isToggled
 
+                                    // Update the notification status in the view model
+                                    notificationViewModel.isNotificationEnabled(isToggled)
+
                                     val message =
                                         if (isToggled) "Notification is on" else "Notification is off"
                                     coroutineScope.launch {
-                                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss() // Dismiss previous snackbar if any
+                                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
                                         scaffoldState.snackbarHostState.showSnackbar(message = message)
                                     }
                                 }
@@ -110,6 +123,7 @@ fun Notification(modifier: Modifier = Modifier, navController: NavController) {
     )
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun NotificationPreview() {
@@ -117,6 +131,8 @@ fun NotificationPreview() {
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        billsViewModel = viewModel(),
+        notificationViewModel = viewModel()
     )
 }

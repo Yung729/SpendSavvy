@@ -257,6 +257,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
 
                         Button(
                             onClick = {
+                                val isToggled = true
                                 billsViewModel.addBillsToFirestore(
                                     Bills(
                                         id = billsViewModel.generateBillId(),
