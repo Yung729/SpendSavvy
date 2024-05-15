@@ -334,7 +334,7 @@ fun OverviewScreen(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         TransactionList(
-                            modifier = Modifier.height(400.dp),
+                            modifier = Modifier.height(700.dp),
                             transactionsList = transactionList,
                             navController = navController,
                             transactionViewModel = transactionViewModel,

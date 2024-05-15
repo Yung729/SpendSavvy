@@ -181,7 +181,7 @@ class StaffViewModel(
             })
     }
 
-    fun addTotalStaffSalaryToExpenses() {
+    fun addTotalStaffSalaryToExpenses(bankName : String) {
         viewModelScope.launch {
             val totalSalary = totalStaffSalary.value ?: 0.0
 
@@ -198,7 +198,7 @@ class StaffViewModel(
                         categoryName = "Staff Salary",
                         categoryType = "Expenses"
                     ),
-                    paymentMethod = "Cash",
+                    paymentMethod = bankName,
                     transactionType = "Expenses"
                 ),
                 onSuccess = {

@@ -758,7 +758,8 @@ fun SetupNavGraph(
                         navController = navController,
                         transactionViewModel = transactionsViewModel,
                         catViewModel = categoryViewModel,
-                        walletViewModel = walletViewModel
+                        walletViewModel = walletViewModel,
+                        window = window
                     )
 
                 }
@@ -774,7 +775,8 @@ fun SetupNavGraph(
                         navController = navController,
                         transactionViewModel = transactionsViewModel,
                         catViewModel = categoryViewModel,
-                        walletViewModel = walletViewModel
+                        walletViewModel = walletViewModel,
+                        window = window
                     )
 
                 }
@@ -873,7 +875,8 @@ fun SetupNavGraph(
                             .fillMaxSize()
                             .padding(20.dp),
                         staffViewModel = staffViewModel,
-                        navController = navController
+                        navController = navController,
+                        walletViewModel = walletViewModel
                     )
 
 

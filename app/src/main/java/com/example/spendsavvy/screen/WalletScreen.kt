@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,10 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,12 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
@@ -75,8 +76,6 @@ fun WalletScreen(
         modifier = modifier
     ) {
 
-        Spacer(modifier = Modifier.height(25.dp))
-
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = Color.White, //later need change to brush color
@@ -101,19 +100,21 @@ fun WalletScreen(
                     .fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(15.dp)) {
-                    Text(stringResource(id = R.string.availableBalance),
-                        fontSize = 20.sp)
+                    Text(
+                        stringResource(id = R.string.availableBalance),
+                        fontSize = 18.sp
+                    )
 
-                    Text(text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
-                        fontSize = 20.sp)
+                    Text(
+                        text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(35.dp))
 
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -142,7 +143,8 @@ fun WalletScreen(
                 },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
-                border = BorderStroke(1.dp, Color.Black)
+                border = BorderStroke(1.dp, Color.Black),
+                modifier = Modifier.size(100.dp, 40.dp)
 
             ) {
                 Text(
@@ -161,9 +163,18 @@ fun WalletScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            Column {
+                Image(
+                    painter = painterResource(id = R.drawable.money),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp, 20.dp)
+                )
+            }
+
             Column {
                 Text(
-                    stringResource(id = R.string.cashMoney)
+                    stringResource(id = R.string.cashMoney), textAlign = TextAlign.Left
                 )
 
                 Text(
@@ -203,6 +214,14 @@ fun WalletScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
+            Column {
+                Image(
+                    painter = painterResource(id = R.drawable.bank),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp, 20.dp)
+                )
+            }
+
             Text(
                 stringResource(id = R.string.bankAccs)
             )
@@ -226,6 +245,7 @@ fun WalletScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
+
             Column {
                 Text(
                     text = stringResource(id = R.string.fixedDep),
@@ -248,7 +268,8 @@ fun WalletScreen(
                 },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
-                border = BorderStroke(1.dp, Color.Black)
+                border = BorderStroke(1.dp, Color.Black),
+                modifier = Modifier.size(100.dp, 40.dp)
 
             ) {
                 Text(
@@ -266,6 +287,16 @@ fun WalletScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            Column {
+                Image(
+                    painter = painterResource(id = R.drawable.deposit),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp, 20.dp)
+                )
+            }
+
+
             Text(
                 stringResource(id = R.string.fdAcc)
             )
@@ -284,6 +315,8 @@ fun WalletScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
+
             Column {
                 Text(
                     text = stringResource(id = R.string.stock),
@@ -305,7 +338,8 @@ fun WalletScreen(
                 },
                 shape = RoundedCornerShape(6.dp),
                 contentPadding = PaddingValues(3.dp),
-                border = BorderStroke(1.dp, Color.Black)
+                border = BorderStroke(1.dp, Color.Black),
+                modifier = Modifier.size(100.dp, 40.dp)
 
             ) {
                 Text(
@@ -322,6 +356,16 @@ fun WalletScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
+
+            Column {
+                Image(
+                    painter = painterResource(id = R.drawable.stock),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp, 20.dp)
+                )
+            }
+
             Text(
                 stringResource(id = R.string.stocks)
             )
