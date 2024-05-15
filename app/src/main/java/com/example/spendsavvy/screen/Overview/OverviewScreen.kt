@@ -166,15 +166,52 @@ fun OverviewScreen(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
 
+
                     item {
-                        Text(
-                            text = "Hi, ${userData.userName}", //current User
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = HeaderTitle
-                        )
+                        Column(modifier = Modifier.fillMaxWidth()) {
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "Hi, ${userData.userName}", //current User
+                                        fontFamily = poppinsFontFamily,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HeaderTitle
+                                    )
+
+                                }
+
+                                Column(
+                                    modifier = Modifier
+                                        .clickable(onClick = { navController.navigate(Screen.Wallet.route) })
+                                ) {
+
+                                    Row {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.wallet1),
+                                            contentDescription = "wallet",
+                                            modifier = Modifier.size(20.dp, 20.dp)
+                                        )
+
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = "RM $0.0",
+                                            fontSize = 16.sp,
+                                            color = Color.Black
+                                        )
+                                    }
+                                }
+
+
+                            }
+                        }
                     }
+
 
                     item {
                         val selectedDateString = selectedDate.value.let {
@@ -184,6 +221,10 @@ fun OverviewScreen(
                                 dateFormat.format(it)
                             }
                         } ?: "Select Month"
+
+
+
+
 
                         Row(
                             modifier = Modifier
@@ -305,14 +346,50 @@ fun OverviewScreen(
                 ) {
 
                     item {
-                        Text(
-                            text = "Hi, ${userData.userName}", //current User
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = HeaderTitle
-                        )
+                        Column(modifier = Modifier.fillMaxWidth()) {
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "Hi, ${userData.userName}", //current User
+                                        fontFamily = poppinsFontFamily,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HeaderTitle
+                                    )
+
+                                }
+
+                                Column(
+                                    modifier = Modifier
+                                        .clickable(onClick = { navController.navigate(Screen.Wallet.route) })
+                                ) {
+
+                                    Row {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.wallet1),
+                                            contentDescription = "wallet",
+                                            modifier = Modifier.size(20.dp, 20.dp)
+                                        )
+
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = "RM $0.0",
+                                            fontSize = 16.sp,
+                                            color = Color.Black
+                                        )
+                                    }
+                                }
+
+
+                            }
+                        }
                     }
+
 
                     item {
                         val selectedDateString = selectedDate.value.let {
@@ -322,6 +399,10 @@ fun OverviewScreen(
                                 dateFormat.format(it)
                             }
                         } ?: "Select Month"
+
+
+
+
 
                         Row(
                             modifier = Modifier
@@ -711,7 +792,7 @@ fun BudgetCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.availableBalance)+ " : RM ${budgetAmount - totalExpenses}",
+                            text = stringResource(id = R.string.availableBalance) + " : RM ${budgetAmount - totalExpenses}",
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -897,6 +978,7 @@ fun GoalCard(
 
 
 }
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
