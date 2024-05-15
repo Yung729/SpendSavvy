@@ -1,9 +1,11 @@
 package com.example.spendsavvy.screen
 
 import android.app.LocaleManager
+import android.content.Context
 import android.os.Build
 import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.LocaleList
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +60,7 @@ import com.example.spendsavvy.viewModels.MainViewModel
 @RequiresApi(TIRAMISU)
 @Composable
 fun LoginScreen(
+    context : Context,
     modifier: Modifier = Modifier,
     navController: NavController,
     fireAuthRepository: FireAuthRepository
@@ -132,15 +135,23 @@ fun LoginScreen(
         )
 
         ButtonComponent(onButtonClick = {
-            fireAuthRepository.signIn(email = email, password = password){
-                val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUserId())
-                mainViewModel.syncDatabase()
 
-                navController.navigate("Second") {
-                    popUpTo(0) {}
+            if (email.isNotBlank() && password.isNotBlank()){
+                fireAuthRepository.signIn(email = email, password = password){
+                    val mainViewModel = MainViewModel(context, true, fireAuthRepository.getCurrentUserId())
+                    mainViewModel.syncDatabase()
 
+                    navController.navigate("Second") {
+                        popUpTo(0) {}
+
+                    }
                 }
+            }else {
+                Toast.makeText(
+                    context, "Please fill in all the field", Toast.LENGTH_SHORT
+                ).show()
             }
+
 
 
 
@@ -179,6 +190,7 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() = LoginScreen(
+    context = LocalContext.current,
     modifier = Modifier
         .fillMaxSize()
         .padding(20.dp),

@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.viewModels.CategoryViewModel
@@ -192,8 +193,8 @@ fun CategoryDetail(
         }
 
 
-        Button(
-            onClick = {
+        ButtonComponent(
+            onButtonClick = {
                 catViewModel.editCategory(
                     category = category,
                     updatedCategory = Category(
@@ -205,17 +206,10 @@ fun CategoryDetail(
                 )
 
             },
-            modifier = Modifier
-                .padding(bottom = 10.dp)
-                .bounceClick(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black
-            )
-        ) {
-            Text(
-                text = "Update", textAlign = TextAlign.Center, color = Color.White
-            )
-        }
+            text = "Update"
+        )
+
+
 
 
     }

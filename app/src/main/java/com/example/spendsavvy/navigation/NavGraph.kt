@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -99,6 +100,7 @@ import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SetupNavGraph(
     navController: NavHostController = rememberNavController(),
@@ -329,6 +331,7 @@ fun SetupNavGraph(
                     route = Screen.Login.route
                 ) {
                     LoginScreen(
+                        context = context,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp),

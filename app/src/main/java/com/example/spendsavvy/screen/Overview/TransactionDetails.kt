@@ -2,6 +2,7 @@ package com.example.spendsavvy.screen.Overview
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,9 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -80,6 +83,12 @@ fun TransactionDetail(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        OutlinedButton(onClick = { calendarState.show() },modifier = Modifier.fillMaxWidth()) {
+            Text(text = updatedDate.value.let { dateFormat.format(it) } ?: "Select Date")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Text(text = "Transaction Name : ${transactions.category.categoryName}")
 
 
@@ -112,9 +121,6 @@ fun TransactionDetail(
                 updatedDate.value = selectedDateValue
             })
 
-        OutlinedButton(onClick = { calendarState.show() }) {
-            Text(text = updatedDate.value.let { dateFormat.format(it) } ?: "Select Date")
-        }
 
         OutlinedTextField(
             value = updatedTransactionDescription,
@@ -130,9 +136,8 @@ fun TransactionDetail(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-
-        Button(
-            onClick = {
+        ButtonComponent(
+            onButtonClick = {
                 transactionViewModel.editTransaction(
                     transactions = transactions,
                     updatedTransactions = Transactions(
@@ -153,18 +158,8 @@ fun TransactionDetail(
                 )
 
             },
-            modifier = Modifier
-                .padding(bottom = 10.dp)
-                .bounceClick(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black
-            )
-        ) {
-            Text(
-                text = "Update", textAlign = TextAlign.Center, color = Color.White
-            )
-        }
-
+            text = "Edit"
+        )
 
     }
 

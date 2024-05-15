@@ -40,8 +40,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.viewModels.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -185,9 +187,8 @@ fun AddCategoryScreen(
                 "Incomes"
             }
 
-
-            Button(
-                onClick = {
+            ButtonComponent(
+                onButtonClick = {
                     if (selectedImageUri != null && categoryName.isNotEmpty()) {
                         // If all fields have data, add the category
                         catViewModel.addCategoryToDatabase(
@@ -204,17 +205,9 @@ fun AddCategoryScreen(
                     }
 
                 },
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-                    .bounceClick(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
-                )
-            ) {
-                Text(
-                    text = "Add", textAlign = TextAlign.Center, color = Color.White
-                )
-            }
+                text = "Add"
+            )
+
 
             if (error) {
                 Text(

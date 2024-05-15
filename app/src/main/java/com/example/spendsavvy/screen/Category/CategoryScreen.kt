@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.SwipeToDeleteItem
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
@@ -74,27 +76,6 @@ fun CategoryScreen(
     Column(modifier = modifier) {
 
 
-        Column(
-            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
-        ) {
-            Button(
-                onClick = { navController.navigate(Screen.AddCategory.route) },
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-                    .bounceClick()
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
-                )
-            ) {
-                Text(
-                    text = "Add Category", textAlign = TextAlign.Center, color = Color.White
-                )
-            }
-
-
-        }
-
 
         Row(
             horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
@@ -114,11 +95,11 @@ fun CategoryScreen(
             }
         }
 
-        Box(modifier = Modifier.fillMaxSize()) {
 
 
             if (selectedIndex == 0) {
                 CategoryList(
+                    modifier = Modifier.height(445.dp),
                     categoryList = expenseList,
                     catViewModel = catViewModel,
                     navController = navController,
@@ -126,6 +107,7 @@ fun CategoryScreen(
                 )
             } else if (selectedIndex == 1) {
                 CategoryList(
+                    modifier = Modifier.height(445.dp),
                     categoryList = incomeList,
                     catViewModel = catViewModel,
                     navController = navController,
@@ -134,7 +116,20 @@ fun CategoryScreen(
             }
 
 
+        Column(modifier = Modifier.fillMaxWidth()) {
+
+            ButtonComponent(
+                onButtonClick = { navController.navigate(Screen.AddCategory.route) },
+                text = "Add Category",
+                modifier = Modifier.fillMaxWidth()
+            )
         }
+
+
+
+
+
+
     }
 
 

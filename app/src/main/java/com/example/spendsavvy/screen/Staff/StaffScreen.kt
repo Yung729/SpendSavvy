@@ -17,8 +17,6 @@ import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -35,8 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.components.SwipeToDeleteItem
-import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.HeaderTitle
@@ -78,7 +76,7 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
             Spacer(modifier = Modifier.height(10.dp))
 
             StaffList(
-                modifier = Modifier.height(400.dp),
+                modifier = Modifier.height(290.dp),
                 staffList = staffList,
                 navController = navController,
                 staffViewModel = staffViewModel,
@@ -87,42 +85,20 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
         }
 
         item {
-            Row {
-                Button(
-                    onClick = {
-                        navController.navigate(Screen.AddStaffScreen.route)
-                    },
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .bounceClick(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    )
-                ) {
-                    Text(
-                        text = "Add Staff",
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                ButtonComponent(
+                    onButtonClick = { navController.navigate(Screen.AddStaffScreen.route) },
+                    text = "Add Staff"
+                )
 
-                Button(
-                    onClick = {
-                        staffViewModel.addTotalStaffSalaryToExpenses()
-                    },
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .bounceClick(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    )
-                ) {
-                    Text(
-                        text = "Add Expenses",
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
-                }
+                ButtonComponent(
+                    onButtonClick = { staffViewModel.addTotalStaffSalaryToExpenses() },
+                    text = "Add Expenses"
+                )
+
             }
 
         }

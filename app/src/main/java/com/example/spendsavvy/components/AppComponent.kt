@@ -78,10 +78,10 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import kotlinx.coroutines.delay
 
 @Composable
-fun ButtonComponent(onButtonClick: () -> Unit, text: String) {
+fun ButtonComponent(onButtonClick: () -> Unit, text: String,modifier: Modifier = Modifier) {
     Button(
         onClick = onButtonClick,
-        modifier = Modifier
+        modifier = modifier
             .padding(bottom = 10.dp, top = 10.dp)
             .bounceClick(),
         colors = ButtonDefaults.buttonColors(
@@ -186,7 +186,7 @@ fun InternetAwareContent(
 
 fun Modifier.bounceClick() = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
-    val scale by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0.70f else 1f)
+    val scale by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0.9f else 1f)
 
     this
         .graphicsLayer {
