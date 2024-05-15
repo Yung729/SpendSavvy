@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -270,7 +269,7 @@ fun AddNewStockScreen(
                     transactionViewModel.addTransactionToFirestore(
                         Transactions(
                             id = transactionViewModel.generateTransactionId(),
-                            amount = ((price.toDoubleOrNull() ?: 0.0 )* qty.toInt()) ,
+                            amount = ((price.toDoubleOrNull() ?: 0.0) * qty.toInt()),
                             description = "Purchase Stock",
                             date = Date(),
                             category = Category(
@@ -289,7 +288,7 @@ fun AddNewStockScreen(
                                     stockName,
                                     price.toDoubleOrNull() ?: 0.0,
                                     qty.toInt()
-                                ),selectedImageUri
+                                ), selectedImageUri
                             )
                         },
                         onFailure = {

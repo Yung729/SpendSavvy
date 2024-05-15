@@ -242,14 +242,6 @@ fun AddStockSelectionScreen(
     onConfirmClick: () -> Unit,
     navController: NavController
 ) {
-    var isAddNewStock by remember {
-        mutableStateOf(false)
-    }
-
-    var isAddExistingStock by remember {
-        mutableStateOf(false)
-    }
-
     Dialog(
         onDismissRequest = { onCancelClick() },
         properties = DialogProperties(
@@ -276,7 +268,7 @@ fun AddStockSelectionScreen(
                 ) {
                     Button(
                         onClick = {
-                            isAddNewStock = true
+                            navController.navigate(route = Screen.AddStock.route)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
@@ -294,7 +286,7 @@ fun AddStockSelectionScreen(
 
                     Button(
                         onClick = {
-                            isAddExistingStock = true
+                            navController.navigate(route = Screen.AddExistingStock.route)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
@@ -314,12 +306,6 @@ fun AddStockSelectionScreen(
         }
     }
 
-
-    if (isAddNewStock)
-        navController.navigate(route = Screen.AddStock.route)
-    else if (isAddExistingStock){
-        navController.navigate(route = Screen.AddExistingStock.route)
-    }
 }
 
 

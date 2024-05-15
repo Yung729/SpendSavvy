@@ -242,7 +242,6 @@ fun EditExistingStockScreen(
             Button(
                 onClick = {
                     navController.navigateUp()
-                    navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
