@@ -48,7 +48,7 @@ fun ForgotPassword(
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
     ) {
-        
+
         Text(
             text = "Recover your account password",
             color = Color.Gray,
