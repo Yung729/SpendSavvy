@@ -5,7 +5,7 @@ import com.example.spendsavvy.R
 sealed class Screen(val route: String, val iconResourceId: Int) {
 
     object Login : Screen(route = "Login", 0)
-    object SignUp : Screen(route = "SignUp", 0)
+    object SignUp : Screen(route = "Sign Up", 0)
     object Overview : Screen(route = "Overview", R.drawable.bar_chart)
     object AllTransaction : Screen(route = "Transaction Record", 0)
     object TransactionDetails : Screen(route = "Transaction Details", 0)

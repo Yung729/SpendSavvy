@@ -67,12 +67,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.spendsavvy.R
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import kotlinx.coroutines.delay
@@ -292,7 +294,7 @@ fun RemainingChart(
     bigTextFontSize: TextUnit = 30.sp,
     bigTextColor: Color = MaterialTheme.colorScheme.onSurface,
     bigTextSuffix: String = "RM",
-    smallText: String = "Remaining",
+    smallText: String = stringResource(id = R.string.remaining),
     smallTextFontSize: TextUnit = 20.sp,
     smallTextColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
 ) {

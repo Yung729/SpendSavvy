@@ -101,8 +101,8 @@ fun AnalysisScreen(
 
             PieChart(
                 data = mapOf(
-                    Pair("Expenses", expensesData.roundToInt()),
-                    Pair("Incomes", incomesData.roundToInt())
+                    Pair(stringResource(id = R.string.expense), expensesData.roundToInt()),
+                    Pair(stringResource(id = R.string.income), incomesData.roundToInt())
                 )
             )
         }
