@@ -25,8 +25,10 @@ import com.example.spendsavvy.R
 import com.example.spendsavvy.db.DatabaseHelper
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
+import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -34,9 +36,11 @@ class BillsViewModel(
     context: Context,
     isOnline: Boolean,
     userId: String,
-    private val notificationViewModel: NotificationViewModel
+    private val notificationViewModel: NotificationViewModel,
+    transactionViewModel: OverviewViewModel
 ): ViewModel() {
 
+    private val transactionViewModel = transactionViewModel
     private val firestoreRepository = FirestoreRepository()
     private val dbHelper = DatabaseHelper(context)
     private val internet = isOnline
@@ -277,6 +281,51 @@ class BillsViewModel(
         val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
+
+    fun addBillToExpenses(amount: Double, category: Category, description: String, currentDate: Date,bankName: String, context: Context, bill: Bills) {
+        viewModelScope.launch {
+            transactionViewModel.addTransactionToFirestore(
+                Transactions(
+                    id = transactionViewModel.generateTransactionId(),
+                    amount = amount,
+                    description = description,
+                    date = currentDate,
+                    category = category,
+                    paymentMethod = bankName,
+                    transactionType = "Expenses"
+                ),
+                onSuccess = {
+                    editBill(
+                        bills = bill,
+                        updatedBills = Bills(
+                            id = bill.id,
+                            amount = bill.amount,
+                            category = bill.category,
+                            description = bill.description,
+                            selectedDueDate = bill.selectedDueDate,
+                            selectedDuration = bill.selectedDuration,
+                            billsStatus = "PAID"
+                        )
+                    )
+                    Toast.makeText(
+                        context,
+                        "Bill has been added successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
+                onFailure = {
+                    Toast.makeText(
+                        context,
+                        "Unsuccessful to add in expense",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+        }
+    }
+
+
+
 
 //    private fun setOneTimeNotification(){
 //        val workManager = WorkManager.getInstance(currentContext)

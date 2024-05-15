@@ -1,11 +1,21 @@
 package com.example.spendsavvy.viewModels
 
+import android.content.Context
+import android.net.Uri
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import java.time.LocalDate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Transactions
+import kotlinx.coroutines.launch
+import java.util.Date
 
-class TaxViewModel : ViewModel() {
+class TaxViewModel(transactionViewModel: OverviewViewModel) : ViewModel() {
+    private val transactionViewModel = transactionViewModel
+
     private val _incomeMonthly = MutableLiveData<Double>()
     var incomeMonthly: LiveData<Double> = _incomeMonthly
 
@@ -108,5 +118,36 @@ class TaxViewModel : ViewModel() {
         println("Income after Tax(A): ${_incomeAfterTaxAnnually.value}")
 
         return tax
+    }
+
+    fun addTaxToExpenses(tax: Double, selectedYear: Int, currentDate :Date, bankName: String, context: Context) {
+        viewModelScope.launch {
+                transactionViewModel.addTransactionToFirestore(
+                    Transactions(
+                        id = transactionViewModel.generateTransactionId(),
+                        amount = tax,
+                        description = "Income Tax of ${selectedYear}",
+                        date = currentDate,
+                        category = Category(
+                            id = "CT0009",
+                            imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
+                            categoryName = "Income Tax",
+                            categoryType = "Expenses"
+                        ),
+                        paymentMethod = bankName,
+                        transactionType = "Expenses"
+                    ),
+                    onSuccess = {
+                        Toast.makeText(
+                            context, "Income Tax added successfully", Toast.LENGTH_SHORT
+                        ).show()
+                    },
+                    onFailure = {
+                        Toast.makeText(
+                            context, "Failed to add income Tax", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
+        }
     }
 }

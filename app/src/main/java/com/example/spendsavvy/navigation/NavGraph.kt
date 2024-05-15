@@ -165,7 +165,7 @@ fun SetupNavGraph(
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId, isConnected, context)
     val notificationViewModel = NotificationViewModel(context)
-    val billsViewModel = BillsViewModel(context, isConnected, userId,notificationViewModel)
+    val billsViewModel = BillsViewModel(context, isConnected, userId,notificationViewModel,transactionsViewModel)
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
     val showOption = remember { mutableStateOf(false) }
 
@@ -660,6 +660,7 @@ fun SetupNavGraph(
                         navController = navController,
                         billsViewModel = billsViewModel,
                         transactionViewModel = transactionsViewModel,
+                        walletViewModel = walletViewModel
                     )
 
                 }
@@ -705,7 +706,8 @@ fun SetupNavGraph(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp), navController = navController,
-                        transactionViewModel = transactionsViewModel
+                        transactionViewModel = transactionsViewModel,
+                        walletViewModel = walletViewModel
                     )
 
                 }

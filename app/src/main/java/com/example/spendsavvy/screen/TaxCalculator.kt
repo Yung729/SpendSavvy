@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.border
@@ -24,8 +25,13 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -37,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,14 +55,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.screen.Staff.AddExpensesDialog
+import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
+import com.example.spendsavvy.viewModels.WalletViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -70,9 +83,10 @@ import java.util.Date
 fun TaxCalculator(
     modifier: Modifier = Modifier,
     navController: NavController,
-    transactionViewModel: OverviewViewModel
+    transactionViewModel: OverviewViewModel,
+    walletViewModel : WalletViewModel
 ) {
-    val taxViewModel = TaxViewModel()
+    val taxViewModel = TaxViewModel(transactionViewModel)
     val context = LocalContext.current
     var initialAmount by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -86,10 +100,11 @@ fun TaxCalculator(
     val taxAnnually by taxViewModel.taxAnnually.observeAsState(initial = 0.0)
     val incomeAfterTaxAnnually by taxViewModel.incomeAfterTaxAnnually.observeAsState(initial = 0.0)
 
-    val tax :Double = taxAnnually
+    val tax :Double = taxAnnually  //only add income tax per year
     val currentDate: Date = Date()
     var showDialog by remember { mutableStateOf(false) }
     var success by remember { mutableStateOf(true) }
+    var isPopUp by remember { mutableStateOf(false) }
 
     fun validateAmount(amount: String): Boolean {
         return try {
@@ -228,37 +243,8 @@ fun TaxCalculator(
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                     onClick = {
-                        if(tax != 0.0) {
-                            transactionViewModel.addTransactionToFirestore(
-                                Transactions(
-                                    id = transactionViewModel.generateTransactionId(),
-                                    amount = tax,
-                                    description = "Income Tax of ${selectedDate.year}",
-                                    date = currentDate,
-                                    category = Category(
-                                        id = "CT0009",
-                                        imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
-                                        categoryName = "Income Tax",
-                                        categoryType = "Expenses"
-                                    ),
-                                    paymentMethod = "Cash",
-                                    transactionType = "Expenses"
-                                ),
-                                onSuccess = {
-                                    showDialog = true
-                                    success = true
-                                    println("Income Tax added successfully")
-                                },
-                                onFailure = {
-                                    showDialog = true
-                                    success = false
-                                    println("Failed to add income Tax")
-                                }
-                            )
-                        }
-                        else{
-                            showDialog = true
-                            success = false
+                        if(tax != 0.0){
+                            isPopUp = true
                         }
                     },
                     modifier = Modifier
@@ -267,57 +253,221 @@ fun TaxCalculator(
                 ) {
                     Text(text = stringResource(id = com.example.spendsavvy.R.string.addExpense), fontSize = 11.sp)
                 }
-                if (showDialog) {
-                    TransactionResultDialog(
-                        success = success,
-                        message = if (success) stringResource(id = com.example.spendsavvy.R.string.text_26) else stringResource(id = com.example.spendsavvy.R.string.text_27),
-                        onDismiss = { showDialog = false }
+
+                if(isPopUp) {
+                    ChooseWalletDialog(
+                        onCancelClick = { isPopUp = false },
+                        walletViewModel = walletViewModel,
+                        taxViewModel = taxViewModel,
+                        tax = tax,
+                        selectedYear = selectedDate.year,
+                        currentDate = currentDate
                     )
+                }
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState", "RememberReturnType")
+@Composable
+fun ChooseWalletDialog(
+    onCancelClick: () -> Unit,
+    walletViewModel: WalletViewModel,
+    taxViewModel: TaxViewModel,
+    tax: Double,
+    selectedYear: Int,
+    currentDate: Date
+) {
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+    var searchAccount by remember { mutableStateOf("") }
+    var isExpanded by remember { mutableStateOf(false) }
+    var withdrawalAmt by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    Dialog(
+        onDismissRequest = { onCancelClick() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
+                .shadow(elevation = 15.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
+            ) {
+                Text(
+                    "Add Expenses",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp
+                )
+                Spacer(modifier = Modifier.height(30.dp))
+                Text("Cash Account" )
+
+                Spacer(modifier = Modifier.height(25.dp))
+                ExposedDropdownMenuBox(
+                    expanded = isExpanded,
+                    onExpandedChange = { isExpanded = it }
+                ) {
+                    TextField(
+                        value = searchAccount,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
+                    ExposedDropdownMenuBox(
+                        expanded = isExpanded,
+                        onExpandedChange = { isExpanded = it }
+                    ) {
+                        TextField(
+                            value = searchAccount,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = isExpanded,
+                            onDismissRequest = { isExpanded = false }
+                        ) {
+                            for (cash in cashDetailsList) {          //read from existing stock items
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = cash.typeName)
+                                    },
+                                    onClick = {
+                                        searchAccount = cash.typeName
+                                        isExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Box( Modifier.fillMaxWidth() )
+                {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            taxViewModel.addTaxToExpenses(tax, selectedYear, currentDate,searchAccount, context)
+                            onCancelClick()
+                                  },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Confirm Cash Account",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun TransactionResultDialog(
-    success: Boolean,
-    message: String,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = message,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp,
-                color = if (success) Color.Black else Color.Red,
-                modifier = Modifier.fillMaxWidth()
-            )
-        },
-        confirmButton = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = CenterHorizontally
-            ) {
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier
-                        .padding(start = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.DarkGray,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(text = if (success) stringResource(id = com.example.spendsavvy.R.string.ctn) else stringResource(id = com.example.spendsavvy.R.string.tryAgain))
-                }
-            }
-        }
-    )
-}
+
+//if(tax != 0.0) {
+//    transactionViewModel.addTransactionToFirestore(
+//        Transactions(
+//            id = transactionViewModel.generateTransactionId(),
+//            amount = tax,
+//            description = "Income Tax of ${selectedDate.year}",
+//            date = currentDate,
+//            category = Category(
+//                id = "CT0009",
+//                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
+//                categoryName = "Income Tax",
+//                categoryType = "Expenses"
+//            ),
+//            paymentMethod = "Cash",
+//            transactionType = "Expenses"
+//        ),
+//        onSuccess = {
+//            showDialog = true
+//            success = true
+//            println("Income Tax added successfully")
+//        },
+//        onFailure = {
+//            showDialog = true
+//            success = false
+//            println("Failed to add income Tax")
+//        }
+//    )
+//}
+//else{
+//    showDialog = true
+//    success = false
+//}
+
+//if (showDialog) {
+//    TransactionResultDialog(
+//        success = success,
+//        message = if (success) stringResource(id = com.example.spendsavvy.R.string.text_26) else stringResource(id = com.example.spendsavvy.R.string.text_27),
+//        onDismiss = { showDialog = false }
+//    )
+//}
+//@Composable
+//fun TransactionResultDialog(
+//    success: Boolean,
+//    message: String,
+//    onDismiss: () -> Unit
+//) {
+//    AlertDialog(
+//        onDismissRequest = onDismiss,
+//        title = {
+//            Text(
+//                text = message,
+//                textAlign = TextAlign.Center,
+//                fontWeight = FontWeight.SemiBold,
+//                fontSize = 22.sp,
+//                color = if (success) Color.Black else Color.Red,
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//        },
+//        confirmButton = {
+//            Column(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalArrangement = Arrangement.Center,
+//                horizontalAlignment = CenterHorizontally
+//            ) {
+//                Button(
+//                    onClick = onDismiss,
+//                    modifier = Modifier
+//                        .padding(start = 8.dp),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = Color.DarkGray,
+//                        contentColor = Color.White
+//                    )
+//                ) {
+//                    Text(text = if (success) stringResource(id = com.example.spendsavvy.R.string.ctn) else stringResource(id = com.example.spendsavvy.R.string.tryAgain))
+//                }
+//            }
+//        }
+//    )
+//}
 @Composable
 fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
     var selectedOption by remember { mutableStateOf("") }
@@ -638,6 +788,7 @@ fun TaxCalculatorPreview() {
             .fillMaxSize()
             .padding(20.dp),
         navController = rememberNavController(),
-        transactionViewModel = viewModel()
+        transactionViewModel = viewModel(),
+        walletViewModel = viewModel()
     )
 }

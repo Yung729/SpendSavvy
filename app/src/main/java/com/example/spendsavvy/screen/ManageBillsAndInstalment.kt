@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,15 +26,20 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -57,16 +64,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Bills
-import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.OverviewViewModel
+import com.example.spendsavvy.viewModels.WalletViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -78,7 +89,8 @@ fun ManageBillsAndInstalment(
     modifier: Modifier = Modifier,
     navController: NavController,
     billsViewModel: BillsViewModel,
-    transactionViewModel: OverviewViewModel
+    transactionViewModel: OverviewViewModel,
+    walletViewModel: WalletViewModel
 ) {
 
     val categories = listOf(stringResource(id = com.example.spendsavvy.R.string.upcoming), stringResource(id = com.example.spendsavvy.R.string.paid), stringResource(id = com.example.spendsavvy.R.string.overdue))
@@ -159,14 +171,14 @@ fun ManageBillsAndInstalment(
                             val textColor = when (category) {
                                 stringResource(id = com.example.spendsavvy.R.string.upcoming) -> Color.Yellow
                                 stringResource(id = com.example.spendsavvy.R.string.overdue) -> Color.Red
-                                stringResource(id = com.example.spendsavvy.R.string.paid) -> Color.Green
+                                stringResource(id = R.string.paid) -> Color.Green
                                 else -> Color.Black
                             }
                             Text(
                                 text = when (category) {
                                     stringResource(id = com.example.spendsavvy.R.string.upcoming) -> totalUpcomingBills.toString()
                                     stringResource(id = com.example.spendsavvy.R.string.overdue) -> totalOverdueBills.toString()
-                                    stringResource(id = com.example.spendsavvy.R.string.paid) -> totalPaidBills.toString()
+                                    stringResource(id = R.string.paid) -> totalPaidBills.toString()
                                     else -> ""
                                 },
                                 fontSize = 20.sp,
@@ -210,10 +222,10 @@ fun ManageBillsAndInstalment(
             }
 
             when (selectedIndex) {
-                0 -> BillList(allBillsList, navController, transactionViewModel, billsViewModel)
-                1 -> BillList(upcomingBillsList, navController, transactionViewModel, billsViewModel)
-                2 -> BillList(paidBillsList, navController, transactionViewModel, billsViewModel)
-                3 -> BillList(overdueBillsList, navController, transactionViewModel, billsViewModel)
+                0 -> BillList(allBillsList, navController, walletViewModel, billsViewModel)
+                1 -> BillList(upcomingBillsList, navController, walletViewModel, billsViewModel)
+                2 -> BillList(paidBillsList, navController, walletViewModel, billsViewModel)
+                3 -> BillList(overdueBillsList, navController, walletViewModel, billsViewModel)
             }
         }
     }
@@ -223,7 +235,7 @@ fun ManageBillsAndInstalment(
 fun BillList(
     bills: List<Bills>,
     navController: NavController,
-    transactionViewModel: OverviewViewModel,
+    walletViewModel: WalletViewModel,
     billsViewModel: BillsViewModel
 ) {
 
@@ -242,7 +254,7 @@ fun BillList(
                     },
                 bill = bill,
                 navController = navController,
-                transactionViewModel = transactionViewModel,
+                walletViewModel = walletViewModel,
                 billsViewModel = billsViewModel
             )
         }
@@ -254,13 +266,13 @@ fun BillItem(
     modifier: Modifier = Modifier,
     bill: Bills,
     navController: NavController,
-    transactionViewModel: OverviewViewModel,
+    walletViewModel: WalletViewModel,
     billsViewModel: BillsViewModel
 ) {
-    val currentDate: Date = Date()
     val context = LocalContext.current
     var showConfirmationDialog by remember { mutableStateOf(false) }
     var isDelete by remember { mutableStateOf(false) }
+    var isPopUp by remember { mutableStateOf(false) }
 
     // Display bill details
     Card(
@@ -363,8 +375,8 @@ fun BillItem(
             Spacer(modifier = Modifier.width(30.dp))
             Button(
                 onClick = {
-                    showConfirmationDialog = true
-                    isDelete = false
+                    isPopUp = true
+//                    isDelete = false
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -381,7 +393,7 @@ fun BillItem(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = stringResource(id = com.example.spendsavvy.R.string.markAsPaid),
+                        text = stringResource(id = R.string.markAsPaid),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
                         color = Color.Black
@@ -409,7 +421,7 @@ fun BillItem(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = stringResource(id = com.example.spendsavvy.R.string.delete),
+                        text = stringResource(id = R.string.delete),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
                         color = Color.Black
@@ -423,7 +435,7 @@ fun BillItem(
                     onDismissRequest = { showConfirmationDialog = false },
                     title = {
                         Text(
-                            text = if (isDelete) stringResource(id = com.example.spendsavvy.R.string.text_25) else stringResource(id = com.example.spendsavvy.R.string.text_26),
+                            text = if (isDelete) stringResource(id = R.string.text_25) else stringResource(id = R.string.text_26),
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 22.sp,
@@ -437,43 +449,7 @@ fun BillItem(
                                 if (bill.billsStatus != "PAID") {
                                     showConfirmationDialog = false
                                     if (!isDelete) {
-                                        transactionViewModel.addTransactionToFirestore(
-                                            Transactions(
-                                                id = transactionViewModel.generateTransactionId(),
-                                                amount = bill.amount,
-                                                description = bill.description,
-                                                date = currentDate,
-                                                category = bill.category,
-                                                paymentMethod = "Cash",
-                                                transactionType = "Expenses"
-                                            ),
-                                            onSuccess = {
-                                                billsViewModel.editBill(
-                                                    bills = bill,
-                                                    updatedBills = Bills(
-                                                        id = bill.id,
-                                                        amount = bill.amount,
-                                                        category = bill.category,
-                                                        description = bill.description,
-                                                        selectedDueDate = bill.selectedDueDate,
-                                                        selectedDuration = bill.selectedDuration,
-                                                        billsStatus = "PAID"
-                                                    )
-                                                )
-                                                Toast.makeText(
-                                                    context,
-                                                    "Bill has been added successfully",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            },
-                                            onFailure = {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Unsuccessful to add in expense",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        )
+                                        //add
                                     } else {
                                         billsViewModel.deleteBill(bill)
                                         Toast.makeText(
@@ -499,7 +475,7 @@ fun BillItem(
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(text = if (!isDelete) stringResource(id = com.example.spendsavvy.R.string.add) else stringResource(id = com.example.spendsavvy.R.string.delete))
+                            Text(text = if (!isDelete) stringResource(id = R.string.add) else stringResource(id = R.string.delete))
                         }
                     },
                     dismissButton = {
@@ -513,6 +489,139 @@ fun BillItem(
                         }
                     }
                 )
+            }
+
+
+            if(isPopUp){
+                MakePaidDialog(
+                    onCancelClick = { isPopUp = false },
+                    walletViewModel = walletViewModel,
+                    billsViewModel = billsViewModel,
+                    category = bill.category,
+                    amount = bill.amount,
+                    description = bill.description,
+                    bill = bill
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState", "RememberReturnType")
+@Composable
+fun MakePaidDialog(
+    onCancelClick: () -> Unit,
+    walletViewModel: WalletViewModel,
+    billsViewModel: BillsViewModel,
+    category: Category,
+    amount: Double,
+    description: String,
+    bill: Bills
+) {
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+    var searchAccount by remember { mutableStateOf("") }
+    var isExpanded by remember { mutableStateOf(false) }
+    var withdrawalAmt by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val currentDate: Date = Date()
+
+    Dialog(
+        onDismissRequest = { onCancelClick() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
+                .shadow(elevation = 15.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
+            ) {
+                Text(
+                    "Add Expenses",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp
+                )
+                Spacer(modifier = Modifier.height(30.dp))
+                Text("Cash Account" )
+
+                Spacer(modifier = Modifier.height(25.dp))
+                ExposedDropdownMenuBox(
+                    expanded = isExpanded,
+                    onExpandedChange = { isExpanded = it }
+                ) {
+                    TextField(
+                        value = searchAccount,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
+                    ExposedDropdownMenuBox(
+                        expanded = isExpanded,
+                        onExpandedChange = { isExpanded = it }
+                    ) {
+                        TextField(
+                            value = searchAccount,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = isExpanded,
+                            onDismissRequest = { isExpanded = false }
+                        ) {
+                            for (cash in cashDetailsList) {          //read from existing stock items
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = cash.typeName)
+                                    },
+                                    onClick = {
+                                        searchAccount = cash.typeName
+                                        isExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Box( Modifier.fillMaxWidth() )
+                {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            billsViewModel.addBillToExpenses(amount, category, description,currentDate,searchAccount, context, bill)
+                            onCancelClick()
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Confirm Cash Account",
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = poppinsFontFamily
+                        )
+                    }
+                }
             }
         }
     }
@@ -539,5 +648,6 @@ fun ManageBillsAndInstalmentPreview() {
         navController = rememberNavController(),
         billsViewModel = viewModel(),
         transactionViewModel = viewModel(),
+        walletViewModel = viewModel()
     )
 }
