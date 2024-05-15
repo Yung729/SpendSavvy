@@ -49,7 +49,7 @@
     <string name="stocks">Stocks</string>
     <string name="text_8">Add/Manage Stock</string>
     <string name="text_9">Includes cash money, bank accounts, and eWallet</string>
-    <string name="accs">Accounts</string>
+    <string name="accs">Account(s)</string>
     <string name="addAcc">Add Account</string>
     <string name="editAcc">Edit Account</string>
     <string name="addCashAcc">Add Cash Account</string>

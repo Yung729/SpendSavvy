@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -140,7 +141,6 @@ fun WalletScreen(
             }
         }
 
-
         Spacer(modifier = Modifier.height(30.dp))
 
         Row(
@@ -191,24 +191,27 @@ fun WalletScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Column {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.money),
                     contentDescription = "",
                     modifier = Modifier.size(20.dp, 20.dp)
                 )
-            }
 
-            Column {
-                Text(
-                    stringResource(id = R.string.cashMoney), textAlign = TextAlign.Left
-                )
 
-                Text(
-                    text = stringResource(id = R.string.availableBalance),
-                    fontSize = 10.sp,
-                    color = Color.Gray
-                )
+                Column {
+                    Text(
+                        stringResource(id = R.string.cashMoney), textAlign = TextAlign.Left
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.availableBalance),
+                        fontSize = 10.sp,
+                        color = Color.Gray
+                    )
+                }
             }
 
             for (cashDetails in cashDetailsList) {
@@ -241,17 +244,19 @@ fun WalletScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Column {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.bank),
                     contentDescription = "",
                     modifier = Modifier.size(20.dp, 20.dp)
                 )
-            }
 
-            Text(
-                stringResource(id = R.string.bankAccs)
-            )
+                Text(
+                    stringResource(id = R.string.bankAccs)
+                )
+            }
 
             bankCount = bankAccountCount(cashDetailsList)
 
@@ -315,18 +320,19 @@ fun WalletScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Column {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.deposit),
                     contentDescription = "",
                     modifier = Modifier.size(20.dp, 20.dp)
                 )
+
+                Text(
+                    stringResource(id = R.string.fdAcc)
+                )
             }
-
-
-            Text(
-                stringResource(id = R.string.fdAcc)
-            )
 
             fdCount = fdCount(fdAccDetailsList)
 
@@ -384,18 +390,19 @@ fun WalletScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
-
-            Column {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.stock),
                     contentDescription = "",
                     modifier = Modifier.size(20.dp, 20.dp)
                 )
-            }
 
-            Text(
-                stringResource(id = R.string.stocks)
-            )
+                Text(
+                    stringResource(id = R.string.stocks)
+                )
+            }
 
             stockCount = stocksCount(stockListLive)
 
@@ -453,6 +460,10 @@ fun TransferDialog(
         mutableIntStateOf(0)
     }
 
+    var isSelectionClicked by remember {
+        mutableStateOf(false)
+    }
+
     Dialog(
         onDismissRequest = { onCancelClick() },
         properties = DialogProperties(
@@ -462,65 +473,69 @@ fun TransferDialog(
         Card(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
-                .fillMaxWidth(0.85f)
+                .fillMaxWidth()
                 .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
                 .shadow(elevation = 15.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 15.dp, top = 15.dp)
+                    .padding(15.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.spacedBy(30.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            isClicked = 1
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Between Cash Accounts",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
-                    }
 
-                    Button(
-                        onClick = {
-                            isClicked = 2
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Cash Account To FD Account",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
-                    }
+                Button(
+                    onClick = {
+                        isClicked = 1
+                        isSelectionClicked = true
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                ) {
+                    Text(
+                        text = "Between Cash Accounts",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        isClicked = 2
+                        isSelectionClicked = true
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                ) {
+                    Text(
+                        text = "Cash Account To FD Account",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFontFamily
+                    )
                 }
             }
         }
     }
 
-    if (isClicked == 1)
-        TransferAccountDialog(onCancelClick = { false }, {}, walletViewModel, 1)
-    else if (isClicked == 2)
-        TransferAccountDialog(onCancelClick = { false }, {}, walletViewModel, 2)
+    if (isClicked == 1 && isSelectionClicked)
+        TransferAccountDialog(
+            onCancelClick = { isSelectionClicked = false },
+            {},
+            walletViewModel,
+            1
+        )
+    else if (isClicked == 2 && isSelectionClicked)
+        TransferAccountDialog(
+            onCancelClick = { isSelectionClicked = false },
+            {},
+            walletViewModel,
+            2
+        )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -587,13 +602,28 @@ fun TransferAccountDialog(
                     .fillMaxWidth()
                     .padding(start = 15.dp, top = 15.dp)
             ) {
-                Text(
-                    "From Cash Account",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp
-                )
+                Row {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "From",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(30.dp))
+
+                Text("Cash Account")
+
+                Spacer(modifier = Modifier.height(25.dp))
 
                 ExposedDropdownMenuBox(
                     expanded = isExpanded,
@@ -628,8 +658,8 @@ fun TransferAccountDialog(
                             expanded = isExpanded,
                             onDismissRequest = { isExpanded = false }
                         ) {
-                            for (cash in cashDetailsList) {          //read from existing stock items
-                                if (searchAccount2 != searchAccount1)
+                            for (cash in cashDetailsList) {                 //read from existing stock items
+                                if (searchAccount2 != cash.typeName)
                                     DropdownMenuItem(
                                         text = {
                                             Text(text = cash.typeName)
@@ -693,7 +723,8 @@ fun TransferAccountDialog(
                         ) {
                             Text(
                                 "To",
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
                             )
                         }
                     }
@@ -743,7 +774,7 @@ fun TransferAccountDialog(
                                 onDismissRequest = { isExpanded = false }
                             ) {
                                 for (cash in cashDetailsList) {
-                                    if (searchAccount2 != searchAccount1)
+                                    if (searchAccount1 != cash.typeName) {
                                         DropdownMenuItem(
                                             text = {
                                                 Text(text = cash.typeName)
@@ -753,6 +784,7 @@ fun TransferAccountDialog(
                                                 isExpanded = false
                                             }
                                         )
+                                    }
                                 }
                             }
                         }
@@ -849,7 +881,6 @@ fun TransferAccountDialog(
                                             )
                                         )
 
-
                                         walletViewModel.addFDDetailsToDatabase(
                                             fdAccount = FDAccount(
                                                 imageUri = cashDetails.imageUri,
@@ -870,8 +901,8 @@ fun TransferAccountDialog(
                         containerColor = Color.Black
                     ),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
+                        .fillMaxWidth(0.9f)
+                        .padding(10.dp)
                 ) {
                     Text(
                         text = "Transfer",
@@ -879,7 +910,6 @@ fun TransferAccountDialog(
                         fontFamily = poppinsFontFamily
                     )
                 }
-
             }
         }
     }
