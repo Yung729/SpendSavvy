@@ -270,7 +270,7 @@ fun TaxCalculator(
                 if (showDialog) {
                     TransactionResultDialog(
                         success = success,
-                        message = if (success) "Your income tax has been added successfully" else "Failed to add income tax",
+                        message = if (success) stringResource(id = com.example.spendsavvy.R.string.text_26) else stringResource(id = com.example.spendsavvy.R.string.text_27),
                         onDismiss = { showDialog = false }
                     )
                 }
@@ -312,7 +312,7 @@ fun TransactionResultDialog(
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = if (success) "OK" else "Try Again")
+                    Text(text = if (success) stringResource(id = com.example.spendsavvy.R.string.ctn) else stringResource(id = com.example.spendsavvy.R.string.tryAgain))
                 }
             }
         }
@@ -350,7 +350,7 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                listOf(stringResource(id = com.example.spendsavvy.R.string.monthly), stringResource(id = com.example.spendsavvy.R.string.annually)).forEach { option ->
+                listOf("Monthly", "Annually").forEach { option ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier

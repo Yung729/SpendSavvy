@@ -157,8 +157,8 @@ fun SavePasswordButton(
     }
 
     if (showDialog) {
-        val title = if (isPasswordValid) "Success" else "Fail"
-        val message = if (isPasswordValid) "Your password has been changed successfully" else "Unable to change password \n Please Try Again"
+        val title = if (isPasswordValid) stringResource(id = com.example.spendsavvy.R.string.success) else stringResource(id = com.example.spendsavvy.R.string.fail)
+        val message = if (isPasswordValid) stringResource(id = com.example.spendsavvy.R.string.successPw) else stringResource(id = com.example.spendsavvy.R.string.failPw)
 
         AlertDialog(
             onDismissRequest = { onShowDialogChange(false) },
@@ -196,7 +196,7 @@ fun SavePasswordButton(
                             contentColor = Color.White
                         )
                     ) {
-                        Text(text = "Continue")
+                        Text(text = stringResource(id = com.example.spendsavvy.R.string.ctn))
                     }
                 }
             }

@@ -12,21 +12,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,24 +48,28 @@ fun Language(modifier: Modifier = Modifier, navController: NavController) {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
+    val englishText = stringResource(id = R.string.english)
+    val chineseText = stringResource(id = R.string.chinese)
+    val bmText = stringResource(id = R.string.bm)
+
     val selections = remember {
         mutableStateListOf(
             LanguageSelection(
                 id = 0,
                 isSelected = true,
-                text = "English",
+                text = englishText,
                 languageCode = "en"
             ),
             LanguageSelection(
                 id = 1,
                 isSelected = false,
-                text = "Chinese中文",
+                text = chineseText,
                 languageCode = "zh"
             ),
             LanguageSelection(
                 id = 2,
                 isSelected = false,
-                text = "Bahasa Melayu",
+                text = bmText,
                 languageCode = "ms"
             )
         )
@@ -84,7 +83,7 @@ fun Language(modifier: Modifier = Modifier, navController: NavController) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(
-                    text = stringResource(id = R.string.login_text),
+                    text = stringResource(id = R.string.suggestedLanguage),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -96,7 +95,7 @@ fun Language(modifier: Modifier = Modifier, navController: NavController) {
                         modifier = Modifier
                             .clickable {
                                 coroutineScope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(message = "Change language to ${info.text}(${info.languageCode})")
+                                    scaffoldState.snackbarHostState.showSnackbar(message = "Changing language to ${info.text}(${info.languageCode}).....")
                                     // Deselect all languages
                                     selections.forEach { it.isSelected = false }
                                     // Select the clicked language
@@ -116,13 +115,6 @@ fun Language(modifier: Modifier = Modifier, navController: NavController) {
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.weight(1f)
                         )
-//                        if (info.isSelected) {
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.tick_icon),
-//                                contentDescription = "",
-//                                modifier = Modifier.size(24.dp)
-//                            )
-//                        }
                     }
                     LineDivider()
                 }

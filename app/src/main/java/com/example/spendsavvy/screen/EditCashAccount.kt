@@ -74,7 +74,7 @@ fun EditCashAccountScreen(
         mutableStateOf(0)
     }
 
-    val options = mutableStateListOf<String>("Cash", "Bank")
+    val options = mutableStateListOf<String>(stringResource(id = R.string.cash), stringResource(id = R.string.bank))
     val cashInfo by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
     Column(

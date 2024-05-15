@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -98,7 +99,7 @@ fun AllTransactionScreen(
     val dateRangeExpenses by transactionViewModel.dateRangeExpensesTotal.observeAsState(initial = 0.0)
     val dateRangeIncomes by transactionViewModel.dateRangeIncomesTotal.observeAsState(initial = 0.0)
 
-    val options = mutableStateListOf("Year", "Month", "Day", "ALL", "Custom")
+    val options = mutableStateListOf(stringResource(id = R.string.year), stringResource(id = R.string.month), stringResource(id = R.string.day), stringResource(id = R.string.all), stringResource(id = R.string.custom))
     var selectedIndex by remember {
         mutableIntStateOf(3)
     }
@@ -271,7 +272,7 @@ fun DetailCard(
                         , horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Overview",
+                            text = stringResource(id = R.string.overview),
                             fontWeight = FontWeight.Bold,
                             fontSize = 25.sp,
                             textAlign = TextAlign.Center,
@@ -297,7 +298,7 @@ fun DetailCard(
 
                                     Column {
                                         Text(
-                                            text = "Income",
+                                            text = stringResource(id = R.string.income),
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 20.sp,
                                             color = Color.White
@@ -327,7 +328,7 @@ fun DetailCard(
 
                                     Column {
                                         Text(
-                                            text = "Expenses",
+                                            text = stringResource(id = R.string.expense),
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 20.sp,
                                             color = Color.White

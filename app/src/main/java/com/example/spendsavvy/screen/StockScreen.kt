@@ -72,7 +72,7 @@ fun StockScreen(
         ) {
             Column {
                 Text(
-                    text = "Stock Account",
+                    text = stringResource(id = R.string.stockAcc),
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Justify,
                     fontFamily = poppinsFontFamily,
@@ -80,7 +80,7 @@ fun StockScreen(
                 )
 
                 Text(
-                    text = "Add and Sell Stocks",
+                    text = stringResource(id = R.string.addnSellStocks),
                     color = Color.Gray,
                     fontSize = 10.sp,
                     textAlign = TextAlign.Justify

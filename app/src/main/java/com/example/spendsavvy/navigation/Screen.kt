@@ -7,7 +7,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object Login : Screen(route = "Login", 0)
     object SignUp : Screen(route = "Sign Up", 0)
     object Overview : Screen(route = "Overview", R.drawable.bar_chart)
-    object AllTransaction : Screen(route = "Transaction Record", 0)
+    object AllTransaction : Screen(route = "ALl Transactions", 0)
     object TransactionDetails : Screen(route = "Transaction Details", 0)
     object Wallet : Screen(route = "Wallet", R.drawable.wallet)
 
@@ -22,7 +22,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object ChangeProfile : Screen(route = "Edit Profile", 0)
     object MyProfile : Screen(route = "My Profile", 0)
 
-    object ChangePassword : Screen(route = "Change Password ", 0)
+    object ChangePassword : Screen(route = "Change Password", 0)
     object ForgotPassword : Screen(route = "Forgot Password", 0)
     object CreatePassword : Screen(route = "Create Password", 0)
     object Notifications : Screen(route = "Notification", 0)
