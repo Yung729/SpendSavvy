@@ -432,7 +432,7 @@ fun AddExpensesDialog(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = "Withdraw FD Money",
+                            text = "Add Salary",
                             fontWeight = FontWeight.Bold,
                             fontFamily = poppinsFontFamily
                         )
