@@ -1000,8 +1000,6 @@ fun TransactionsCard(
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
 
-
-
     SwipeToDeleteItem(state = dismissState) {
         Card(
             modifier = modifier.clickable {

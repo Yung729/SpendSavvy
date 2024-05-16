@@ -1,78 +1,78 @@
-package com.example.spendsavvy.screen
+package com.example.spendsavvy.screen.Wallet
 
+import android.R
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.spendsavvy.models.FDAccount
-import com.example.spendsavvy.navigation.Screen
+import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Stock
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
-import java.util.Calendar
-import android.R
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.res.stringResource
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun FixedDepositDetailsScreen(
+fun AddNewStockScreen(
     modifier: Modifier,
     walletViewModel: WalletViewModel,
+    transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
-    val currentDate = Calendar.getInstance().apply {
-        set(Calendar.HOUR_OF_DAY, 0)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
-        set(Calendar.MILLISECOND, 0)
-    }.time
-
-    var selectedBank by remember {
+    var stockName by remember {
         mutableStateOf("")
     }
 
-    var depositAmt by remember {
+    var price by remember {
         mutableStateOf("")
     }
 
-    var interestRate by remember {
+    var qty by remember {
         mutableStateOf("")
     }
 
@@ -84,35 +84,34 @@ fun FixedDepositDetailsScreen(
         onResult = {
             selectedImageUri = it
         })
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+    var searchAccount by remember {
+        mutableStateOf("")
+    }
+
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                start = 15.dp, top = 15.dp
-            )
+            .padding(start = 15.dp, top = 15.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = stringResource(id = com.example.spendsavvy.R.string.fixedDep),
+            text = stringResource(id = com.example.spendsavvy.R.string.addNewProduct),
             fontFamily = poppinsFontFamily,
-            fontSize = 20.sp
+            fontSize = 25.sp
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 15.dp, top = 15.dp)
+                .padding(start = 40.dp, top = 30.dp, bottom = 30.dp)
         ) {
-            Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.text_10),
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp,
-                color = Color.Red
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = stringResource(id = com.example.spendsavvy.R.string.pickIconPhoto),
@@ -173,59 +172,17 @@ fun FixedDepositDetailsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.text_11),
+                text = stringResource(id = com.example.spendsavvy.R.string.prodName),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
 
-            ClickableText(
-                text = AnnotatedString(stringResource(id = com.example.spendsavvy.R.string.text_12)),
-                onClick = {
-                    navController.navigate(Screen.AddCashAccount.route)
-                }
-            )
-
-            /*ExposedDropdownMenuBox(
-                expanded = isExpanded,
-                onExpandedChange = { isExpanded = it }
-            ) {
-                TextField(
-                    value = searchBank,
-                    onValueChange = {
-                        searchBank = it
-                    },
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                    },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    modifier = Modifier.menuAnchor()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = isExpanded,
-                    onDismissRequest = { isExpanded = false }
-                ) {
-                    for (bankAccount in cashDetailsList) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = bankAccount.typeName)
-                            },
-                            onClick = {
-                                searchBank = bankAccount.typeName
-                                isExpanded = false
-                            }
-                        )
-                    }
-                }
-            }*/
             TextField(
-                value = selectedBank,
+                value = stockName,
                 onValueChange = {
-                    selectedBank = it
+                    stockName = it
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -233,7 +190,7 @@ fun FixedDepositDetailsScreen(
                 ),
                 placeholder = {
                     Text(
-                        text = "Public bank",
+                        text = "Product",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
                         color = Color.Gray
@@ -241,55 +198,19 @@ fun FixedDepositDetailsScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(15.dp))
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 15.dp, top = 15.dp)
-        ) {
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.depositAmount),
+                text = stringResource(id = com.example.spendsavvy.R.string.prodPrice),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
 
             TextField(
-                value = depositAmt,
+                value = price,
                 onValueChange = {
-                    depositAmt = it
+                    price = it
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Decimal
-                ),
-                placeholder = {
-                    Text(
-                        text = "RM 0.00",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                }
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.interestRate),
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
-
-
-            TextField(
-                value = interestRate,
-                onValueChange = {
-                    interestRate = it
-                },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Decimal
                 ),
                 placeholder = {
@@ -301,11 +222,88 @@ fun FixedDepositDetailsScreen(
                     )
                 }
             )
+
+            Text(
+                text = stringResource(id = com.example.spendsavvy.R.string.qty),
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
+
+            TextField(
+                value = qty,
+                onValueChange = {
+                    qty = it
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                ),
+                placeholder = {
+                    Text(
+                        text = "0",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp,
+                        color = Color.Gray
+                    )
+                }
+            )
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Text(
+                "Cash Account"
+            )
+
+            ExposedDropdownMenuBox(
+                expanded = isExpanded,
+                onExpandedChange = { isExpanded = it }
+            ) {
+                TextField(
+                    value = searchAccount,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    modifier = Modifier.menuAnchor()
+                )
+                ExposedDropdownMenuBox(
+                    expanded = isExpanded,
+                    onExpandedChange = { isExpanded = it }
+                ) {
+                    TextField(
+                        value = searchAccount,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isExpanded,
+                        onDismissRequest = { isExpanded = false }
+                    ) {
+                        for (cash in cashDetailsList) {          //read from existing stock items
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = cash.typeName)
+                                },
+                                onClick = {
+                                    searchAccount = cash.typeName
+                                    isExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
         }
-
-
-        Spacer(modifier = Modifier.height(30.dp))
-
         Row(
             modifier = Modifier
                 .padding(15.dp),
@@ -332,16 +330,37 @@ fun FixedDepositDetailsScreen(
 
             Button(
                 onClick = {
-                    walletViewModel.addFDDetailsToDatabase(
-                        FDAccount(
-                            selectedImageUri,
-                            selectedBank,
-                            interestRate.toDoubleOrNull() ?: 0.0,
-                            depositAmt.toDoubleOrNull() ?: 0.0,
-                            currentDate,
-                            "Deposit"
-                        ), selectedImageUri
+
+
+                    transactionViewModel.addTransactionToFirestore(
+                        Transactions(
+                            id = transactionViewModel.generateTransactionId(),
+                            amount = ((price.toDoubleOrNull() ?: 0.0) * qty.toInt()),
+                            description = "Purchase Stock",
+                            date = Date(),
+                            category = Category(
+                                id = "CT0014",
+                                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
+                                categoryName = "Stock Purchase",
+                                categoryType = "Expenses"
+                            ),
+                            paymentMethod = searchAccount,
+                            transactionType = "Expenses"
+                        ),
+                        onSuccess = {
+                            walletViewModel.addStockDetailsToDatabase(
+                                Stock(
+                                    selectedImageUri,
+                                    stockName,
+                                    price.toDoubleOrNull() ?: 0.0,
+                                    qty.toInt()
+                                ), selectedImageUri
+                            )
+                        },
+                        onFailure = {
+                        }
                     )
+
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
@@ -358,4 +377,6 @@ fun FixedDepositDetailsScreen(
             }
         }
     }
+
+
 }

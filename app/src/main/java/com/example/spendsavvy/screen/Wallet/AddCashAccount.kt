@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen
+package com.example.spendsavvy.screen.Wallet
 
 import android.R
 import android.annotation.SuppressLint

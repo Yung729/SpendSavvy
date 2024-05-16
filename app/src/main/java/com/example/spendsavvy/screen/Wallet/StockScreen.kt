@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen
+package com.example.spendsavvy.screen.Wallet
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke

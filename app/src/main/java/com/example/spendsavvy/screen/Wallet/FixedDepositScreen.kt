@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen
+package com.example.spendsavvy.screen.Wallet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
