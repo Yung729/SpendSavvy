@@ -42,9 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.spendsavvy.components.ButtonComponent
-import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.viewModels.CategoryViewModel
 

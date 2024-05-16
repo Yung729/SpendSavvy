@@ -1,7 +1,6 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -61,12 +59,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
-import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.models.Transactions
-import com.example.spendsavvy.screen.staff.AddExpensesDialog
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.OverviewViewModel
-import com.example.spendsavvy.viewModels.StaffViewModel
 import com.example.spendsavvy.viewModels.TaxViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
@@ -76,7 +70,6 @@ import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import java.time.LocalDate
 import java.time.Month
-import java.time.ZoneId
 import java.util.Date
 
 @Composable

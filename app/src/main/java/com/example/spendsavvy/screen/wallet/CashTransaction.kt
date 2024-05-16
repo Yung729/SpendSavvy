@@ -36,7 +36,6 @@ import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.viewModels.OverviewViewModel
-import com.example.spendsavvy.viewModels.WalletViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
