@@ -333,11 +333,6 @@ fun AddExpensesDialog(
         mutableStateOf(false)
     }
 
-    var withdrawalAmt by remember {
-        mutableStateOf("")
-    }
-
-    val context = LocalContext.current
 
     Dialog(
         onDismissRequest = { onCancelClick() },

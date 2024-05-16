@@ -78,6 +78,17 @@ fun EditExistingStockScreen(
     }
 
 
+
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
+    var searchAccount by remember {
+        mutableStateOf("")
+    }
+
+    var isExpanded1 by remember {
+        mutableStateOf(false)
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -239,6 +250,61 @@ fun EditExistingStockScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        Text(
+            "Cash Account"
+        )
+
+        ExposedDropdownMenuBox(
+            expanded = isExpanded1,
+            onExpandedChange = { isExpanded1 = it }
+        ) {
+            TextField(
+                value = searchAccount,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded1)
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor()
+            )
+            ExposedDropdownMenuBox(
+                expanded = isExpanded1,
+                onExpandedChange = { isExpanded1 = it }
+            ) {
+                TextField(
+                    value = searchAccount,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded1)
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    modifier = Modifier.menuAnchor()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isExpanded1,
+                    onDismissRequest = { isExpanded1 = false }
+                ) {
+                    for (cash in cashDetailsList) {          //read from existing stock items
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = cash.typeName)
+                            },
+                            onClick = {
+                                searchAccount = cash.typeName
+                                isExpanded1 = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+
         Row(
             modifier = Modifier
                 .padding(15.dp),
@@ -288,7 +354,7 @@ fun EditExistingStockScreen(
                                                     categoryName = "Stock Sales",
                                                     categoryType = "Incomes"
                                                 ),
-                                                paymentMethod = "Cash",
+                                                paymentMethod = searchAccount,
                                                 transactionType = "Incomes"
                                             ),
                                             onSuccess = {
@@ -321,7 +387,7 @@ fun EditExistingStockScreen(
                                             categoryName = "Stock Purchase",
                                             categoryType = "Expenses"
                                         ),
-                                        paymentMethod = "Cash",
+                                        paymentMethod = searchAccount,
                                         transactionType = "Expenses"
                                     ),
                                     onSuccess = {
