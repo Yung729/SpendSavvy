@@ -78,7 +78,6 @@ fun EditExistingStockScreen(
     }
 
 
-
     val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
     var searchAccount by remember {
         mutableStateOf("")
@@ -334,45 +333,45 @@ fun EditExistingStockScreen(
                     for (stock in stockDetails) {
                         if (searchProduct == stock.productName) {
                             if (mode == 2) {                                        //sell existing stock
-                                    if((qty.toIntOrNull()?:0) > stock.quantity){
-                                        Toast.makeText(
-                                            context,
-                                            "You cannot only sell more than what you have\nAvailable quantity: ${stock.quantity}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }else {
-                                        transactionViewModel.addTransactionToFirestore(
-                                            Transactions(
-                                                id = transactionViewModel.generateTransactionId(),
-                                                amount = ((price.toDoubleOrNull()
-                                                    ?: 0.0) * qty.toInt()),
-                                                description = "Sell Stock",
-                                                date = Date(),
-                                                category = Category(
-                                                    id = "CT0002",
-                                                    imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
-                                                    categoryName = "Stock Sales",
-                                                    categoryType = "Incomes"
-                                                ),
-                                                paymentMethod = searchAccount,
-                                                transactionType = "Incomes"
+                                if ((qty.toIntOrNull() ?: 0) > stock.quantity) {
+                                    Toast.makeText(
+                                        context,
+                                        "You cannot only sell more than what you have\nAvailable quantity: ${stock.quantity}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    transactionViewModel.addTransactionToFirestore(
+                                        Transactions(
+                                            id = transactionViewModel.generateTransactionId(),
+                                            amount = ((price.toDoubleOrNull()
+                                                ?: 0.0) * qty.toInt()),
+                                            description = "Sell Stock",
+                                            date = Date(),
+                                            category = Category(
+                                                id = "CT0002",
+                                                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
+                                                categoryName = "Stock Sales",
+                                                categoryType = "Incomes"
                                             ),
-                                            onSuccess = {
-                                                walletViewModel.editStockDetails(
-                                                    stock = stock,
-                                                    updatedStockDetails = Stock(
-                                                        stock.imageUri,
-                                                        searchProduct,
-                                                        stock.originalPrice,
-                                                        stock.quantity - qty.toInt()
-                                                    )
+                                            paymentMethod = searchAccount,
+                                            transactionType = "Incomes"
+                                        ),
+                                        onSuccess = {
+                                            walletViewModel.editStockDetails(
+                                                stock = stock,
+                                                updatedStockDetails = Stock(
+                                                    stock.imageUri,
+                                                    searchProduct,
+                                                    stock.originalPrice,
+                                                    stock.quantity - qty.toInt()
                                                 )
-                                            },
-                                            onFailure = {
-                                            }
-                                        )
+                                            )
+                                        },
+                                        onFailure = {
+                                        }
+                                    )
 
-                                    }
+                                }
                             } else {                                            //add existing stock
 
                                 transactionViewModel.addTransactionToFirestore(
@@ -418,7 +417,9 @@ fun EditExistingStockScreen(
                     .weight(1f)
             ) {
                 Text(
-                    text = if (mode == 2) stringResource(id = com.example.spendsavvy.R.string.sell) else stringResource(id = com.example.spendsavvy.R.string.all),
+                    text = if (mode == 2) stringResource(id = com.example.spendsavvy.R.string.sell) else stringResource(
+                        id = com.example.spendsavvy.R.string.all
+                    ),
                     fontWeight = FontWeight.Bold,
                     fontFamily = poppinsFontFamily
                 )

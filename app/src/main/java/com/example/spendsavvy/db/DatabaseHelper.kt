@@ -1311,7 +1311,7 @@ class DatabaseHelper(context: Context) :
             put("quantity", quantity)
             put("userId", userId)
         }
-        db.update("stock", values, "userId=? AND productName", arrayOf(userId, productName))
+        db.update("stock", values, "userId=? AND productName=?", arrayOf(userId, productName))
         db.close()
     }
 
@@ -1427,6 +1427,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 35
+        private const val DATABASE_VERSION = 36
     }
 }
