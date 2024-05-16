@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.models.UserData
+import com.example.spendsavvy.screen.start.passwordValidation
 import com.google.firebase.auth.FirebaseAuth
 
 

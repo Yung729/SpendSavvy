@@ -57,44 +57,44 @@ import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.screen.AddBills
-import com.example.spendsavvy.screen.Wallet.AddCashAccountScreen
-import com.example.spendsavvy.screen.Wallet.AddNewStockScreen
-import com.example.spendsavvy.screen.Analysis.AnalysisScreen
-import com.example.spendsavvy.screen.Analysis.BudgetScreen
-import com.example.spendsavvy.screen.Wallet.CashScreen
-import com.example.spendsavvy.screen.Wallet.CashTransactionScreen
-import com.example.spendsavvy.screen.Category.AddCategoryScreen
-import com.example.spendsavvy.screen.Category.CategoryDetail
-import com.example.spendsavvy.screen.Category.CategoryScreen
+import com.example.spendsavvy.screen.wallet.AddCashAccountScreen
+import com.example.spendsavvy.screen.wallet.AddNewStockScreen
+import com.example.spendsavvy.screen.analysis.AnalysisScreen
+import com.example.spendsavvy.screen.analysis.BudgetScreen
+import com.example.spendsavvy.screen.wallet.CashScreen
+import com.example.spendsavvy.screen.wallet.CashTransactionScreen
+import com.example.spendsavvy.screen.category.AddCategoryScreen
+import com.example.spendsavvy.screen.category.CategoryDetail
+import com.example.spendsavvy.screen.category.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
 import com.example.spendsavvy.screen.EditBills
-import com.example.spendsavvy.screen.Wallet.EditCashAccountScreen
-import com.example.spendsavvy.screen.Wallet.EditExistingStockScreen
-import com.example.spendsavvy.screen.Wallet.FDEarnScreen
-import com.example.spendsavvy.screen.Wallet.FixedDepositDetailsScreen
-import com.example.spendsavvy.screen.Wallet.FixedDepositScreen
+import com.example.spendsavvy.screen.wallet.EditCashAccountScreen
+import com.example.spendsavvy.screen.wallet.EditExistingStockScreen
+import com.example.spendsavvy.screen.wallet.FDEarnScreen
+import com.example.spendsavvy.screen.wallet.FixedDepositDetailsScreen
+import com.example.spendsavvy.screen.wallet.FixedDepositScreen
 import com.example.spendsavvy.screen.ForgotPassword
 import com.example.spendsavvy.screen.HelpAndSupport
 import com.example.spendsavvy.screen.Language
-import com.example.spendsavvy.screen.LoginScreen
+import com.example.spendsavvy.screen.start.LoginScreen
 import com.example.spendsavvy.screen.ManageBillsAndInstalment
 import com.example.spendsavvy.screen.MyProfileScreen
 import com.example.spendsavvy.screen.Notification
-import com.example.spendsavvy.screen.Overview.AddExpensesScreen
-import com.example.spendsavvy.screen.Overview.AddIncomeScreen
-import com.example.spendsavvy.screen.Overview.AllTransactionScreen
-import com.example.spendsavvy.screen.Overview.OverviewScreen
-import com.example.spendsavvy.screen.Overview.TransactionDetail
+import com.example.spendsavvy.screen.overview.AddExpensesScreen
+import com.example.spendsavvy.screen.overview.AddIncomeScreen
+import com.example.spendsavvy.screen.overview.AllTransactionScreen
+import com.example.spendsavvy.screen.overview.OverviewScreen
+import com.example.spendsavvy.screen.overview.TransactionDetail
 import com.example.spendsavvy.screen.SettingsScreen
-import com.example.spendsavvy.screen.SignUpScreen
-import com.example.spendsavvy.screen.Staff.StaffAddScreen
-import com.example.spendsavvy.screen.Staff.StaffDetailScreen
-import com.example.spendsavvy.screen.Staff.StaffScreen
-import com.example.spendsavvy.screen.Wallet.StockScreen
+import com.example.spendsavvy.screen.start.SignUpScreen
+import com.example.spendsavvy.screen.staff.StaffAddScreen
+import com.example.spendsavvy.screen.staff.StaffDetailScreen
+import com.example.spendsavvy.screen.staff.StaffScreen
+import com.example.spendsavvy.screen.wallet.StockScreen
 import com.example.spendsavvy.screen.TaxCalculator
-import com.example.spendsavvy.screen.Wallet.WalletScreen
+import com.example.spendsavvy.screen.wallet.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.viewModels.BillsViewModel
@@ -600,7 +600,6 @@ fun SetupNavGraph(
                                 .padding(20.dp),
                             navController = navController,
                             cash = selectedCashAccount,
-                            walletViewModel = walletViewModel,
                             transactionViewModel = transactionsViewModel
                         )
 

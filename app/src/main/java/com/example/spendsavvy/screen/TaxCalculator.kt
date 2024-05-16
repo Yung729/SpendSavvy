@@ -63,7 +63,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
-import com.example.spendsavvy.screen.Staff.AddExpensesDialog
+import com.example.spendsavvy.screen.staff.AddExpensesDialog
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.StaffViewModel

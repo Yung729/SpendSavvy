@@ -28,10 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.repo.FireAuthRepository
+import com.example.spendsavvy.screen.start.emailValidation
 import com.example.spendsavvy.viewModels.ProfileViewModel
 
 
