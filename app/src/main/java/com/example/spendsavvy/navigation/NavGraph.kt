@@ -50,6 +50,7 @@ import androidx.navigation.navigation
 import com.example.spendsavvy.R
 import com.example.spendsavvy.components.HeaderTopBar
 import com.example.spendsavvy.models.Bills
+import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.models.Staff
@@ -61,6 +62,7 @@ import com.example.spendsavvy.screen.AddNewStockScreen
 import com.example.spendsavvy.screen.Analysis.AnalysisScreen
 import com.example.spendsavvy.screen.Analysis.BudgetScreen
 import com.example.spendsavvy.screen.CashScreen
+import com.example.spendsavvy.screen.CashTransactionScreen
 import com.example.spendsavvy.screen.Category.AddCategoryScreen
 import com.example.spendsavvy.screen.Category.CategoryDetail
 import com.example.spendsavvy.screen.Category.CategoryScreen
@@ -579,6 +581,25 @@ fun SetupNavGraph(
                                 .padding(20.dp),
                             navController = navController,
                             fdAccount = selectedFDAccount,
+                            walletViewModel = walletViewModel
+                        )
+
+                    }
+                }
+
+                composable(
+                    route = Screen.CashTransactionScreen.route
+                ) {
+                    val selectedCashAccount =
+                        navController.previousBackStackEntry?.savedStateHandle?.get<Cash>("currentCashAccount")
+
+                    if (selectedCashAccount != null) {
+                        CashTransactionScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            navController = navController,
+                            cash = selectedCashAccount,
                             walletViewModel = walletViewModel
                         )
 

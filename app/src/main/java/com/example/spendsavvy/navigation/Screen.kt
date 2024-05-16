@@ -45,6 +45,7 @@ sealed class Screen(val route: String, val iconResourceId: Int) {
     object FixedDepositScreen : Screen (route = "Fixed Deposit", 0)
     object FDEarnScreen : Screen (route = "FD Info", 0)
 
+    object CashTransactionScreen : Screen (route = "Cash Transaction", 0)
     object BudgetScreen : Screen(route = "Budget & Goal", 0)
 
     object StaffScreen : Screen(route = "Staff", 0)

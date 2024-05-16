@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,7 +61,11 @@ fun CashScreen(
 
     val cashDetailsList by cashViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
-    Column(modifier = Modifier.padding(15.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(15.dp)
+            .fillMaxWidth()
+    ) {
         Spacer(modifier = Modifier.height(25.dp))
         Text(
             text = stringResource(id = R.string.cash),
@@ -76,152 +81,168 @@ fun CashScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            for (cashDetails in cashDetailsList) {
-                if (cashDetails.typeName == "Cash")
-                    Image(
-                        painter = rememberAsyncImagePainter(model = cashDetails.imageUri),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(30.dp, 30.dp)
-                            .padding(end = 10.dp)
-                    )
-            }
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            Column {
+                for (cashDetails in cashDetailsList) {
+                    if (cashDetails.typeName == "Cash") {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = modifier.clickable {
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    key = "currentCashAccount",
+                                    value = cashDetails
+                                )
+                                navController.navigate(Screen.CashTransactionScreen.route)
+                            }
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model = cashDetails.imageUri),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(30.dp, 30.dp)
+                                    .padding(end = 10.dp)
+                            )
 
-                Text(
-                    text = stringResource(id = R.string.cashMoney),
-                    fontSize = 20.sp,
-                    fontFamily = poppinsFontFamily
-                )
 
-                Text(
-                    text = stringResource(id = R.string.availableBalance),
-                    fontSize = 10.sp,
-                    color = Color.Gray,
-                    fontFamily = poppinsFontFamily
-                )
 
-            }
+                            Column {
+                                Text(
+                                    text = stringResource(id = R.string.cashMoney),
+                                    fontSize = 17.sp,
+                                    fontFamily = poppinsFontFamily
+                                )
 
-            totalAccount.value = bankAccountCount(cashList = cashDetailsList)
+                                Text(
+                                    text = stringResource(id = R.string.availableBalance),
+                                    fontSize = 10.sp,
+                                    color = Color.Gray,
+                                    fontFamily = poppinsFontFamily
+                                )
 
-            for (cashDetails in cashDetailsList) {
-                if (cashDetails.typeName == "Cash") {
-                    count = 1
-                    cashAmount = cashDetails.balance
+                            }
+
+                            totalAccount.value = bankAccountCount(cashList = cashDetailsList)
+
+                            for (cashDetails in cashDetailsList) {
+                                if (cashDetails.typeName == "Cash") {
+                                    count = 1
+                                    cashAmount = cashDetails.balance
+                                }
+                            }
+
+                            if (count == 1)
+                                Text(
+                                    text = "RM ${cashAmount}",
+                                    fontSize = 17.sp,
+                                    fontFamily = poppinsFontFamily
+                                )
+                            else
+                                Text(
+                                    text = "RM 0.00",
+                                    fontSize = 17.sp,
+                                    fontFamily = poppinsFontFamily
+                                )
+                        }
+                    }
                 }
             }
 
-            if (count == 1)
+            Spacer(modifier = Modifier.height(15.dp))
+            Divider(color = Color.Gray, thickness = 0.7.dp)
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
                 Text(
-                    text = "RM ${cashAmount}",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.bankAccs),
                     fontFamily = poppinsFontFamily
                 )
-            else
+
                 Text(
-                    text = "RM 0.00",
-                    fontSize = 20.sp,
+                    text = "${totalAccount.value} " + stringResource(id = R.string.accs),     //display total bank accounts
+                    fontSize = 17.sp,
                     fontFamily = poppinsFontFamily
                 )
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+            Divider(color = Color.Gray, thickness = 0.7.dp)
+            Spacer(modifier = Modifier.height(15.dp))
 
-        }
+            BankAccList(cashDetailsList, modifier, navController)
 
-        Spacer(modifier = Modifier.height(15.dp))
-        Divider(color = Color.Gray, thickness = 0.7.dp)
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(
-                text = stringResource(id = R.string.bankAccs),
-                fontSize = 20.sp,
-                fontFamily = poppinsFontFamily
-            )
-
-            Text(
-                text = "${totalAccount.value} " + stringResource(id = R.string.accs),     //display total bank accounts
-                fontFamily = poppinsFontFamily
-            )
-        }
-        Spacer(modifier = Modifier.height(15.dp))
-        Divider(color = Color.Gray, thickness = 0.7.dp)
-        Spacer(modifier = Modifier.height(15.dp))
-
-        BankAccList(cashDetailsList, modifier)
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
+                    .fillMaxSize()
             ) {
-                Row(
+                Box(
                     modifier = Modifier
-                        .padding(start = 35.dp),
-                    horizontalArrangement = Arrangement.spacedBy(30.dp)
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
                 ) {
-                    OutlinedButton(
-                        onClick = {
-                            navController.navigate(route = Screen.AddCashAccount.route)
-                        },
+                    Column(
                         modifier = Modifier
-                            .bounceClick()
+                            .padding(15.dp)
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.addAcc),
-                            textAlign = TextAlign.Center,
-                            fontFamily = poppinsFontFamily,
-                        )
+                        OutlinedButton(
+                            onClick = {
+                                navController.navigate(route = Screen.AddCashAccount.route)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .bounceClick()
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.addAcc),
+                                textAlign = TextAlign.Center,
+                                fontFamily = poppinsFontFamily,
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                navController.navigate(route = Screen.EditCashAccount.route)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .bounceClick(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Black
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.editAcc),
+                                textAlign = TextAlign.Center,
+                                fontFamily = poppinsFontFamily,
+                                color = Color.White
+                            )
+                        }
+
+
                     }
-
-                    Button(
-                        onClick = {
-                            navController.navigate(route = Screen.EditCashAccount.route)
-                        },
-                        modifier = Modifier
-                            .bounceClick(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.editAcc),
-                            textAlign = TextAlign.Center,
-                            fontFamily = poppinsFontFamily,
-                            color = Color.White
-                        )
-                    }
-
-
                 }
             }
+
         }
-
     }
-
-
 }
+
 
 //do all are clickable later
 @Composable
 fun BankAccList(
     bankList: List<Cash>,
-    modifier: Modifier
+    modifier: Modifier,
+    navController: NavController
 ) {
     LazyColumn(
         modifier = modifier.padding(10.dp)
@@ -229,7 +250,15 @@ fun BankAccList(
         items(bankList) { item: Cash ->
             if (item.typeName != "Cash") {
                 Row(
-                    modifier = modifier.fillMaxWidth(),
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                key = "currentCashAccount",
+                                value = item
+                            )
+                            navController.navigate(Screen.CashTransactionScreen.route)
+                        },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row {
