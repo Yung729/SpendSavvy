@@ -635,7 +635,7 @@ fun CategoryItem(category: String) {
         text = category,
         fontWeight = FontWeight.SemiBold,
         color = Color.Black,
-        fontSize = 20.sp,
+        fontSize = 17.sp,
         modifier = Modifier.padding(horizontal = 12.dp)
     )
 }
