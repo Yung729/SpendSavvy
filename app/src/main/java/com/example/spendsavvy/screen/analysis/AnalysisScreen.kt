@@ -166,18 +166,20 @@ fun AnalysisScreen(
             )
 
 
+
+
             when (window.height) {
                 WindowType.Expanded -> {
                     RemainingChart(
                         canvasSize = 500.dp,
-                        indicatorValue = incomesData - expensesData,
+                        indicatorValue = if ((incomesData - expensesData) >= 0){ incomesData - expensesData} else {0.0},
                         maxIndicatorValue = monthlyGoalAmount,
                     )
                 }
 
                 else -> {
                     RemainingChart(
-                        indicatorValue = incomesData - expensesData,
+                        indicatorValue = if ((incomesData - expensesData) >= 0){ incomesData - expensesData} else {0.0},
                         maxIndicatorValue = monthlyGoalAmount,
                     )
                 }

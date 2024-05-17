@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +44,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,8 +58,6 @@ import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.FDAccount
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -124,98 +125,75 @@ fun FDEarnScreen(
         Spacer(modifier = Modifier.height(15.dp))
 
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Card(
                 border = BorderStroke(2.dp, Color.Black),
                 modifier = Modifier
-                    .padding(start = 20.dp, end = 15.dp)
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp)
             ) {
-                Column {
+                Column(modifier = Modifier
+                    .padding(20.dp)) {
 
                     Text(
                         "Interest To Earn",
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            top = 10.dp,
-                            end = 10.dp,
-                            bottom = 3.dp
-                        )
+                        modifier = Modifier
                     )
 
                     Text(
                         "RM ${fdAccount.deposit * fdAccount.interestRate / 100}",    //temporary
                         color = Color.Green,
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            top = 3.dp,
-                            end = 10.dp,
-                            bottom = 75.dp
-                        )
+                        modifier = Modifier
                     )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    
+                    Row {
+                        Column {
+                            Text(
+                                "Days Left",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                            )
+
+                            //show how many days left
+                            Text(
+                                "${365 - (daysLeft / (24 * 60 * 60 * 1000))} Days",
+                                color = Color.Gray,
+                                fontSize = 15.sp,
+                                modifier = Modifier
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(50.dp))
+                        
+                        Column {
+                            Text(
+                                "Interest Rate",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                            )
+
+                            //show how many days left
+                            Text(
+                                "${fdAccount.interestRate} %",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+                                modifier = Modifier
+                            )
+                        }
+                    }
 
                 }
 
             }
 
-            Card(
-                border = BorderStroke(2.dp, Color.Black),
-                modifier = Modifier
-                    .padding(start = 15.dp)
-            ) {
-                Column {
-
-                    Text(
-                        "Days Left",
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            top = 10.dp,
-                            end = 10.dp,
-                            bottom = 3.dp
-                        )
-                    )
-
-                    //show how many days left
-                    Text(
-                        "${365 - (daysLeft / (24 * 60 * 60 * 1000))} Days",
-                        color = Color.Gray,
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            top = 3.dp,
-                            end = 10.dp,
-                            bottom = 10.dp
-                        )
-                    )
-
-                    Text(
-                        "Interest Rate",
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            top = 3.dp,
-                            end = 10.dp,
-                            bottom = 3.dp
-                        )
-                    )
-
-                    //show how many days left
-                    Text(
-                        "${fdAccount.interestRate} %",
-                        fontSize = 15.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            top = 3.dp,
-                            end = 10.dp,
-                            bottom = 10.dp
-                        )
-                    )
-                }
-
-            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -260,21 +238,6 @@ fun FDEarnScreen(
                         )
                     }
 
-                    OutlinedButton(
-                        onClick = {
-                            navController.navigateUp()
-                        },
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .bounceClick()
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Cancel",
-                            textAlign = TextAlign.Center,
-                            color = Color.Black
-                        )
-                    }
                 }
             }
         }

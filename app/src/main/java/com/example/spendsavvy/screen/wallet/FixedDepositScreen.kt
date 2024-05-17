@@ -87,7 +87,6 @@ fun FixedDepositScreen(
 
         Spacer(modifier = Modifier.height(15.dp))
         Divider(color = Color.Gray, thickness = 0.7.dp)
-        Spacer(modifier = Modifier.height(15.dp))
 
         Box(modifier = Modifier.fillMaxSize()) {
 

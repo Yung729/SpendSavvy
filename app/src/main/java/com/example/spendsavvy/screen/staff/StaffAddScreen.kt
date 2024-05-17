@@ -159,7 +159,7 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
-                })
+                }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
             }
         }
 

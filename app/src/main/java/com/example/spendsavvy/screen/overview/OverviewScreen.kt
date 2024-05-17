@@ -89,7 +89,7 @@ fun OverviewScreen(
     budgetViewModel: TargetViewModel,
     dateViewModel: DateSelectionViewModel,
     profileViewModel: ProfileViewModel,
-    walletViewModel : WalletViewModel,
+    walletViewModel: WalletViewModel,
     navController: NavController,
     window: ScreenSize
 ) {
@@ -920,7 +920,7 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${goalAmount - (totalIncomes - totalExpenses)}",
+                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${if (goalAmount - (totalIncomes - totalExpenses) >= 0){ goalAmount - (totalIncomes - totalExpenses)} else {0.0}}",
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -972,7 +972,7 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${goalAmount - (totalIncomes - totalExpenses)}",
+                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${if (goalAmount - (totalIncomes - totalExpenses) >= 0){ goalAmount - (totalIncomes - totalExpenses) } else { 0.0}}",
                             fontSize = 16.sp,
                             color = Color.White
                         )
