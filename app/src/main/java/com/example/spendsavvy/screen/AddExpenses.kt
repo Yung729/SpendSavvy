@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.overview
+package com.example.spendsavvy.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

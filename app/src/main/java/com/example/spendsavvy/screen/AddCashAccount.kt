@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.wallet
+package com.example.spendsavvy.screen
 
 import android.R
 import android.annotation.SuppressLint
@@ -22,17 +22,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,33 +47,52 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.models.Stock
-import com.example.spendsavvy.models.Transactions
+import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
-import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
-import java.util.Date
+
+//DRAFT ONLY
+@Composable
+fun CashDetailsScreen(
+
+) {
+    //account
+
+    //upload image(Cash no need, use money icon)
+
+
+    //2 options (Cash or Bank)
+
+
+    //if typeName found, let show initial amount textfield, else show increase amount & decrease amount (cash no need name {typeName = "Cash"}, bank need to specify bankName where typeName = bankName
+
+    //button
+    //condition: new account, use addDetailsToDatabase, else editDetailsToDatabase
+
+}
+//DRAFT ONLY
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun AddNewStockScreen(
-    modifier: Modifier,
+fun AddCashAccountScreen(
     walletViewModel: WalletViewModel,
-    transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
-    var stockName by remember {
+    /*var type by remember {
+        mutableStateOf("")
+    }*/
+
+    var typeName by remember {
         mutableStateOf("")
     }
 
-    var price by remember {
+    var initialAmt by remember {
         mutableStateOf("")
     }
 
-    var qty by remember {
-        mutableStateOf("")
+    var selectedIndex by remember {
+        mutableStateOf(0)
     }
 
     var selectedImageUri by remember {
@@ -84,33 +103,47 @@ fun AddNewStockScreen(
         onResult = {
             selectedImageUri = it
         })
-    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
-    var searchAccount by remember {
-        mutableStateOf("")
-    }
 
-    var isExpanded by remember {
-        mutableStateOf(false)
-    }
+    val options = mutableStateListOf<String>("Cash", "Bank")
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 15.dp, top = 15.dp)
+            .fillMaxWidth(0.85f)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = stringResource(id = com.example.spendsavvy.R.string.addNewProduct),
+            text = stringResource(id = com.example.spendsavvy.R.string.addCashAcc),
             fontFamily = poppinsFontFamily,
-            fontSize = 25.sp
+            fontSize = 30.sp,
+            modifier = Modifier
+                .padding(start = 15.dp, top = 15.dp)
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.padding(start = 30.dp, top = 15.dp, bottom = 30.dp)
         ) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                SingleChoiceSegmentedButtonRow {
+                    options.forEachIndexed { index, option ->
+                        SegmentedButton(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index, count = options.size
+                            )
+                        ) {
+                            Text(text = option)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = stringResource(id = com.example.spendsavvy.R.string.pickIconPhoto),
@@ -171,50 +204,58 @@ fun AddNewStockScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            if (selectedIndex == 1) {
+
+                Text(
+                    text = "Enter your bank",
+                    fontFamily = poppinsFontFamily,
+                    fontSize = 15.sp
+                )
+
+                TextField(
+                    value = typeName,
+                    onValueChange = {
+                        typeName = it
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "Public Bank",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    }
+                )
+            }else{
+                typeName = "Cash"
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
 
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.prodName),
+                text = stringResource(id = com.example.spendsavvy.R.string.initAmount),
                 fontFamily = poppinsFontFamily,
                 fontSize = 15.sp
             )
 
             TextField(
-                value = stockName,
+                value = initialAmt,
                 onValueChange = {
-                    stockName = it
+                    initialAmt = it
                 },
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Text
-                ),
-                placeholder = {
-                    Text(
-                        text = "Product",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                }
-            )
-
-            Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.prodPrice),
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
-
-            TextField(
-                value = price,
-                onValueChange = {
-                    price = it
-                },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
+                    imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Decimal
                 ),
                 placeholder = {
                     Text(
-                        text = "0.00",
+                        text = "RM 0.00",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
                         color = Color.Gray
@@ -222,90 +263,13 @@ fun AddNewStockScreen(
                 }
             )
 
-            Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.qty),
-                fontFamily = poppinsFontFamily,
-                fontSize = 15.sp
-            )
-
-            TextField(
-                value = qty,
-                onValueChange = {
-                    qty = it
-                },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number
-                ),
-                placeholder = {
-                    Text(
-                        text = "0",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                }
-            )
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Text(
-                "Cash Account"
-            )
-
-            ExposedDropdownMenuBox(
-                expanded = isExpanded,
-                onExpandedChange = { isExpanded = it }
-            ) {
-                TextField(
-                    value = searchAccount,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                    },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    modifier = Modifier.menuAnchor()
-                )
-                ExposedDropdownMenuBox(
-                    expanded = isExpanded,
-                    onExpandedChange = { isExpanded = it }
-                ) {
-                    TextField(
-                        value = searchAccount,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                        },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                        modifier = Modifier.menuAnchor()
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = isExpanded,
-                        onDismissRequest = { isExpanded = false }
-                    ) {
-                        for (cash in cashDetailsList) {          //read from existing stock items
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = cash.typeName)
-                                },
-                                onClick = {
-                                    searchAccount = cash.typeName
-                                    isExpanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(30.dp))
         }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
         Row(
             modifier = Modifier
-                .padding(15.dp),
+                .padding(30.dp),
             horizontalArrangement = Arrangement.spacedBy(30.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -329,37 +293,13 @@ fun AddNewStockScreen(
 
             Button(
                 onClick = {
-
-
-                    transactionViewModel.addTransactionToFirestore(
-                        Transactions(
-                            id = transactionViewModel.generateTransactionId(),
-                            amount = ((price.toDoubleOrNull() ?: 0.0) * qty.toInt()),
-                            description = "Purchase Stock",
-                            date = Date(),
-                            category = Category(
-                                id = "CT0014",
-                                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
-                                categoryName = "Stock Purchase",
-                                categoryType = "Expenses"
-                            ),
-                            paymentMethod = searchAccount,
-                            transactionType = "Expenses"
-                        ),
-                        onSuccess = {
-                            walletViewModel.addStockDetailsToDatabase(
-                                Stock(
-                                    selectedImageUri,
-                                    stockName,
-                                    price.toDoubleOrNull() ?: 0.0,
-                                    qty.toInt()
-                                ), selectedImageUri
-                            )
-                        },
-                        onFailure = {
-                        }
+                    walletViewModel.addCashDetailsToDatabase(
+                        Cash(
+                            imageUri = selectedImageUri,
+                            typeName = typeName,
+                            balance = initialAmt.toDoubleOrNull() ?: 0.0
+                        ),selectedImageUri
                     )
-
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
@@ -376,6 +316,5 @@ fun AddNewStockScreen(
             }
         }
     }
-
 
 }

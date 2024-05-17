@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.staff
+package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

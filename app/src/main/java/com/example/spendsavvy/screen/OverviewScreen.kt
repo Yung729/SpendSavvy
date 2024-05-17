@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.overview
+package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image

@@ -31,7 +31,6 @@ import androidx.navigation.NavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
 import com.example.spendsavvy.repo.FireAuthRepository
-import com.example.spendsavvy.screen.start.emailValidation
 import com.example.spendsavvy.viewModels.ProfileViewModel
 
 

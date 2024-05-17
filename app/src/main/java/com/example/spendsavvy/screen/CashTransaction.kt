@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.wallet
+package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.analysis
+package com.example.spendsavvy.screen
 
 
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.analysis
+package com.example.spendsavvy.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -138,7 +138,7 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
 
 
                 DetailCard(
-                    title = stringResource(id = com.example.spendsavvy.R.string.goal),
+                    title = stringResource(id = R.string.goal),
                     dailyAmount = goalAmountFromDB.value,
                     monthlyAmount = monthlyGoalAmount,
                     window = window

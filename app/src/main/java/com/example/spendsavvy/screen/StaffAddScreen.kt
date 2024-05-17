@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.staff
+package com.example.spendsavvy.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column

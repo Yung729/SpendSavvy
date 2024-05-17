@@ -1,4 +1,4 @@
-package com.example.spendsavvy.screen.start
+package com.example.spendsavvy.screen
 
 import android.content.Context
 import android.os.Build.VERSION_CODES.TIRAMISU
