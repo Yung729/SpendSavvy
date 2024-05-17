@@ -111,7 +111,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-                text = stringResource(id = R.string.text_14),
+            text = stringResource(id = R.string.text_14),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,

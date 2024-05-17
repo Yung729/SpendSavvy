@@ -93,8 +93,8 @@ fun ManageBillsAndInstalment(
     walletViewModel: WalletViewModel
 ) {
 
-    val categories = listOf(stringResource(id = com.example.spendsavvy.R.string.upcoming), stringResource(id = com.example.spendsavvy.R.string.paid), stringResource(id = com.example.spendsavvy.R.string.overdue))
-    val options = mutableStateListOf(stringResource(id = com.example.spendsavvy.R.string.all),stringResource(id = com.example.spendsavvy.R.string.upcoming), stringResource(id = com.example.spendsavvy.R.string.paid), stringResource(id = com.example.spendsavvy.R.string.overdue))
+    val categories = listOf(stringResource(id = R.string.upcoming), stringResource(id = R.string.paid), stringResource(id = R.string.overdue))
+    val options = mutableStateListOf(stringResource(id = R.string.all),stringResource(id = R.string.upcoming), stringResource(id = R.string.paid), stringResource(id = R.string.overdue))
     var selectedIndex by remember { mutableIntStateOf(0) }
     val gradientBrush = Brush.horizontalGradient(
         colors = listOf(Color.LightGray, Color.DarkGray)
@@ -169,15 +169,15 @@ fun ManageBillsAndInstalment(
                         ) {
                             CategoryItem(category)
                             val textColor = when (category) {
-                                stringResource(id = com.example.spendsavvy.R.string.upcoming) -> Color.Yellow
-                                stringResource(id = com.example.spendsavvy.R.string.overdue) -> Color.Red
+                                stringResource(id = R.string.upcoming) -> Color.Yellow
+                                stringResource(id = R.string.overdue) -> Color.Red
                                 stringResource(id = R.string.paid) -> Color.Green
                                 else -> Color.Black
                             }
                             Text(
                                 text = when (category) {
-                                    stringResource(id = com.example.spendsavvy.R.string.upcoming) -> totalUpcomingBills.toString()
-                                    stringResource(id = com.example.spendsavvy.R.string.overdue) -> totalOverdueBills.toString()
+                                    stringResource(id = R.string.upcoming) -> totalUpcomingBills.toString()
+                                    stringResource(id = R.string.overdue) -> totalOverdueBills.toString()
                                     stringResource(id = R.string.paid) -> totalPaidBills.toString()
                                     else -> ""
                                 },
@@ -325,7 +325,7 @@ fun BillItem(
                 )
             }
             Spacer(modifier = Modifier.width(10.dp))
-            Column() {
+            Column {
                 // Bills Status
                 val textColor = when (bill.billsStatus) {
                     "UPCOMING" -> Color.Yellow
@@ -485,7 +485,7 @@ fun BillItem(
                                 .fillMaxWidth()
                                 .padding(start = 8.dp)
                         ) {
-                            Text(stringResource(id = com.example.spendsavvy.R.string.cancel))
+                            Text(stringResource(id = R.string.cancel))
                         }
                     }
                 )
@@ -522,9 +522,8 @@ fun MakePaidDialog(
     val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
     var searchAccount by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
-    var withdrawalAmt by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val currentDate: Date = Date()
+    val currentDate = Date()
 
     Dialog(
         onDismissRequest = { onCancelClick() },
