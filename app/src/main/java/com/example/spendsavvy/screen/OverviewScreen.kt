@@ -208,7 +208,7 @@ fun OverviewScreen(
 
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(
-                                            text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
+                                            text = String.format("RM %.2f", totalCashAmount + totalFixedDeposit + totalPriceStock),
                                             fontSize = 16.sp,
                                             color = Color.Black
                                         )
@@ -384,9 +384,9 @@ fun OverviewScreen(
                                             modifier = Modifier.size(20.dp, 20.dp)
                                         )
 
-                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Spacer(modifier = Modifier.width(5.dp))
                                         Text(
-                                            text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
+                                            text = String.format("RM %.2f", totalCashAmount + totalFixedDeposit + totalPriceStock) ,
                                             fontSize = 16.sp,
                                             color = Color.Black
                                         )
@@ -588,7 +588,7 @@ fun OverViewCard(
                                         )
 
                                         Text(
-                                            text = "RM $incomes",
+                                            text = String.format("RM%.2f", incomes),
                                             fontSize = 16.sp,
                                             color = Color.White
                                         )
@@ -620,7 +620,7 @@ fun OverViewCard(
                                         )
 
                                         Text(
-                                            text = "RM $expenses",
+                                            text = String.format("RM%.2f", expenses),
                                             fontSize = 16.sp,
                                             color = Color.White
                                         )
@@ -696,7 +696,7 @@ fun OverViewCard(
                                         )
 
                                         Text(
-                                            text = "RM $incomes",
+                                            text = String.format("RM%.2f", incomes),
                                             fontSize = 14.sp,
                                             color = Color.White
                                         )
@@ -726,7 +726,7 @@ fun OverViewCard(
                                         )
 
                                         Text(
-                                            text = "RM $expenses",
+                                            text = String.format("RM%.2f", expenses),
                                             fontSize = 14.sp,
                                             color = Color.White
                                         )
@@ -793,14 +793,14 @@ fun BudgetCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "RM $budgetAmount",
+                            text = String.format("RM%.2f", budgetAmount),
                             modifier = Modifier,
                             color = Color.White
 
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.availableBalance) + " : RM ${budgetAmount - totalExpenses}",
+                            text = stringResource(id = R.string.availableBalance) + String.format(": RM%.2f", budgetAmount - totalExpenses),
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -847,14 +847,14 @@ fun BudgetCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "RM $budgetAmount",
+                            text = String.format("RM%.2f", budgetAmount),
                             modifier = Modifier,
                             color = Color.White
 
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.availableBalance) + " : RM ${budgetAmount - totalExpenses}",
+                            text = stringResource(id = R.string.availableBalance) + String.format(": RM%.2f", budgetAmount - totalExpenses),
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -914,7 +914,7 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "RM $goalAmount",
+                            text = String.format("RM%.2f", goalAmount),
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -922,9 +922,9 @@ fun GoalCard(
                         Text(
                             text = stringResource(id = R.string.balanceNeeded) + ": RM ${
                                 if (goalAmount - totalIncomes + totalExpenses <= goalAmount) {
-                                    0.0
+                                    String.format("%.2f", 0.0)
                                 } else {
-                                    goalAmount - totalIncomes + totalExpenses
+                                    String.format("%.2f", goalAmount - totalIncomes + totalExpenses)
                                 }
                             }",
                             fontSize = 16.sp,
@@ -972,7 +972,7 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "RM $goalAmount",
+                            text = String.format("RM%.2f", goalAmount),
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -980,9 +980,9 @@ fun GoalCard(
                         Text(
                             text = stringResource(id = R.string.balanceNeeded) + ": RM ${
                                 if (goalAmount - totalIncomes + totalExpenses <= goalAmount) {
-                                    0.0
+                                    String.format("%.2f", 0.0)
                                 } else {
-                                    goalAmount - totalIncomes + totalExpenses
+                                    String.format("%.2f", goalAmount - totalIncomes + totalExpenses) 
                                 }
                             }",
                             fontSize = 16.sp,
@@ -1057,7 +1057,7 @@ fun TransactionsCard(
 
 
                 Text(
-                    text = transactions.amount.toString(),
+                    text = String.format("RM%.2f", transactions.amount) ,
                     fontWeight = FontWeight.SemiBold,
                     color = if (transactions.transactionType == "Expenses") Color.Red else Color(
                         0xFF119316

@@ -315,7 +315,7 @@ fun DetailCard(
                                         )
 
                                         Text(
-                                            text = "RM $incomes",
+                                            text = String.format("RM %.2f", expenses),
                                             fontSize = 18.sp,
                                             color = Color.White
                                         )
@@ -345,7 +345,7 @@ fun DetailCard(
                                         )
 
                                         Text(
-                                            text = "RM $expenses",
+                                            text = String.format("RM %.2f", expenses),
                                             fontSize = 18.sp,
                                             color = Color.White
                                         )
@@ -421,7 +421,7 @@ fun DetailCard(
                                         )
 
                                         Text(
-                                            text = "RM $incomes",
+                                            text = String.format("RM %.2f", incomes),
                                             fontSize = 14.sp,
                                             color = Color.White
                                         )
@@ -451,7 +451,7 @@ fun DetailCard(
                                         )
 
                                         Text(
-                                            text = "RM $expenses",
+                                            text = String.format("RM %.2f", expenses),
                                             fontSize = 14.sp,
                                             color = Color.White
                                         )
