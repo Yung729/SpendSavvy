@@ -31,17 +31,41 @@ private val DarkColorScheme = darkColorScheme(
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF423E3E),
-    secondary = Color(0xFF423E3E),
-    tertiary = Color(0xFF423E3E),
-    background = Color.White,
-    surface = Color.White,
     onPrimary = Color.White,
+    primaryContainer = Color(0xFF625D5D),
+    onPrimaryContainer = Color(0xFFD9D9D9),
+    inversePrimary = Color(0xFFB0B0B0),
+    secondary = Color(0xFF423E3E),
     onSecondary = Color.White,
+    secondaryContainer = Color(0xFF625D5D),
+    onSecondaryContainer = Color(0xFFD9D9D9),
+    tertiary = Color(0xFF423E3E),
     onTertiary = Color.White,
+    tertiaryContainer = Color(0xFF625D5D),
+    onTertiaryContainer = Color(0xFFD9D9D9),
+    background = Color.White,
     onBackground = Color(0xFF1C1B1F),
-    surfaceTint = Color(0xFFFFFFFF), // Card
+    surface = Color.White,
     onSurface = Color(0xFF1C1B1F),
-    surfaceVariant = Color.White // Adjust as needed
+    surfaceVariant = Color(0xFFF5F5F5),
+    onSurfaceVariant = Color(0xFF49454F),
+    surfaceTint = Color(0xFF423E3E),
+    inverseSurface = Color(0xFF313033),
+    inverseOnSurface = Color(0xFFE6E1E5),
+    error = Color(0xFFB00020),
+    onError = Color.White,
+    errorContainer = Color(0xFFF2B8B5),
+    onErrorContainer = Color(0xFF601410),
+    outline = Color(0xFF79747E),
+    outlineVariant = Color(0xFFCAC4D0),
+    scrim = Color.Black,
+    surfaceBright = Color.White,
+    surfaceContainer = Color(0xFFEEEEEE),
+    surfaceContainerHigh = Color(0xFFE0E0E0),
+    surfaceContainerHighest = Color(0xFFD6D6D6),
+    surfaceContainerLow = Color(0xFFF6F6F6),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceDim = Color(0xFFFAFAFA)
 )
 
 @Composable

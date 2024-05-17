@@ -1,5 +1,6 @@
 package com.example.spendsavvy.components
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -80,7 +80,7 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import kotlinx.coroutines.delay
 
 @Composable
-fun ButtonComponent(onButtonClick: () -> Unit, text: String,modifier: Modifier = Modifier) {
+fun ButtonComponent(onButtonClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
     Button(
         onClick = onButtonClick,
         modifier = modifier
@@ -282,6 +282,7 @@ fun LoadingScreen() {
     }
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun RemainingChart(
     canvasSize: Dp = 300.dp,
@@ -336,39 +337,39 @@ fun RemainingChart(
     )
 
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(canvasSize)
-                .drawBehind {
-                    val componentSize = size / 1.25f
-                    backgroundIndicator(
-                        componentSize = componentSize,
-                        indicatorColor = backgroundIndicatorColor,
-                        indicatorStrokeWidth = backgroundIndicatorStrokeWidth,
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(canvasSize)
+            .drawBehind {
+                val componentSize = size / 1.25f
+                backgroundIndicator(
+                    componentSize = componentSize,
+                    indicatorColor = backgroundIndicatorColor,
+                    indicatorStrokeWidth = backgroundIndicatorStrokeWidth,
 //                    indicatorStokeCap = indicatorStrokeCap
-                    )
-                    foregroundIndicator(
-                        sweepAngle = sweepAngle,
-                        componentSize = componentSize,
-                        indicatorColor = foregroundIndicatorColor,
-                        indicatorStrokeWidth = foregroundIndicatorStrokeWidth,
+                )
+                foregroundIndicator(
+                    sweepAngle = sweepAngle,
+                    componentSize = componentSize,
+                    indicatorColor = foregroundIndicatorColor,
+                    indicatorStrokeWidth = foregroundIndicatorStrokeWidth,
 //                    indicatorStokeCap = indicatorStrokeCap
-                    )
-                },
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            EmbeddedElements(
-                bigText = (maxIndicatorValue - receivedValue),
-                bigTextFontSize = bigTextFontSize,
-                bigTextColor = animatedBigTextColor,
-                bigTextSuffix = bigTextSuffix,
-                smallText = smallText,
-                smallTextColor = smallTextColor,
-                smallTextFontSize = smallTextFontSize
-            )
-        }
+                )
+            },
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        EmbeddedElements(
+            bigText = (maxIndicatorValue - receivedValue),
+            bigTextFontSize = bigTextFontSize,
+            bigTextColor = animatedBigTextColor,
+            bigTextSuffix = bigTextSuffix,
+            smallText = smallText,
+            smallTextColor = smallTextColor,
+            smallTextFontSize = smallTextFontSize
+        )
+    }
 
 }
 
@@ -567,7 +568,8 @@ fun DetailsPieChartItem(
 
     Surface(
         modifier = Modifier
-            .padding(vertical = 10.dp, horizontal = 40.dp).fillMaxWidth(),
+            .padding(vertical = 10.dp, horizontal = 40.dp)
+            .fillMaxWidth(),
         color = Color.Transparent
     ) {
 
