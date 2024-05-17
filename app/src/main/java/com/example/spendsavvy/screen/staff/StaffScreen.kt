@@ -111,7 +111,7 @@ fun StaffScreen(modifier: Modifier, staffViewModel: StaffViewModel, navControlle
                 else ->{
 
                     StaffList(
-                        modifier = Modifier.height(290.dp),
+                        modifier = Modifier.height(280.dp),
                         staffList = staffList,
                         navController = navController,
                         staffViewModel = staffViewModel,
