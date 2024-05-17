@@ -920,7 +920,13 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${if (goalAmount - (totalIncomes - totalExpenses) >= 0){ goalAmount - (totalIncomes - totalExpenses)} else {0.0}}",
+                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${
+                                if (goalAmount - totalIncomes + totalExpenses <= goalAmount) {
+                                    0.0
+                                } else {
+                                    goalAmount - totalIncomes + totalExpenses
+                                }
+                            }",
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -972,7 +978,13 @@ fun GoalCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${if (goalAmount - (totalIncomes - totalExpenses) >= 0){ goalAmount - (totalIncomes - totalExpenses) } else { 0.0}}",
+                            text = stringResource(id = R.string.balanceNeeded) + ": RM ${
+                                if (goalAmount - totalIncomes + totalExpenses <= goalAmount) {
+                                    0.0
+                                } else {
+                                    goalAmount - totalIncomes + totalExpenses
+                                }
+                            }",
                             fontSize = 16.sp,
                             color = Color.White
                         )

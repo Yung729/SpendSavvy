@@ -219,7 +219,7 @@ fun WalletScreen(
                         text = String.format("RM %.2f",cashDetails.balance),
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
-                        color = GreenColor,
+                        color = Color(0xFF119316),
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     break

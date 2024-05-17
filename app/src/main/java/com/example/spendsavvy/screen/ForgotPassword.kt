@@ -53,12 +53,6 @@ fun ForgotPassword(
     ) {
 
         Text(
-            text = stringResource(id = R.string.forgotPw),
-            fontSize = 25.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.align(CenterHorizontally)
-        )
-        Text(
             text = stringResource(id = R.string.text_1),
             color = Color.Gray,
             fontSize = 18.sp,

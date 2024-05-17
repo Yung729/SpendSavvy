@@ -76,16 +76,16 @@ fun TransactionDetail(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        Text(text = "Transaction Name : ${transactions.category.categoryName}")
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedButton(onClick = { calendarState.show() },modifier = Modifier.fillMaxWidth()) {
             Text(text = updatedDate.value.let { dateFormat.format(it) } ?: "Select Date")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Transaction Name : ${transactions.category.categoryName}")
-
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = updatedTransactionAmount,

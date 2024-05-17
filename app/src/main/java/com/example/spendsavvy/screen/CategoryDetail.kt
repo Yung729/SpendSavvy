@@ -108,12 +108,12 @@ fun CategoryDetail(
                 painter = rememberAsyncImagePainter(model = category.imageUri),
                 contentDescription = "",
                 modifier = Modifier
-                    .size(30.dp, 30.dp)
+                    .size(50.dp, 50.dp)
                     .padding(end = 10.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
 
         Button(modifier = Modifier

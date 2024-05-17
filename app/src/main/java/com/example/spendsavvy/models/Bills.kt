@@ -9,8 +9,7 @@ data class Bills (
     val category: Category ,
     val description: String,
     val selectedDueDate: Date,
-    val selectedDuration: String,
     val billsStatus : String
 ): Serializable {
-    constructor() : this("",0.0, Category(), "",Date(), "", "")
+    constructor() : this("",0.0, Category(), "",Date(), "")
 }

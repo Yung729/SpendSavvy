@@ -49,7 +49,6 @@ fun FixedDepositScreen(
     Column(
         modifier = Modifier.padding(15.dp)
     ) {
-        Spacer(modifier = Modifier.height(25.dp))
         Text(
             text = stringResource(id = R.string.fixedDep),
             fontFamily = poppinsFontFamily,

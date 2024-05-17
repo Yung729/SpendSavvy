@@ -401,7 +401,7 @@ fun AddExpensesDialog(
                             for (cash in cashDetailsList) {          //read from existing stock items
                                 DropdownMenuItem(
                                     text = {
-                                        Text(text = cash.typeName)
+                                        Text(text = "${cash.typeName} - ${cash.balance}")
                                     },
                                     onClick = {
                                         searchAccount = cash.typeName

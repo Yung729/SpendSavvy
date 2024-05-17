@@ -88,7 +88,6 @@ class DatabaseHelper(context: Context) :
                 categoryId TEXT,
                 description TEXT,
                 selectedDueDate LONG,
-                selectedDuration TEXT,
                 billsStatus TEXT,
                 userId TEXT,
                 PRIMARY KEY (id, userId),
@@ -573,7 +572,6 @@ class DatabaseHelper(context: Context) :
         categoryId: String,
         description: String,
         selectedDueDate: Date,
-        selectedDuration: String,
         billsStatus: String,
         userId: String
     ) {
@@ -586,7 +584,6 @@ class DatabaseHelper(context: Context) :
             put("categoryId", categoryId)
             put("description", description)
             put("selectedDueDate", selectedDueDateMillis)
-            put("selectedDuration", selectedDuration)
             put("billsStatus", billsStatus)
             put("userId", userId)
         }
@@ -601,7 +598,6 @@ class DatabaseHelper(context: Context) :
         categoryId: String,
         description: String,
         selectedDueDate: Date,
-        selectedDuration: String,
         billsStatus: String,
         userId: String
     ) {
@@ -613,7 +609,6 @@ class DatabaseHelper(context: Context) :
             put("categoryId", categoryId)
             put("description", description)
             put("selectedDueDate", selectedDueDateMillis)
-            put("selectedDuration", selectedDuration)
             put("billsStatus", billsStatus)
             put("userId", userId)
         }
@@ -643,7 +638,6 @@ class DatabaseHelper(context: Context) :
         val categoryIdIndex = cursor.getColumnIndex("categoryId")
         val descriptionIndex = cursor.getColumnIndex("description")
         val selectedDueDateIndex = cursor.getColumnIndex("selectedDueDate")
-        val selectedDurationIndex = cursor.getColumnIndex("selectedDuration")
         val billsStatusIndex = cursor.getColumnIndex("billsStatus")
 
         if (cursor.moveToFirst()) {
@@ -653,7 +647,6 @@ class DatabaseHelper(context: Context) :
                 val categoryId = cursor.getString(categoryIdIndex)
                 val description = cursor.getString(descriptionIndex)
                 val selectedDueDateMillis = cursor.getLong(selectedDueDateIndex)
-                val selectedDuration = cursor.getString(selectedDurationIndex)
                 val billsStatus = cursor.getString(billsStatusIndex)
 
                 // Get the category linked with this bill
@@ -667,7 +660,6 @@ class DatabaseHelper(context: Context) :
                     category,
                     description,
                     selectedDueDate,
-                    selectedDuration,
                     billsStatus
                 )
                 billsList.add(bill)
@@ -699,7 +691,6 @@ class DatabaseHelper(context: Context) :
                 put("categoryId", categoryId)
                 put("description", bill.description)
                 put("selectedDueDate", currentDateMillis)
-                put("selectedDuration", bill.selectedDuration)
                 put("billsStatus", bill.billsStatus)
                 put("userId", userId)
             }
@@ -1427,6 +1418,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 37
+        private const val DATABASE_VERSION = 38
     }
 }

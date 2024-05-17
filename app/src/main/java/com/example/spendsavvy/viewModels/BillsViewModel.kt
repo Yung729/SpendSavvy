@@ -139,7 +139,6 @@ class BillsViewModel(
                             categoryId = categoryId,
                             description = bills.description,
                             selectedDueDate = bills.selectedDueDate,
-                            selectedDuration = bills.selectedDuration,
                             billsStatus = bills.billsStatus,
                             userId = currentUserId
                         )
@@ -183,7 +182,6 @@ class BillsViewModel(
                             categoryId = categoryId,
                             description = updatedBills.description,
                             selectedDueDate = updatedBills.selectedDueDate,
-                            selectedDuration = updatedBills.selectedDuration,
                             billsStatus = updatedBills.billsStatus,
                             userId = currentUserId
                         )
@@ -301,7 +299,6 @@ class BillsViewModel(
                             category = bill.category,
                             description = bill.description,
                             selectedDueDate = bill.selectedDueDate,
-                            selectedDuration = bill.selectedDuration,
                             billsStatus = "PAID"
                         )
                     )
