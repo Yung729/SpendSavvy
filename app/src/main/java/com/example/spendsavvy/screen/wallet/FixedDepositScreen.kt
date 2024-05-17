@@ -57,9 +57,9 @@ fun FixedDepositScreen(
         )
         Text(
             text = stringResource(id = R.string.text_5),
-            fontSize = 15.sp,
-            fontFamily = poppinsFontFamily,
-            color = Color.Gray
+            fontSize = 10.sp,
+            color = Color.Gray,
+            fontFamily = poppinsFontFamily
         )
 
         val accountCount = fdCount(fdAccDetailsList = fdAccDetailsList)
@@ -174,7 +174,6 @@ fun BankCard(fdAccount: FDAccount, modifier: Modifier, navController: NavControl
                     color = Color.Gray
                 )
                 Spacer(modifier = Modifier.height(15.dp))
-                Divider(color = Color.Gray, thickness = 0.7.dp)
             }
         }
     }

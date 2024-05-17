@@ -134,7 +134,7 @@ fun FDEarnScreen(
                 Column {
 
                     Text(
-                        "Interest To Be Earned",
+                        "Interest To Earn",
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(
                             start = 10.dp,
@@ -151,7 +151,7 @@ fun FDEarnScreen(
                             start = 10.dp,
                             top = 3.dp,
                             end = 10.dp,
-                            bottom = 10.dp
+                            bottom = 75.dp
                         )
                     )
 
@@ -222,7 +222,8 @@ fun FDEarnScreen(
 
         Text(
             "Record",
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
         )
 
         Box(

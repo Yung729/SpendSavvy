@@ -81,50 +81,55 @@ fun CashScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
 
-                for (cashDetails in cashDetailsList) {
-                    if (cashDetails.typeName == "Cash") {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = modifier.clickable {
-                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                    key = "currentCashAccount",
-                                    value = cashDetails
-                                )
-                                navController.navigate(Screen.CashTransactionScreen.route)
-                            }
-                        ) {
-                            Image(
-                                painter = rememberAsyncImagePainter(model = cashDetails.imageUri),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(30.dp, 30.dp)
-                                    .padding(end = 10.dp)
+
+            for (cashDetails in cashDetailsList) {
+                if (cashDetails.typeName == "Cash") {
+                    Row(
+                        modifier = modifier.clickable {
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                key = "currentCashAccount",
+                                value = cashDetails
                             )
-
-
-
-                            Column {
-                                Text(
-                                    text = stringResource(id = R.string.cashMoney),
-                                    fontSize = 17.sp,
-                                    fontFamily = poppinsFontFamily
+                            navController.navigate(Screen.CashTransactionScreen.route)
+                        }
+                    ) {
+                        Row(
+                            modifier = modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(model = cashDetails.imageUri),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(30.dp, 30.dp)
+                                        .padding(end = 10.dp)
                                 )
 
-                                Text(
-                                    text = stringResource(id = R.string.availableBalance),
-                                    fontSize = 10.sp,
-                                    color = Color.Gray,
-                                    fontFamily = poppinsFontFamily
-                                )
 
+
+                                Column {
+                                    Text(
+                                        text = stringResource(id = R.string.cashMoney),
+                                        fontSize = 17.sp,
+                                        fontFamily = poppinsFontFamily
+                                    )
+
+                                    Text(
+                                        text = stringResource(id = R.string.availableBalance),
+                                        fontSize = 10.sp,
+                                        color = Color.Gray,
+                                        fontFamily = poppinsFontFamily
+                                    )
+
+                                }
                             }
 
                             totalAccount.value = bankAccountCount(cashList = cashDetailsList)
@@ -284,8 +289,6 @@ fun BankAccList(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(15.dp))
-                Divider(color = Color.Gray, thickness = 0.7.dp)
                 Spacer(modifier = Modifier.height(15.dp))
             }
         }
