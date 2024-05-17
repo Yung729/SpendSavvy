@@ -66,7 +66,6 @@ fun CashScreen(
             .padding(15.dp)
             .fillMaxWidth()
     ) {
-        Spacer(modifier = Modifier.height(25.dp))
         Text(
             text = stringResource(id = R.string.cash),
             fontFamily = poppinsFontFamily,
