@@ -283,19 +283,27 @@ class DatabaseHelper(context: Context) :
             "SELECT * FROM categories WHERE id=? AND userId=?",
             arrayOf(categoryId, userId)
         )
+        val category: Category
 
-        val internalIdIndex = cursor.getColumnIndex("internalId")
-        val imageUriIndex = cursor.getColumnIndex("imageUri")
-        val categoryNameIndex = cursor.getColumnIndex("categoryName")
-        val categoryTypeIndex = cursor.getColumnIndex("categoryType")
+        if (cursor.moveToFirst()) {
+            val internalIdIndex = cursor.getColumnIndex("internalId")
+            val imageUriIndex = cursor.getColumnIndex("imageUri")
+            val categoryNameIndex = cursor.getColumnIndex("categoryName")
+            val categoryTypeIndex = cursor.getColumnIndex("categoryType")
 
-        cursor.moveToFirst()
-        val internalId = cursor.getString(internalIdIndex)
-        val imageUri = Uri.parse(cursor.getString(imageUriIndex))
-        val categoryName = cursor.getString(categoryNameIndex)
-        val categoryType = cursor.getString(categoryTypeIndex)
+            val internalId = cursor.getString(internalIdIndex)
+            val imageUri = Uri.parse(cursor.getString(imageUriIndex))
+            val categoryName = cursor.getString(categoryNameIndex)
+            val categoryType = cursor.getString(categoryTypeIndex)
+
+            category = Category(internalId, imageUri, categoryName, categoryType)
+        } else {
+            // Return an empty Category if no result is found
+            category = Category()
+        }
+
         cursor.close()
-        return Category(internalId, imageUri, categoryName, categoryType)
+        return category
     }
 
     fun readCategory(userId: String): ArrayList<Category> {
@@ -454,9 +462,13 @@ class DatabaseHelper(context: Context) :
                 val transactionType = cursor.getString(transactionTypeIndex)
 
                 val date = Date(dateMillis)
-
+                var category = Category()
                 // Get the category linked with this transaction
-                val category = getCategoryById(categoryId, userId)
+                if (categoryId != null){
+                     category = getCategoryById(categoryId, userId)
+                }
+
+
 
                 // Create a Transaction object and add it to the list
                 val transaction = Transactions(

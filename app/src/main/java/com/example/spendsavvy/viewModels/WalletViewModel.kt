@@ -147,7 +147,7 @@ class WalletViewModel(
                         dbHelper.updateCashDetails(
                             cashAccount?.imageUri.toString(),
                             cashName,
-                            updateAmount,
+                            cashAccount?.balance?.plus(updateAmount) ?: 0.0,
                             userId
                         )
 
