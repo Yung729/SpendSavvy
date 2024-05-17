@@ -81,15 +81,6 @@ fun ForgotPassword(
         Button(
             onClick = {
                 if (emailValidation(email)) {
-                    /*if (email == userData.email) {
-                        navController.navigate(Screen.CreatePassword.route)
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "User Email incorrect",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }*/
 
                     fireAuthRepository.resetPassword(email)
                     Toast.makeText(

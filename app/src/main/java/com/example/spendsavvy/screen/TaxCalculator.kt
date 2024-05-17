@@ -94,7 +94,7 @@ fun TaxCalculator(
     val incomeAfterTaxAnnually by taxViewModel.incomeAfterTaxAnnually.observeAsState(initial = 0.0)
 
     val tax :Double = taxAnnually  //only add income tax per year
-    val currentDate: Date = Date()
+    val currentDate = Date()
     var showDialog by remember { mutableStateOf(false) }
     var success by remember { mutableStateOf(true) }
     var isPopUp by remember { mutableStateOf(false) }
