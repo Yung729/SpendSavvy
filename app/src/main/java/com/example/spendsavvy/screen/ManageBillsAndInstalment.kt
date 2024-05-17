@@ -470,6 +470,7 @@ fun ConfirmationDialog(
             Button(
                 onClick = {
                     billsViewModel.deleteBill(bill)
+                    onDismiss()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

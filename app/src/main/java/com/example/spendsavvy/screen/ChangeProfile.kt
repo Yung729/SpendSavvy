@@ -2,7 +2,6 @@
 
 package com.example.spendsavvy.screen
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
@@ -14,7 +13,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,7 +55,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -67,16 +64,13 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
-import com.example.spendsavvy.navigation.Screen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
-import java.io.IOException
 
 @Composable
 fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
-
     var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
     val auth = FirebaseAuth.getInstance()
     getUserData(auth.currentUser?.uid ?: "") { user ->
@@ -85,19 +79,19 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
     var showOption by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var photoUri by remember { mutableStateOf<Uri?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
+            photoUri = it
             bitmap = if (Build.VERSION.SDK_INT < 28) {
                 MediaStore.Images.Media.getBitmap(context.contentResolver, it)
             } else {
                 val source = ImageDecoder.createSource(context.contentResolver, it)
                 ImageDecoder.decodeBitmap(source)
             }
-            // Upload image to Firebase Storage
-            uploadImageToFirebaseStorage(context, it, userData)
         }
     }
 
@@ -143,7 +137,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                         shape = CircleShape
                     )
                     .clickable { showOption = true },
-                )
+            )
         }
         if (showOption) {
             AlertDialog(
@@ -155,7 +149,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = stringResource(id = com.example.spendsavvy.R.string.chooseImg),
+                            text = stringResource(id = R.string.chooseImg),
                             fontSize = 20.sp,
                             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
                         )
@@ -186,7 +180,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(id = com.example.spendsavvy.R.string.gallery))
+                            Text(stringResource(id = R.string.gallery))
                         }
                     }
                 },
@@ -204,7 +198,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             )
         }
 
-        Spacer(modifier = Modifier.height(15.dp)) // Spacer added here
+        Spacer(modifier = Modifier.height(15.dp))
 
         Text(
             text = stringResource(id = R.string.userName),
@@ -213,11 +207,11 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             modifier = Modifier.padding(vertical = 10.dp),
         )
         OutlinedTextFieldItem(
-            label = stringResource(id = com.example.spendsavvy.R.string.userName),
+            label = stringResource(id = R.string.userName),
             placeholder = userData.userName,
             value = userData.userName,
             onValueChange = { userData.userName = it },
-            height = 60.dp
+            height = 70.dp,
         )
         Text(
             text = stringResource(id = R.string.email),
@@ -226,12 +220,12 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             modifier = Modifier.padding(vertical = 10.dp),
         )
         OutlinedTextFieldItem(
-            label = stringResource(id = com.example.spendsavvy.R.string.email),
+            label = stringResource(id = R.string.email),
             placeholder = userData.email,
             value = userData.email,
             keyboardType = KeyboardType.Email,
             onValueChange = { userData.email = it},
-            height = 60.dp
+            height = 70.dp,
         )
         Text(
             text = stringResource(id = R.string.phoneNo),
@@ -240,19 +234,19 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             modifier = Modifier.padding(vertical = 10.dp),
         )
         OutlinedTextFieldItem(
-            label = stringResource(id = com.example.spendsavvy.R.string.phoneNo),
+            label = stringResource(id = R.string.phoneNo),
             placeholder = userData.phoneNo,
             value = userData.phoneNo,
             keyboardType = KeyboardType.Phone,
             onValueChange = { userData.phoneNo = it},
-            height = 60.dp
+            height = 70.dp,
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-            onClick = { saveChangesToFirebase(context, userData) }, // Pass photoUrl to saveChangesToFirebase
+            onClick = { saveChangesToFirebase(context, userData, navController, photoUri) }, // Pass photoUri to saveChangesToFirebase
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -260,53 +254,57 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             Text(stringResource(id = R.string.saveChanges))
         }
     }
-
-}
-private fun uploadImageToFirebaseStorage(context: Context, uri: Uri, userData: UserData) {
-    val auth = FirebaseAuth.getInstance()
-    val uid = auth.currentUser?.uid ?: ""
-    val storageRef = Firebase.storage.reference
-
-    // Create a reference to "user_photos/$uid.jpg"
-    val photoRef = storageRef.child("user_photos/$uid.jpg")
-
-    // Upload the image to Firebase Storage
-    val uploadTask = photoRef.putFile(uri)
-    uploadTask.addOnSuccessListener { taskSnapshot ->
-        // Get the download URL from the task snapshot
-        taskSnapshot.storage.downloadUrl.addOnSuccessListener { url ->
-            // Update the photoURL field in the userData object
-            val updatedUserData = userData.copy(photoURL = url.toString())
-            saveChangesToFirebase(context, updatedUserData)
-        }
-    }.addOnFailureListener { e ->
-        // Handle failure
-        Log.w(TAG, "Error uploading image", e)
-        Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
-    }
 }
 
-
-private fun saveChangesToFirebase(context: Context, userData: UserData) {
-    // Update user data in Firestore
+private fun saveChangesToFirebase(context: Context, userData: UserData, navController: NavController, photoUri: Uri?) {
     val auth = FirebaseAuth.getInstance()
     val uid = auth.currentUser?.uid ?: ""
     val db = Firebase.firestore
-
     val usersCollection = db.collection("Users")
-    usersCollection.document(uid)
-        .set(userData)
-        .addOnSuccessListener {
-            // Handle success
-            Log.d(TAG, "User data updated successfully")
-            Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+
+    if (photoUri != null) {
+        val storageRef = Firebase.storage.reference
+        val photoRef = storageRef.child("user_photos/$uid.jpg")
+
+        // Upload the image to Firebase Storage
+        val uploadTask = photoRef.putFile(photoUri)
+        uploadTask.addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.storage.downloadUrl.addOnSuccessListener { url ->
+                // Update the photoURL field in the userData object
+                val updatedUserData = userData.copy(photoURL = url.toString())
+                // Save all user data to Firestore
+                usersCollection.document(uid)
+                    .set(updatedUserData)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "User data updated successfully")
+                        Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+                        navController.navigateUp()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error updating user data", e)
+                        Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }.addOnFailureListener { e ->
+            Log.w(TAG, "Error uploading image", e)
+            Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
         }
-        .addOnFailureListener { e ->
-            // Handle failure
-            Log.w(TAG, "Error updating user data", e)
-            Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
-        }
+    } else {
+        // Save all user data to Firestore without photo
+        usersCollection.document(uid)
+            .set(userData)
+            .addOnSuccessListener {
+                Log.d(TAG, "User data updated successfully")
+                Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+                navController.navigateUp()
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating user data", e)
+                Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
+
 
 @Composable
 fun OutlinedTextFieldItem(
@@ -315,7 +313,7 @@ fun OutlinedTextFieldItem(
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit,
-    height: Dp = TextFieldDefaults.MinHeight
+    height: Dp = TextFieldDefaults.MinHeight,
 ) {
     val (textValue, setTextValue) = remember { mutableStateOf(value) }
 

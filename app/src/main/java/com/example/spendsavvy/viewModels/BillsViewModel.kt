@@ -22,6 +22,7 @@ import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FirestoreRepository
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.UUID
 
@@ -240,11 +241,15 @@ class BillsViewModel(
     }
 
     private fun createBillMadeNotification(bills: Bills) {
+
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+        val formattedDate = simpleDateFormat.format(bills.selectedDueDate)
+
         val notificationId = 1
         val builder = NotificationCompat.Builder(currentContext, "CHANNEL_ID")
             .setSmallIcon(R.drawable.bills_icon)
-            .setContentTitle("New bill made")
-            .setContentText("Bill(${bills.description}) with amount ${bills.amount} && ${bills.selectedDueDate} is due date!")
+            .setContentTitle("New Bill Made")
+            .setContentText("Bill(${bills.description}) with amount ${bills.amount} && $formattedDate is due date!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         with(NotificationManagerCompat.from(currentContext)){

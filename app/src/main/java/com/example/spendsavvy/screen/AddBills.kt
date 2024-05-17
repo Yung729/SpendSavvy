@@ -138,7 +138,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             value = description,
             keyboardType = KeyboardType.Text,
             onValueChange = { description = it },
-            height = 60.dp
+            height = 70.dp,
         )
 
         Card(
@@ -190,7 +190,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             value = amount,
             keyboardType = KeyboardType.Number,
             onValueChange = { amount = it},
-            height = 60.dp
+            height = 70.dp,
         )
 
         DueDatePicker(
