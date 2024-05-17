@@ -132,7 +132,7 @@ fun WalletScreen(
                     )
 
                     Text(
-                        text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
+                        text = String.format("RM %.2f",(totalCashAmount + totalFixedDeposit + totalPriceStock)),
                         fontSize = 15.sp
                     )
                 }
@@ -216,7 +216,7 @@ fun WalletScreen(
                 if (cashDetails.typeName == "Cash") {
                     count = 1
                     Text(
-                        text = "RM ${cashDetails.balance}",
+                        text = String.format("RM %.2f",cashDetails.balance),
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
                         color = GreenColor,
@@ -679,7 +679,7 @@ fun TransferAccountDialog(
 
                 for (cashDetails in cashDetailsList) {
                     if (cashDetails.typeName == searchAccount1) {
-                        Text("RM ${cashDetails.balance}")
+                        Text(String.format("RM %.2f",cashDetails.balance))
                         balanceFound = cashDetails.balance
                     }
                 }
@@ -836,7 +836,7 @@ fun TransferAccountDialog(
                         if ((transferAmt.toDoubleOrNull() ?: 0.0) > balanceFound) {
                             Toast.makeText(
                                 context,
-                                "Please enter the amount that less than or equals to your deposit amount\nAccount Balance: ${balanceFound}",
+                                "Please enter the amount that less than or equals to your deposit amount\nAccount Balance: ${String.format("RM %.2f",balanceFound)}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {

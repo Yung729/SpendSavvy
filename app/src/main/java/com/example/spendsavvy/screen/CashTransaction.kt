@@ -83,7 +83,7 @@ fun CashTransactionScreen(
                         color = Color.Gray
                     )
 
-                    Text(text = "RM ${cash.balance}")
+                    Text(text = String.format("RM %.2f",cash.balance))
                 }
             }
         }

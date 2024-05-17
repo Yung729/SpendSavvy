@@ -108,7 +108,7 @@ fun StockScreen(
                     fontSize = 15.sp,
                 )
 
-                Text(text = "RM $totalPriceStock")
+                Text(text = String.format("RM %.2f",totalPriceStock))
             }
         }
 
@@ -216,7 +216,7 @@ fun StockCard(stock: Stock, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "RM ${(stock.originalPrice * stock.quantity)}",
+                    text = String.format("RM %.2f",(stock.originalPrice * stock.quantity)),
                     fontSize = 10.sp
                 )
             }

@@ -257,7 +257,7 @@ fun EditCashAccountScreen(
                             ) {
                                 Toast.makeText(
                                     context,
-                                    "You cannot decrease your amount more than the total of your remaining and increased amount\nRemaining Amount: RM ${cashDetails.balance}",
+                                    "You cannot decrease your amount more than the total of your remaining and increased amount\nRemaining Amount: RM ${String.format("RM %.2f",cashDetails.balance)}",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {

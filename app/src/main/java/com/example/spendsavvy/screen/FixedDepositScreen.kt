@@ -168,7 +168,7 @@ fun BankCard(fdAccount: FDAccount, modifier: Modifier, navController: NavControl
                 )
 
                 Text(
-                    text = "RM ${fdAccount.deposit}",
+                    text = String.format("RM %.2f",fdAccount.deposit),
                     fontFamily = poppinsFontFamily,
                     color = Color.Gray
                 )

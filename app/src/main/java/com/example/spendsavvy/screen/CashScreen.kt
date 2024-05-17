@@ -143,7 +143,7 @@ fun CashScreen(
 
                             if (count == 1)
                                 Text(
-                                    text = "RM ${cashAmount}",
+                                    text = String.format("RM %.2f",cashAmount),
                                     fontSize = 17.sp,
                                     fontFamily = poppinsFontFamily
                                 )
@@ -283,7 +283,7 @@ fun BankAccList(
                     }
 
                     Text(
-                        text = "RM ${item.balance}",
+                        text = String.format("RM %.2f",item.balance),
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
