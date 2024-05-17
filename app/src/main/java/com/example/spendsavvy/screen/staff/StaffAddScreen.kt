@@ -1,5 +1,8 @@
 package com.example.spendsavvy.screen.staff
 
+import android.content.Context
+import android.health.connect.datatypes.units.Length
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -34,8 +38,9 @@ import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.StaffViewModel
 
 @Composable
-fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel ) {
+fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel) {
 
+    val context = LocalContext.current
     var icNumber by remember {
         mutableStateOf("")
     }
@@ -64,7 +69,8 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
 
             ) {
 
-                TextField(value = icNumber,
+                TextField(
+                    value = icNumber,
                     onValueChange = {
                         icNumber = it
                     },
@@ -80,9 +86,12 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
                     maxLines = 1,
                     label = {
                         Text(
-                            text = stringResource(id = R.string.staffIc), fontFamily = poppinsFontFamily, fontSize = 15.sp
+                            text = stringResource(id = R.string.staffIc),
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp
                         )
-                    }
+                    }, isError = !isValidICNumber(icNumber), // Set error state based on validation
+                    singleLine = true // Ensure single line input
                 )
             }
         }
@@ -106,14 +115,16 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
                     staffName = it
                 }, placeholder = {
                     Text(
-                        text = stringResource(id = com.example.spendsavvy.R.string.staff) +" 1",
+                        text = stringResource(id = com.example.spendsavvy.R.string.staff) + " 1",
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp,
                         color = Color.Gray
                     )
                 }, label = {
                     Text(
-                        text = stringResource(id = com.example.spendsavvy.R.string.staffName), fontFamily = poppinsFontFamily, fontSize = 15.sp
+                        text = stringResource(id = com.example.spendsavvy.R.string.staffName),
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
                     )
                 })
             }
@@ -144,7 +155,9 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
                     )
                 }, label = {
                     Text(
-                        text = stringResource(id = com.example.spendsavvy.R.string.staffSalary), fontFamily = poppinsFontFamily, fontSize = 15.sp
+                        text = stringResource(id = com.example.spendsavvy.R.string.staffSalary),
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp
                     )
                 })
             }
@@ -154,9 +167,16 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
 
         Button(
             onClick = {
-                staffViewModel.addStaffToDatabase(
-                    Staff(id = icNumber, name = staffName, salary = salary.toDoubleOrNull() ?: 0.0)
-                )
+
+                if(isValidICNumber(icNumber) && staffName.isNotEmpty() && salary.isNotEmpty()){
+                    staffViewModel.addStaffToDatabase(
+                        Staff(id = icNumber, name = staffName, salary = salary.toDoubleOrNull() ?: 0.0)
+                    )
+                }else{
+                    Toast.makeText(context,"Please fill in all the details",Toast.LENGTH_SHORT).show()
+                }
+
+
             },
             modifier = Modifier
                 .padding(bottom = 10.dp)
@@ -175,4 +195,9 @@ fun StaffAddScreen(modifier: Modifier = Modifier,staffViewModel: StaffViewModel 
 
     }
 
+}
+
+fun isValidICNumber(icNumber: String): Boolean {
+    val regex = """^\d{6}-\d{2}-\d{4}$""".toRegex()
+    return regex.matches(icNumber)
 }
