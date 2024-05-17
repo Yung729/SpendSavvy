@@ -62,7 +62,6 @@ fun EditBills(
     var updatedDescription by remember { mutableStateOf(bill.description) }
     var updatedAmount by remember { mutableStateOf(bill.amount.toString()) }
     var updatedDueDate by remember { mutableStateOf(bill.selectedDueDate) }
-    var updatedDuration by remember { mutableStateOf(bill.selectedDuration) }
     var updatedCategory by remember { mutableStateOf(bill.category) }
 
     fun validateAmount(amount: String): Boolean {
@@ -76,7 +75,7 @@ fun EditBills(
                 true
             }
         } catch (e: NumberFormatException) {
-            Toast.makeText(context, "Invalid Input", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Invalid Amount Input", Toast.LENGTH_SHORT).show()
             false
         }
     }
@@ -146,19 +145,11 @@ fun EditBills(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        // DropDown for Status
-        DropDown(
-            label = stringResource(id = R.string.setReminder),
-            selectedDuration = updatedDuration,
-            onDurationSelected = { newDuration ->
-                updatedDuration = newDuration
-            }
-        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                if (updatedDescription.isNotBlank() && updatedAmount.isNotBlank() && updatedCategory != Category() && updatedDuration.isNotBlank() && validateAmount(updatedAmount)) {
+                if (updatedDescription.isNotBlank() && updatedAmount.isNotBlank() && updatedCategory != Category() && validateAmount(updatedAmount)) {
                     showDialog = true
                 } else {
                     Toast.makeText(
@@ -218,7 +209,6 @@ fun EditBills(
                                         category = updatedCategory,
                                         description = updatedDescription,
                                         selectedDueDate = updatedDueDate,
-                                        selectedDuration = updatedDuration,
                                         billsStatus = bill.billsStatus
                                     )
                                 )

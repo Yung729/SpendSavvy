@@ -75,7 +75,6 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
     var selectedCategory by remember { mutableStateOf(Category()) }
     var amount by remember { mutableStateOf("") }
     var selectedDueDate by remember { mutableStateOf(Date()) }
-    var selectedDuration by remember { mutableStateOf("") }
 
     val selectedCalendar = Calendar.getInstance().apply {
         time = selectedDueDate
@@ -107,7 +106,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                 true
             }
         } catch (e: NumberFormatException) {
-            Toast.makeText(context, "Invalid Input", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Invalid Amount Input", Toast.LENGTH_SHORT).show()
             false
         }
     }
@@ -199,16 +198,12 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             selectedDueDate = selectedDueDate,
             onDateSelected = { selectedDueDate = it },
         )
-        DropDown(
-            label = stringResource(id = R.string.setReminder),
-            selectedDuration = selectedDuration,
-            onDurationSelected = { selectedDuration = it }
-        )
+
 
         Spacer(modifier = Modifier.height(5.dp))
         Button(
             onClick = {
-                if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && selectedDuration.isNotBlank() && validateAmount(amount)) {
+                if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && validateAmount(amount)) {
                     showDialog = true
                 }
                 else{
@@ -271,7 +266,6 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                         description = description,
                                         category = selectedCategory,
                                         selectedDueDate = selectedDueDate,
-                                        selectedDuration = selectedDuration,
                                         billsStatus = billsStatus
                                     ),
                                     onSuccess = {
@@ -305,49 +299,6 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                     }
                 }
             )
-        }
-    }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DropDown(label: String, selectedDuration: String, onDurationSelected: (String) -> Unit) {
-    val list = listOf("1 day before", "2 days before", "1 week before", "2 weeks before", "1 month before")
-
-    var expandedState by remember { mutableStateOf(false) }
-    var currentSelectedDuration by remember { mutableStateOf(selectedDuration) }
-
-    Column(
-        modifier = Modifier
-            .padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(text = label, fontSize = 20.sp)
-        ExposedDropdownMenuBox(
-            expanded = expandedState,
-            onExpandedChange = { expandedState = it }
-        ) {
-            TextField(
-                modifier = Modifier.menuAnchor(),
-                value = currentSelectedDuration,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState) }
-            )
-
-            ExposedDropdownMenu(
-                expanded = expandedState,
-                onDismissRequest = { expandedState = false }) {
-                list.forEachIndexed { index, text ->
-                    DropdownMenuItem(
-                        text = { Text(text = text) },
-                        onClick = {
-                            currentSelectedDuration = list[index]
-                            onDurationSelected(list[index])
-                            expandedState = false
-                        }
-                    )
-                }
-            }
         }
     }
 }

@@ -107,7 +107,7 @@ fun TaxCalculator(
                 true
             }
         } catch (e: NumberFormatException) {
-            Toast.makeText(context, "Invalid Input", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Invalid Income Input", Toast.LENGTH_SHORT).show()
             false
         }
     }
