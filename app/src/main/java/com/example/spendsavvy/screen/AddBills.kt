@@ -1,7 +1,6 @@
 package com.example.spendsavvy.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -46,14 +44,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
@@ -63,11 +59,7 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.Month
-import java.time.YearMonth
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -104,6 +96,21 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
 
     var showDialog by remember { mutableStateOf(false) }
 
+    fun validateAmount(amount: String): Boolean {
+        return try {
+            val value = amount.toDouble()
+            if (value <= 0) {
+                Toast.makeText(context, "Amount cannot be negative and zero", Toast.LENGTH_SHORT)
+                    .show()
+                false
+            } else {
+                true
+            }
+        } catch (e: NumberFormatException) {
+            Toast.makeText(context, "Invalid Input", Toast.LENGTH_SHORT).show()
+            false
+        }
+    }
     Column(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
@@ -121,14 +128,14 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                 .padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 18.dp)
         )
         Text(
-            text = stringResource(id = com.example.spendsavvy.R.string.description),
+            text = stringResource(id = R.string.description),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
         )
         OutlinedTextFieldItem(
-            label = stringResource(id = com.example.spendsavvy.R.string.description),
-            placeholder = stringResource(id = com.example.spendsavvy.R.string.description),
+            label = stringResource(id = R.string.description),
+            placeholder = stringResource(id = R.string.description),
             value = description,
             keyboardType = KeyboardType.Text,
             onValueChange = { description = it },
@@ -142,7 +149,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
             Column(
                 modifier = Modifier.padding(10.dp)
             ) {
-                Text( text = stringResource(id = com.example.spendsavvy.R.string.category), fontFamily = poppinsFontFamily, fontSize = 15.sp)
+                Text( text = stringResource(id = R.string.category), fontFamily = poppinsFontFamily, fontSize = 15.sp)
 
                 ExposedDropdownMenuBox(expanded = isExpanded,
                     onExpandedChange = { isExpanded = it }) {
@@ -173,14 +180,14 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(id = com.example.spendsavvy.R.string.amount),
+            text = stringResource(id = R.string.amount),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
         )
         OutlinedTextFieldItem(
             label = "Amount",
-            placeholder = stringResource(id = com.example.spendsavvy.R.string.amount),
+            placeholder = stringResource(id = R.string.amount),
             value = amount,
             keyboardType = KeyboardType.Number,
             onValueChange = { amount = it},
@@ -188,12 +195,12 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         )
 
         DueDatePicker(
-            label = stringResource(id = com.example.spendsavvy.R.string.dueDate),
+            label = stringResource(id = R.string.dueDate),
             selectedDueDate = selectedDueDate,
             onDateSelected = { selectedDueDate = it },
         )
         DropDown(
-            label = stringResource(id = com.example.spendsavvy.R.string.setReminder),
+            label = stringResource(id = R.string.setReminder),
             selectedDuration = selectedDuration,
             onDurationSelected = { selectedDuration = it }
         )
@@ -201,7 +208,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
         Spacer(modifier = Modifier.height(5.dp))
         Button(
             onClick = {
-                if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && selectedDuration.isNotBlank()) {
+                if (description.isNotBlank() && amount.isNotBlank() && selectedCategory != Category() && selectedDuration.isNotBlank() && validateAmount(amount)) {
                     showDialog = true
                 }
                 else{
@@ -220,7 +227,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                 contentColor = Color.White
             )
         ) {
-            Text(stringResource(id = com.example.spendsavvy.R.string.addBill))
+            Text(stringResource(id = R.string.addBill))
         }
 
         if(showDialog){
@@ -228,7 +235,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                 onDismissRequest = { showDialog = false },
                 title = {
                     Text(
-                        text = "Confirm to add bill?",
+                        text = stringResource(id = R.string.text_28),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp,
@@ -252,12 +259,11 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                 contentColor = Color.Red,
                             )
                         ) {
-                            Text(text = stringResource(id = com.example.spendsavvy.R.string.cancel))
+                            Text(text = stringResource(id = R.string.cancel))
                         }
 
                         Button(
                             onClick = {
-                                val isToggled = true
                                 billsViewModel.addBillsToFirestore(
                                     Bills(
                                         id = billsViewModel.generateBillId(),
@@ -294,7 +300,7 @@ fun AddBills(modifier: Modifier = Modifier, navController: NavController, billsV
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(text = stringResource(id = com.example.spendsavvy.R.string.add))
+                            Text(text = stringResource(id = R.string.add))
                         }
                     }
                 }

@@ -34,21 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Bills
 import com.example.spendsavvy.models.Category
-import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.BillsViewModel
 import com.example.spendsavvy.viewModels.CategoryViewModel
-import java.time.LocalDate
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,12 +65,28 @@ fun EditBills(
     var updatedDuration by remember { mutableStateOf(bill.selectedDuration) }
     var updatedCategory by remember { mutableStateOf(bill.category) }
 
+    fun validateAmount(amount: String): Boolean {
+        return try {
+            val value = amount.toDouble()
+            if (value <= 0) {
+                Toast.makeText(context, "Amount cannot be negative and zero", Toast.LENGTH_SHORT)
+                    .show()
+                false
+            } else {
+                true
+            }
+        } catch (e: NumberFormatException) {
+            Toast.makeText(context, "Invalid Input", Toast.LENGTH_SHORT).show()
+            false
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
         Text(
-            text = stringResource(id = com.example.spendsavvy.R.string.text_23),
+            text = stringResource(id = R.string.text_23),
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -94,14 +104,14 @@ fun EditBills(
         OutlinedTextField(
             value = updatedAmount,
             onValueChange = { updatedAmount = it },
-            label = { Text(stringResource(id = com.example.spendsavvy.R.string.amount)) },
+            label = { Text(stringResource(id = R.string.amount)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Text(text = stringResource(id = com.example.spendsavvy.R.string.category), fontFamily = poppinsFontFamily, fontSize = 15.sp)
+            Text(text = stringResource(id = R.string.category), fontFamily = poppinsFontFamily, fontSize = 15.sp)
 
             ExposedDropdownMenuBox(expanded = isExpanded,
                 onExpandedChange = { isExpanded = it }) {
@@ -130,7 +140,7 @@ fun EditBills(
             }
         }
         DueDatePicker(
-            label = stringResource(id = com.example.spendsavvy.R.string.dueDate),
+            label = stringResource(id = R.string.dueDate),
             selectedDueDate = updatedDueDate,
             onDateSelected = { updatedDueDate = it }
         )
@@ -138,7 +148,7 @@ fun EditBills(
 
         // DropDown for Status
         DropDown(
-            label = stringResource(id = com.example.spendsavvy.R.string.setReminder),
+            label = stringResource(id = R.string.setReminder),
             selectedDuration = updatedDuration,
             onDurationSelected = { newDuration ->
                 updatedDuration = newDuration
@@ -148,7 +158,7 @@ fun EditBills(
 
         Button(
             onClick = {
-                if (updatedDescription.isNotBlank() && updatedAmount.isNotBlank() && updatedCategory != Category() && updatedDuration.isNotBlank()) {
+                if (updatedDescription.isNotBlank() && updatedAmount.isNotBlank() && updatedCategory != Category() && updatedDuration.isNotBlank() && validateAmount(updatedAmount)) {
                     showDialog = true
                 } else {
                     Toast.makeText(
@@ -165,7 +175,7 @@ fun EditBills(
                 contentColor = Color.White
             )
         ) {
-            Text(stringResource(id = com.example.spendsavvy.R.string.saveChanges))
+            Text(stringResource(id = R.string.saveChanges))
         }
 
         if (showDialog) {
@@ -173,7 +183,7 @@ fun EditBills(
                 onDismissRequest = { showDialog = false },
                 title = {
                     Text(
-                        text = stringResource(id = com.example.spendsavvy.R.string.text_24),
+                        text = stringResource(id = R.string.text_24),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp,
@@ -195,7 +205,7 @@ fun EditBills(
                                 contentColor = Color.Red,
                             )
                         ) {
-                            Text(text =stringResource(id = com.example.spendsavvy.R.string.cancel))
+                            Text(text =stringResource(id = R.string.cancel))
                         }
 
                         Button(
@@ -223,7 +233,7 @@ fun EditBills(
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(stringResource(id = com.example.spendsavvy.R.string.saveChanges))
+                            Text(stringResource(id = R.string.saveChanges))
                         }
                     }
                 }

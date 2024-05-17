@@ -126,7 +126,7 @@ class TaxViewModel(transactionViewModel: OverviewViewModel) : ViewModel() {
                     Transactions(
                         id = transactionViewModel.generateTransactionId(),
                         amount = tax,
-                        description = "Income Tax of ${selectedYear}",
+                        description = "Income Tax of $selectedYear",
                         date = currentDate,
                         category = Category(
                             id = "CT0009",

@@ -29,7 +29,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -95,8 +94,6 @@ fun TaxCalculator(
 
     val tax :Double = taxAnnually  //only add income tax per year
     val currentDate = Date()
-    var showDialog by remember { mutableStateOf(false) }
-    var success by remember { mutableStateOf(true) }
     var isPopUp by remember { mutableStateOf(false) }
 
     fun validateAmount(amount: String): Boolean {
@@ -154,14 +151,14 @@ fun TaxCalculator(
                             modifier = Modifier.height(50.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
-                            placeholder = { Text(text = stringResource(id = com.example.spendsavvy.R.string.text_15)) }
+                            placeholder = { Text(text = stringResource(id = R.string.text_15)) }
                         )
                     }
                 }
 
                 // DatePickerItem
                 DatePickerItem(
-                    label = stringResource(id = com.example.spendsavvy.R.string.taxYear),
+                    label = stringResource(id = R.string.taxYear),
                     selectedDate = selectedDate,
                     onDateSelected = { selectedDate = it }
                 )
@@ -231,7 +228,7 @@ fun TaxCalculator(
                         .weight(1f)
                         .padding(12.dp),
                 ) {
-                    Text(text = stringResource(id = com.example.spendsavvy.R.string.calculate))
+                    Text(text = stringResource(id = R.string.calculate))
                 }
                 Button(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
@@ -239,12 +236,19 @@ fun TaxCalculator(
                         if(tax != 0.0){
                             isPopUp = true
                         }
+                        else{
+                            Toast.makeText(
+                                context,
+                                "Tax is empty. Please fill in your income amount",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     },
                     modifier = Modifier
                         .weight(1f)
                         .padding(10.dp),
                 ) {
-                    Text(text = stringResource(id = com.example.spendsavvy.R.string.addExpense), fontSize = 11.sp)
+                    Text(text = stringResource(id = R.string.addExpense), fontSize = 11.sp)
                 }
 
                 if(isPopUp) {
@@ -277,7 +281,6 @@ fun ChooseWalletDialog(
     val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
     var searchAccount by remember { mutableStateOf("") }
     var isExpanded by remember { mutableStateOf(false) }
-    var withdrawalAmt by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     Dialog(
@@ -298,12 +301,12 @@ fun ChooseWalletDialog(
                     .padding(15.dp)
             ) {
                 Text(
-                    "Add Expenses",
+                    stringResource(id = R.string.addExpense),
                     fontWeight = FontWeight.Bold,
                     fontSize = 25.sp
                 )
                 Spacer(modifier = Modifier.height(30.dp))
-                Text("Cash Account" )
+                Text(stringResource(id = R.string.cashAcc) )
 
                 Spacer(modifier = Modifier.height(25.dp))
                 ExposedDropdownMenuBox(
@@ -361,19 +364,22 @@ fun ChooseWalletDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
-                    )
-                    OutlinedButton(
-                        onClick = {
-                            taxViewModel.addTaxToExpenses(tax, selectedYear, currentDate,searchAccount, context)
-                            onCancelClick()
-                                  },
-                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = "Confirm Cash Account",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
+                        Button(
+                            onClick = {
+                                taxViewModel.addTaxToExpenses(tax, selectedYear, currentDate,searchAccount, context)
+                                onCancelClick()
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(Color.Black),
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.confirmCashAcc),
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = poppinsFontFamily,
+                                color = Color.Green
+                            )
+                        }
                     }
                 }
             }
@@ -381,86 +387,6 @@ fun ChooseWalletDialog(
     }
 }
 
-
-//if(tax != 0.0) {
-//    transactionViewModel.addTransactionToFirestore(
-//        Transactions(
-//            id = transactionViewModel.generateTransactionId(),
-//            amount = tax,
-//            description = "Income Tax of ${selectedDate.year}",
-//            date = currentDate,
-//            category = Category(
-//                id = "CT0009",
-//                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2FincomeTax.png?alt=media&token=c4d11810-731f-41e0-a248-a921733754d2"),
-//                categoryName = "Income Tax",
-//                categoryType = "Expenses"
-//            ),
-//            paymentMethod = "Cash",
-//            transactionType = "Expenses"
-//        ),
-//        onSuccess = {
-//            showDialog = true
-//            success = true
-//            println("Income Tax added successfully")
-//        },
-//        onFailure = {
-//            showDialog = true
-//            success = false
-//            println("Failed to add income Tax")
-//        }
-//    )
-//}
-//else{
-//    showDialog = true
-//    success = false
-//}
-
-//if (showDialog) {
-//    TransactionResultDialog(
-//        success = success,
-//        message = if (success) stringResource(id = com.example.spendsavvy.R.string.text_26) else stringResource(id = com.example.spendsavvy.R.string.text_27),
-//        onDismiss = { showDialog = false }
-//    )
-//}
-//@Composable
-//fun TransactionResultDialog(
-//    success: Boolean,
-//    message: String,
-//    onDismiss: () -> Unit
-//) {
-//    AlertDialog(
-//        onDismissRequest = onDismiss,
-//        title = {
-//            Text(
-//                text = message,
-//                textAlign = TextAlign.Center,
-//                fontWeight = FontWeight.SemiBold,
-//                fontSize = 22.sp,
-//                color = if (success) Color.Black else Color.Red,
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//        },
-//        confirmButton = {
-//            Column(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalArrangement = Arrangement.Center,
-//                horizontalAlignment = CenterHorizontally
-//            ) {
-//                Button(
-//                    onClick = onDismiss,
-//                    modifier = Modifier
-//                        .padding(start = 8.dp),
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color.DarkGray,
-//                        contentColor = Color.White
-//                    )
-//                ) {
-//                    Text(text = if (success) stringResource(id = com.example.spendsavvy.R.string.ctn) else stringResource(id = com.example.spendsavvy.R.string.tryAgain))
-//                }
-//            }
-//        }
-//    )
-//}
 @Composable
 fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
     var selectedOption by remember { mutableStateOf("") }
@@ -475,7 +401,7 @@ fun RadioButtonsIncomePeriod(onOptionSelected: (String) -> Unit) {
             // Icon and label text
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.incomePeriod),
+                    text = stringResource(id = R.string.incomePeriod),
                     fontSize = 20.sp,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
@@ -539,13 +465,13 @@ fun DisplayIncomeTax(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.monthly),
+                text = stringResource(id = R.string.monthly),
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.annually),
+                text = stringResource(id = R.string.annually),
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold
@@ -564,7 +490,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.income),
+                    text = stringResource(id = R.string.income),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -582,7 +508,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.income),
+                    text = stringResource(id = R.string.income),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -608,7 +534,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.tax),
+                    text = stringResource(id = R.string.tax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -625,7 +551,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.tax),
+                    text = stringResource(id = R.string.tax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -651,7 +577,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.incomeAfterTax),
+                    text = stringResource(id = R.string.incomeAfterTax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -668,7 +594,7 @@ fun DisplayIncomeTax(
                 horizontalAlignment = CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.incomeAfterTax),
+                    text = stringResource(id = R.string.incomeAfterTax),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 2.dp)

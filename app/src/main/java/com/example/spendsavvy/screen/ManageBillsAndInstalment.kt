@@ -2,6 +2,7 @@ package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,7 +34,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -269,9 +269,7 @@ fun BillItem(
     walletViewModel: WalletViewModel,
     billsViewModel: BillsViewModel
 ) {
-    val context = LocalContext.current
     var showConfirmationDialog by remember { mutableStateOf(false) }
-    var isDelete by remember { mutableStateOf(false) }
     var isPopUp by remember { mutableStateOf(false) }
 
     // Display bill details
@@ -376,13 +374,13 @@ fun BillItem(
             Button(
                 onClick = {
                     isPopUp = true
-//                    isDelete = false
                 },
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 4.dp, vertical = 2.dp),
                 colors = ButtonDefaults.buttonColors(Color.Green),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                border = BorderStroke(1.dp, Color.Black)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
@@ -404,13 +402,13 @@ fun BillItem(
             Button(
                 onClick = {
                     showConfirmationDialog = true
-                    isDelete = true
                 },
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 4.dp, vertical = 2.dp),
                 colors = ButtonDefaults.buttonColors(Color.Red),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                border = BorderStroke(1.dp, Color.Black)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
@@ -431,66 +429,8 @@ fun BillItem(
             Spacer(modifier = Modifier.width(40.dp))
 
             if (showConfirmationDialog) {
-                AlertDialog(
-                    onDismissRequest = { showConfirmationDialog = false },
-                    title = {
-                        Text(
-                            text = if (isDelete) stringResource(id = R.string.text_25) else stringResource(id = R.string.text_26),
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 22.sp,
-                            color = Color.Black,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                if (bill.billsStatus != "PAID") {
-                                    showConfirmationDialog = false
-                                    if (!isDelete) {
-                                        //add
-                                    } else {
-                                        billsViewModel.deleteBill(bill)
-                                        Toast.makeText(
-                                            context,
-                                            "Bill has been deleted successfully",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                } else {
-                                    showConfirmationDialog = false
-                                    Toast.makeText(
-                                        context,
-                                        "This bill has already been paid",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 8.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.DarkGray,
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(text = if (!isDelete) stringResource(id = R.string.add) else stringResource(id = R.string.delete))
-                        }
-                    },
-                    dismissButton = {
-                        Button(
-                            onClick = { showConfirmationDialog = false },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp)
-                        ) {
-                            Text(stringResource(id = R.string.cancel))
-                        }
-                    }
-                )
+                ConfirmationDialog(bill = bill, billsViewModel, message = stringResource(id = R.string.text_25), onDismiss= { showConfirmationDialog = false})
             }
-
 
             if(isPopUp){
                 MakePaidDialog(
@@ -505,6 +445,54 @@ fun BillItem(
             }
         }
     }
+}
+
+@Composable
+fun ConfirmationDialog(
+    bill : Bills,
+    billsViewModel: BillsViewModel,
+    message: String,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = {
+            Text(
+                text = message,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    billsViewModel.deleteBill(bill)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.DarkGray,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = stringResource(id = R.string.delete))
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = { onDismiss() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp)
+            ) {
+                Text(stringResource(id = R.string.cancel))
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -525,46 +513,33 @@ fun MakePaidDialog(
     val context = LocalContext.current
     val currentDate = Date()
 
-    Dialog(
-        onDismissRequest = { onCancelClick() },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
-                .shadow(elevation = 15.dp)
+    if (bill.billsStatus != "PAID") {
+        Dialog(
+            onDismissRequest = { onCancelClick() },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false
+            )
         ) {
-            Column(
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp)
+                    .fillMaxWidth(0.85f)
+                    .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(15.dp))
+                    .shadow(elevation = 15.dp)
             ) {
-                Text(
-                    "Add Expenses",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp
-                )
-                Spacer(modifier = Modifier.height(30.dp))
-                Text("Cash Account" )
-
-                Spacer(modifier = Modifier.height(25.dp))
-                ExposedDropdownMenuBox(
-                    expanded = isExpanded,
-                    onExpandedChange = { isExpanded = it }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp)
                 ) {
-                    TextField(
-                        value = searchAccount,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                        },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                        modifier = Modifier.menuAnchor()
+                    Text(
+                        stringResource(id = R.string.addExpense),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 25.sp
                     )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Text(stringResource(id = R.string.cashAcc) )
+
+                    Spacer(modifier = Modifier.height(25.dp))
                     ExposedDropdownMenuBox(
                         expanded = isExpanded,
                         onExpandedChange = { isExpanded = it }
@@ -579,51 +554,79 @@ fun MakePaidDialog(
                             colors = ExposedDropdownMenuDefaults.textFieldColors(),
                             modifier = Modifier.menuAnchor()
                         )
-
-                        ExposedDropdownMenu(
+                        ExposedDropdownMenuBox(
                             expanded = isExpanded,
-                            onDismissRequest = { isExpanded = false }
+                            onExpandedChange = { isExpanded = it }
                         ) {
-                            for (cash in cashDetailsList) {          //read from existing stock items
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(text = cash.typeName)
-                                    },
-                                    onClick = {
-                                        searchAccount = cash.typeName
-                                        isExpanded = false
-                                    }
+                            TextField(
+                                value = searchAccount,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                                },
+                                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                modifier = Modifier.menuAnchor()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = isExpanded,
+                                onDismissRequest = { isExpanded = false }
+                            ) {
+                                for (cash in cashDetailsList) {          //read from existing stock items
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(text = cash.typeName)
+                                        },
+                                        onClick = {
+                                            searchAccount = cash.typeName
+                                            isExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    Box( Modifier.fillMaxWidth() )
+                    {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
+                        ) {
+                            Button(
+                                onClick = {
+                                    billsViewModel.addBillToExpenses(amount, category, description, currentDate, searchAccount, context, bill)
+                                    onCancelClick()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(Color.Black),
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.confirmCashAcc),
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = poppinsFontFamily,
+                                    color = Color.Green
                                 )
                             }
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Box( Modifier.fillMaxWidth() )
-                {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomCenter)
-                    )
-                    OutlinedButton(
-                        onClick = {
-                            billsViewModel.addBillToExpenses(amount, category, description,currentDate,searchAccount, context, bill)
-                            onCancelClick()
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Confirm Cash Account",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = poppinsFontFamily
-                        )
-                    }
-                }
             }
         }
     }
+    else
+    {
+        onCancelClick()
+        Toast.makeText(
+            context,
+            "This bill has already been paid",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
 }
 
 @Composable

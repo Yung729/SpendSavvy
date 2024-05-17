@@ -214,4 +214,8 @@
     <string name="fail">失败</string>
     <string name="successPw">您的密码已成功更改</string>
     <string name="failPw">无法更改密码\n请重试</string>
+    <string name="confirmCashAcc">确认现金账户</string>
+    <string name="cashAcc">现金账户</string>
+    <string name="text_28">确认添加账单？</string>
+
 </resources>
