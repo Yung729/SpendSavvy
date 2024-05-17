@@ -201,7 +201,7 @@ fun StaffCard(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = stringResource(id = com.example.spendsavvy.R.string.totalSalary) + " : RM $staffSalary",
+                    text = stringResource(id = com.example.spendsavvy.R.string.totalSalary) + String.format(": RM %.2f", staffSalary),
                     fontSize = 16.sp,
                     color = Color.White
                 )
@@ -291,7 +291,7 @@ fun StaffCard(
 
 
                 Text(
-                    text = staff.salary.toString(),
+                    text = String.format("RM %.2f", staff.salary) ,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF119316),
                     textAlign = TextAlign.End,

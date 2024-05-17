@@ -117,7 +117,7 @@ fun AnalysisScreen(
 
 
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.monthlyBudget) +" : $monthlyBudgetAmount",
+                text = stringResource(id = com.example.spendsavvy.R.string.monthlyBudget) + String.format(": RM %.2f", monthlyBudgetAmount),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
@@ -158,7 +158,7 @@ fun AnalysisScreen(
 
 
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.monthlyGoal) +" : $monthlyGoalAmount",
+                text = stringResource(id = com.example.spendsavvy.R.string.monthlyGoal) + String.format(": RM %.2f", monthlyGoalAmount),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
