@@ -82,12 +82,13 @@ fun CashTransactionScreen(
                             .padding(end = 10.dp)
                     )
 
-                    Text(text = "RM ${cash.balance}")
 
                     Text(
                         "Account Balance",
                         color = Color.Gray
                     )
+
+                    Text(text = "RM ${cash.balance}")
                 }
             }
         }
@@ -96,45 +97,14 @@ fun CashTransactionScreen(
 
         Text(
             "Record",
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
         )
 
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CashTransactionList(cashTransactions)
+        Spacer(modifier = Modifier.height(20.dp))
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Button(
-                        onClick = {
-                            navController.navigateUp()
-                        },
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .bounceClick()
-                            .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Black
-                        )
-                    ) {
-                        Text(
-                            text = "Back",
-                            textAlign = TextAlign.Center,
-                            color = Color.White
-                        )
-                    }
-                }
-            }
-        }
+        CashTransactionList(cashTransactions)
+
     }
 }
 
@@ -222,7 +192,7 @@ fun CashTransactionCard(
 
 
             Text(
-                text = transactions.amount.toString(),
+                text = ("RM ${transactions.amount}"),
                 fontWeight = FontWeight.SemiBold,
                 color = if (transactions.transactionType == "Expenses") Color.Red else Color(
                     0xFF119316

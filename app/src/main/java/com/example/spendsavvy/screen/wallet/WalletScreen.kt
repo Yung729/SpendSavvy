@@ -133,7 +133,7 @@ fun WalletScreen(
 
                     Text(
                         text = "RM ${totalCashAmount + totalFixedDeposit + totalPriceStock}",
-                        fontSize = 20.sp
+                        fontSize = 15.sp
                     )
                 }
             }
