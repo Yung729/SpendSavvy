@@ -103,7 +103,9 @@ fun SettingsScreen(
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
             )
-            List(R.drawable.profile_icon, stringResource(id = com.example.spendsavvy.R.string.myProfile), navController, Screen.MyProfile.route)
+            List(R.drawable.profile_icon, stringResource(id = com.example.spendsavvy.R.string.myProfile),
+                navController,
+                Screen.MyProfile.route)
         }
 
         item {
@@ -112,12 +114,6 @@ fun SettingsScreen(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 5.dp)
-            )
-            List(
-                R.drawable.changepassword_icon,
-                stringResource(id = com.example.spendsavvy.R.string.changePw),
-                navController,
-                Screen.ChangePassword.route
             )
             List(
                 R.drawable.forgotpassword_icon,
@@ -147,10 +143,16 @@ fun SettingsScreen(
                 Screen.TaxCalculator.route
             )
             List(
-                R.drawable.category_icon, stringResource(id = com.example.spendsavvy.R.string.manageCategory), navController, Screen.Category.route
+                R.drawable.category_icon,
+                stringResource(id = com.example.spendsavvy.R.string.manageCategory),
+                navController,
+                Screen.Category.route
             )
             List(
-                R.drawable.staff_icon, stringResource(id = com.example.spendsavvy.R.string.manageStaff), navController, Screen.StaffScreen.route
+                R.drawable.staff_icon,
+                stringResource(id = com.example.spendsavvy.R.string.manageStaff),
+                navController,
+                Screen.StaffScreen.route
             )
         }
 
@@ -162,13 +164,22 @@ fun SettingsScreen(
                 modifier = Modifier.padding(vertical = 5.dp)
             )
             List(
-                R.drawable.bell_icon, stringResource(id = com.example.spendsavvy.R.string.notifications), navController, Screen.Notifications.route
+                R.drawable.bell_icon,
+                stringResource(id = com.example.spendsavvy.R.string.notifications),
+                navController,
+                Screen.Notifications.route
             )
             List(
-                R.drawable.language_icon, stringResource(id = com.example.spendsavvy.R.string.language), navController, Screen.Language.route
+                R.drawable.language_icon,
+                stringResource(id = com.example.spendsavvy.R.string.language),
+                navController,
+                Screen.Language.route
             )
             List(
-                R.drawable.help_icon, stringResource(id = com.example.spendsavvy.R.string.help), navController, Screen.HelpAndSupport.route
+                R.drawable.help_icon,
+                stringResource(id = com.example.spendsavvy.R.string.help),
+                navController,
+                Screen.HelpAndSupport.route
             )
         }
 
