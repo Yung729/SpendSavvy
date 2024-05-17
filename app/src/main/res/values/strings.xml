@@ -212,6 +212,8 @@
     <string name="fail">Fail</string>
     <string name="successPw">Your password has been changed successfully</string>
     <string name="failPw">Unable to change password \n Please Try Again</string>
-
+    <string name="confirmCashAcc">Confirm Cash Account</string>
+    <string name="cashAcc">Cash Account</string>
+    <string name="text_28">Confirm to add bill ?</string>
 
 </resources>

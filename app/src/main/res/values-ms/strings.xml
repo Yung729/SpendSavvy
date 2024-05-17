@@ -214,4 +214,8 @@
     <string name="fail">Gagal</string>
     <string name="successPw">Kata laluan anda telah berjaya ditukar</string>
     <string name="failPw">Tidak dapat menukar kata laluan\nSila cuba lagi</string>
+    <string name="confirmCashAcc">Sahkan akaun tunai</string>
+    <string name="cashAcc">Akaun tunai</string>
+    <string name="text_28">Sahkan untuk menambah bil?</string>
+
 </resources>
