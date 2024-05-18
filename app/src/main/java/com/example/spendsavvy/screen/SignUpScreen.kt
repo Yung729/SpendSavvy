@@ -198,19 +198,50 @@ fun SignUpScreen(
 
         ButtonComponent(
             onButtonClick = {
-                if (!emailValidation(email) || !passwordValidation(password) || password != confirmPassword || !phoneValidation(
-                        phoneNo
-                    )
-                ) {
-                    isError = true
+                isError = false
+
+                // Check for blank fields
+                if (email.isBlank() || password.isBlank() || confirmPassword.isBlank() || userName.isBlank() || phoneNo.isBlank()) {
                     Toast.makeText(
                         context,
-                        "Details Not Fulfill Requirement",
+                        "All fields are required",
                         Toast.LENGTH_SHORT
                     ).show()
+                    isError = true
                 } else {
-                    isError = false
+                    if (!emailValidation(email)) {
+                        Toast.makeText(
+                            context,
+                            "Invalid Email Format",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        isError = true
+                    } else if (!passwordValidation(password)) {
+                        Toast.makeText(
+                            context,
+                            "Minimum 8 Characters Password Required",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        isError = true
+                    } else if (password != confirmPassword) {
+                        Toast.makeText(
+                            context,
+                            "Passwords Do Not Match",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        isError = true
+                    } else if (!phoneValidation(phoneNo)) {
+                        Toast.makeText(
+                            context,
+                            "Invalid Phone Number",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        isError = true
+                    }
+                }
 
+                // If no errors, proceed with sign-up
+                if (!isError) {
                     fireAuthRepository.signUp(email, password, userName, phoneNo)
                     navController.navigate(route = Screen.Login.route)
                 }
