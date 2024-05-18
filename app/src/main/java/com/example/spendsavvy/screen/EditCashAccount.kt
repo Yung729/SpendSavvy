@@ -338,6 +338,11 @@ fun EditCashAccountScreen(
                                                         ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
                                                 )
                                             )
+                                            Toast.makeText(
+                                                context,
+                                                "Balance updated",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         },
                                         onFailure = {
 
