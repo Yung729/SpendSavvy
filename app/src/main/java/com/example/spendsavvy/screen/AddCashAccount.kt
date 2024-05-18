@@ -70,10 +70,6 @@ fun AddCashAccountScreen(
         mutableStateOf("")
     }
 
-    var selectedIndex by remember {
-        mutableStateOf(0)
-    }
-
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -83,47 +79,15 @@ fun AddCashAccountScreen(
             selectedImageUri = it
         })
 
-    val options = mutableStateListOf<String>("Cash", "Bank")
 
     Column(
         modifier = Modifier
             .fillMaxWidth(0.85f)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(
-            text = stringResource(id = com.example.spendsavvy.R.string.addCashAcc),
-            fontFamily = poppinsFontFamily,
-            fontSize = 30.sp,
-            modifier = Modifier
-                .padding(start = 15.dp, top = 15.dp)
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
         Column(
             modifier = Modifier.padding(start = 30.dp, top = 15.dp, bottom = 30.dp)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                SingleChoiceSegmentedButtonRow {
-                    options.forEachIndexed { index, option ->
-                        SegmentedButton(
-                            selected = selectedIndex == index,
-                            onClick = { selectedIndex = index },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index, count = options.size
-                            )
-                        ) {
-                            Text(text = option)
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
             Text(
                 text = stringResource(id = com.example.spendsavvy.R.string.pickIconPhoto),
                 fontFamily = poppinsFontFamily,
@@ -185,35 +149,30 @@ fun AddCashAccountScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (selectedIndex == 1) {
+            Text(
+                text = "Enter your bank",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
+            )
 
-                Text(
-                    text = "Enter your bank",
-                    fontFamily = poppinsFontFamily,
-                    fontSize = 15.sp
-                )
-
-                TextField(
-                    value = typeName,
-                    onValueChange = {
-                        typeName = it
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    placeholder = {
-                        Text(
-                            text = "Public Bank",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                    }
-                )
-            }else{
-                typeName = "Cash"
-            }
+            TextField(
+                value = typeName,
+                onValueChange = {
+                    typeName = it
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                ),
+                placeholder = {
+                    Text(
+                        text = "Public Bank",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 15.sp,
+                        color = Color.Gray
+                    )
+                }
+            )
 
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -279,14 +238,15 @@ fun AddCashAccountScreen(
                             Toast.LENGTH_SHORT
                         ).show()
 
-                    }else{
-                    walletViewModel.addCashDetailsToDatabase(
-                        Cash(
-                            imageUri = selectedImageUri,
-                            typeName = typeName,
-                            balance = initialAmt.toDoubleOrNull() ?: 0.0
-                        ),selectedImageUri
-                    )}
+                    } else {
+                        walletViewModel.addCashDetailsToDatabase(
+                            Cash(
+                                imageUri = selectedImageUri,
+                                typeName = typeName,
+                                balance = initialAmt.toDoubleOrNull() ?: 0.0
+                            ), selectedImageUri
+                        )
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

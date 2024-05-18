@@ -53,7 +53,6 @@
     <string name="accs">Account(s)</string>
     <string name="addAcc">Add Account</string>
     <string name="editAcc">Edit Account</string>
-    <string name="addCashAcc">Add Cash Account</string>
     <string name="acc">Account</string>
     <string name="initAmount">Initial Amount</string>
     <string name="bank">Bank</string>
