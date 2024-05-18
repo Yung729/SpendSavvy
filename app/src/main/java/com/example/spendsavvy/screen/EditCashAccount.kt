@@ -57,6 +57,17 @@ fun EditCashAccountScreen(
     transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
+    var validTypeName by remember {
+        mutableStateOf(false)
+    }
+
+    var validIncAmt by remember {
+        mutableStateOf(false)
+    }
+
+    var validDecAmt by remember {
+        mutableStateOf(false)
+    }
 
     val context = LocalContext.current
 
@@ -165,6 +176,7 @@ fun EditCashAccountScreen(
                                     onClick = {
                                         searchCashAccount = cashDetails.typeName
                                         isExpanded = false
+                                        validTypeName = true
                                     }
                                 )
                                 typeName = searchCashAccount
@@ -189,6 +201,7 @@ fun EditCashAccountScreen(
                 value = incAmt,
                 onValueChange = {
                     incAmt = it
+                    validIncAmt = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -214,6 +227,7 @@ fun EditCashAccountScreen(
                 value = decAmt,
                 onValueChange = {
                     decAmt = it
+                    validDecAmt = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
@@ -258,102 +272,121 @@ fun EditCashAccountScreen(
 
             Button(
                 onClick = {
-                    if ((decAmt.toDoubleOrNull() ?: 0.00) < 0.00 || (incAmt.toDoubleOrNull()
-                            ?: 0.00) < 0.00
-                    ) {
-                        Toast.makeText(
-                            context,
-                            "Please do not enter any amount that is less than RM 0.00",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        for (cashDetails in cashInfo) {
-                            if (cashDetails.typeName == typeName) {
-                                if ((decAmt.toDoubleOrNull() ?: 0.0) > (incAmt.toDoubleOrNull()
-                                        ?: 0.0) + cashDetails.balance
-                                ) {
-                                    Toast.makeText(
-                                        context,
-                                        "You cannot decrease your amount more than the total of your remaining and increased amount\nRemaining Amount: RM ${
-                                            String.format(
-                                                "RM %.2f",
-                                                cashDetails.balance
-                                            )
-                                        }",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-
-                                    transactionViewModel.addTransactionToFirestore(
-                                        Transactions(
-                                            id = transactionViewModel.generateTransactionId(),
-                                            amount = if (((incAmt.toDoubleOrNull()
-                                                    ?: 0.0) - (decAmt.toDoubleOrNull()
-                                                    ?: 0.0)) > 0.0
-                                            ) {
-                                                (incAmt.toDoubleOrNull() ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
-                                            } else {
-                                                (decAmt.toDoubleOrNull() ?: 0.0) - (incAmt.toDoubleOrNull() ?: 0.0)
-                                            },
-                                            description = "Update Bank Balance",
-                                            date = Date(),
-                                            category = Category(
-                                                id = if (((incAmt.toDoubleOrNull()
-                                                        ?: 0.0) - (decAmt.toDoubleOrNull()
-                                                        ?: 0.0)) > 0.0
-                                                ) {
-                                                    "CT0016"
-                                                } else {
-                                                    "CT0015"
-                                                },
-                                                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Faccounting.png?alt=media&token=77e41b81-d217-475a-8ba7-8837aa6929e1"),
-                                                categoryName = "Update Balance",
-                                                categoryType = if (((incAmt.toDoubleOrNull()
-                                                        ?: 0.0) - (decAmt.toDoubleOrNull()
-                                                        ?: 0.0)) > 0.0
-                                                ) {
-                                                    "Incomes"
-                                                } else {
-                                                    "Expenses"
-                                                }
-                                            ),
-                                            paymentMethod = typeName,
-                                            transactionType =
-                                            if (((incAmt.toDoubleOrNull()
-                                                    ?: 0.0) - (decAmt.toDoubleOrNull()
-                                                    ?: 0.0)) > 0.0
-                                            ) {
-                                                "Incomes"
-                                            } else {
-                                                "Expenses"
-                                            }
-                                        ),
-                                        onSuccess = {
-                                            walletViewModel.editCashDetails(
-                                                cash = cashDetails,
-                                                updatedCashDetails = Cash(
-                                                    imageUri = cashDetails.imageUri,
-                                                    typeName = typeName,
-                                                    balance = cashDetails.balance + (incAmt.toDoubleOrNull()
-                                                        ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
-                                                )
-                                            )
+                    if (validIncAmt && validDecAmt) {
+                        if (selectedIndex == 1 && !validTypeName) {
+                            Toast.makeText(
+                                context,
+                                "Please select a cash account",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            if ((decAmt.toDoubleOrNull() ?: 0.00) < 0.00 || (incAmt.toDoubleOrNull()
+                                    ?: 0.00) < 0.00
+                            ) {
+                                Toast.makeText(
+                                    context,
+                                    "Please do not enter any amount that is less than RM 0.00",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                for (cashDetails in cashInfo) {
+                                    if (cashDetails.typeName == typeName) {
+                                        if ((decAmt.toDoubleOrNull()
+                                                ?: 0.0) > (incAmt.toDoubleOrNull()
+                                                ?: 0.0) + cashDetails.balance
+                                        ) {
                                             Toast.makeText(
                                                 context,
-                                                "Balance updated",
+                                                "You cannot decrease your amount more than the total of your remaining and increased amount\nRemaining Amount: RM ${
+                                                    String.format(
+                                                        "RM %.2f",
+                                                        cashDetails.balance
+                                                    )
+                                                }",
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                        },
-                                        onFailure = {
+                                        } else {
+                                            transactionViewModel.addTransactionToFirestore(
+                                                Transactions(
+                                                    id = transactionViewModel.generateTransactionId(),
+                                                    amount = if (((incAmt.toDoubleOrNull()
+                                                            ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                            ?: 0.0)) > 0.0
+                                                    ) {
+                                                        (incAmt.toDoubleOrNull()
+                                                            ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                            ?: 0.0)
+                                                    } else {
+                                                        (decAmt.toDoubleOrNull()
+                                                            ?: 0.0) - (incAmt.toDoubleOrNull()
+                                                            ?: 0.0)
+                                                    },
+                                                    description = "Update Bank Balance",
+                                                    date = Date(),
+                                                    category = Category(
+                                                        id = if (((incAmt.toDoubleOrNull()
+                                                                ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                                ?: 0.0)) > 0.0
+                                                        ) {
+                                                            "CT0016"
+                                                        } else {
+                                                            "CT0015"
+                                                        },
+                                                        imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Faccounting.png?alt=media&token=77e41b81-d217-475a-8ba7-8837aa6929e1"),
+                                                        categoryName = "Update Balance",
+                                                        categoryType = if (((incAmt.toDoubleOrNull()
+                                                                ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                                ?: 0.0)) > 0.0
+                                                        ) {
+                                                            "Incomes"
+                                                        } else {
+                                                            "Expenses"
+                                                        }
+                                                    ),
+                                                    paymentMethod = typeName,
+                                                    transactionType =
+                                                    if (((incAmt.toDoubleOrNull()
+                                                            ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                            ?: 0.0)) > 0.0
+                                                    ) {
+                                                        "Incomes"
+                                                    } else {
+                                                        "Expenses"
+                                                    }
+                                                ),
+                                                onSuccess = {
+                                                    walletViewModel.editCashDetails(
+                                                        cash = cashDetails,
+                                                        updatedCashDetails = Cash(
+                                                            imageUri = cashDetails.imageUri,
+                                                            typeName = typeName,
+                                                            balance = cashDetails.balance + (incAmt.toDoubleOrNull()
+                                                                ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                                ?: 0.0)
+                                                        )
+                                                    )
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Balance updated",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                },
+                                                onFailure = {
+
+                                                }
+                                            )
 
                                         }
-                                    )
-
-
+                                    }
                                 }
                             }
                         }
-                        navController.navigateUp()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Please fill up all the details",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -372,16 +405,3 @@ fun EditCashAccountScreen(
         }
     }
 }
-
-
-/*
-@Composable
-fun cashUpdateDetails(cashList: List<Cash>, typeName: String): Cash {
-
-    for (cashDetails in cashList) {
-        if (cashDetails.typeName == typeName) {
-            return cashDetails
-        }
-    }
-
-}*/

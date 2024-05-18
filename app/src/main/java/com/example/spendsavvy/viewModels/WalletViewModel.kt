@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -93,16 +94,8 @@ class WalletViewModel(
     }
 
     fun editCashDetails(cash: Cash, updatedCashDetails: Cash) {
-        /*if (cashDetailsList.value?.any { it.typeName == cash.typeName } == false) {
-            Toast.makeText(
-                currentContext, "The cash account has not added yet, create one", Toast.LENGTH_SHORT
-            ).show()
-            return
-        }*/
-
         viewModelScope.launch {
             try {
-
                 firestoreRepository.updateWalletItemsInFirestoreByName(
                     userId,
                     "Cash",

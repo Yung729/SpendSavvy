@@ -26,14 +26,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +56,14 @@ fun AddCashAccountScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
+    var validTypeName by remember {
+        mutableStateOf(false)
+    }
+
+    var validInitialAmt by remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
 
     var typeName by remember {
@@ -159,6 +163,7 @@ fun AddCashAccountScreen(
                 value = typeName,
                 onValueChange = {
                     typeName = it
+                    validTypeName = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -186,6 +191,7 @@ fun AddCashAccountScreen(
                 value = initialAmt,
                 onValueChange = {
                     initialAmt = it
+                    validInitialAmt = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
@@ -231,21 +237,28 @@ fun AddCashAccountScreen(
 
             Button(
                 onClick = {
-                    if ((initialAmt.toDoubleOrNull() ?: 0.0) <= 0.00) {
+                    if (validTypeName && validInitialAmt) {
+                        if ((initialAmt.toDoubleOrNull() ?: 0.0) <= 0.00) {
+                            Toast.makeText(
+                                context,
+                                "Please enter the amount that is more than RM 0.00",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            walletViewModel.addCashDetailsToDatabase(
+                                Cash(
+                                    imageUri = selectedImageUri,
+                                    typeName = typeName,
+                                    balance = initialAmt.toDoubleOrNull() ?: 0.0
+                                ), selectedImageUri
+                            )
+                        }
+                    } else {
                         Toast.makeText(
                             context,
-                            "Please enter the amount that is more than RM 0.00",
+                            "Please fill in all the details",
                             Toast.LENGTH_SHORT
                         ).show()
-
-                    } else {
-                        walletViewModel.addCashDetailsToDatabase(
-                            Cash(
-                                imageUri = selectedImageUri,
-                                typeName = typeName,
-                                balance = initialAmt.toDoubleOrNull() ?: 0.0
-                            ), selectedImageUri
-                        )
                     }
                 },
                 colors = ButtonDefaults.buttonColors(

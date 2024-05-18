@@ -66,6 +66,22 @@ fun AddNewStockScreen(
     transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
+    var validAccount by remember {
+        mutableStateOf(false)
+    }
+
+    var validStockName by remember {
+        mutableStateOf(false)
+    }
+
+    var validPrice by remember {
+        mutableStateOf(false)
+    }
+
+    var validQty by remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
 
     var stockName by remember {
@@ -186,6 +202,7 @@ fun AddNewStockScreen(
                 value = stockName,
                 onValueChange = {
                     stockName = it
+                    validStockName = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -211,6 +228,7 @@ fun AddNewStockScreen(
                 value = price,
                 onValueChange = {
                     price = it
+                    validPrice = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -236,6 +254,7 @@ fun AddNewStockScreen(
                 value = qty,
                 onValueChange = {
                     qty = it
+                    validQty = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
@@ -254,7 +273,9 @@ fun AddNewStockScreen(
             Spacer(modifier = Modifier.height(25.dp))
 
             Text(
-                "Cash Account"
+                "Cash Account That Paid",
+                fontFamily = poppinsFontFamily,
+                fontSize = 15.sp
             )
 
             ExposedDropdownMenuBox(
@@ -263,7 +284,8 @@ fun AddNewStockScreen(
             ) {
                 TextField(
                     value = searchAccount,
-                    onValueChange = {},
+                    onValueChange = {
+                    },
                     readOnly = true,
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
@@ -298,6 +320,7 @@ fun AddNewStockScreen(
                                 onClick = {
                                     searchAccount = cash.typeName
                                     isExpanded = false
+                                    validAccount = true
                                 }
                             )
                         }
@@ -333,47 +356,55 @@ fun AddNewStockScreen(
 
             Button(
                 onClick = {
-                    if ((price.toDoubleOrNull() ?: 0.00) <= 0.00) {
-                        Toast.makeText(
-                            context,
-                            "You cannot only set the price more than RM 0.00",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if ((qty.toIntOrNull() ?: 0) <= 0) {
-                        Toast.makeText(
-                            context,
-                            "You must at least add 1 item",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        transactionViewModel.addTransactionToFirestore(
-                            Transactions(
-                                id = transactionViewModel.generateTransactionId(),
-                                amount = ((price.toDoubleOrNull() ?: 0.0) * qty.toInt()),
-                                description = "Purchase Stock",
-                                date = Date(),
-                                category = Category(
-                                    id = "CT0014",
-                                    imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
-                                    categoryName = "Stock Purchase",
-                                    categoryType = "Expenses"
+                    if (validStockName && validPrice && validQty && validAccount) {
+                        if ((price.toDoubleOrNull() ?: 0.00) <= 0.00) {
+                            Toast.makeText(
+                                context,
+                                "You cannot only set the price more than RM 0.00",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else if ((qty.toIntOrNull() ?: 0) <= 0) {
+                            Toast.makeText(
+                                context,
+                                "You must at least add 1 item",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            transactionViewModel.addTransactionToFirestore(
+                                Transactions(
+                                    id = transactionViewModel.generateTransactionId(),
+                                    amount = ((price.toDoubleOrNull() ?: 0.0) * qty.toInt()),
+                                    description = "Purchase Stock",
+                                    date = Date(),
+                                    category = Category(
+                                        id = "CT0014",
+                                        imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
+                                        categoryName = "Stock Purchase",
+                                        categoryType = "Expenses"
+                                    ),
+                                    paymentMethod = searchAccount,
+                                    transactionType = "Expenses"
                                 ),
-                                paymentMethod = searchAccount,
-                                transactionType = "Expenses"
-                            ),
-                            onSuccess = {
-                                walletViewModel.addStockDetailsToDatabase(
-                                    Stock(
-                                        selectedImageUri,
-                                        stockName,
-                                        price.toDoubleOrNull() ?: 0.0,
-                                        qty.toInt()
-                                    ), selectedImageUri
-                                )
-                            },
-                            onFailure = {
-                            }
-                        )
+                                onSuccess = {
+                                    walletViewModel.addStockDetailsToDatabase(
+                                        Stock(
+                                            selectedImageUri,
+                                            stockName,
+                                            price.toDoubleOrNull() ?: 0.0,
+                                            qty.toInt()
+                                        ), selectedImageUri
+                                    )
+                                },
+                                onFailure = {
+                                }
+                            )
+                        }
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Please fill in all the details",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(

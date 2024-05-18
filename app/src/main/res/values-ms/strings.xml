@@ -37,7 +37,6 @@
     <string name="all">Semua</string>
     <string name="custom">Custom</string>
     <string name="wallet">Dompet</string>
-    <string name="assets">Aset</string>
     <string name="cash">Wang Tunai</string>
     <string name="text_3">Termasuk Wang Tunai dan Bank</string>
     <string name="text_4">Tambahkan Butiran Wang Tunai</string>
@@ -55,7 +54,6 @@
     <string name="accs">Akaun</string>
     <string name="addAcc">Tambah Akaun</string>
     <string name="editAcc">Edit Akaun</string>
-    <string name="addCashAcc">Tambah Akaun Tunai</string>
     <string name="acc">Akaun</string>
     <string name="initAmount">Jumlah Awal</string>
     <string name="bank">Bank</string>

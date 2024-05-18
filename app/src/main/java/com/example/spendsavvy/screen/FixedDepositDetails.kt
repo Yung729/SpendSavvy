@@ -61,6 +61,18 @@ fun FixedDepositDetailsScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
+    var validSelectedBank by remember {
+        mutableStateOf(false)
+    }
+
+    var validDepositAmt by remember {
+        mutableStateOf(false)
+    }
+
+    var validInterestRate by remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
 
     val currentDate = Calendar.getInstance().apply {
@@ -199,6 +211,7 @@ fun FixedDepositDetailsScreen(
                 value = selectedBank,
                 onValueChange = {
                     selectedBank = it
+                    validSelectedBank = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -232,6 +245,7 @@ fun FixedDepositDetailsScreen(
                 value = depositAmt,
                 onValueChange = {
                     depositAmt = it
+                    validDepositAmt = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -260,6 +274,7 @@ fun FixedDepositDetailsScreen(
                 value = interestRate,
                 onValueChange = {
                     interestRate = it
+                    validInterestRate = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
@@ -305,29 +320,37 @@ fun FixedDepositDetailsScreen(
 
             Button(
                 onClick = {
-                    if((interestRate.toDoubleOrNull()?:0.0) <= 0.00) {
-                        Toast.makeText(
-                            context,
-                            "Please enter the rate that is more than 0.00",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if ((depositAmt.toDoubleOrNull()?:0.0) <= 0.00) {
-                        Toast.makeText(
-                            context,
-                            "You can only deposit the amount that is more than RM 0.00",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    if (validSelectedBank && validDepositAmt && validInterestRate) {
+                        if ((interestRate.toDoubleOrNull() ?: 0.0) <= 0.00) {
+                            Toast.makeText(
+                                context,
+                                "Please enter the rate that is more than 0.00",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else if ((depositAmt.toDoubleOrNull() ?: 0.0) <= 0.00) {
+                            Toast.makeText(
+                                context,
+                                "You can only deposit the amount that is more than RM 0.00",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            walletViewModel.addFDDetailsToDatabase(
+                                FDAccount(
+                                    selectedImageUri,
+                                    selectedBank,
+                                    interestRate.toDoubleOrNull() ?: 0.0,
+                                    depositAmt.toDoubleOrNull() ?: 0.0,
+                                    currentDate,
+                                    "Deposit"
+                                ), selectedImageUri
+                            )
+                        }
                     } else {
-                    walletViewModel.addFDDetailsToDatabase(
-                        FDAccount(
-                            selectedImageUri,
-                            selectedBank,
-                            interestRate.toDoubleOrNull() ?: 0.0,
-                            depositAmt.toDoubleOrNull() ?: 0.0,
-                            currentDate,
-                            "Deposit"
-                        ), selectedImageUri
-                    )
+                        Toast.makeText(
+                            context,
+                            "Please fill in all the details",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
