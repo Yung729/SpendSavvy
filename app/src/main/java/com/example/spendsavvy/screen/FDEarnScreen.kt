@@ -146,7 +146,7 @@ fun FDEarnScreen(
 
                     Text(
                         "RM ${fdAccount.deposit * fdAccount.interestRate / 100}",    //temporary
-                        color = Color.Green,
+                        color = Color(0xFF119316),
                         modifier = Modifier
                     )
 
@@ -558,7 +558,7 @@ fun FDTransferCard(
             Text(
                 text = "RM ${fdAccount.deposit}",
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Green,
+                color = Color(0xFF119316),
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .fillMaxWidth()
