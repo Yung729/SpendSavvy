@@ -3,6 +3,7 @@ package com.example.spendsavvy.screen
 import android.R
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -59,6 +61,8 @@ fun FixedDepositDetailsScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
+    val context = LocalContext.current
+
     val currentDate = Calendar.getInstance().apply {
         set(Calendar.HOUR_OF_DAY, 0)
         set(Calendar.MINUTE, 0)
@@ -191,40 +195,6 @@ fun FixedDepositDetailsScreen(
                 }
             )
 
-            /*ExposedDropdownMenuBox(
-                expanded = isExpanded,
-                onExpandedChange = { isExpanded = it }
-            ) {
-                TextField(
-                    value = searchBank,
-                    onValueChange = {
-                        searchBank = it
-                    },
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                    },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    modifier = Modifier.menuAnchor()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = isExpanded,
-                    onDismissRequest = { isExpanded = false }
-                ) {
-                    for (bankAccount in cashDetailsList) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = bankAccount.typeName)
-                            },
-                            onClick = {
-                                searchBank = bankAccount.typeName
-                                isExpanded = false
-                            }
-                        )
-                    }
-                }
-            }*/
             TextField(
                 value = selectedBank,
                 onValueChange = {
@@ -335,6 +305,19 @@ fun FixedDepositDetailsScreen(
 
             Button(
                 onClick = {
+                    if((interestRate.toDoubleOrNull()?:0.0) <= 0.00) {
+                        Toast.makeText(
+                            context,
+                            "Please enter the rate that is more than 0.00",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if ((depositAmt.toDoubleOrNull()?:0.0) <= 0.00) {
+                        Toast.makeText(
+                            context,
+                            "You can only deposit the amount that is more than RM 0.00",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
                     walletViewModel.addFDDetailsToDatabase(
                         FDAccount(
                             selectedImageUri,
@@ -345,6 +328,7 @@ fun FixedDepositDetailsScreen(
                             "Deposit"
                         ), selectedImageUri
                     )
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

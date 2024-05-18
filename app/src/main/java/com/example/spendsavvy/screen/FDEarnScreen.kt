@@ -424,6 +424,12 @@ fun withdrawFDDialog(
                                         "Please enter the amount that less than or equals to your deposit amount\nAccount Balance: ${String.format("RM %.2f",fdAccount.deposit)}",
                                         Toast.LENGTH_SHORT
                                     ).show()
+                                }else if ((withdrawalAmt.toDoubleOrNull() ?: 0.0) <= 0.00) {
+                                    Toast.makeText(
+                                        context,
+                                        "Invalid input!\nYou can only withdraw more than RM 0.00",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
                                     for (cashDetails in cashDetailsList) {
                                         if (cashDetails.typeName == searchAccount) {

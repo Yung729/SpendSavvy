@@ -73,13 +73,15 @@ fun EditCashAccountScreen(
     var decAmt by remember {
         mutableStateOf("")
     }
-
-
+    
     var selectedIndex by remember {
         mutableStateOf(0)
     }
 
-    val options = mutableStateListOf<String>(stringResource(id = R.string.cash), stringResource(id = R.string.bank))
+    val options = mutableStateListOf<String>(
+        stringResource(id = R.string.cash),
+        stringResource(id = R.string.bank)
+    )
     val cashInfo by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
 
     Column(
@@ -250,30 +252,43 @@ fun EditCashAccountScreen(
 
             Button(
                 onClick = {
-                    for (cashDetails in cashInfo) {
-                        if (cashDetails.typeName == typeName) {
-                            if ((decAmt.toDoubleOrNull() ?: 0.0) > (incAmt.toDoubleOrNull()
-                                    ?: 0.0) + cashDetails.balance
-                            ) {
-                                Toast.makeText(
-                                    context,
-                                    "You cannot decrease your amount more than the total of your remaining and increased amount\nRemaining Amount: RM ${String.format("RM %.2f",cashDetails.balance)}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                walletViewModel.editCashDetails(
-                                    cash = cashDetails,
-                                    updatedCashDetails = Cash(
-                                        imageUri = cashDetails.imageUri,
-                                        typeName = typeName,
-                                        balance = cashDetails.balance + (incAmt.toDoubleOrNull()
-                                            ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
+                    if ((decAmt.toDoubleOrNull() ?: 0.00) < 0.00 || (incAmt.toDoubleOrNull() ?: 0.00) < 0.00) {
+                        Toast.makeText(
+                            context,
+                            "Please do not enter any amount that is less than RM 0.00",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        for (cashDetails in cashInfo) {
+                            if (cashDetails.typeName == typeName) {
+                                if ((decAmt.toDoubleOrNull() ?: 0.0) > (incAmt.toDoubleOrNull()
+                                        ?: 0.0) + cashDetails.balance
+                                ) {
+                                    Toast.makeText(
+                                        context,
+                                        "You cannot decrease your amount more than the total of your remaining and increased amount\nRemaining Amount: RM ${
+                                            String.format(
+                                                "RM %.2f",
+                                                cashDetails.balance
+                                            )
+                                        }",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    walletViewModel.editCashDetails(
+                                        cash = cashDetails,
+                                        updatedCashDetails = Cash(
+                                            imageUri = cashDetails.imageUri,
+                                            typeName = typeName,
+                                            balance = cashDetails.balance + (incAmt.toDoubleOrNull()
+                                                ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
+                        navController.navigateUp()
                     }
-                    navController.navigateUp()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black

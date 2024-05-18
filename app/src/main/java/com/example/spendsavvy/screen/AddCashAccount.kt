@@ -3,6 +3,7 @@ package com.example.spendsavvy.screen
 import android.R
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,27 +53,6 @@ import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.WalletViewModel
 
-//DRAFT ONLY
-@Composable
-fun CashDetailsScreen(
-
-) {
-    //account
-
-    //upload image(Cash no need, use money icon)
-
-
-    //2 options (Cash or Bank)
-
-
-    //if typeName found, let show initial amount textfield, else show increase amount & decrease amount (cash no need name {typeName = "Cash"}, bank need to specify bankName where typeName = bankName
-
-    //button
-    //condition: new account, use addDetailsToDatabase, else editDetailsToDatabase
-
-}
-//DRAFT ONLY
-
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
@@ -79,9 +60,7 @@ fun AddCashAccountScreen(
     walletViewModel: WalletViewModel,
     navController: NavController
 ) {
-    /*var type by remember {
-        mutableStateOf("")
-    }*/
+    val context = LocalContext.current
 
     var typeName by remember {
         mutableStateOf("")
@@ -293,13 +272,21 @@ fun AddCashAccountScreen(
 
             Button(
                 onClick = {
+                    if ((initialAmt.toDoubleOrNull() ?: 0.0) <= 0.00) {
+                        Toast.makeText(
+                            context,
+                            "Please enter the amount that is more than RM 0.00",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    }else{
                     walletViewModel.addCashDetailsToDatabase(
                         Cash(
                             imageUri = selectedImageUri,
                             typeName = typeName,
                             balance = initialAmt.toDoubleOrNull() ?: 0.0
                         ),selectedImageUri
-                    )
+                    )}
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
