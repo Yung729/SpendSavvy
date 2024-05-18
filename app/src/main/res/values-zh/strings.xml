@@ -12,6 +12,7 @@
     <string name="password">密码</string>
     <string name="forgotPw">忘记密码</string>
     <string name="registerAcc">注册账户</string>
+    <string name="haveAcc">已有账号?</string>
     <string name="text_1">找回您的账户密码</string>
     <string name="text_2">输入你的电子邮箱地址</string>
     <string name="next">下一个</string>

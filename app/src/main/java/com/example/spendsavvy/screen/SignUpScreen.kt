@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -44,6 +46,7 @@ import com.example.spendsavvy.R
 import com.example.spendsavvy.components.ButtonComponent
 import com.example.spendsavvy.navigation.Screen
 import com.example.spendsavvy.repo.FireAuthRepository
+import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.HeaderTitle
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
 import com.example.spendsavvy.viewModels.CategoryViewModel
@@ -213,6 +216,17 @@ fun SignUpScreen(
                 }
             },
             text = stringResource(id = R.string.signUp_text)
+        )
+
+        Text(
+            text = stringResource(id = R.string.haveAcc),
+            style = TextStyle(
+                color = ButtonColor,
+                fontFamily = poppinsFontFamily
+            ),
+            modifier = Modifier.clickable {
+                navController.navigate(route = Screen.Login.route)
+            }
         )
     }
 }

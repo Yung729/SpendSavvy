@@ -243,7 +243,7 @@ fun AddExpensesScreen(
                             value = amount,
                             onValueChange = {
                                 amount = it
-                                isAmountValid = it.toDoubleOrNull() != null
+                                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
                             },
                             placeholder = {
                                 Text(
@@ -397,7 +397,7 @@ fun AddExpensesScreen(
                             if (!isAmountValid) {
                                 Toast.makeText(
                                     context,
-                                    "Amount is Empty",
+                                    "Amount is Invalid",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!isCategoryValid) {
@@ -540,7 +540,7 @@ fun AddExpensesScreen(
                         TextField(value = amount,
                             onValueChange = {
                                 amount = it
-                                isAmountValid = it.toDoubleOrNull() != null
+                                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0.0
                             },
                             placeholder = {
                                 Text(
@@ -687,7 +687,7 @@ fun AddExpensesScreen(
                             if (!isAmountValid) {
                                 Toast.makeText(
                                     context,
-                                    "Amount is Empty",
+                                    "Amount is Invalid",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!isCategoryValid) {

@@ -245,7 +245,7 @@ fun AddIncomeScreen(
                             value = amount,
                             onValueChange = {
                                 amount = it
-                                isAmountValid = it.toDoubleOrNull() != null
+                                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
                             },
                             placeholder = {
                                 Text(
@@ -399,7 +399,7 @@ fun AddIncomeScreen(
                             if (!isAmountValid) {
                                 Toast.makeText(
                                     context,
-                                    "Amount is Empty",
+                                    "Amount is Invalid",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!isCategoryValid) {
@@ -541,7 +541,7 @@ fun AddIncomeScreen(
                         TextField(value = amount,
                             onValueChange = {
                                 amount = it
-                                isAmountValid = it.toDoubleOrNull() != null
+                                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
                             },
                             placeholder = {
                                 Text(
@@ -688,7 +688,7 @@ fun AddIncomeScreen(
                             if (!isAmountValid) {
                                 Toast.makeText(
                                     context,
-                                    "Amount is Empty",
+                                    "Amount is Invalid",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!isCategoryValid) {

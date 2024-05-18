@@ -12,6 +12,7 @@
     <string name="password">Kata laluan</string>
     <string name="forgotPw">Lupa kata laluan</string>
     <string name="registerAcc">Daftar Akaun</string>
+    <string name="haveAcc">Sudah Ada Akaun?</string>
     <string name="text_1">Pulihkan kata laluan akaun anda</string>
     <string name="text_2">Masukkan alamat emel anda</string>
     <string name="next">Seterusnya</string>
