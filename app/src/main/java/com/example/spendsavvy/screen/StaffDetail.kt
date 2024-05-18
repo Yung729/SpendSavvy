@@ -78,7 +78,6 @@ fun StaffDetailScreen(
             value = updatedStaffName,
             onValueChange = {
                 updatedStaffName = it
-                isNameValid = it.isNotEmpty()
             },
             label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffName) + ".") },
             maxLines = 1,
@@ -86,7 +85,7 @@ fun StaffDetailScreen(
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
-            singleLine = true, isError = !isNameValid
+            singleLine = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -95,7 +94,7 @@ fun StaffDetailScreen(
             value = updatedStaffSalary,
             onValueChange = {
                 updatedStaffSalary = it
-                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
+                isAmountValid =  it.toDouble() > 0
             },
             label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffSalary)) },
             maxLines = 1,
@@ -103,15 +102,16 @@ fun StaffDetailScreen(
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
-            singleLine = true,
-            isError = !isAmountValid
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
             onClick = {
-                if (isValidICNumber(updatedStaffIC) && isNameValid && isAmountValid) {
+                if (isValidICNumber(updatedStaffIC) && updatedStaffName.isNotEmpty() && (updatedStaffSalary.toDoubleOrNull()
+                        ?: 0.0) > 0.0
+                ) {
                     staffViewModel.editStaff(
                         staff = staff,
                         updatedStaff = Staff(
@@ -124,10 +124,11 @@ fun StaffDetailScreen(
 
                     if (!isValidICNumber(updatedStaffIC)) {
                         Toast.makeText(context, "Invalid Ic Number", Toast.LENGTH_SHORT).show()
-                    } else if (!isNameValid) {
+                    } else if (updatedStaffName.isEmpty()) {
                         Toast.makeText(context, "Please fill in staff name", Toast.LENGTH_SHORT)
                             .show()
-                    } else if (!isAmountValid) {
+                    } else if ((updatedStaffSalary.toDoubleOrNull()
+                            ?: 0.0) <= 0.0) {
                         Toast.makeText(context, "Please fill in staff salary", Toast.LENGTH_SHORT)
                             .show()
                     }
