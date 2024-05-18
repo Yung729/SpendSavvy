@@ -46,14 +46,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun AddCashAccountScreen(
     walletViewModel: WalletViewModel,
+    transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
     var validTypeName by remember {
