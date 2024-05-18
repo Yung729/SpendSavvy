@@ -48,11 +48,7 @@ fun StaffDetailScreen(
     var updatedStaffSalary by remember {
         mutableStateOf(staff.salary.toString())
     }
-
-
-    var isAmountValid by remember { mutableStateOf(false) }
-    var isNameValid by remember { mutableStateOf(false) }
-
+    
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -94,7 +90,6 @@ fun StaffDetailScreen(
             value = updatedStaffSalary,
             onValueChange = {
                 updatedStaffSalary = it
-                isAmountValid =  it.toDouble() > 0
             },
             label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffSalary)) },
             maxLines = 1,

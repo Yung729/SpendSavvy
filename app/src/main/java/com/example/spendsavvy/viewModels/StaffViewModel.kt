@@ -109,7 +109,7 @@ class StaffViewModel(
                             if (it == staff) updatedStaff else it
                         }
                         updateStaff(staff = updatedStaffList)
-                        
+
                         Toast.makeText(
                             currentContext, "Staff edited", Toast.LENGTH_SHORT
                         ).show()
