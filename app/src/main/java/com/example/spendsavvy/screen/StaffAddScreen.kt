@@ -51,6 +51,10 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
         mutableStateOf("")
     }
 
+
+    var isAmountValid by remember { mutableStateOf(false) }
+    var isNameValid by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {
@@ -111,6 +115,7 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
 
                 TextField(value = staffName, onValueChange = {
                     staffName = it
+                    isNameValid = it.isNotEmpty()
                 }, placeholder = {
                     Text(
                         text = stringResource(id = com.example.spendsavvy.R.string.staff) + " 1",
@@ -124,7 +129,7 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
                         fontFamily = poppinsFontFamily,
                         fontSize = 15.sp
                     )
-                })
+                }, isError = !isNameValid)
             }
         }
 
@@ -142,22 +147,30 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
 
             ) {
 
-                TextField(value = salary, onValueChange = {
-                    salary = it
-                }, placeholder = {
-                    Text(
-                        text = "RM 0",
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp,
-                        color = Color.Gray
-                    )
-                }, label = {
-                    Text(
-                        text = stringResource(id = com.example.spendsavvy.R.string.staffSalary),
-                        fontFamily = poppinsFontFamily,
-                        fontSize = 15.sp
-                    )
-                }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                TextField(
+                    value = salary,
+                    onValueChange = {
+                        salary = it
+                        isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
+                    },
+                    placeholder = {
+                        Text(
+                            text = "RM 0",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp,
+                            color = Color.Gray
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(id = com.example.spendsavvy.R.string.staffSalary),
+                            fontFamily = poppinsFontFamily,
+                            fontSize = 15.sp
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    isError = !isAmountValid
+                )
             }
         }
 
@@ -166,12 +179,27 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
         Button(
             onClick = {
 
-                if(isValidICNumber(icNumber) && staffName.isNotEmpty() && salary.isNotEmpty()){
+                if (isValidICNumber(icNumber) && isNameValid && isAmountValid) {
                     staffViewModel.addStaffToDatabase(
-                        Staff(id = icNumber, name = staffName, salary = salary.toDoubleOrNull() ?: 0.0)
+                        Staff(
+                            id = icNumber,
+                            name = staffName,
+                            salary = salary.toDoubleOrNull() ?: 0.0
+                        )
                     )
-                }else{
-                    Toast.makeText(context,"Please fill in all the details",Toast.LENGTH_SHORT).show()
+                } else {
+
+                    if (!isValidICNumber(icNumber)) {
+                        Toast.makeText(context, "Invalid Ic Number", Toast.LENGTH_SHORT).show()
+                    } else if (isNameValid) {
+                        Toast.makeText(context, "Please fill in staff name", Toast.LENGTH_SHORT)
+                            .show()
+                    } else if (isAmountValid) {
+                        Toast.makeText(context, "Please fill in staff salary", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+
                 }
 
 

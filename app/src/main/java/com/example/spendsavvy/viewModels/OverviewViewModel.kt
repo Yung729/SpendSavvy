@@ -109,7 +109,7 @@ class OverviewViewModel(
             } catch (e: Exception) {
                 Log.e(ContentValues.TAG, "Error getting transactions", e)
             } finally {
-                isLoading.postValue(false) // Set loading state to false when loading is completed
+                isLoading.postValue(false)
             }
         }
     }

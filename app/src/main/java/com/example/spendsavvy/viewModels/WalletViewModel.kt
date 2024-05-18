@@ -214,7 +214,6 @@ class WalletViewModel(
                             )
                         }, { exception ->
                             Log.e(ContentValues.TAG, "Error uploading image", exception)
-                            // Handle failure
                         })
                 } else {
 

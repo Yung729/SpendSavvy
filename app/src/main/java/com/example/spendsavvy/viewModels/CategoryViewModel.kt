@@ -157,7 +157,7 @@ class CategoryViewModel(
                 if (documentIdList.isNotEmpty()) { // Check if the list is not empty
                     categoryData.forEachIndexed { index, category ->
                         val documentId =
-                            documentIdList[index % documentIdList.size] // Use modulo operator to cycle through the documentIdList
+                            documentIdList[index % documentIdList.size]
                         dbHelper.addNewCategory(
                             documentId,
                             category.id,
@@ -215,11 +215,9 @@ class CategoryViewModel(
 
                     }, onFailure = { exception ->
                         Log.e(TAG, "Error adding category", exception)
-                        // Handle failure
                     })
             }, { exception ->
                 Log.e(TAG, "Error uploading image", exception)
-                // Handle failure
             })
         } else {
             firestoreRepository.addItem(currentUserId, "Categories", category, "CT%04d",
