@@ -272,7 +272,9 @@ fun EditCashAccountScreen(
 
             Button(
                 onClick = {
-                    if (validIncAmt && validDecAmt) {
+                    if ((incAmt.toDoubleOrNull() ?: 0.0) >= 0.0 && (decAmt.toDoubleOrNull()
+                            ?: 0.0) >= 0.0
+                    ) {
                         if (selectedIndex == 1 && !validTypeName) {
                             Toast.makeText(
                                 context,
