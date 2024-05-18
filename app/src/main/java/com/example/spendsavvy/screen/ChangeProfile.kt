@@ -42,6 +42,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,31 +58,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.UserData
+import com.example.spendsavvy.repo.FireAuthRepository
+import com.example.spendsavvy.viewModels.ProfileViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 
 @Composable
-fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
-    var userData by remember { mutableStateOf(UserData("","","", "", "", "")) }
-    val auth = FirebaseAuth.getInstance()
-    getUserData(auth.currentUser?.uid ?: "") { user ->
-        userData = user
-    }
+fun ChangeProfileScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    fireAuthRepository: FireAuthRepository,
+    profileViewModel: ProfileViewModel
+) {
+
+    val userData by profileViewModel.userData.observeAsState(UserData())
     var showOption by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
+
+    val userEmail = userData.email
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -106,7 +111,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-        if(bitmap != null) {
+        if (bitmap != null) {
             Image(
                 bitmap = bitmap?.asImageBitmap()!!,
                 contentDescription = null,
@@ -121,8 +126,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
                     )
                     .clickable { showOption = true },
             )
-        }
-        else {
+        } else {
             Image(
                 painter = if (userData.photoURL!!.isNotEmpty()) {
                     rememberAsyncImagePainter(model = userData.photoURL)
@@ -227,7 +231,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             placeholder = userData.email,
             value = userData.email,
             keyboardType = KeyboardType.Email,
-            onValueChange = { userData.email = it},
+            onValueChange = { userData.email = it },
             height = 70.dp,
         )
         Text(
@@ -241,7 +245,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             placeholder = userData.phoneNo,
             value = userData.phoneNo,
             keyboardType = KeyboardType.Phone,
-            onValueChange = { userData.phoneNo = it},
+            onValueChange = { userData.phoneNo = it },
             height = 70.dp,
         )
 
@@ -249,7 +253,22 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
 
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-            onClick = { saveChangesToFirebase(context, userData, navController, photoUri) }, // Pass photoUri to saveChangesToFirebase
+            onClick = {
+                if (userEmail != userData.email) {
+                    fireAuthRepository.changeEmail(
+                        userData.email,
+                        onSuccess = {
+                            saveChangesToFirebase(
+                                context,
+                                userData,
+                                navController,
+                                photoUri
+                            )
+                        })
+                }else {
+                    saveChangesToFirebase(context, userData, navController, photoUri)
+                }
+            }, // Pass photoUri to saveChangesToFirebase
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -259,7 +278,12 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
     }
 }
 
-private fun saveChangesToFirebase(context: Context, userData: UserData, navController: NavController, photoUri: Uri?) {
+private fun saveChangesToFirebase(
+    context: Context,
+    userData: UserData,
+    navController: NavController,
+    photoUri: Uri?
+) {
     val auth = FirebaseAuth.getInstance()
     val uid = auth.currentUser?.uid ?: ""
     val db = Firebase.firestore
@@ -280,12 +304,17 @@ private fun saveChangesToFirebase(context: Context, userData: UserData, navContr
                     .set(updatedUserData)
                     .addOnSuccessListener {
                         Log.d(TAG, "User data updated successfully")
-                        Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "User data updated successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         navController.navigateUp()
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error updating user data", e)
-                        Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT)
+                            .show()
                     }
             }
         }.addOnFailureListener { e ->
@@ -340,16 +369,5 @@ fun OutlinedTextFieldItem(
         label = { Text(text = "", color = Color.Black) },
         placeholder = { Text(text = placeholder, color = Color.Gray) },
         singleLine = true
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ChangeProfileScreenPreview() {
-    ChangeProfileScreen(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        navController = rememberNavController()
     )
 }

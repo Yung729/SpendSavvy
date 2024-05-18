@@ -57,43 +57,43 @@ import com.example.spendsavvy.models.Staff
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.repo.FireAuthRepository
 import com.example.spendsavvy.screen.AddBills
+import com.example.spendsavvy.screen.AddCashAccountScreen
+import com.example.spendsavvy.screen.AddCategoryScreen
+import com.example.spendsavvy.screen.AddExpensesScreen
+import com.example.spendsavvy.screen.AddIncomeScreen
+import com.example.spendsavvy.screen.AddNewStockScreen
+import com.example.spendsavvy.screen.AllTransactionScreen
+import com.example.spendsavvy.screen.AnalysisScreen
+import com.example.spendsavvy.screen.BudgetScreen
+import com.example.spendsavvy.screen.CashScreen
+import com.example.spendsavvy.screen.CashTransactionScreen
+import com.example.spendsavvy.screen.CategoryDetail
+import com.example.spendsavvy.screen.CategoryScreen
 import com.example.spendsavvy.screen.ChangePassword
 import com.example.spendsavvy.screen.ChangeProfileScreen
 import com.example.spendsavvy.screen.CreatePassword
 import com.example.spendsavvy.screen.EditBills
-import com.example.spendsavvy.screen.ForgotPassword
-import com.example.spendsavvy.screen.HelpAndSupport
-import com.example.spendsavvy.screen.Language
-import com.example.spendsavvy.screen.ManageBillsAndInstalment
-import com.example.spendsavvy.screen.MyProfileScreen
-import com.example.spendsavvy.screen.Notification
-import com.example.spendsavvy.screen.SettingsScreen
-import com.example.spendsavvy.screen.TaxCalculator
-import com.example.spendsavvy.screen.AnalysisScreen
-import com.example.spendsavvy.screen.BudgetScreen
-import com.example.spendsavvy.screen.AddCategoryScreen
-import com.example.spendsavvy.screen.CategoryDetail
-import com.example.spendsavvy.screen.CategoryScreen
-import com.example.spendsavvy.screen.AddExpensesScreen
-import com.example.spendsavvy.screen.AddIncomeScreen
-import com.example.spendsavvy.screen.AllTransactionScreen
-import com.example.spendsavvy.screen.OverviewScreen
-import com.example.spendsavvy.screen.TransactionDetail
-import com.example.spendsavvy.screen.StaffAddScreen
-import com.example.spendsavvy.screen.StaffDetailScreen
-import com.example.spendsavvy.screen.StaffScreen
-import com.example.spendsavvy.screen.LoginScreen
-import com.example.spendsavvy.screen.SignUpScreen
-import com.example.spendsavvy.screen.AddCashAccountScreen
-import com.example.spendsavvy.screen.AddNewStockScreen
-import com.example.spendsavvy.screen.CashScreen
-import com.example.spendsavvy.screen.CashTransactionScreen
 import com.example.spendsavvy.screen.EditCashAccountScreen
 import com.example.spendsavvy.screen.EditExistingStockScreen
 import com.example.spendsavvy.screen.FDEarnScreen
 import com.example.spendsavvy.screen.FixedDepositDetailsScreen
 import com.example.spendsavvy.screen.FixedDepositScreen
+import com.example.spendsavvy.screen.ForgotPassword
+import com.example.spendsavvy.screen.HelpAndSupport
+import com.example.spendsavvy.screen.Language
+import com.example.spendsavvy.screen.LoginScreen
+import com.example.spendsavvy.screen.ManageBillsAndInstalment
+import com.example.spendsavvy.screen.MyProfileScreen
+import com.example.spendsavvy.screen.Notification
+import com.example.spendsavvy.screen.OverviewScreen
+import com.example.spendsavvy.screen.SettingsScreen
+import com.example.spendsavvy.screen.SignUpScreen
+import com.example.spendsavvy.screen.StaffAddScreen
+import com.example.spendsavvy.screen.StaffDetailScreen
+import com.example.spendsavvy.screen.StaffScreen
 import com.example.spendsavvy.screen.StockScreen
+import com.example.spendsavvy.screen.TaxCalculator
+import com.example.spendsavvy.screen.TransactionDetail
 import com.example.spendsavvy.screen.WalletScreen
 import com.example.spendsavvy.ui.theme.ButtonColor
 import com.example.spendsavvy.ui.theme.ScreenSize
@@ -167,7 +167,8 @@ fun SetupNavGraph(
     val staffViewModel = StaffViewModel(context, isConnected, userId, transactionsViewModel)
     val profileViewModel = ProfileViewModel(userId, isConnected, context)
     val notificationViewModel = NotificationViewModel(context)
-    val billsViewModel = BillsViewModel(context, isConnected, userId,notificationViewModel,transactionsViewModel)
+    val billsViewModel =
+        BillsViewModel(context, isConnected, userId, notificationViewModel, transactionsViewModel)
     val questionsViewModel = QuestionViewModel(context, isConnected, userId)
     val showOption = remember { mutableStateOf(false) }
 
@@ -641,7 +642,10 @@ fun SetupNavGraph(
                     ChangeProfileScreen(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(20.dp), navController = navController
+                            .padding(20.dp),
+                        navController = navController,
+                        fireAuthRepository = fireAuthRepository,
+                        profileViewModel = profileViewModel
                     )
 
                 }

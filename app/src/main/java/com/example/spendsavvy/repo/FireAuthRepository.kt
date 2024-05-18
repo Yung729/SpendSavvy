@@ -159,30 +159,31 @@ class FireAuthRepository(
             }
     }
 
-    fun updateUser(
-        userId: String,
-        newPassword: String
-    ) {
-        val db = Firebase.firestore
-        val docRef = db.collection("Users").document(userId)
+    fun changeEmail(newEmail: String,onSuccess: () -> Unit) {
+        val user = auth.currentUser
+        user?.verifyBeforeUpdateEmail(newEmail)?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
 
-        docRef.update("password", newPassword)
-            .addOnSuccessListener {
-                Log.d(ContentValues.TAG, "Password successfully updated in Firestore")
+                onSuccess()
+                val editor = sharedPreferences.edit()
+                editor.putString("email", newEmail)
+                editor.apply()
 
+
+            } else {
+
+                Toast.makeText(
+                    context,
+                    "No authenticated user found.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-            .addOnFailureListener { e ->
-                Log.d(ContentValues.TAG, "Error updating password in Firestore: $e")
-
-            }
+        }
     }
+
 
     fun getCurrentUserId(): String {
         return auth.currentUser?.uid ?: ""
-    }
-
-    fun getCurrentUser(): FirebaseUser {
-        return auth.currentUser as FirebaseUser
     }
 
 }
