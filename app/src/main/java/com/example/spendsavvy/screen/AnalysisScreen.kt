@@ -28,12 +28,12 @@ import com.example.spendsavvy.components.PieChart
 import com.example.spendsavvy.components.RemainingChart
 import com.example.spendsavvy.components.bounceClick
 import com.example.spendsavvy.navigation.Screen
-import com.example.spendsavvy.screen.LineDivider
 import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.ui.theme.WindowType
 import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.TargetViewModel
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 
@@ -43,7 +43,7 @@ fun AnalysisScreen(
     navController: NavController,
     transactionViewModel: OverviewViewModel,
     budgetViewModel: TargetViewModel,
-    window : ScreenSize
+    window: ScreenSize
 ) {
     val scrollState = rememberScrollState()
     val expensesData by transactionViewModel.currentMonthExpenses.observeAsState(initial = 0.0)
@@ -54,11 +54,9 @@ fun AnalysisScreen(
 
     // Get the current year and month
     val currentYearMonth = YearMonth.now()
-
-    // Get the total days in the current month
     val totalDaysInMonth = currentYearMonth.lengthOfMonth()
+    val formattedYearMonth = currentYearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
 
-    // Calculate the monthly budget amount multiplied by the total days in the current month
     val monthlyBudgetAmount = budgetAmountFromDB.value * totalDaysInMonth
     val monthlyGoalAmount = goalAmountFromDB.value * totalDaysInMonth
 
@@ -70,7 +68,7 @@ fun AnalysisScreen(
             modifier = Modifier
                 .padding(bottom = 10.dp)
                 .bounceClick()
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally).fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
             )
@@ -82,7 +80,21 @@ fun AnalysisScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Column {
+            Text(
+                text = formattedYearMonth,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+        }
+
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column {
             Text(
@@ -117,7 +129,10 @@ fun AnalysisScreen(
 
 
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.monthlyBudget) + String.format(": RM %.2f", monthlyBudgetAmount),
+                text = stringResource(id = com.example.spendsavvy.R.string.monthlyBudget) + String.format(
+                    ": RM %.2f",
+                    monthlyBudgetAmount
+                ),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
@@ -158,7 +173,10 @@ fun AnalysisScreen(
 
 
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.monthlyGoal) + String.format(": RM %.2f", monthlyGoalAmount),
+                text = stringResource(id = com.example.spendsavvy.R.string.monthlyGoal) + String.format(
+                    ": RM %.2f",
+                    monthlyGoalAmount
+                ),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
@@ -172,14 +190,22 @@ fun AnalysisScreen(
                 WindowType.Expanded -> {
                     RemainingChart(
                         canvasSize = 500.dp,
-                        indicatorValue = if ((incomesData - expensesData) >= 0){ incomesData - expensesData} else {0.0},
+                        indicatorValue = if ((incomesData - expensesData) >= 0) {
+                            incomesData - expensesData
+                        } else {
+                            0.0
+                        },
                         maxIndicatorValue = monthlyGoalAmount,
                     )
                 }
 
                 else -> {
                     RemainingChart(
-                        indicatorValue = if ((incomesData - expensesData) >= 0){ incomesData - expensesData} else {0.0},
+                        indicatorValue = if ((incomesData - expensesData) >= 0) {
+                            incomesData - expensesData
+                        } else {
+                            0.0
+                        },
                         maxIndicatorValue = monthlyGoalAmount,
                     )
                 }

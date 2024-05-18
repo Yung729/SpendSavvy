@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -61,12 +63,13 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
 
     // Get the current year and month
     val currentYearMonth = YearMonth.now()
-
-    // Get the total days in the current month
     val totalDaysInMonth = currentYearMonth.lengthOfMonth()
 
     val monthlyBudgetAmount = budgetAmountFromDB.value * totalDaysInMonth
     val monthlyGoalAmount = goalAmountFromDB.value * totalDaysInMonth
+
+    val context = LocalContext.current
+    var isAmountValid by remember { mutableStateOf(false) }
 
     Column() {
         Surface(
@@ -104,7 +107,10 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
 
                         OutlinedTextField(
                             value = budgetAmountText,
-                            onValueChange = { budgetAmountText = it },
+                            onValueChange = {
+                                budgetAmountText = it
+                                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
+                            },
                             label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.dailyBudget)) },
                             maxLines = 1,
                             modifier = Modifier
@@ -112,7 +118,8 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
                                 .padding(bottom = 10.dp, top = 10.dp),
                             shape = RoundedCornerShape(15.dp),
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            isError = !isAmountValid
                         )
                         Button(
                             onClick = {
@@ -157,7 +164,10 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
 
                         OutlinedTextField(
                             value = goalAmountText,
-                            onValueChange = { goalAmountText = it },
+                            onValueChange = {
+                                goalAmountText = it
+                                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
+                            },
                             label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.dailyGoal)) },
                             maxLines = 1,
                             modifier = Modifier
@@ -165,12 +175,22 @@ fun BudgetScreen(budgetViewModel: TargetViewModel, window: ScreenSize) {
                                 .padding(bottom = 10.dp, top = 10.dp),
                             shape = RoundedCornerShape(15.dp),
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            isError = !isAmountValid
                         )
 
                         Button(
                             onClick = {
-                                budgetViewModel.addGoal(amount = goalAmount)
+                                if (isAmountValid){
+                                    budgetViewModel.addGoal(amount = goalAmount)
+                                }else{
+                                    Toast.makeText(
+                                        context,
+                                        "Amount is Invalid",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
                             },
                             modifier = Modifier
                                 .padding(bottom = 10.dp)
