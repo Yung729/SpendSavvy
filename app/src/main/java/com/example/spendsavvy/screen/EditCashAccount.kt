@@ -84,11 +84,11 @@ fun EditCashAccountScreen(
     }
 
     var incAmt by remember {
-        mutableStateOf("")
+        mutableStateOf("0")
     }
 
     var decAmt by remember {
-        mutableStateOf("")
+        mutableStateOf("0")
     }
 
     var selectedIndex by remember {
