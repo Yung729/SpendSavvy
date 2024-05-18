@@ -1,5 +1,6 @@
 package com.example.spendsavvy.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,7 +36,7 @@ fun StaffDetailScreen(
     staff: Staff,
     staffViewModel: StaffViewModel
 ) {
-
+    val context = LocalContext.current
     var updatedStaffIC by remember {
         mutableStateOf(staff.id)
     }
@@ -47,6 +49,10 @@ fun StaffDetailScreen(
         mutableStateOf(staff.salary.toString())
     }
 
+
+    var isAmountValid by remember { mutableStateOf(false) }
+    var isNameValid by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,55 +63,77 @@ fun StaffDetailScreen(
         OutlinedTextField(
             value = updatedStaffIC,
             onValueChange = { updatedStaffIC = it },
-            label = { Text(text = stringResource(id = R.string.staffIc) +" No.") },
+            label = { Text(text = stringResource(id = R.string.staffIc) + " No.") },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
-            singleLine = true,
+            singleLine = true, isError = !isValidICNumber(updatedStaffIC),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = updatedStaffName,
-            onValueChange = { updatedStaffName = it },
-            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffName) +".") },
+            onValueChange = {
+                updatedStaffName = it
+                isNameValid = it.isNotEmpty()
+            },
+            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffName) + ".") },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
-            singleLine = true,
+            singleLine = true, isError = !isNameValid
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = updatedStaffSalary,
-            onValueChange = { updatedStaffSalary = it },
-            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffSalary) +" No.") },
+            onValueChange = {
+                updatedStaffSalary = it
+                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
+            },
+            label = { Text(text = stringResource(id = com.example.spendsavvy.R.string.staffSalary)) },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
             singleLine = true,
+            isError = !isAmountValid
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
             onClick = {
-                staffViewModel.editStaff(
-                    staff = staff,
-                    updatedStaff = Staff(
-                        id = updatedStaffIC,
-                        name = updatedStaffName,
-                        salary = updatedStaffSalary.toDoubleOrNull() ?: 0.0
+                if (isValidICNumber(updatedStaffIC) && isNameValid && isAmountValid) {
+                    staffViewModel.editStaff(
+                        staff = staff,
+                        updatedStaff = Staff(
+                            id = updatedStaffIC,
+                            name = updatedStaffName,
+                            salary = updatedStaffSalary.toDoubleOrNull() ?: 0.0
+                        )
                     )
-                )
+                } else {
+
+                    if (!isValidICNumber(updatedStaffIC)) {
+                        Toast.makeText(context, "Invalid Ic Number", Toast.LENGTH_SHORT).show()
+                    } else if (!isNameValid) {
+                        Toast.makeText(context, "Please fill in staff name", Toast.LENGTH_SHORT)
+                            .show()
+                    } else if (!isAmountValid) {
+                        Toast.makeText(context, "Please fill in staff salary", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+
+                }
 
             },
             modifier = Modifier
@@ -116,7 +144,9 @@ fun StaffDetailScreen(
             )
         ) {
             Text(
-                text = stringResource(id = com.example.spendsavvy.R.string.update), textAlign = TextAlign.Center, color = Color.White
+                text = stringResource(id = com.example.spendsavvy.R.string.update),
+                textAlign = TextAlign.Center,
+                color = Color.White
             )
         }
 
@@ -125,3 +155,4 @@ fun StaffDetailScreen(
 
 
 }
+

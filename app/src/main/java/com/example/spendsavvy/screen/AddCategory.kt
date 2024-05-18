@@ -3,6 +3,7 @@ package com.example.spendsavvy.screen
 import android.R
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +56,7 @@ fun AddCategoryScreen(
     catViewModel: CategoryViewModel,
     window : ScreenSize
 ) {
+    val context = LocalContext.current
     val options = mutableStateListOf(stringResource(id = com.example.spendsavvy.R.string.expense),stringResource(id = com.example.spendsavvy.R.string.income))
     var selectedIndex by remember {
         mutableIntStateOf(0)
@@ -64,7 +67,6 @@ fun AddCategoryScreen(
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
-    var error by remember { mutableStateOf(false) }
 
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -201,24 +203,13 @@ fun AddCategoryScreen(
                             ), selectedImageUri
                         )
                     } else {
-                        // If any field is empty, show error
-                        error = true
+                        Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT)
+                            .show()
                     }
 
                 },
                 text = stringResource(id = com.example.spendsavvy.R.string.add)
             )
-
-
-            if (error) {
-                Text(
-                    text = "All fields are required",
-                    color = Color.Red,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-
 
         }
 

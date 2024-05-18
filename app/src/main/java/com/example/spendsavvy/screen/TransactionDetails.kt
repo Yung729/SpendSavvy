@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.spendsavvy.components.ButtonComponent
@@ -46,7 +48,7 @@ fun TransactionDetail(
     transactionViewModel: OverviewViewModel
 ) {
 
-
+    val context = LocalContext.current
     var updatedTransactionAmount by remember {
         mutableStateOf(transactions.amount.toString())
     }
@@ -59,6 +61,8 @@ fun TransactionDetail(
     val updatedDate = remember { mutableStateOf<Date>(transactions.date) }
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
+
+    var isAmountValid by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier,
@@ -80,7 +84,7 @@ fun TransactionDetail(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedButton(onClick = { calendarState.show() },modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(onClick = { calendarState.show() }, modifier = Modifier.fillMaxWidth()) {
             Text(text = updatedDate.value.let { dateFormat.format(it) } ?: "Select Date")
         }
 
@@ -89,7 +93,10 @@ fun TransactionDetail(
 
         OutlinedTextField(
             value = updatedTransactionAmount,
-            onValueChange = { updatedTransactionAmount = it },
+            onValueChange = {
+                updatedTransactionAmount = it
+                isAmountValid = it.toDoubleOrNull() != null && it.toDouble() > 0
+            },
             label = { Text(text = "Amount") },
             maxLines = 1,
             modifier = Modifier
@@ -97,6 +104,7 @@ fun TransactionDetail(
                 .padding(bottom = 10.dp, top = 10.dp),
             shape = RoundedCornerShape(15.dp),
             singleLine = true,
+            isError = !isAmountValid
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -131,24 +139,32 @@ fun TransactionDetail(
 
         ButtonComponent(
             onButtonClick = {
-                transactionViewModel.editTransaction(
-                    transactions = transactions,
-                    updatedTransactions = Transactions(
-                        id = transactions.id,
-                        amount = updatedTransactionAmount.toDoubleOrNull() ?: 0.0,
-                        category = Category(
-                            id = transactions.category.id,
-                            imageUri = transactions.category.imageUri,
-                            categoryName = transactions.category.categoryName,
-                            categoryType = transactions.category.categoryType
-                        ),
-                        paymentMethod = transactions.paymentMethod,
-                        description = updatedTransactionDescription,
-                        transactionType = transactions.transactionType,
-                        date = updatedDate.value
+                if (isAmountValid ) {
+                    transactionViewModel.editTransaction(
+                        transactions = transactions,
+                        updatedTransactions = Transactions(
+                            id = transactions.id,
+                            amount = updatedTransactionAmount.toDoubleOrNull() ?: 0.0,
+                            category = Category(
+                                id = transactions.category.id,
+                                imageUri = transactions.category.imageUri,
+                                categoryName = transactions.category.categoryName,
+                                categoryType = transactions.category.categoryType
+                            ),
+                            paymentMethod = transactions.paymentMethod,
+                            description = updatedTransactionDescription,
+                            transactionType = transactions.transactionType,
+                            date = updatedDate.value
 
+                        )
                     )
-                )
+                }else{
+                    Toast.makeText(
+                        context,
+                        "Amount is Invalid",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
             },
             text = "Edit"

@@ -92,8 +92,8 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
                             fontFamily = poppinsFontFamily,
                             fontSize = 15.sp
                         )
-                    }, isError = !isValidICNumber(icNumber), // Set error state based on validation
-                    singleLine = true // Ensure single line input
+                    }, isError = !isValidICNumber(icNumber),
+                    singleLine = true
                 )
             }
         }
@@ -191,10 +191,10 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
 
                     if (!isValidICNumber(icNumber)) {
                         Toast.makeText(context, "Invalid Ic Number", Toast.LENGTH_SHORT).show()
-                    } else if (isNameValid) {
+                    } else if (!isNameValid) {
                         Toast.makeText(context, "Please fill in staff name", Toast.LENGTH_SHORT)
                             .show()
-                    } else if (isAmountValid) {
+                    } else if (!isAmountValid) {
                         Toast.makeText(context, "Please fill in staff salary", Toast.LENGTH_SHORT)
                             .show()
                     }

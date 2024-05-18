@@ -3,6 +3,7 @@ package com.example.spendsavvy.screen
 import android.R
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,7 +55,7 @@ fun CategoryDetail(
     category: Category,
     catViewModel: CategoryViewModel
 ) {
-
+    val context = LocalContext.current
     val options = mutableStateListOf(stringResource(id = com.example.spendsavvy.R.string.expense),stringResource(id = com.example.spendsavvy.R.string.income))
 
     var selectedIndex by remember {
@@ -194,15 +196,22 @@ fun CategoryDetail(
 
         ButtonComponent(
             onButtonClick = {
-                catViewModel.editCategory(
-                    category = category,
-                    updatedCategory = Category(
-                        id = category.id,
-                        imageUri = updatedImageUri,
-                        categoryName = updatedCategoryName,
-                        categoryType = updatedCategoryType
+                if (updatedImageUri != null && updatedCategoryName.isNotEmpty()) {
+                    catViewModel.editCategory(
+                        category = category,
+                        updatedCategory = Category(
+                            id = category.id,
+                            imageUri = updatedImageUri,
+                            categoryName = updatedCategoryName,
+                            categoryType = updatedCategoryType
+                        )
                     )
-                )
+                }else {
+                    if (updatedCategoryName.isEmpty()){
+                        Toast.makeText(context, "Please fill in category Name", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
 
             },
             text = stringResource(id = com.example.spendsavvy.R.string.update)
