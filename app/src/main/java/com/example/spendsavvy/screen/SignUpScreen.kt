@@ -233,7 +233,7 @@ fun SignUpScreen(
                     } else if (!phoneValidation(phoneNo)) {
                         Toast.makeText(
                             context,
-                            "Invalid Phone Number",
+                            "Invalid Phone Number, must need 10 numbers",
                             Toast.LENGTH_SHORT
                         ).show()
                         isError = true

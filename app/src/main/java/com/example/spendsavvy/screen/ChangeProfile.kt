@@ -303,7 +303,6 @@ private fun saveChangesToFirebase(
                 usersCollection.document(uid)
                     .set(updatedUserData)
                     .addOnSuccessListener {
-                        Log.d(TAG, "User data updated successfully")
                         Toast.makeText(
                             context,
                             "User data updated successfully",
@@ -311,14 +310,12 @@ private fun saveChangesToFirebase(
                         ).show()
                         navController.navigateUp()
                     }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error updating user data", e)
+                    .addOnFailureListener {
                         Toast.makeText(context, "Error updating user data", Toast.LENGTH_SHORT)
                             .show()
                     }
             }
-        }.addOnFailureListener { e ->
-            Log.w(TAG, "Error uploading image", e)
+        }.addOnFailureListener {
             Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
         }
     } else {
