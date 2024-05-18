@@ -1,6 +1,7 @@
 package com.example.spendsavvy.viewModels
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.Uri
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendsavvy.data.CategoryData
 import com.example.spendsavvy.db.DatabaseHelper
+import com.example.spendsavvy.models.Cash
 import com.example.spendsavvy.models.Category
 import com.example.spendsavvy.repo.FirestoreRepository
 import com.google.firebase.storage.FirebaseStorage
@@ -178,6 +180,28 @@ class CategoryViewModel(
                 Log.e(TAG, "Error adding category", exception)
                 // Handle failure
             })
+
+        firestoreRepository.addWalletItems(
+            userId,
+            "Cash",
+            Cash(
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/cashImages%2Fmoney.png?alt=media&token=1805ae10-6a37-469f-80ce-8e544242720d"),
+                typeName = "Cash",
+                balance = 0.0
+            ),
+            "Cash",
+            onSuccess = {
+                dbHelper.addNewCashDetails(
+                    imageUri = "https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/cashImages%2Fmoney.png?alt=media&token=1805ae10-6a37-469f-80ce-8e544242720d",
+                    typeName = "Cash",
+                    balance = 0.0,
+                    userId = userId
+                )
+            },
+            onFailure = { exception ->
+                Log.e(ContentValues.TAG, "Error adding cash details", exception)
+            }
+        )
     }
 
 

@@ -101,6 +101,7 @@ class FireAuthRepository(
 
 
                         categoryViewModel.initializeCategoryToFirestore(user.uid)
+
                     }
 
                     user?.sendEmailVerification()?.addOnCompleteListener { emailTask ->
