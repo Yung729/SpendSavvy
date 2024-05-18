@@ -399,7 +399,7 @@ fun AddIncomeScreen(
                             if (!isAmountValid) {
                                 Toast.makeText(
                                     context,
-                                    "Amount is Invalid",
+                                    "Invalid Amount, must above 0",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!isCategoryValid) {
@@ -688,7 +688,7 @@ fun AddIncomeScreen(
                             if (!isAmountValid) {
                                 Toast.makeText(
                                     context,
-                                    "Amount is Invalid",
+                                    "Invalid Amount, must above 0",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (!isCategoryValid) {
