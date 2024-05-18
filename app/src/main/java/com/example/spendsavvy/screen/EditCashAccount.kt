@@ -1,6 +1,7 @@
 package com.example.spendsavvy.screen
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,14 +42,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.spendsavvy.R
 import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun EditCashAccountScreen(
     walletViewModel: WalletViewModel,
+    transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
 
@@ -252,7 +258,9 @@ fun EditCashAccountScreen(
 
             Button(
                 onClick = {
-                    if ((decAmt.toDoubleOrNull() ?: 0.00) < 0.00 || (incAmt.toDoubleOrNull() ?: 0.00) < 0.00) {
+                    if ((decAmt.toDoubleOrNull() ?: 0.00) < 0.00 || (incAmt.toDoubleOrNull()
+                            ?: 0.00) < 0.00
+                    ) {
                         Toast.makeText(
                             context,
                             "Please do not enter any amount that is less than RM 0.00",
@@ -275,15 +283,68 @@ fun EditCashAccountScreen(
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
-                                    walletViewModel.editCashDetails(
-                                        cash = cashDetails,
-                                        updatedCashDetails = Cash(
-                                            imageUri = cashDetails.imageUri,
-                                            typeName = typeName,
-                                            balance = cashDetails.balance + (incAmt.toDoubleOrNull()
-                                                ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
-                                        )
+
+                                    transactionViewModel.addTransactionToFirestore(
+                                        Transactions(
+                                            id = transactionViewModel.generateTransactionId(),
+                                            amount = if (((incAmt.toDoubleOrNull()
+                                                    ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                    ?: 0.0)) > 0.0
+                                            ) {
+                                                (incAmt.toDoubleOrNull() ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
+                                            } else {
+                                                (decAmt.toDoubleOrNull() ?: 0.0) - (incAmt.toDoubleOrNull() ?: 0.0)
+                                            },
+                                            description = "Update Bank Balance",
+                                            date = Date(),
+                                            category = Category(
+                                                id = if (((incAmt.toDoubleOrNull()
+                                                        ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                        ?: 0.0)) > 0.0
+                                                ) {
+                                                    "CT0016"
+                                                } else {
+                                                    "CT0015"
+                                                },
+                                                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Faccounting.png?alt=media&token=77e41b81-d217-475a-8ba7-8837aa6929e1"),
+                                                categoryName = "Update Balance",
+                                                categoryType = if (((incAmt.toDoubleOrNull()
+                                                        ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                        ?: 0.0)) > 0.0
+                                                ) {
+                                                    "Incomes"
+                                                } else {
+                                                    "Expenses"
+                                                }
+                                            ),
+                                            paymentMethod = typeName,
+                                            transactionType =
+                                            if (((incAmt.toDoubleOrNull()
+                                                    ?: 0.0) - (decAmt.toDoubleOrNull()
+                                                    ?: 0.0)) > 0.0
+                                            ) {
+                                                "Incomes"
+                                            } else {
+                                                "Expenses"
+                                            }
+                                        ),
+                                        onSuccess = {
+                                            walletViewModel.editCashDetails(
+                                                cash = cashDetails,
+                                                updatedCashDetails = Cash(
+                                                    imageUri = cashDetails.imageUri,
+                                                    typeName = typeName,
+                                                    balance = cashDetails.balance + (incAmt.toDoubleOrNull()
+                                                        ?: 0.0) - (decAmt.toDoubleOrNull() ?: 0.0)
+                                                )
+                                            )
+                                        },
+                                        onFailure = {
+
+                                        }
                                     )
+
+
                                 }
                             }
                         }

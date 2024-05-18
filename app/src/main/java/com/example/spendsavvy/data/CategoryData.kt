@@ -92,6 +92,18 @@ class CategoryData {
                 imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
                 categoryName = "Stock Purchase",
                 categoryType = "Expenses"
+            ),
+            Category(
+                id = "CT0015",
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Faccounting.png?alt=media&token=77e41b81-d217-475a-8ba7-8837aa6929e1"),
+                categoryName = "Update Balance",
+                categoryType = "Expenses"
+            ),
+            Category(
+                id = "CT0016",
+                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Faccounting.png?alt=media&token=77e41b81-d217-475a-8ba7-8837aa6929e1"),
+                categoryName = "Update Balance",
+                categoryType = "Incomes"
             )
 
         )
