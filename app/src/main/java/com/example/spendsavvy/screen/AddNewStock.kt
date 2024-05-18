@@ -293,7 +293,7 @@ fun AddNewStockScreen(
                         for (cash in cashDetailsList) {          //read from existing stock items
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = cash.typeName)
+                                    Text(text = "${cash.typeName} - RM ${cash.balance}")
                                 },
                                 onClick = {
                                     searchAccount = cash.typeName

@@ -77,8 +77,13 @@ fun EditExistingStockScreen(
         mutableStateOf("")
     }
 
+    val cashDetailsList by walletViewModel.cashDetailsList.observeAsState(initial = emptyList())
     var searchAccount by remember {
         mutableStateOf("")
+    }
+
+    var isExpanded1 by remember {
+        mutableStateOf(false)
     }
 
 
@@ -242,6 +247,57 @@ fun EditExistingStockScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        ExposedDropdownMenuBox(
+            expanded = isExpanded1,
+            onExpandedChange = { isExpanded1 = it }
+        ) {
+            TextField(
+                value = searchAccount,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded1)
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor()
+            )
+            ExposedDropdownMenuBox(
+                expanded = isExpanded1,
+                onExpandedChange = { isExpanded1 = it }
+            ) {
+                TextField(
+                    value = searchAccount,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded1)
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    modifier = Modifier.menuAnchor()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isExpanded1,
+                    onDismissRequest = { isExpanded1 = false }
+                ) {
+                    for (cash in cashDetailsList) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = "${cash.typeName} - RM ${cash.balance}")
+                            },
+                            onClick = {
+                                searchAccount = cash.typeName
+                                isExpanded1 = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+
+        Spacer(modifier = Modifier.height(30.dp))
+
         Row(
             modifier = Modifier
                 .padding(15.dp),
@@ -265,6 +321,8 @@ fun EditExistingStockScreen(
                     fontFamily = poppinsFontFamily
                 )
             }
+
+
 
             Button(
                 onClick = {
@@ -318,6 +376,13 @@ fun EditExistingStockScreen(
                                                         stock.quantity - qty.toInt()
                                                     )
                                                 )
+
+                                                Toast.makeText(
+                                                    context,
+                                                    "Stock sell",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+
                                             },
                                             onFailure = {
                                             }
@@ -350,6 +415,11 @@ fun EditExistingStockScreen(
                                                     stock.quantity + qty.toInt()
                                                 )
                                             )
+                                            Toast.makeText(
+                                                context,
+                                                "Stock added",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         },
                                         onFailure = {
                                         }
@@ -378,4 +448,5 @@ fun EditExistingStockScreen(
             }
         }
     }
+
 }

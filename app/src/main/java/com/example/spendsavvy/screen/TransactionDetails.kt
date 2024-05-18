@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -76,15 +77,19 @@ fun TransactionDetail(
             painter = rememberAsyncImagePainter(model = transactions.category.imageUri),
             contentDescription = "",
             modifier = Modifier
-                .size(30.dp, 30.dp)
+                .size(40.dp, 40.dp)
                 .padding(end = 10.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Transaction Name : ${transactions.category.categoryName}")
+        Text(text = transactions.category.categoryName, fontWeight = FontWeight.Bold)
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = "Payment Account : ${transactions.paymentMethod}")
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedButton(onClick = { calendarState.show() }, modifier = Modifier.fillMaxWidth()) {
             Text(text = updatedDate.value.let { dateFormat.format(it) } ?: "Select Date")
