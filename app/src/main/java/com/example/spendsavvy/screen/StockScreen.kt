@@ -233,7 +233,7 @@ fun StockCard(stock: Stock, modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = String.format("RM %.2f",(stock.originalPrice * stock.quantity)),
+                    text = String.format("RM %.2f",stock.originalPrice ),
                     fontSize = 10.sp
                 )
             }

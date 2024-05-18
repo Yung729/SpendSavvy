@@ -262,6 +262,12 @@ fun EditExistingStockScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        Text(
+            "Cash Account That Paid",
+            fontFamily = poppinsFontFamily,
+            fontSize = 15.sp
+        )
+
         ExposedDropdownMenuBox(
             expanded = isExpanded1,
             onExpandedChange = { isExpanded1 = it }
@@ -392,6 +398,13 @@ fun EditExistingStockScreen(
                                                             stock.quantity - qty.toInt()
                                                         )
                                                     )
+
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Stock sell",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+
                                                 },
                                                 onFailure = {
                                                 }
@@ -427,7 +440,7 @@ fun EditExistingStockScreen(
 
                                                 Toast.makeText(
                                                     context,
-                                                    "Stock sell",
+                                                    "Stock add",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
 
@@ -438,7 +451,7 @@ fun EditExistingStockScreen(
 
 
                                     }
-                                } 
+                                }
                             }
                         }
                     }else{
