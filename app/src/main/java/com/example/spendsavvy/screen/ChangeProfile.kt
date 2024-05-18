@@ -207,7 +207,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             text = stringResource(id = R.string.userName),
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(top = 10.dp),
         )
         OutlinedTextFieldItem(
             label = stringResource(id = R.string.userName),
@@ -220,7 +220,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             text = stringResource(id = R.string.email),
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(top = 10.dp),
         )
         OutlinedTextFieldItem(
             label = stringResource(id = R.string.email),
@@ -234,7 +234,7 @@ fun ChangeProfileScreen(modifier: Modifier = Modifier, navController: NavControl
             text = stringResource(id = R.string.phoneNo),
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(top = 10.dp),
         )
         OutlinedTextFieldItem(
             label = stringResource(id = R.string.phoneNo),
