@@ -295,7 +295,7 @@ fun EditCashAccountScreen(
                                             } else {
                                                 (decAmt.toDoubleOrNull() ?: 0.0) - (incAmt.toDoubleOrNull() ?: 0.0)
                                             },
-                                            description = "Update Bank Balance",
+                                            description = "Update $typeName Balance",
                                             date = Date(),
                                             category = Category(
                                                 id = if (((incAmt.toDoubleOrNull()

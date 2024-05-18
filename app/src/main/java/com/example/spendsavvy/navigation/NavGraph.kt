@@ -470,6 +470,7 @@ fun SetupNavGraph(
 
                     AddCashAccountScreen(
                         walletViewModel = walletViewModel,
+                        transactionViewModel = transactionsViewModel,
                         navController = navController
                     )
 

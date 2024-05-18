@@ -26,14 +26,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,14 +46,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.spendsavvy.models.Cash
+import com.example.spendsavvy.models.Category
+import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.poppinsFontFamily
+import com.example.spendsavvy.viewModels.OverviewViewModel
 import com.example.spendsavvy.viewModels.WalletViewModel
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
 fun AddCashAccountScreen(
     walletViewModel: WalletViewModel,
+    transactionViewModel: OverviewViewModel,
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -239,13 +240,37 @@ fun AddCashAccountScreen(
                         ).show()
 
                     } else {
-                        walletViewModel.addCashDetailsToDatabase(
-                            Cash(
-                                imageUri = selectedImageUri,
-                                typeName = typeName,
-                                balance = initialAmt.toDoubleOrNull() ?: 0.0
-                            ), selectedImageUri
+
+                        transactionViewModel.addAccountTransaction(
+                            Transactions(
+                                id = transactionViewModel.generateTransactionId(),
+                                amount = initialAmt.toDoubleOrNull() ?: 0.0,
+                                description = "Add $typeName",
+                                date = Date(),
+                                category = Category(
+                                    id = "CT0016",
+                                    imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Faccounting.png?alt=media&token=77e41b81-d217-475a-8ba7-8837aa6929e1"),
+                                    categoryName = "Update Balance",
+                                    categoryType = "Incomes"
+                                ),
+                                paymentMethod = typeName,
+                                transactionType = "Incomes"
+
+                            ),
+                            onSuccess = {
+                                walletViewModel.addCashDetailsToDatabase(
+                                    Cash(
+                                        imageUri = selectedImageUri,
+                                        typeName = typeName,
+                                        balance = initialAmt.toDoubleOrNull() ?: 0.0
+                                    ), selectedImageUri
+                                )
+                            },
+                            onFailure = {
+
+                            }
                         )
+
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
