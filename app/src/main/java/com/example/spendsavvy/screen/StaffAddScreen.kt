@@ -190,12 +190,12 @@ fun StaffAddScreen(modifier: Modifier = Modifier, staffViewModel: StaffViewModel
                 } else {
 
                     if (!isValidICNumber(icNumber)) {
-                        Toast.makeText(context, "Invalid Ic Number", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Invalid Ic Number, Format is 123456-78-9012", Toast.LENGTH_SHORT).show()
                     } else if (!isNameValid) {
                         Toast.makeText(context, "Please fill in staff name", Toast.LENGTH_SHORT)
                             .show()
                     } else if (!isAmountValid) {
-                        Toast.makeText(context, "Please fill in staff salary", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, "Invalid staff salary, must above zero", Toast.LENGTH_SHORT)
                             .show()
                     }
 

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.spendsavvy.R
+import com.example.spendsavvy.components.LoadingScreen
 import com.example.spendsavvy.models.Transactions
 import com.example.spendsavvy.ui.theme.ScreenSize
 import com.example.spendsavvy.ui.theme.WindowType
@@ -70,7 +71,7 @@ fun AllTransactionScreen(
     navController: NavController,
     window: ScreenSize
 ) {
-
+    val isLoading by transactionViewModel.isLoading.observeAsState(initial = false)
     val allTransactionList by transactionViewModel.transactionsList.observeAsState(initial = emptyList())
     val dayTransactionList by transactionViewModel.todayTransactionsList.observeAsState(initial = emptyList())
     val monthTransactionList by transactionViewModel.monthTransactionsList.observeAsState(initial = emptyList())
@@ -150,6 +151,10 @@ fun AllTransactionScreen(
                 transactionViewModel.updateTransactions()
             }
         )
+    }
+
+    if (isLoading) {
+        LoadingScreen() // Display loading animation
     }
 
     Column(
