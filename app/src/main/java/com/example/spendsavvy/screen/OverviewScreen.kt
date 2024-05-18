@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -208,7 +210,10 @@ fun OverviewScreen(
 
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(
-                                            text = String.format("RM %.2f", totalCashAmount + totalFixedDeposit + totalPriceStock),
+                                            text = String.format(
+                                                "RM %.2f",
+                                                totalCashAmount + totalFixedDeposit + totalPriceStock
+                                            ),
                                             fontSize = 16.sp,
                                             color = Color.Black
                                         )
@@ -386,7 +391,10 @@ fun OverviewScreen(
 
                                         Spacer(modifier = Modifier.width(5.dp))
                                         Text(
-                                            text = String.format("RM %.2f", totalCashAmount + totalFixedDeposit + totalPriceStock) ,
+                                            text = String.format(
+                                                "RM %.2f",
+                                                totalCashAmount + totalFixedDeposit + totalPriceStock
+                                            ),
                                             fontSize = 16.sp,
                                             color = Color.Black
                                         )
@@ -800,7 +808,10 @@ fun BudgetCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.availableBalance) + String.format(": RM%.2f", budgetAmount - totalExpenses),
+                            text = stringResource(id = R.string.availableBalance) + String.format(
+                                ": RM%.2f",
+                                budgetAmount - totalExpenses
+                            ),
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -854,7 +865,10 @@ fun BudgetCard(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = stringResource(id = R.string.availableBalance) + String.format(": RM%.2f", budgetAmount - totalExpenses),
+                            text = stringResource(id = R.string.availableBalance) + String.format(
+                                ": RM%.2f",
+                                budgetAmount - totalExpenses
+                            ),
                             fontSize = 16.sp,
                             color = Color.White
                         )
@@ -982,7 +996,7 @@ fun GoalCard(
                                 if (goalAmount - totalIncomes + totalExpenses <= goalAmount) {
                                     String.format("%.2f", 0.0)
                                 } else {
-                                    String.format("%.2f", goalAmount - totalIncomes + totalExpenses) 
+                                    String.format("%.2f", goalAmount - totalIncomes + totalExpenses)
                                 }
                             }",
                             fontSize = 16.sp,
@@ -1057,7 +1071,7 @@ fun TransactionsCard(
 
 
                 Text(
-                    text = String.format("RM%.2f", transactions.amount) ,
+                    text = String.format("RM%.2f", transactions.amount),
                     fontWeight = FontWeight.SemiBold,
                     color = if (transactions.transactionType == "Expenses") Color.Red else Color(
                         0xFF119316
@@ -1088,20 +1102,27 @@ fun TransactionList(
     dismissStateMap: MutableMap<Transactions, DismissState>
 ) {
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-    var lastDate = ""
     val todayDate = Calendar.getInstance().time
+    val listState = rememberLazyListState()
 
-    LazyColumn(modifier = modifier) {
-        items(transactionsList) { item: Transactions ->
+    // Map to track the first appearance of each date
+    val dateHeaderMap = remember { mutableMapOf<String, Int>() }
 
-            if (dateFormat.format(item.date) != lastDate) {
+    LazyColumn(modifier = modifier, state = listState) {
 
-                if (dateFormat.format(todayDate) == dateFormat.format(item.date)) {
+        itemsIndexed(transactionsList) { index, item ->
+
+            val currentItemDate = dateFormat.format(item.date)
+            if (index == 0 || currentItemDate != dateFormat.format(transactionsList[index - 1].date)) {
+                dateHeaderMap[currentItemDate] = index
+            }
+
+            if (dateHeaderMap[currentItemDate] == index) {
+                if (dateFormat.format(todayDate) == currentItemDate) {
                     Text(stringResource(id = R.string.today), fontWeight = FontWeight.SemiBold)
                 } else {
-                    Text(text = dateFormat.format(item.date), fontWeight = FontWeight.SemiBold)
+                    Text(text = currentItemDate, fontWeight = FontWeight.SemiBold)
                 }
-
             }
 
             TransactionsCard(
@@ -1113,10 +1134,8 @@ fun TransactionList(
                 transactionViewModel = transactionViewModel,
                 dismissState = dismissStateMap[item]
                     ?: rememberDismissState().also { dismissStateMap[item] = it }
-
             )
-
-            lastDate = dateFormat.format(item.date)
         }
     }
 }
+
