@@ -61,14 +61,6 @@ fun EditCashAccountScreen(
         mutableStateOf(false)
     }
 
-    var validIncAmt by remember {
-        mutableStateOf(false)
-    }
-
-    var validDecAmt by remember {
-        mutableStateOf(false)
-    }
-
     val context = LocalContext.current
 
     var isExpanded by remember {
@@ -201,7 +193,6 @@ fun EditCashAccountScreen(
                 value = incAmt,
                 onValueChange = {
                     incAmt = it
-                    validIncAmt = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -227,7 +218,6 @@ fun EditCashAccountScreen(
                 value = decAmt,
                 onValueChange = {
                     decAmt = it
-                    validDecAmt = it.isNotEmpty()
                 },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
