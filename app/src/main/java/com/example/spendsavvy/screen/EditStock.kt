@@ -438,44 +438,7 @@ fun EditExistingStockScreen(
 
 
                                     }
-                                } else {                                            //add existing stock
-                                    transactionViewModel.addTransactionToFirestore(
-                                        Transactions(
-                                            id = transactionViewModel.generateTransactionId(),
-                                            amount = ((stock.originalPrice) * qty.toInt()),
-                                            description = "Purchase Stock",
-                                            date = Date(),
-                                            category = Category(
-                                                id = "CT0014",
-                                                imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/spendsavvy-5a2a8.appspot.com/o/images%2Fstock.png?alt=media&token=416dc2e0-caf2-4c9e-a664-2c0eceba49fb"),
-                                                categoryName = "Stock Purchase",
-                                                categoryType = "Expenses"
-                                            ),
-                                            paymentMethod = searchAccount,
-                                            transactionType = "Expenses"
-                                        ),
-                                        onSuccess = {
-                                            walletViewModel.editStockDetails(
-                                                stock = stock,
-                                                updatedStockDetails = Stock(
-                                                    stock.imageUri,
-                                                    searchProduct,
-                                                    stock.originalPrice,
-                                                    stock.quantity + qty.toInt()
-                                                )
-                                            )
-                                            Toast.makeText(
-                                                context,
-                                                "Stock added",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        },
-                                        onFailure = {
-                                        }
-                                    )
-
-
-                                }
+                                } 
                             }
                         }
                     }else{
