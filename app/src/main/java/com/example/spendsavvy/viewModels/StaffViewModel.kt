@@ -156,7 +156,7 @@ class StaffViewModel(
 
         if (staffList.value?.any { it.id == staff.id } == true) {
             Toast.makeText(
-                currentContext, "Category with the same name already exists", Toast.LENGTH_SHORT
+                currentContext, "Ic Number already exists", Toast.LENGTH_SHORT
             ).show()
             return
         }
