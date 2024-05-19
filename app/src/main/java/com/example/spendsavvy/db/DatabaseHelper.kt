@@ -591,7 +591,7 @@ class DatabaseHelper(context: Context) :
 
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put("internalId", billId)
+            put("id", billId)
             put("amount", amount)
             put("categoryId", categoryId)
             put("description", description)
@@ -616,7 +616,7 @@ class DatabaseHelper(context: Context) :
         val selectedDueDateMillis = selectedDueDate.time
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put("internalId", billId)
+            put("id", billId)
             put("amount", amount)
             put("categoryId", categoryId)
             put("description", description)
@@ -645,7 +645,7 @@ class DatabaseHelper(context: Context) :
         val cursor = db.rawQuery("SELECT * FROM bills WHERE userId=?", arrayOf(userId))
         val billsList: ArrayList<Bills> = ArrayList()
 
-        val internalIdIndex = cursor.getColumnIndex("internalId")
+        val internalIdIndex = cursor.getColumnIndex("id")
         val amountIndex = cursor.getColumnIndex("amount")
         val categoryIdIndex = cursor.getColumnIndex("categoryId")
         val descriptionIndex = cursor.getColumnIndex("description")
@@ -1430,6 +1430,6 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "Local_Database"
-        private const val DATABASE_VERSION = 38
+        private const val DATABASE_VERSION = 39
     }
 }
